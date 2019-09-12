@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>html/keycombos.html</file>
+        <file>html/introduction.html</file>
+        <file>img/arrows.png</file>
+    </qresource>
+</RCC>

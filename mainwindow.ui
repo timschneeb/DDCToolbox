@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>749</width>
+    <height>382</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>DDC Toolbox</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="title">
+       <string>Calibration Points</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QTableWidget" name="listView_DDCPoints">
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustIgnored</enum>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ExtendedSelection</enum>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="gridStyle">
+          <enum>Qt::SolidLine</enum>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <property name="cornerButtonEnabled">
+          <bool>false</bool>
+         </property>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Frequency</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Bandwidth</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Gain</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="title">
+       <string>Graph</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QFrame" name="frame">
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255, 255, 255);</string>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QCustomPlot" name="graph" native="true"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionAdd_Point"/>
+   <addaction name="actionRemove_Point"/>
+   <addaction name="separator"/>
+   <addaction name="actionClear_all"/>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>749</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuProject">
+    <property name="title">
+     <string>Project</string>
+    </property>
+    <widget class="QMenu" name="menuImport">
+     <property name="title">
+      <string>Import</string>
+     </property>
+     <addaction name="actionAutoEQ_ParametricEQ_txt"/>
+    </widget>
+    <addaction name="separator"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="separator"/>
+    <addaction name="menuImport"/>
+    <addaction name="actionExport"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionIntroduction"/>
+    <addaction name="separator"/>
+    <addaction name="actionKey_shortcuts"/>
+   </widget>
+   <widget class="QMenu" name="menuToold">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionQ_BW_Calculator"/>
+   </widget>
+   <addaction name="menuProject"/>
+   <addaction name="menuToold"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <action name="actionAdd_Point">
+   <property name="text">
+    <string>Add Point</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionRemove_Point">
+   <property name="text">
+    <string>Remove Point</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionClear_all">
+   <property name="text">
+    <string>Clear all</string>
+   </property>
+  </action>
+  <action name="actionProject">
+   <property name="text">
+    <string>Project</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Help</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Load</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save as</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="text">
+    <string>Export as VDC</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionIntroduction">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionKey_shortcuts">
+   <property name="text">
+    <string>Shortcuts</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionAutoEQ_ParametricEQ_txt">
+   <property name="text">
+    <string>AutoEQ (ParametricEQ.txt)</string>
+   </property>
+  </action>
+  <action name="actionShift_selection_by_frequency">
+   <property name="text">
+    <string>Shift by frequency</string>
+   </property>
+  </action>
+  <action name="actionInvert_gain">
+   <property name="text">
+    <string>Invert gain</string>
+   </property>
+  </action>
+  <action name="actionQ_BW_Calculator">
+   <property name="text">
+    <string>Q/BW Calculator</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>actionClear_all</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clearPoint()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>226</x>
+     <y>163</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>listView_DDCPoints</sender>
+   <signal>itemChanged(QTableWidgetItem*)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>editCell(QTableWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>180</x>
+     <y>192</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>226</x>
+     <y>163</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAdd_Point</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>addPoint()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>250</x>
+     <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionRemove_Point</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>removePoint()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>250</x>
+     <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionExport</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>exportVDC()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>535</x>
+     <y>286</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionOpen</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>loadDDCProject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>535</x>
+     <y>286</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSave</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saveDDCProject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>535</x>
+     <y>286</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionKey_shortcuts</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showKeycombos()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>535</x>
+     <y>183</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionIntroduction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showIntroduction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>535</x>
+     <y>183</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAutoEQ_ParametricEQ_txt</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>importParametricAutoEQ()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>374</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionQ_BW_Calculator</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showCalc()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>374</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>clearPoint()</slot>
+  <slot>editCell(QTableWidgetItem*)</slot>
+  <slot>beforeEditCell(QTableWidgetItem*)</slot>
+  <slot>addPoint()</slot>
+  <slot>removePoint()</slot>
+  <slot>saveDDCProject()</slot>
+  <slot>loadDDCProject()</slot>
+  <slot>exportVDC()</slot>
+  <slot>showIntroduction()</slot>
+  <slot>showKeycombos()</slot>
+  <slot>importParametricAutoEQ()</slot>
+  <slot>showCalc()</slot>
+ </slots>
+</ui>
