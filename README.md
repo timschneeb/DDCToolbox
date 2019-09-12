@@ -1,6 +1,15 @@
 # DDCToolbox
 Create and edit ViPER DDC files on Linux
 
+## Features
+ * Add/edit/remove calibration points
+ * Save/load *.vdcprj files
+ * Export as *.vdc
+ * Live preview
+ * Edit values directly in the table
+ * Import AutoEQ configurations (*ParametricEQ.txt)
+
+ 
 ## Screenshot
 
 ![Screenshot](https://github.com/ThePBone/DDCToolbox/blob/master/img/screenshot.png?raw=true)
@@ -65,7 +74,9 @@ Terminal=false
 Type=Application
 EOT
 ```
-##### Download Icon
+Download Icon
 ```bash
 sudo wget -O /usr/share/pixmaps/ddc-toolbox.png https://raw.githubusercontent.com/ThePBone/DDCToolbox/master/img/icon.png -q --show-progress
 ```
+_____________
+Based on ViPERs Toolbox 2.0 for Windows
