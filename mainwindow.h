@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QTableWidgetItem>
 #include <QItemDelegate>
+#include <QStyledItemDelegate>
+#include <QDoubleSpinBox>
 #include <mutex>
 #include <regex>
 #include "ddccontext.h"
@@ -44,16 +46,26 @@ private:
     bool lock_actions = false;
 
 };
-class SaveItemDelegate : public QItemDelegate {
+class SaveItemDelegate : public QStyledItemDelegate {
     public:
-        QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-            if(index.model()->columnCount()==3){
-                Global::old_freq = index.sibling(index.row(),0).data(Qt::DisplayRole).toInt();
-                Global::old_bw = index.sibling(index.row(),1).data(Qt::DisplayRole).toDouble();
-                Global::old_gain = index.sibling(index.row(),2).data(Qt::DisplayRole).toDouble();
-            }
-            return QItemDelegate::createEditor(parent, option, index);
+    QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+                                 const QModelIndex &index) const Q_DECL_OVERRIDE
+   {
+       auto w = QStyledItemDelegate::createEditor(
+           parent, option, index);
+
+       auto sp = qobject_cast<QDoubleSpinBox*>(w);
+       if (sp)
+       {
+           sp->setDecimals(6);
+       }
+       if(index.model()->columnCount()==3){
+              Global::old_freq = index.sibling(index.row(),0).data(Qt::DisplayRole).toInt();
+              Global::old_bw = index.sibling(index.row(),1).data(Qt::DisplayRole).toDouble();
+              Global::old_gain = index.sibling(index.row(),2).data(Qt::DisplayRole).toDouble();
         }
+       return w;
+   }
 };
 
 
