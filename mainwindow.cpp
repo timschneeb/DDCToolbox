@@ -199,7 +199,7 @@ void MainWindow::exportVDC()
             {
                 outStream << qSetRealNumberPrecision(16) << v1.at(i);
                 if (i != (v1.size() - 1))
-                    outStream << ";";
+                    outStream << ",";
             }
             outStream << n;
             outStream << "SR_48000:";
@@ -208,7 +208,7 @@ void MainWindow::exportVDC()
             {
                 outStream << qSetRealNumberPrecision(16) << v2.at(i);
                 if (i != (v2.size() - 1))
-                    outStream << ";";
+                    outStream << ",";
             }
 
             outStream << n;
@@ -217,8 +217,10 @@ void MainWindow::exportVDC()
         catch (const std::exception& e)
         {
             qWarning() << e.what();
+            mtx.unlock();
             return;
         }
+        mtx.unlock();
     }
 }
 void MainWindow::clearPoint(){
@@ -271,24 +273,24 @@ void MainWindow::editCell(QTableWidgetItem* item){
 
         //Validate bandwidth value
         else if(calibrationPointBandwidth < 0){
-            ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,0);
+            ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,(double)0);
             QMessageBox::warning(this,"Warning","Bandwidth value '" + QString::number(calibrationPointBandwidth) + "' is too low (0.0 ~ 100.0)");
             calibrationPointBandwidth = 0;
         }
         else if(calibrationPointBandwidth > 100){
-            ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,100);
+            ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,(double)100);
             QMessageBox::warning(this,"Warning","Bandwidth value '" + QString::number(calibrationPointBandwidth) + "' is too high (0.0 ~ 100.0)");
             calibrationPointBandwidth = 100;
         }
 
         //Validate gain value
         else if(calibrationPointGain < -24){
-            ui->listView_DDCPoints->item(row,2)->setData(Qt::DisplayRole,-24);
+            ui->listView_DDCPoints->item(row,2)->setData(Qt::DisplayRole,(double)-24);
             QMessageBox::warning(this,"Warning","Gain value '" + QString::number(calibrationPointGain) + "' is too low (-24.0 ~ 24.0)");
             calibrationPointGain = -24;
         }
         else if(calibrationPointGain > 24){
-            ui->listView_DDCPoints->item(row,2)->setData(Qt::DisplayRole,24);
+            ui->listView_DDCPoints->item(row,2)->setData(Qt::DisplayRole,(double)24);
             QMessageBox::warning(this,"Warning","Gain value '" + QString::number(calibrationPointGain) + "' is too high (-24.0 ~ 24.0)");
             calibrationPointGain = 24;
         }
