@@ -1,0 +1,9 @@
+The code is distributed under GPL.
+
+This is a temp project for VDC import(Reverse engineering)
+We expect user will able to get back .vdcprj via the current tool.
+
+James had also include a expect output from the program...
+which is originally written in C language,...
+the execution environment is Visual Studio 2017....
+Any valid C compiler will do the job.
