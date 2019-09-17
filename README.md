@@ -7,6 +7,7 @@ Create and edit ViPER DDC files on Linux
  * Export as *.vdc
  * Live preview
  * Edit values directly in the table
+ * Import VDCs (to *.vdcprj)
  * Import AutoEQ configurations (*ParametricEQ.txt)
 
  
@@ -78,5 +79,8 @@ Download Icon
 ```bash
 sudo wget -O /usr/share/pixmaps/ddc-toolbox.png https://raw.githubusercontent.com/ThePBone/DDCToolbox/master/img/icon.png -q --show-progress
 ```
+
+## Contributors
+  * VDC Importer (vdc2vdcprj) - [James Fung (@james34602)](https://github.com/james34602)
 _____________
 Based on ViPERs Toolbox 2.0 for Windows
