@@ -41,6 +41,7 @@ private slots:
     void showPointToolTip(QMouseEvent *event);
     void importVDC();
     void readLine_DDCProject(QString);
+    void batch_vdc2vdcprj();
 
 private:
     Ui::MainWindow *ui;

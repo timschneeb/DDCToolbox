@@ -176,6 +176,13 @@
     <property name="title">
      <string>Tools</string>
     </property>
+    <widget class="QMenu" name="menuBatch_Conversion_2">
+     <property name="title">
+      <string>Batch Conversion</string>
+     </property>
+     <addaction name="action_batchVDC_to_Project_File"/>
+    </widget>
+    <addaction name="menuBatch_Conversion_2"/>
     <addaction name="actionQ_BW_Calculator"/>
    </widget>
    <addaction name="menuProject"/>
@@ -276,6 +283,11 @@
    </property>
   </action>
   <action name="actionBatch_VDC2VDCPRJ">
+   <property name="text">
+    <string>VDC to Project File</string>
+   </property>
+  </action>
+  <action name="action_batchVDC_to_Project_File">
    <property name="text">
     <string>VDC to Project File</string>
    </property>
@@ -486,6 +498,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>action_batchVDC_to_Project_File</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>batch_vdc2vdcprj()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>374</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>clearPoint()</slot>
@@ -501,5 +529,6 @@
   <slot>importParametricAutoEQ()</slot>
   <slot>showCalc()</slot>
   <slot>importVDC()</slot>
+  <slot>batch_vdc2vdcprj()</slot>
  </slots>
 </ui>

@@ -199,7 +199,6 @@ void MainWindow::importVDC(){
         }
         stream.seek(0);
 
-        printf(vdcprj);
         free(vdcprj);
         for (i = 0; i < sosCount; i++)
         {
@@ -523,7 +522,6 @@ void MainWindow::showCalc(){
     t->show();
 }
 
-
 void MainWindow::importParametricAutoEQ(){
 
     ui->listView_DDCPoints->clear();
@@ -613,7 +611,6 @@ void MainWindow::importParametricAutoEQ(){
     }
 
 }
-
 ///Tooltip with x-value while hovering graph
 void MainWindow::showPointToolTip(QMouseEvent *event)
 {
@@ -622,4 +619,56 @@ void MainWindow::showPointToolTip(QMouseEvent *event)
     //int y = this->yAxis->pixelToCoord(event->pos().y());
     ui->graph->setToolTip(QString("%1Hz").arg(x));
 
+}
+
+//---Batch conversion
+void MainWindow::batch_vdc2vdcprj(){
+    QStringList filenames = QFileDialog::getOpenFileNames(this,"Select all VDC files to convert",QDir::currentPath(),tr("VDC files (*.vdc)") );
+    if( !filenames.isEmpty() )
+    {
+        QMessageBox::information(this,"Note",QString::number((int)filenames.count()) +
+                                 " files will be converted.\nYou will now be prompted to select an output directory.");
+        QString dir = QFileDialog::getExistingDirectory(this, tr("Select Output-Directory"),
+                                                        "",
+                                                        QFileDialog::ShowDirsOnly
+                                                        | QFileDialog::DontResolveSymlinks);
+
+        if(dir=="")return;
+        for (int l=0;l<(int)filenames.count();l++){
+            int i = 0;
+
+            QString str;
+            QFile file(filenames.at(l));
+            if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+                QMessageBox::warning(this,"Error","Cannot open file " + filenames.at(l) + " for reading");
+                continue;
+            }
+            QTextStream in(&file);
+            QByteArray ba = in.readAll().toLatin1();
+            char* textString = ba.data();
+
+            DirectForm2 **df441, **df48;
+            int sosCount = DDCParser(textString, &df441, &df48);
+            char *vdcprj = VDC2vdcprj(df48, 48000.0, sosCount);
+
+
+            QFileInfo fi(filenames.at(l));
+            QString out = fi.completeBaseName();
+            QFile qFile(QDir(dir).filePath(fi.completeBaseName()+".vdcprj"));
+            if (qFile.open(QIODevice::WriteOnly)) {
+                QTextStream out(&qFile); out << QString(vdcprj);
+                qFile.close();
+            }
+
+            free(vdcprj);
+            for (i = 0; i < sosCount; i++)
+            {
+                free(df441[i]);
+                free(df48[i]);
+            }
+            free(df441);
+            free(df48);
+        }
+        QMessageBox::information(this,"Note","Conversion finished!\nYou can find the files here:\n"+dir);
+    }
 }
