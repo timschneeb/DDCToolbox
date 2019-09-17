@@ -41,7 +41,8 @@ HEADERS += \
         ddccontext.h \
         mainwindow.h \
         qcustomplot.h \
-        textpopup.h
+        textpopup.h \
+        vdcimporter.h
 
 FORMS += \
         addpoint.ui \

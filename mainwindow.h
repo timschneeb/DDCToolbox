@@ -38,6 +38,9 @@ private slots:
     void showKeycombos();
     void importParametricAutoEQ();
     void showCalc();
+    void showPointToolTip(QMouseEvent *event);
+    void importVDC();
+    void readLine_DDCProject(QString);
 
 private:
     Ui::MainWindow *ui;

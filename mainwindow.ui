@@ -154,6 +154,7 @@
       <string>Import</string>
      </property>
      <addaction name="actionAutoEQ_ParametricEQ_txt"/>
+     <addaction name="actionimportVDC_file"/>
     </widget>
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
@@ -267,6 +268,16 @@
   <action name="actionQ_BW_Calculator">
    <property name="text">
     <string>Q/BW Calculator</string>
+   </property>
+  </action>
+  <action name="actionimportVDC_file">
+   <property name="text">
+    <string>VDC file</string>
+   </property>
+  </action>
+  <action name="actionBatch_VDC2VDCPRJ">
+   <property name="text">
+    <string>VDC to Project File</string>
    </property>
   </action>
  </widget>
@@ -459,6 +470,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionimportVDC_file</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>importVDC()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>374</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>clearPoint()</slot>
@@ -473,5 +500,6 @@
   <slot>showKeycombos()</slot>
   <slot>importParametricAutoEQ()</slot>
   <slot>showCalc()</slot>
+  <slot>importVDC()</slot>
  </slots>
 </ui>

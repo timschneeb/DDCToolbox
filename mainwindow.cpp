@@ -4,11 +4,13 @@
 #include "addpoint.h"
 #include "textpopup.h"
 #include "calc.h"
+#include "vdcimporter.h"
 #include <QFileDialog>
 #include <QDebug>
 #include <QAction>
 #include <QMessageBox>
 #include <vector>
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -19,7 +21,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->listView_DDCPoints->setItemDelegate(new SaveItemDelegate());
     ui->listView_DDCPoints->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->graph->yAxis->setRange(QCPRange(-1, 1));
-    ui->graph->xAxis->setRange(QCPRange(0, 24000));
+    ui->graph->xAxis->setRange(QCPRange(1, 24000));
+    ui->graph->xAxis->setScaleType(QCPAxis::stLogarithmic);
+    ui->graph->xAxis->setLabel("Frequency (Hz)");
+
+    QSharedPointer<QCPAxisTickerLog> logTicker(new QCPAxisTickerLog);
+    ui->graph->xAxis->setTicker(logTicker);
+    ui->graph->xAxis->setScaleType(QCPAxis::stLogarithmic);
+    ui->graph->rescaleAxes();
+    connect(ui->graph, SIGNAL(mouseMove(QMouseEvent*)), this,SLOT(showPointToolTip(QMouseEvent*)));
+
 }
 
 MainWindow::~MainWindow()
@@ -78,70 +89,17 @@ void MainWindow::loadDDCProject()
 
         try
         {
-            QString str;
             QFile file(fileName);
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
                 QMessageBox::warning(this,"Error","Cannot open file for reading");
                 return;
             }
-
             QTextStream in(&file);
+            QString str;
             clearPoint();
-            lock_actions = true;
             while (!in.atEnd())
-            {
-                str = in.readLine().trimmed();
-                if (str != nullptr || str != "")
-                {
-                    if ((str.length() > 0) && !str.startsWith("#"))
-                    {
-                        QStringList strArray = str.split(',');
-                        if ((!strArray.empty()) && (strArray.length() == 3))
-                        {
-                            int result = 0;
-                            double num2 = 0.0;
-                            double num3 = 0.0;
-                            if ((sscanf(strArray[0].toUtf8().constData(), "%d", &result) == 1 &&
-                                 sscanf(strArray[1].toUtf8().constData(), "%lf", &num2) == 1) &&
-                                    sscanf(strArray[2].toUtf8().constData(), "%lf", &num3) == 1)
-                            {
-                                bool flag = false;
-                                for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
-                                {
-                                    if (ui->listView_DDCPoints->item(i,0)->data(Qt::DisplayRole).toInt() == result)
-                                    {
-                                        flag = true;
-                                        break;
-                                    }
-                                }
-                                if (!flag)
-                                {
-
-                                    ui->listView_DDCPoints->setSortingEnabled(false);
-                                    QTableWidgetItem *c1 = new QTableWidgetItem();
-                                    QTableWidgetItem *c2 = new QTableWidgetItem();
-                                    QTableWidgetItem *c3 = new QTableWidgetItem();
-                                    c1->setData(Qt::DisplayRole, result);
-                                    c2->setData(Qt::DisplayRole, num2);
-                                    c3->setData(Qt::DisplayRole, num3);
-
-                                    qDebug() << result << num2 << num3;
-
-                                    ui->listView_DDCPoints->insertRow ( ui->listView_DDCPoints->rowCount() );
-                                    ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 0, c1);
-                                    ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 1, c2);
-                                    ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 2, c3);
-                                    ui->listView_DDCPoints->setSortingEnabled(true);
-
-                                    g_dcDDCContext->AddFilter(result, num3, num2, 44100.0);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+                readLine_DDCProject(in.readLine().trimmed());
             file.close();
-
         }
         catch (const std::exception& e)
         {
@@ -151,10 +109,106 @@ void MainWindow::loadDDCProject()
             return;
         }
         mtx.unlock();
-        lock_actions=false;
         ui->listView_DDCPoints->update();
         ui->listView_DDCPoints->sortItems(0,Qt::SortOrder::AscendingOrder);
 
+        drawGraph();
+    }
+}
+void MainWindow::readLine_DDCProject(QString str){
+    lock_actions = true;
+    if (str != nullptr || str != "")
+    {
+        if ((str.length() > 0) && !str.startsWith("#"))
+        {
+            QStringList strArray = str.split(',');
+            if ((!strArray.empty()) && (strArray.length() == 3))
+            {
+                int result = 0;
+                double num2 = 0.0;
+                double num3 = 0.0;
+                if ((sscanf(strArray[0].toUtf8().constData(), "%d", &result) == 1 &&
+                     sscanf(strArray[1].toUtf8().constData(), "%lf", &num2) == 1) &&
+                        sscanf(strArray[2].toUtf8().constData(), "%lf", &num3) == 1)
+                {
+                    if(result<=0||num2<0)return;
+                    if(isnan(result)||isnan(num2)||isnan(num3))return;
+                    if(isinf(result)||isinf(num2)||isinf(num3))return;
+
+                    bool flag = false;
+                    for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
+                    {
+                        if (ui->listView_DDCPoints->item(i,0)->data(Qt::DisplayRole).toInt() == result)
+                        {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (!flag)
+                    {
+                        ui->listView_DDCPoints->setSortingEnabled(false);
+                        QTableWidgetItem *c1 = new QTableWidgetItem();
+                        QTableWidgetItem *c2 = new QTableWidgetItem();
+                        QTableWidgetItem *c3 = new QTableWidgetItem();
+                        c1->setData(Qt::DisplayRole, result);
+                        c2->setData(Qt::DisplayRole, num2);
+                        c3->setData(Qt::DisplayRole, num3);
+
+                        qDebug() << result << num2 << num3;
+
+                        ui->listView_DDCPoints->insertRow ( ui->listView_DDCPoints->rowCount() );
+                        ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 0, c1);
+                        ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 1, c2);
+                        ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 2, c3);
+                        ui->listView_DDCPoints->setSortingEnabled(true);
+
+                        g_dcDDCContext->AddFilter(result, num3, num2, 44100.0);
+                    }
+                }
+            }
+        }
+    }
+    lock_actions = false;
+}
+void MainWindow::importVDC(){
+    int i;
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    "Open VDC", "", "VDC file (*.vdc)");
+    if (fileName != "" && fileName != nullptr){
+        mtx.lock();
+
+        QString str;
+        QFile file(fileName);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+            QMessageBox::warning(this,"Error","Cannot open file for reading");
+            return;
+        }
+        QTextStream in(&file);
+        QByteArray ba = in.readAll().toLatin1();
+        char* textString = ba.data();
+
+        DirectForm2 **df441, **df48;
+        int sosCount = DDCParser(textString, &df441, &df48);
+        char *vdcprj = VDC2vdcprj(df48, 48000.0, sosCount);
+
+        QString line;
+        QString data(vdcprj);
+        QTextStream stream(&data);
+        while (stream.readLineInto(&line)) {
+            readLine_DDCProject(line);
+        }
+        stream.seek(0);
+
+        printf(vdcprj);
+        free(vdcprj);
+        for (i = 0; i < sosCount; i++)
+        {
+            free(df441[i]);
+            free(df48[i]);
+        }
+        free(df441);
+        free(df48);
+        mtx.unlock();
         drawGraph();
     }
 }
@@ -437,7 +491,7 @@ void MainWindow::drawGraph(){
         for (size_t m = 0; m < (size_t)bandCount; m++)
         {
             plot->addData(m*100,(double)responseTable.at(m));//m * 10 -> to fit the scale to 24000hz
-            ui->graph->xAxis->setRange(QCPRange(0, m*100));
+            ui->graph->xAxis->setRange(QCPRange(1, m*100));
         }
     }
     ui->graph->replot();
@@ -468,6 +522,8 @@ void MainWindow::showCalc(){
     calc *t = new calc();
     t->show();
 }
+
+
 void MainWindow::importParametricAutoEQ(){
 
     ui->listView_DDCPoints->clear();
@@ -555,5 +611,15 @@ void MainWindow::importParametricAutoEQ(){
         drawGraph();
         file.close();
     }
+
+}
+
+///Tooltip with x-value while hovering graph
+void MainWindow::showPointToolTip(QMouseEvent *event)
+{
+    int x = (int)ui->graph->xAxis->pixelToCoord(event->pos().x());
+    if(x<0||x>24000)return;
+    //int y = this->yAxis->pixelToCoord(event->pos().y());
+    ui->graph->setToolTip(QString("%1Hz").arg(x));
 
 }
