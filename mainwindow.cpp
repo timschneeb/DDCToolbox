@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->listView_DDCPoints->setItemDelegate(new SaveItemDelegate());
     ui->listView_DDCPoints->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->graph->yAxis->setRange(QCPRange(-1, 1));
-    ui->graph->xAxis->setRange(QCPRange(1, 24000));
+    ui->graph->xAxis->setRange(QCPRange(20, 24000));
     ui->graph->xAxis->setScaleType(QCPAxis::stLogarithmic);
     ui->graph->xAxis->setLabel("Frequency (Hz)");
 
@@ -132,8 +132,8 @@ void MainWindow::readLine_DDCProject(QString str){
                         sscanf(strArray[2].toUtf8().constData(), "%lf", &num3) == 1)
                 {
                     if(result<=0||num2<0)return;
-                    if(isnan(result)||isnan(num2)||isnan(num3))return;
-                    if(isinf(result)||isinf(num2)||isinf(num3))return;
+                    if(isnan(num2)||isnan(num3))return;
+                    if(isinf(num2)||isinf(num3))return;
 
                     bool flag = false;
                     for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
@@ -286,7 +286,7 @@ void MainWindow::clearPoint(){
     ui->graph->clearItems();
     ui->graph->clearGraphs();
     ui->graph->yAxis->setRange(QCPRange(-1, 1));
-    ui->graph->xAxis->setRange(QCPRange(0, 24000));
+    ui->graph->xAxis->setRange(QCPRange(20, 24000));
     lock_actions=false;
 }
 void MainWindow::editCell(QTableWidgetItem* item){
@@ -490,7 +490,7 @@ void MainWindow::drawGraph(){
         for (size_t m = 0; m < (size_t)bandCount; m++)
         {
             plot->addData(m*100,(double)responseTable.at(m));//m * 10 -> to fit the scale to 24000hz
-            ui->graph->xAxis->setRange(QCPRange(1, m*100));
+            ui->graph->xAxis->setRange(QCPRange(20, m*100));
         }
     }
     ui->graph->replot();
