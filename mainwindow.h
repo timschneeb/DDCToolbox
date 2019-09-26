@@ -48,6 +48,7 @@ private:
     std::mutex mtx;
     DDCContext *g_dcDDCContext;
     bool lock_actions = false;
+    void insertData(int freq,double band,double gain);
 
 };
 class SaveItemDelegate : public QStyledItemDelegate {
