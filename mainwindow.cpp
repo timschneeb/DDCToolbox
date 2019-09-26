@@ -175,6 +175,7 @@ void MainWindow::importVDC(){
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     "Open VDC", "", "VDC file (*.vdc)");
     if (fileName != "" && fileName != nullptr){
+        clearPoint();
         mtx.lock();
 
         QString str;
@@ -283,10 +284,7 @@ void MainWindow::clearPoint(){
     ui->listView_DDCPoints->setRowCount(0);
     ui->listView_DDCPoints->reset();
     ui->listView_DDCPoints->setHorizontalHeaderLabels(QStringList() << "Frequency" << "Bandwidth" << "Gain");
-    ui->graph->clearItems();
-    ui->graph->clearGraphs();
-    ui->graph->yAxis->setRange(QCPRange(-1, 1));
-    ui->graph->xAxis->setRange(QCPRange(20, 24000));
+    drawGraph();
     lock_actions=false;
 }
 void MainWindow::editCell(QTableWidgetItem* item){
