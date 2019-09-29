@@ -17,6 +17,8 @@ Create and edit ViPER DDC files on Linux
 
 ## Installation
 Primarily developed for Linux. It should work on other platforms too, but you need to compile it yourself.
+
+I will try to provide Windows binary packages every now and then.
 ### Ubuntu (PPA)
 Add PPA Repo
 ```bash
@@ -29,6 +31,9 @@ Install from PPA
 sudo apt install ddc-toolbox
 ```
 [View PPA on GitHub](https://github.com/ThePBone/PPA-Repository)
+
+### Windows
+Binaries for Windows are available [here](https://github.com/ThePBone/DDCToolbox/releases).
 
 ### Manually/Portable
 #### Build from sources
