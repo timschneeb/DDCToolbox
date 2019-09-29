@@ -35,6 +35,8 @@ sudo apt install ddc-toolbox
 ### Windows
 Binaries for Windows are available [here](https://github.com/ThePBone/DDCToolbox/releases).
 
+**NOTE:** The current release triggers a SmartScreen warning, you can ignore it though [(Virustotal scan here)](https://www.virustotal.com/gui/file/f54e6a9502a4f09cf9aa8b136d8f2c9ae9f643f9940af7af40027cbadc3ec004/detection)
+
 ### Manually/Portable
 #### Build from sources
 _(You can find precompiled binaries [here](https://github.com/ThePBone/DDCToolbox/releases))_
