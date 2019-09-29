@@ -500,11 +500,10 @@ void MainWindow::exportVDC()
 }
 void MainWindow::importParametricAutoEQ(){
 
-    ui->listView_DDCPoints->clear();
-
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     "Import AutoEQ config 'ParametricEQ.txt'", "", "AutoEQ ParametricEQ.txt (*ParametricEQ.txt);;All files (*.*)");
     if (fileName != "" && fileName != nullptr){
+        ui->listView_DDCPoints->clear();
         QString str;
         QFile file(fileName);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
