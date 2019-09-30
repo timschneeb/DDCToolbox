@@ -19,6 +19,11 @@ Create and edit ViPER DDC files on Linux
 Primarily developed for Linux. It should work on other platforms too, but you need to compile it yourself.
 
 I will try to provide Windows binary packages every now and then.
+
+  * [Windows](#windows)
+  * [Ubuntu](#ubuntu-ppa)
+  * [Debian](#debian)
+  * [Manually/Portable (Linux)](#manuallyportable)
 ### Ubuntu (PPA)
 Add PPA Repo
 ```bash
@@ -36,6 +41,9 @@ sudo apt install ddc-toolbox
 Binaries for Windows are available [here](https://github.com/ThePBone/DDCToolbox/releases).
 
 **NOTE:** The current release triggers a SmartScreen warning, you can ignore it though [(Virustotal scan here)](https://www.virustotal.com/gui/file/f54e6a9502a4f09cf9aa8b136d8f2c9ae9f643f9940af7af40027cbadc3ec004/detection)
+
+### Debian
+Users of debian-based distros can use the DEB-packages that are attached on the [release page](https://github.com/ThePBone/DDCToolbox/releases).
 
 ### Manually/Portable
 #### Build from sources
