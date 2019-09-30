@@ -13,6 +13,11 @@
 namespace Ui {
 class MainWindow;
 }
+typedef struct calibrationPoint_s{
+    int freq;
+    float bw;
+    float gain;
+}calibrationPoint_t;
 namespace Global {
    static int old_freq = 0;
    static double old_bw = 0;
@@ -43,6 +48,7 @@ private slots:
     void importVDC();
     void readLine_DDCProject(QString);
     void batch_vdc2vdcprj();
+    void batch_parametric2vdcprj();
     void toggleGraph(bool);
     void ScreenshotGraph();
     void closeProject();
@@ -56,6 +62,8 @@ private:
     QString currentFile = "";
     void insertData(int freq,double band,double gain);
     void setActiveFile(QString,bool=false);
+    std::vector<calibrationPoint_t> parseParametricEQ(QString);
+    bool writeProjectFile(std::vector<calibrationPoint_t> points,QString fileName);
 };
 class SaveItemDelegate : public QStyledItemDelegate {
     public:
