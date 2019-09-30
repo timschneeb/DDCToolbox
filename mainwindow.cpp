@@ -30,7 +30,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->graph->xAxis->setScaleType(QCPAxis::stLogarithmic);
     ui->graph->rescaleAxes();
     connect(ui->graph, SIGNAL(mouseMove(QMouseEvent*)), this,SLOT(showPointToolTip(QMouseEvent*)));
-
 }
 
 MainWindow::~MainWindow()
@@ -41,14 +40,22 @@ MainWindow::~MainWindow()
 //---Load/Save
 void MainWindow::saveDDCProject()
 {
+    if(currentFile=="")
+        saveAsDDCProject(true);
+    else
+        saveAsDDCProject(false,currentFile);
+}
+void MainWindow::saveAsDDCProject(bool ask,QString path)
+{
     QString n("\n");
-    QString fileName = QFileDialog::getSaveFileName(this,
-                                                    "Save VDC Project File", "", "ViPER DDC Project (*.vdcprj)");
+    QString fileName = path;
+    if(ask)fileName = QFileDialog::getSaveFileName(this,"Save VDC Project File", "", "ViPER DDC Project (*.vdcprj)");
     if (fileName != "" && fileName != nullptr)
     {
         QFileInfo fi(fileName);
         QString ext = fi.suffix();
         if(ext!="vdcprj")fileName.append(".vdcprj");
+        setActiveFile(fileName);
         mtx.lock();
         try
         {
@@ -82,12 +89,11 @@ void MainWindow::saveDDCProject()
 }
 void MainWindow::loadDDCProject()
 {
-
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     "Open VDC Project File", "", "ViPER DDC Project (*.vdcprj)");
     if (fileName != "" && fileName != nullptr){
         mtx.lock();
-
+        setActiveFile(fileName);
         try
         {
             QFile file(fileName);
@@ -173,6 +179,9 @@ void MainWindow::insertData(int freq,double band,double gain){
 }
 void MainWindow::clearPoint(){
     lock_actions=true;
+    QObject* obj = sender();
+    if(obj==ui->actionClear_all) //check if function has been called by Toolbutton
+        setActiveFile(currentFile,true);
     g_dcDDCContext->ClearFilters();
     ui->listView_DDCPoints->clear();
     ui->listView_DDCPoints->setRowCount(0);
@@ -183,8 +192,7 @@ void MainWindow::clearPoint(){
 }
 void MainWindow::editCell(QTableWidgetItem* item){
     if(lock_actions)return;
-
-
+    setActiveFile(currentFile,true);
     int row = item->row();
     int result = 0;
     int nOldFreq = 0;
@@ -263,6 +271,7 @@ void MainWindow::editCell(QTableWidgetItem* item){
 void MainWindow::addPoint(){
     addpoint *dlg = new addpoint;
     if(dlg->exec()){
+        setActiveFile(currentFile,true);
         std::list<double> rawdata = dlg->returndata();
         std::vector<double> data(rawdata.begin(), rawdata.end());
         int freq = (int)data.at(0);
@@ -295,6 +304,7 @@ void MainWindow::removePoint(){
         mtx.unlock();
     else
     {
+        setActiveFile(currentFile,true);
         ui->listView_DDCPoints->setSortingEnabled(false);
         QList<int> removeRows;
         const QModelIndexList list = ui->listView_DDCPoints->selectionModel()->selectedRows();
@@ -363,6 +373,19 @@ void MainWindow::drawGraph(){
     }
     ui->graph->replot();
 }
+void MainWindow::toggleGraph(bool state){
+     ui->graphBox->setVisible(!state);
+}
+void MainWindow::ScreenshotGraph(){
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                                    "Save Screenshot", "", "PNG screenshot (*.png)");
+    if (fileName != "" && fileName != nullptr){
+        QFileInfo fi(fileName);
+        QString ext = fi.suffix();
+        if(ext!="png")fileName.append(".png");
+        ui->graph->saveJpg(fileName);
+    }
+}
 //---Dialogs
 void MainWindow::showIntroduction(){
     QString data = "Unable to open HTML file";
@@ -397,6 +420,7 @@ void MainWindow::importVDC(){
                                                     "Open VDC", "", "VDC file (*.vdc)");
     if (fileName != "" && fileName != nullptr){
         clearPoint();
+        setActiveFile("");
         mtx.lock();
 
         QString str;
@@ -504,6 +528,7 @@ void MainWindow::importParametricAutoEQ(){
                                                     "Import AutoEQ config 'ParametricEQ.txt'", "", "AutoEQ ParametricEQ.txt (*ParametricEQ.txt);;All files (*.*)");
     if (fileName != "" && fileName != nullptr){
         ui->listView_DDCPoints->clear();
+        setActiveFile("");
         QString str;
         QFile file(fileName);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
@@ -634,4 +659,24 @@ void MainWindow::showPointToolTip(QMouseEvent *event)
     //int y = this->yAxis->pixelToCoord(event->pos().y());
     ui->graph->setToolTip(QString("%1Hz").arg(x));
 
+}
+//---Session
+void MainWindow::setActiveFile(QString path,bool unsaved){
+    QFileInfo fi(path);
+    currentFile = path;
+    if(path=="")
+        setWindowTitle("DDC Toolbox");
+    else{
+        if(unsaved) setWindowTitle("DDC Toolbox - " + fi.fileName() + "*");
+        else setWindowTitle("DDC Toolbox - " + fi.fileName());
+    }
+}
+void MainWindow::closeProject(){
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "DDC Toolbox", "Are you sure? This deletes all unsaved changes.",
+                                  QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+        setActiveFile("");
+        clearPoint();
+    }
 }

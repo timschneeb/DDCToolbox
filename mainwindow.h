@@ -6,6 +6,7 @@
 #include <QItemDelegate>
 #include <QStyledItemDelegate>
 #include <QDoubleSpinBox>
+#include "qcustomplot.h"
 #include <mutex>
 #include <regex>
 #include "ddccontext.h"
@@ -26,7 +27,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void saveDDCProject();
+    void saveAsDDCProject(bool=true,QString="");
     void loadDDCProject();
     void exportVDC();
     void clearPoint();
@@ -42,14 +43,19 @@ private slots:
     void importVDC();
     void readLine_DDCProject(QString);
     void batch_vdc2vdcprj();
+    void toggleGraph(bool);
+    void ScreenshotGraph();
+    void closeProject();
+    void saveDDCProject();
 
 private:
     Ui::MainWindow *ui;
     std::mutex mtx;
     DDCContext *g_dcDDCContext;
     bool lock_actions = false;
+    QString currentFile = "";
     void insertData(int freq,double band,double gain);
-
+    void setActiveFile(QString,bool=false);
 };
 class SaveItemDelegate : public QStyledItemDelegate {
     public:
