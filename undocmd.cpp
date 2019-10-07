@@ -230,6 +230,7 @@ void RemoveCommand::undo()
     tw->setSortingEnabled(true);
     tw->sortItems(0);
     tw->update();
+    host->drawGraph();
     *lockActions = false;
     mtx->unlock();
 }

@@ -215,6 +215,12 @@
    <property name="text">
     <string>Add Point</string>
    </property>
+   <property name="iconText">
+    <string>Add Point</string>
+   </property>
+   <property name="toolTip">
+    <string>Add point</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
    </property>
@@ -222,6 +228,9 @@
   <action name="actionRemove_Point">
    <property name="text">
     <string>Remove Point</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove selected point(s)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
@@ -321,10 +330,16 @@
    <property name="text">
     <string>Hide Graph</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
   </action>
   <action name="actionTake_screenshot">
    <property name="text">
     <string>Save screenshot</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Print</string>
    </property>
   </action>
   <action name="actionSave">
