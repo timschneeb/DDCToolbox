@@ -29,17 +29,19 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+    void drawGraph();
+    void setActiveFile(QString,bool=false);
+    QString currentFile = "";
     ~MainWindow();
 
 private slots:
     void saveAsDDCProject(bool=true,QString="");
     void loadDDCProject();
     void exportVDC();
-    void clearPoint();
+    void clearPoint(bool = true);
     void addPoint();
     void removePoint();
     void editCell(QTableWidgetItem* item);
-    void drawGraph();
     void showIntroduction();
     void showKeycombos();
     void importParametricAutoEQ();
@@ -53,15 +55,17 @@ private slots:
     void ScreenshotGraph();
     void closeProject();
     void saveDDCProject();
+    void showUndoView();
 
 private:
     Ui::MainWindow *ui;
     std::mutex mtx;
     DDCContext *g_dcDDCContext;
     bool lock_actions = false;
-    QString currentFile = "";
+    QUndoStack *undoStack;
+    QUndoView *undoView;
+
     void insertData(int freq,double band,double gain);
-    void setActiveFile(QString,bool=false);
     std::vector<calibrationPoint_t> parseParametricEQ(QString);
     bool writeProjectFile(std::vector<calibrationPoint_t> points,QString fileName);
 };

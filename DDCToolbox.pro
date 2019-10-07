@@ -32,7 +32,8 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         qcustomplot.cpp \
-        textpopup.cpp
+        textpopup.cpp \
+        undocmd.cpp
 
 HEADERS += \
         addpoint.h \
@@ -42,6 +43,7 @@ HEADERS += \
         mainwindow.h \
         qcustomplot.h \
         textpopup.h \
+        undocmd.h \
         vdcimporter.h
 
 FORMS += \

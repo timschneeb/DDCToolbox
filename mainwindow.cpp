@@ -5,6 +5,7 @@
 #include "textpopup.h"
 #include "calc.h"
 #include "vdcimporter.h"
+#include "undocmd.h"
 #include <QFileDialog>
 #include <QDebug>
 #include <QAction>
@@ -18,6 +19,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    undoStack = new QUndoStack(this);
+
+    QAction* actionUndo = undoStack->createUndoAction(this, tr("Undo"));
+    actionUndo->setShortcuts(QKeySequence::Undo);
+
+    QAction* actionRedo = undoStack->createRedoAction(this, tr("Redo"));
+    actionRedo->setShortcuts(QKeySequence::Redo);
+
+    QAction* first = ui->menuEdit->actions().at(0);
+    ui->menuEdit->insertAction(first,actionUndo);
+    ui->menuEdit->insertAction(first,actionRedo);
+
     g_dcDDCContext = new class DDCContext;
     ui->listView_DDCPoints->setItemDelegate(new SaveItemDelegate());
     ui->listView_DDCPoints->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -57,6 +70,8 @@ void MainWindow::saveAsDDCProject(bool ask,QString path)
         QString ext = fi.suffix();
         if(ext!="vdcprj")fileName.append(".vdcprj");
         setActiveFile(fileName);
+        undoStack->clear();
+
         mtx.lock();
         std::vector<calibrationPoint_t> points;
         for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
@@ -77,7 +92,6 @@ void MainWindow::loadDDCProject()
                                                     "Open VDC Project File", "", "ViPER DDC Project (*.vdcprj)");
     if (fileName != "" && fileName != nullptr){
         mtx.lock();
-        setActiveFile(fileName);
         try
         {
             QFile file(fileName);
@@ -87,7 +101,10 @@ void MainWindow::loadDDCProject()
             }
             QTextStream in(&file);
             QString str;
-            clearPoint();
+            clearPoint(false);
+            setActiveFile(fileName);
+            undoStack->clear();
+
             while (!in.atEnd())
                 readLine_DDCProject(in.readLine().trimmed());
             file.close();
@@ -161,18 +178,33 @@ void MainWindow::insertData(int freq,double band,double gain){
     ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 2, c3);
     ui->listView_DDCPoints->setSortingEnabled(true);
 }
-void MainWindow::clearPoint(){
-    lock_actions=true;
-    QObject* obj = sender();
-    if(obj==ui->actionClear_all) //check if function has been called by Toolbutton
-        setActiveFile(currentFile,true);
-    g_dcDDCContext->ClearFilters();
-    ui->listView_DDCPoints->clear();
-    ui->listView_DDCPoints->setRowCount(0);
-    ui->listView_DDCPoints->reset();
-    ui->listView_DDCPoints->setHorizontalHeaderLabels(QStringList() << "Frequency" << "Bandwidth" << "Gain");
-    drawGraph();
-    lock_actions=false;
+void MainWindow::clearPoint(bool trackundo){
+    if(trackundo){
+        std::vector<calibrationPoint_t> cal_table;
+        for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
+        {
+            calibrationPoint_t cal;
+            cal.freq = ui->listView_DDCPoints->item(i,0)->data(Qt::DisplayRole).toInt();
+            cal.bw = ui->listView_DDCPoints->item(i,1)->data(Qt::DisplayRole).toFloat();
+            cal.gain = ui->listView_DDCPoints->item(i,2)->data(Qt::DisplayRole).toFloat();
+            cal_table.push_back(cal);
+        }
+        QUndoCommand *clearCommand = new ClearCommand(ui->listView_DDCPoints,
+                                                      g_dcDDCContext,cal_table,&mtx,&lock_actions,this);
+        undoStack->push(clearCommand);
+    }
+    else{
+        lock_actions = true;
+
+        g_dcDDCContext->ClearFilters();
+        ui->listView_DDCPoints->clear();
+        ui->listView_DDCPoints->setRowCount(0);
+        ui->listView_DDCPoints->reset();
+        ui->listView_DDCPoints->setHorizontalHeaderLabels(QStringList() << "Frequency" << "Bandwidth" << "Gain");
+
+        drawGraph();
+        lock_actions = false;
+    }
 }
 void MainWindow::editCell(QTableWidgetItem* item){
     if(lock_actions)return;
@@ -243,11 +275,20 @@ void MainWindow::editCell(QTableWidgetItem* item){
             }
         }
 
-        mtx.lock();
-        g_dcDDCContext->ModifyFilter(nOldFreq, result, calibrationPointGain, calibrationPointBandwidth, 44100.0);
-        ui->listView_DDCPoints->setSortingEnabled(true);
-        ui->listView_DDCPoints->sortItems(0);
-        mtx.unlock();
+        calibrationPoint_t cal;
+        cal.freq = result;
+        cal.bw = calibrationPointBandwidth;
+        cal.gain = calibrationPointGain;
+        calibrationPoint_t oldcal;
+        oldcal.freq = nOldFreq;
+        oldcal.bw = Global::old_bw;
+        oldcal.gain = Global::old_gain;
+
+
+        QUndoCommand *editCommand = new EditCommand(ui->listView_DDCPoints,g_dcDDCContext,
+                                                    row,cal,oldcal,&mtx,&lock_actions,this);
+        undoStack->push(editCommand);
+
         drawGraph();
     }
     else qDebug() << "Invalid input data";
@@ -258,59 +299,54 @@ void MainWindow::addPoint(){
         setActiveFile(currentFile,true);
         std::list<double> rawdata = dlg->returndata();
         std::vector<double> data(rawdata.begin(), rawdata.end());
-        int freq = (int)data.at(0);
-        double bw = data.at(1);
-        double gain = data.at(2);
+        calibrationPoint_t cal;
+        cal.freq = (int)data.at(0);
+        cal.bw = data.at(1);
+        cal.gain = data.at(2);
 
         for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
         {
-            if (ui->listView_DDCPoints->item(i,0)->data(Qt::DisplayRole).toInt() == freq)
+            if (ui->listView_DDCPoints->item(i,0)->data(Qt::DisplayRole).toInt() == cal.freq)
             {
                 QMessageBox::warning(this,"Error","Point already exists");
                 return;
             }
         }
 
-        lock_actions=true;
-        insertData(freq,bw,gain);
-        lock_actions=false;
-
-        mtx.lock();
-        g_dcDDCContext->AddFilter(freq, gain, bw, 44100.0);
-        mtx.unlock();
+        QUndoCommand *addCommand = new AddCommand(ui->listView_DDCPoints,
+                                                  g_dcDDCContext,cal,&mtx,&lock_actions,this);
+        undoStack->push(addCommand);
         drawGraph();
     }
 }
 void MainWindow::removePoint(){
     lock_actions=true;
-    mtx.lock();
-    if (ui->listView_DDCPoints->currentRow() < 0)
-        mtx.unlock();
-    else
+    if (ui->listView_DDCPoints->currentRow() >= 0)
     {
         setActiveFile(currentFile,true);
         ui->listView_DDCPoints->setSortingEnabled(false);
-        QList<int> removeRows;
-        const QModelIndexList list = ui->listView_DDCPoints->selectionModel()->selectedRows();
+        std::vector<int> removeRows;
+        std::vector<calibrationPoint_t> cal_table;
+        QItemSelectionModel *selected = ui->listView_DDCPoints->selectionModel();
+        QModelIndexList list = selected->selectedRows();
         for (int i = 0; i < list.count(); i++)
         {
             QModelIndex index = list.at(i);
             int row = index.row();
-            removeRows.append(row);
-            int freq = ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toInt();
-            g_dcDDCContext->RemoveFilter(freq);
+            removeRows.push_back(row);
+
+            calibrationPoint_t cal;
+            cal.freq = ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toInt();
+            cal.bw = ui->listView_DDCPoints->item(row,1)->data(Qt::DisplayRole).toFloat();
+            cal.gain = ui->listView_DDCPoints->item(row,2)->data(Qt::DisplayRole).toFloat();
+            cal_table.push_back(cal);
         }
-        for(int i=0;i<removeRows.count();++i)
-        {
-            for(int j=i;j<removeRows.count();++j)
-                if(removeRows.at(j) > removeRows.at(i))
-                    removeRows[j]--;
-            ui->listView_DDCPoints->model()->removeRows(removeRows.at(i), 1);
-        }
+        QUndoCommand *removeCommand = new RemoveCommand(ui->listView_DDCPoints,
+                                                  g_dcDDCContext,removeRows,list,cal_table,&mtx,&lock_actions,this);
+        undoStack->push(removeCommand);
+
         ui->listView_DDCPoints->setSortingEnabled(true);
         ui->listView_DDCPoints->sortItems(0);
-
-        mtx.unlock();
         drawGraph();
     }
     lock_actions=false;
@@ -358,7 +394,7 @@ void MainWindow::drawGraph(){
     ui->graph->replot();
 }
 void MainWindow::toggleGraph(bool state){
-     ui->graphBox->setVisible(!state);
+    ui->graphBox->setVisible(!state);
 }
 void MainWindow::ScreenshotGraph(){
     QString fileName = QFileDialog::getSaveFileName(this,
@@ -397,14 +433,23 @@ void MainWindow::showCalc(){
     calc *t = new calc();
     t->show();
 }
+void MainWindow::showUndoView(){
+    undoView = new QUndoView(undoStack);
+    undoView->setWindowTitle(tr("Undo History"));
+    undoView->show();
+    undoView->setAttribute(Qt::WA_QuitOnClose, false);
+}
+
 //---Import/Export
 void MainWindow::importVDC(){
     int i;
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     "Open VDC", "", "VDC file (*.vdc)");
     if (fileName != "" && fileName != nullptr){
-        clearPoint();
+        clearPoint(false);
         setActiveFile("");
+        undoStack->clear();
+
         mtx.lock();
 
         QString str;
@@ -508,11 +553,12 @@ void MainWindow::exportVDC()
 }
 void MainWindow::importParametricAutoEQ(){
     QString fileName = QFileDialog::getOpenFileName(this,
-                                  "Import AutoEQ config 'ParametricEQ.txt'", "", "AutoEQ ParametricEQ.txt (*ParametricEQ.txt);;All files (*.*)");
+                                                    "Import AutoEQ config 'ParametricEQ.txt'", "", "AutoEQ ParametricEQ.txt (*ParametricEQ.txt);;All files (*.*)");
     if (fileName != "" && fileName != nullptr){
         ui->listView_DDCPoints->clear();
+        clearPoint(false);
         setActiveFile("");
-        clearPoint();
+        undoStack->clear();
 
         std::vector<calibrationPoint_t> points = parseParametricEQ(fileName);
         if(points.size() < 1){
@@ -718,10 +764,11 @@ void MainWindow::setActiveFile(QString path,bool unsaved){
 }
 void MainWindow::closeProject(){
     QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "DDC Toolbox", "Are you sure? This deletes all unsaved changes.",
+    reply = QMessageBox::question(this, "DDC Toolbox", "Are you sure? All unsaved changes will be lost.",
                                   QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes) {
         setActiveFile("");
-        clearPoint();
+        clearPoint(false);
+        undoStack->clear();
     }
 }

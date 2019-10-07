@@ -197,7 +197,16 @@
     <addaction name="separator"/>
     <addaction name="actionTake_screenshot"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
+    <addaction name="actionView_undo_history"/>
+   </widget>
    <addaction name="menuProject"/>
+   <addaction name="menuEdit"/>
    <addaction name="menuView"/>
    <addaction name="menuToold"/>
    <addaction name="menuHelp"/>
@@ -337,6 +346,14 @@
   <action name="actionAutoEQ_ParametricEQ_to_Project_File">
    <property name="text">
     <string>AutoEQ (Parametric) to Project File</string>
+   </property>
+  </action>
+  <action name="actionView_undo_history">
+   <property name="text">
+    <string>View undo history</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Z</string>
    </property>
   </action>
  </widget>
@@ -641,6 +658,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionView_undo_history</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showUndoView()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>374</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>clearPoint()</slot>
@@ -662,5 +695,6 @@
   <slot>closeProject()</slot>
   <slot>saveDDCProject()</slot>
   <slot>batch_parametric2vdcprj()</slot>
+  <slot>showUndoView()</slot>
  </slots>
 </ui>

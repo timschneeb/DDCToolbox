@@ -132,7 +132,6 @@ std::vector<float> DDCContext::GetResponseTable(int nBandCount, double dSRate)
 
     UnlockFilter();
 
-
     for (int j = 0; j < nBandCount; j++)
     {
         double num3 = (dSRate / 2.0) / ((double) nBandCount);
