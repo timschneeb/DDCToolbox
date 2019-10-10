@@ -142,7 +142,7 @@
      <x>0</x>
      <y>0</y>
      <width>749</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -205,9 +205,17 @@
     <addaction name="separator"/>
     <addaction name="actionView_undo_history"/>
    </widget>
+   <widget class="QMenu" name="menuSelection">
+    <property name="title">
+     <string>Selection</string>
+    </property>
+    <addaction name="actionInvert_gain_2"/>
+    <addaction name="actionShift_frequency"/>
+   </widget>
    <addaction name="menuProject"/>
    <addaction name="menuEdit"/>
    <addaction name="menuView"/>
+   <addaction name="menuSelection"/>
    <addaction name="menuToold"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -239,16 +247,6 @@
   <action name="actionClear_all">
    <property name="text">
     <string>Clear all</string>
-   </property>
-  </action>
-  <action name="actionProject">
-   <property name="text">
-    <string>Project</string>
-   </property>
-  </action>
-  <action name="actionHelp">
-   <property name="text">
-    <string>Help</string>
    </property>
   </action>
   <action name="actionOpen">
@@ -293,16 +291,6 @@
     <string>AutoEQ (ParametricEQ.txt)</string>
    </property>
   </action>
-  <action name="actionShift_selection_by_frequency">
-   <property name="text">
-    <string>Shift by frequency</string>
-   </property>
-  </action>
-  <action name="actionInvert_gain">
-   <property name="text">
-    <string>Invert gain</string>
-   </property>
-  </action>
   <action name="actionQ_BW_Calculator">
    <property name="text">
     <string>Q/BW Calculator</string>
@@ -311,11 +299,6 @@
   <action name="actionimportVDC_file">
    <property name="text">
     <string>VDC file</string>
-   </property>
-  </action>
-  <action name="actionBatch_VDC2VDCPRJ">
-   <property name="text">
-    <string>VDC to Project File</string>
    </property>
   </action>
   <action name="action_batchVDC_to_Project_File">
@@ -369,6 +352,25 @@
    </property>
    <property name="shortcut">
     <string>Alt+Z</string>
+   </property>
+  </action>
+  <action name="actionInvert_gain_2">
+   <property name="text">
+    <string>Invert gain</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+I</string>
+   </property>
+  </action>
+  <action name="actionShift_frequency">
+   <property name="text">
+    <string>Shift frequencies</string>
+   </property>
+   <property name="toolTip">
+    <string>Shift frequencies</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+F</string>
    </property>
   </action>
  </widget>
@@ -689,6 +691,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionInvert_gain_2</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>invertSelection()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>374</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionShift_frequency</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>shiftSelection()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>374</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>clearPoint()</slot>
@@ -711,5 +745,7 @@
   <slot>saveDDCProject()</slot>
   <slot>batch_parametric2vdcprj()</slot>
   <slot>showUndoView()</slot>
+  <slot>invertSelection()</slot>
+  <slot>shiftSelection()</slot>
  </slots>
 </ui>

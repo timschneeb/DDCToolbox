@@ -12,7 +12,7 @@
 #include <QMessageBox>
 #include <vector>
 #include <map>
-
+#include "shiftfreq.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -178,6 +178,60 @@ void MainWindow::insertData(int freq,double band,double gain){
     ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 2, c3);
     ui->listView_DDCPoints->setSortingEnabled(true);
 }
+void MainWindow::invertSelection(){
+    if (ui->listView_DDCPoints->currentRow() >= 0 && ui->listView_DDCPoints->selectedItems().count() >= 1)
+    {
+        setActiveFile(currentFile,true);
+        std::vector<calibrationPoint_t> cal_table;
+        QItemSelectionModel *selected = ui->listView_DDCPoints->selectionModel();
+        QModelIndexList list = selected->selectedRows();
+        for (int i = 0; i < list.count(); i++)
+        {
+            QModelIndex index = list.at(i);
+            int row = index.row();
+            calibrationPoint_t cal;
+            cal.freq = ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toInt();
+            cal.bw = ui->listView_DDCPoints->item(row,1)->data(Qt::DisplayRole).toFloat();
+            cal.gain = ui->listView_DDCPoints->item(row,2)->data(Qt::DisplayRole).toFloat();
+            cal_table.push_back(cal);
+        }
+        QUndoCommand *invertCommand = new InvertCommand(ui->listView_DDCPoints,
+                                                        g_dcDDCContext,cal_table,&mtx,&lock_actions,this);
+        undoStack->push(invertCommand);
+    }
+    else
+        QMessageBox::information(this,"Invert selection","No rows selected");
+}
+void MainWindow::shiftSelection(){
+    if (ui->listView_DDCPoints->currentRow() >= 0 && ui->listView_DDCPoints->selectedItems().count() >= 1)
+    {
+        setActiveFile(currentFile,true);
+        std::vector<calibrationPoint_t> cal_table;
+        QItemSelectionModel *selected = ui->listView_DDCPoints->selectionModel();
+        QModelIndexList list = selected->selectedRows();
+        for (int i = 0; i < list.count(); i++)
+        {
+            QModelIndex index = list.at(i);
+            int row = index.row();
+            calibrationPoint_t cal;
+            cal.freq = ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toInt();
+            cal.bw = ui->listView_DDCPoints->item(row,1)->data(Qt::DisplayRole).toFloat();
+            cal.gain = ui->listView_DDCPoints->item(row,2)->data(Qt::DisplayRole).toFloat();
+            cal_table.push_back(cal);
+        }
+
+        shiftfreq* sf = new shiftfreq;
+        sf->setRange(cal_table);
+        if(sf->exec()){
+            int shift = sf->getResult();
+            QUndoCommand *shiftCommand = new ShiftCommand(ui->listView_DDCPoints,
+                                                          g_dcDDCContext,shift,cal_table,&mtx,&lock_actions,this);
+            undoStack->push(shiftCommand);
+        }
+    }
+    else
+        QMessageBox::information(this,"Shift selection","No rows selected");
+}
 void MainWindow::clearPoint(bool trackundo){
     if(trackundo){
         std::vector<calibrationPoint_t> cal_table;
@@ -342,7 +396,7 @@ void MainWindow::removePoint(){
             cal_table.push_back(cal);
         }
         QUndoCommand *removeCommand = new RemoveCommand(ui->listView_DDCPoints,
-                                                  g_dcDDCContext,removeRows,list,cal_table,&mtx,&lock_actions,this);
+                                                        g_dcDDCContext,removeRows,list,cal_table,&mtx,&lock_actions,this);
         undoStack->push(removeCommand);
 
         ui->listView_DDCPoints->setSortingEnabled(true);

@@ -56,6 +56,8 @@ private slots:
     void closeProject();
     void saveDDCProject();
     void showUndoView();
+    void invertSelection();
+    void shiftSelection();
 
 private:
     Ui::MainWindow *ui;

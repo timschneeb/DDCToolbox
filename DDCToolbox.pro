@@ -32,6 +32,7 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         qcustomplot.cpp \
+        shiftfreq.cpp \
         textpopup.cpp \
         undocmd.cpp
 
@@ -42,6 +43,7 @@ HEADERS += \
         ddccontext.h \
         mainwindow.h \
         qcustomplot.h \
+        shiftfreq.h \
         textpopup.h \
         undocmd.h \
         vdcimporter.h
@@ -50,6 +52,7 @@ FORMS += \
         addpoint.ui \
         calc.ui \
         mainwindow.ui \
+        shiftfreq.ui \
         textpopup.ui
 
 # Default rules for deployment.

@@ -83,4 +83,42 @@ private:
     std::vector<int> rows;
 };
 
+class InvertCommand : public QUndoCommand
+{
+public:
+    InvertCommand(QTableWidget*,DDCContext*,std::vector<calibrationPoint_t>,std::mutex*,bool*,
+               MainWindow* host,QUndoCommand *parent = 0);
+
+    void undo() override;
+    void redo() override;
+    QString createCommandString();
+
+private:
+    MainWindow* host;
+    std::vector<calibrationPoint_t> cal_table;
+    QTableWidget* tw;
+    std::mutex* mtx;
+    DDCContext* ddcContext;
+    bool* lockActions;
+};
+
+class ShiftCommand : public QUndoCommand
+{
+public:
+    ShiftCommand(QTableWidget*,DDCContext*,int shift,std::vector<calibrationPoint_t>,std::mutex*,bool*,
+               MainWindow* host,QUndoCommand *parent = 0);
+
+    void undo() override;
+    void redo() override;
+    QString createCommandString();
+
+private:
+    MainWindow* host;
+    std::vector<calibrationPoint_t> cal_table;
+    QTableWidget* tw;
+    std::mutex* mtx;
+    DDCContext* ddcContext;
+    int shift;
+    bool* lockActions;
+};
 #endif // UNDOCMD_H

@@ -274,3 +274,157 @@ void RemoveCommand::redo()
 QString RemoveCommand::createCommandString(){
     return QObject::tr("\"Remove row(s)\"");
 }
+InvertCommand::InvertCommand(QTableWidget* _tw,DDCContext* _ddcContext,
+                             std::vector<calibrationPoint_t> _cal_table,std::mutex* _mtx,bool* _lockActions,MainWindow* _host, QUndoCommand *parent)
+    : QUndoCommand(parent)
+{
+    static int itemCount = 0;
+    cal_table = _cal_table;
+    tw = _tw;
+    mtx = _mtx;
+    host = _host;
+    ddcContext = _ddcContext;
+    lockActions = _lockActions;
+    ++itemCount;
+    setText(createCommandString());
+}
+void InvertCommand::undo()
+{
+    mtx->lock();
+    *lockActions = true;
+    tw->setSortingEnabled(false);
+
+    for (size_t i = 0; i < cal_table.size(); i++)
+    {
+        calibrationPoint_t cal = cal_table.at(i);
+        for (int j = 0; j < tw->rowCount(); j++)
+        {
+            if (tw->item(j,0)->data(Qt::DisplayRole).toInt() == cal.freq)
+            {
+                tw->item(j,2)->setData(Qt::DisplayRole,(double)cal.gain);
+                ddcContext->ModifyFilter(cal.freq, cal.freq, cal.gain, cal.bw, 44100.0);
+                break;
+            }
+        }
+    }
+
+    tw->setSortingEnabled(true);
+    tw->sortItems(0);
+
+    host->drawGraph();
+    *lockActions = false;
+    mtx->unlock();
+}
+void InvertCommand::redo()
+{
+    mtx->lock();
+    *lockActions = true;
+    tw->setSortingEnabled(false);
+
+    for (size_t i = 0; i < cal_table.size(); i++)
+    {
+        calibrationPoint_t cal = cal_table.at(i);
+        for (int j = 0; j < tw->rowCount(); j++)
+        {
+            if (tw->item(j,0)->data(Qt::DisplayRole).toInt() == cal.freq)
+            {
+                tw->item(j,2)->setData(Qt::DisplayRole,(double)-cal.gain);
+                ddcContext->ModifyFilter(cal.freq, cal.freq, -cal.gain, cal.bw, 44100.0);
+                break;
+            }
+        }
+    }
+
+    tw->setSortingEnabled(true);
+    tw->sortItems(0);
+    host->drawGraph();
+
+    *lockActions = false;
+    mtx->unlock();
+}
+QString InvertCommand::createCommandString(){
+    return QObject::tr("\"Invert gain (selection)\"");
+}
+
+ShiftCommand::ShiftCommand(QTableWidget* _tw,DDCContext* _ddcContext,int _shift,
+                             std::vector<calibrationPoint_t> _cal_table,std::mutex* _mtx,bool* _lockActions,MainWindow* _host, QUndoCommand *parent)
+    : QUndoCommand(parent)
+{
+    static int itemCount = 0;
+    cal_table = _cal_table;
+    tw = _tw;
+    mtx = _mtx;
+    host = _host;
+    shift = _shift;
+    ddcContext = _ddcContext;
+    lockActions = _lockActions;
+    ++itemCount;
+    setText(createCommandString());
+}
+void ShiftCommand::undo()
+{
+    mtx->lock();
+    *lockActions = true;
+    tw->setSortingEnabled(false);
+
+    for (size_t i = 0; i < cal_table.size(); i++)
+    {
+        calibrationPoint_t cal = cal_table.at(i);
+        for (int j = 0; j < tw->rowCount(); j++)
+        {
+            if (tw->item(j,0)->data(Qt::DisplayRole).toInt() == cal.freq + shift)
+            {
+                tw->item(j,0)->setData(Qt::DisplayRole,(int)cal.freq);
+                ddcContext->ModifyFilter(cal.freq + shift, cal.freq, cal.gain, cal.bw, 44100.0);
+                break;
+            }
+        }
+    }
+
+    tw->setSortingEnabled(true);
+    tw->sortItems(0);
+
+    host->drawGraph();
+    *lockActions = false;
+    mtx->unlock();
+}
+void ShiftCommand::redo()
+{
+    mtx->lock();
+    *lockActions = true;
+    tw->setSortingEnabled(false);
+
+    for (size_t i = 0; i < cal_table.size(); i++)
+    {
+        calibrationPoint_t cal = cal_table.at(i);
+        for (int j = 0; j < tw->rowCount(); j++)
+        {
+            if (tw->item(j,0)->data(Qt::DisplayRole).toInt() == cal.freq)
+            {
+                bool skip = false;
+                for (int k = 0; k < tw->rowCount(); k++)
+                {
+                    if (tw->item(k,0)->data(Qt::DisplayRole).toInt() == cal.freq+shift)
+                    {
+                        skip=true;
+                        break;
+                    }
+                }
+                if(skip)break;
+                tw->item(j,0)->setData(Qt::DisplayRole,(int)cal.freq+shift);
+                ddcContext->ModifyFilter(cal.freq, cal.freq+shift, cal.gain, cal.bw, 44100.0);
+                break;
+            }
+        }
+    }
+
+    tw->setSortingEnabled(true);
+    tw->sortItems(0);
+    host->drawGraph();
+
+    *lockActions = false;
+    mtx->unlock();
+}
+QString ShiftCommand::createCommandString(){
+    return QObject::tr("\"Shift frequencies (selection)\"");
+}
