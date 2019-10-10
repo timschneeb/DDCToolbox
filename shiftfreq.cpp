@@ -21,12 +21,14 @@ int shiftfreq::getResult(){
 }
 
 void shiftfreq::validate(){
+    int fail = 0;
     for (size_t i = 0; i < cal_table.size(); i++)
     {
         calibrationPoint_t cal = cal_table.at(i);
         int result = cal.freq + ui->shift->value();
-        ui->warning->setVisible((result<1||result>24000));
+        if(result<1||result>24000)fail++;
     }
+    ui->warning->setVisible(fail>0);
 }
 void shiftfreq::confirm(){
     for (size_t i = 0; i < cal_table.size(); i++)
