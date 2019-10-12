@@ -1,4 +1,6 @@
 # DDCToolbox
+[![Build status](https://ci.appveyor.com/api/projects/status/7akte2nk20j6u9w1?svg=true)](https://ci.appveyor.com/project/ThePBone/ddctoolbox)
+
 Create and edit ViPER DDC files on Linux
 
 ## Features

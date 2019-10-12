@@ -1,0 +1,54 @@
+environment:
+
+  matrix:
+  - arch: x64
+    qt: 5.12.4
+    cc: VS2017
+    mode: release
+    bits: 64
+    QTDIR: C:\Qt\5.12.4\msvc2017_64
+    QMAKESPEC: win32-msvc
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+
+  - arch: x86
+    cc: VS2017
+    qt: 5.12.4
+    mode: release
+    bits: 32
+    QMAKESPEC: win32-msvc
+    QTDIR: C:\Qt\5.12.4\msvc2017
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+
+matrix:
+  fast_finish: false
+
+init:
+  - set vcarch=%arch%
+  - if "%arch%" == "x64" set vcarch=amd64
+  - set PATH=%PATH%;%QTDIR%\bin;C:\Qt\Tools\QtCreator\bin;%PATH%
+  - set QMakeSpec=%QMAKESPEC%
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %vcarch%
+  
+build_script:
+  - qmake DDCToolbox.pro
+  - nmake
+
+after_build:
+  - windeployqt release/DDCToolbox.exe
+  - rm -f release/*.o
+  - rm -f release/*.cpp
+  - rm -f release/*.obj
+  
+artifacts:
+  - path: release
+    name: ddctoolbox-win%bits%_%APPVEYOR_BUILD_VERSION%
+    type: zip
+
+deploy:
+- provider: FTP
+  host: local.thebone.cf
+  protocol: sftp
+  username: pi
+  password:
+    secure: HM7M4NQaCulL3HMC/t6VHw==
+  folder: /disks/sandisk/www/nightly/ddctoolbox-win
