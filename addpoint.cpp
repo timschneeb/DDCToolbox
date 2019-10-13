@@ -14,10 +14,14 @@ addpoint::~addpoint()
     delete ui;
 }
 
-std::list<double> addpoint::returndata(){
-    std::list<double> data;
+addp_response_t addpoint::returndata(){
+    std::vector<double> data;
     data.push_back((double)ui->freq->value());
     data.push_back(ui->bw->value());
     data.push_back(ui->gain->value());
-    return data;
+
+    addp_response_t addp;
+    addp.values = data;
+    addp.filtertype = ui->ftype->currentText();
+    return addp;
 }

@@ -41,6 +41,7 @@ HEADERS += \
         biquad.h \
         calc.h \
         ddccontext.h \
+        filtertypes.h \
         mainwindow.h \
         qcustomplot.h \
         shiftfreq.h \

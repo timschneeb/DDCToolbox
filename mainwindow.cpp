@@ -32,7 +32,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menuEdit->insertAction(first,actionRedo);
 
     g_dcDDCContext = new class DDCContext;
+
     ui->listView_DDCPoints->setItemDelegate(new SaveItemDelegate());
+
     ui->listView_DDCPoints->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->graph->yAxis->setRange(QCPRange(-1, 1));
     ui->graph->xAxis->setRange(QCPRange(20, 24000));
@@ -59,11 +61,13 @@ void MainWindow::saveDDCProject()
     else
         saveAsDDCProject(false,currentFile);
 }
-void MainWindow::saveAsDDCProject(bool ask,QString path)
+void MainWindow::saveAsDDCProject(bool ask,QString path,bool compatibilitymode)
 {
     QString n("\n");
     QString fileName = path;
-    if(ask)fileName = QFileDialog::getSaveFileName(this,"Save VDC Project File", "", "ViPER DDC Project (*.vdcprj)");
+    QString dialogtitle = "Save VDC Project File";
+    if(compatibilitymode) dialogtitle.append(" (Compatibility Mode)");
+    if(ask)fileName = QFileDialog::getSaveFileName(this,dialogtitle, "", "ViPER DDC Project (*.vdcprj)");
     if (fileName != "" && fileName != nullptr)
     {
         QFileInfo fi(fileName);
@@ -77,13 +81,14 @@ void MainWindow::saveAsDDCProject(bool ask,QString path)
         for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
         {
             calibrationPoint_t cal;
-            cal.freq = ui->listView_DDCPoints->item(i,0)->data(Qt::DisplayRole).toInt();
-            cal.bw = ui->listView_DDCPoints->item(i,1)->data(Qt::DisplayRole).toFloat();
-            cal.gain = ui->listView_DDCPoints->item(i,2)->data(Qt::DisplayRole).toFloat();
+            cal.freq = (int)getValue(datatype::freq,i);
+            cal.bw = getValue(datatype::bw,i);
+            cal.gain = getValue(datatype::gain,i);
+            cal.type = getType(i);
             points.push_back(cal);
         }
         mtx.unlock();
-        writeProjectFile(points,fileName);
+        writeProjectFile(points,fileName,compatibilitymode);
     }
 }
 void MainWindow::loadDDCProject()
@@ -118,7 +123,7 @@ void MainWindow::loadDDCProject()
         }
         mtx.unlock();
         ui->listView_DDCPoints->update();
-        ui->listView_DDCPoints->sortItems(0,Qt::SortOrder::AscendingOrder);
+        ui->listView_DDCPoints->sortItems(1,Qt::SortOrder::AscendingOrder);
 
         drawGraph();
     }
@@ -146,7 +151,7 @@ void MainWindow::readLine_DDCProject(QString str){
                     bool flag = false;
                     for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
                     {
-                        if (ui->listView_DDCPoints->item(i,0)->data(Qt::DisplayRole).toInt() == result)
+                        if ((int)getValue(datatype::freq,i) == result)
                         {
                             flag = true;
                             break;
@@ -154,8 +159,39 @@ void MainWindow::readLine_DDCProject(QString str){
                     }
                     if (!flag)
                     {
-                        insertData(result,num2,num3);
-                        g_dcDDCContext->AddFilter(result, num3, num2, 44100.0);
+                        insertData(biquad::Type::PEAKING,result,num2,num3);
+                        g_dcDDCContext->AddFilter(biquad::Type::PEAKING,result, num3, num2, 44100.0,true);
+                    }
+                }
+            }
+            else if ((!strArray.empty()) && (strArray.length() == 4))
+            {
+                int result = 0;
+                double num2 = 0.0;
+                double num3 = 0.0;
+                if ((sscanf(strArray[0].toUtf8().constData(), "%d", &result) == 1 &&
+                     sscanf(strArray[1].toUtf8().constData(), "%lf", &num2) == 1) &&
+                        sscanf(strArray[2].toUtf8().constData(), "%lf", &num3) == 1)
+                {
+                    if(result<=0||num2<0)return;
+                    if(isnan(num2)||isnan(num3))return;
+                    if(isinf(num2)||isinf(num3))return;
+
+                    biquad::Type filtertype = stringToType(strArray[3].trimmed());
+
+                    bool flag = false;
+                    for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
+                    {
+                        if ((int)getValue(datatype::freq,i) == result)
+                        {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (!flag)
+                    {
+                        insertData(filtertype,result,num2,num3);
+                        g_dcDDCContext->AddFilter(filtertype,result, num3, num2, 44100.0,true);
                     }
                 }
             }
@@ -164,18 +200,21 @@ void MainWindow::readLine_DDCProject(QString str){
     lock_actions = false;
 }
 //---Editor
-void MainWindow::insertData(int freq,double band,double gain){
+void MainWindow::insertData(biquad::Type type,int freq,double band,double gain){
     ui->listView_DDCPoints->setSortingEnabled(false);
+    QTableWidgetItem *c0 = new QTableWidgetItem();
     QTableWidgetItem *c1 = new QTableWidgetItem();
     QTableWidgetItem *c2 = new QTableWidgetItem();
     QTableWidgetItem *c3 = new QTableWidgetItem();
+    c0->setData(Qt::DisplayRole, typeToString(type));
     c1->setData(Qt::DisplayRole, freq);
     c2->setData(Qt::DisplayRole, band);
     c3->setData(Qt::DisplayRole, gain);
     ui->listView_DDCPoints->insertRow ( ui->listView_DDCPoints->rowCount() );
-    ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 0, c1);
-    ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 1, c2);
-    ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 2, c3);
+    ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 0, c0);
+    ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 1, c1);
+    ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 2, c2);
+    ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 3, c3);
     ui->listView_DDCPoints->setSortingEnabled(true);
 }
 void MainWindow::invertSelection(){
@@ -190,9 +229,10 @@ void MainWindow::invertSelection(){
             QModelIndex index = list.at(i);
             int row = index.row();
             calibrationPoint_t cal;
-            cal.freq = ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toInt();
-            cal.bw = ui->listView_DDCPoints->item(row,1)->data(Qt::DisplayRole).toFloat();
-            cal.gain = ui->listView_DDCPoints->item(row,2)->data(Qt::DisplayRole).toFloat();
+            cal.freq = (int)getValue(datatype::freq,row);
+            cal.bw = getValue(datatype::bw,row);
+            cal.gain = getValue(datatype::gain,row);
+            cal.type = getType(row);
             cal_table.push_back(cal);
         }
         QUndoCommand *invertCommand = new InvertCommand(ui->listView_DDCPoints,
@@ -213,10 +253,12 @@ void MainWindow::shiftSelection(){
         {
             QModelIndex index = list.at(i);
             int row = index.row();
+
             calibrationPoint_t cal;
-            cal.freq = ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toInt();
-            cal.bw = ui->listView_DDCPoints->item(row,1)->data(Qt::DisplayRole).toFloat();
-            cal.gain = ui->listView_DDCPoints->item(row,2)->data(Qt::DisplayRole).toFloat();
+            cal.freq = (int)getValue(datatype::freq,row);
+            cal.bw = getValue(datatype::bw,row);
+            cal.gain = getValue(datatype::gain,row);
+            cal.type = getType(row);
             cal_table.push_back(cal);
         }
 
@@ -238,9 +280,10 @@ void MainWindow::clearPoint(bool trackundo){
         for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
         {
             calibrationPoint_t cal;
-            cal.freq = ui->listView_DDCPoints->item(i,0)->data(Qt::DisplayRole).toInt();
-            cal.bw = ui->listView_DDCPoints->item(i,1)->data(Qt::DisplayRole).toFloat();
-            cal.gain = ui->listView_DDCPoints->item(i,2)->data(Qt::DisplayRole).toFloat();
+            cal.freq = (int)getValue(datatype::freq,i);
+            cal.bw = getValue(datatype::bw,i);
+            cal.gain = getValue(datatype::gain,i);
+            cal.type = getType(i);
             cal_table.push_back(cal);
         }
         QUndoCommand *clearCommand = new ClearCommand(ui->listView_DDCPoints,
@@ -254,7 +297,7 @@ void MainWindow::clearPoint(bool trackundo){
         ui->listView_DDCPoints->clear();
         ui->listView_DDCPoints->setRowCount(0);
         ui->listView_DDCPoints->reset();
-        ui->listView_DDCPoints->setHorizontalHeaderLabels(QStringList() << "Frequency" << "Bandwidth" << "Gain");
+        ui->listView_DDCPoints->setHorizontalHeaderLabels(QStringList() << "Type" << "Frequency" << "Bandwidth" << "Gain");
 
         drawGraph();
         lock_actions = false;
@@ -274,9 +317,9 @@ void MainWindow::editCell(QTableWidgetItem* item){
         return;
     }
 
-    if ((sscanf(ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toString().toUtf8().constData(), "%d", &result) == 1 &&
-         sscanf(ui->listView_DDCPoints->item(row,1)->data(Qt::DisplayRole).toString().toUtf8().constData(), "%lf", &calibrationPointBandwidth) == 1) &&
-            sscanf(ui->listView_DDCPoints->item(row,2)->data(Qt::DisplayRole).toString().toUtf8().constData(), "%lf", &calibrationPointGain) == 1){
+    if ((sscanf(QString::number((int)getValue(datatype::freq,row)).toUtf8().constData(), "%d", &result) == 1 &&
+         sscanf(QString::number(getValue(datatype::bw,row)).toUtf8().constData(), "%lf", &calibrationPointBandwidth) == 1) &&
+            sscanf(QString::number(getValue(datatype::gain,row)).toUtf8().constData(), "%lf", &calibrationPointGain) == 1){
 
         ui->listView_DDCPoints->setSortingEnabled(false);
         nOldFreq = Global::old_freq;
@@ -284,47 +327,47 @@ void MainWindow::editCell(QTableWidgetItem* item){
 
         //Validate frequency value
         if(result < 0){
-            ui->listView_DDCPoints->item(row,0)->setData(Qt::DisplayRole,0);
+            ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,0);
             QMessageBox::warning(this,"Warning","Frequency value '" + QString::number(result) + "' is too low (0.0 ~ 24000.0)");
             result = 0;
         }
         else if(result > 24000){
-            ui->listView_DDCPoints->item(row,0)->setData(Qt::DisplayRole,24000);
+            ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,24000);
             QMessageBox::warning(this,"Warning","Frequency value '" + QString::number(result) + "' is too high (0.0 ~ 24000.0)");
             result = 24000;
         }
 
         //Validate bandwidth value
         else if(calibrationPointBandwidth < 0){
-            ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,(double)0);
+            ui->listView_DDCPoints->item(row,2)->setData(Qt::DisplayRole,(double)0);
             QMessageBox::warning(this,"Warning","Bandwidth value '" + QString::number(calibrationPointBandwidth) + "' is too low (0.0 ~ 100.0)");
             calibrationPointBandwidth = 0;
         }
         else if(calibrationPointBandwidth > 100){
-            ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,(double)100);
+            ui->listView_DDCPoints->item(row,2)->setData(Qt::DisplayRole,(double)100);
             QMessageBox::warning(this,"Warning","Bandwidth value '" + QString::number(calibrationPointBandwidth) + "' is too high (0.0 ~ 100.0)");
             calibrationPointBandwidth = 100;
         }
 
         //Validate gain value
-        else if(calibrationPointGain < -24){
-            ui->listView_DDCPoints->item(row,2)->setData(Qt::DisplayRole,(double)-24);
-            QMessageBox::warning(this,"Warning","Gain value '" + QString::number(calibrationPointGain) + "' is too low (-24.0 ~ 24.0)");
-            calibrationPointGain = -24;
+        else if(calibrationPointGain < -40){
+            ui->listView_DDCPoints->item(row,3)->setData(Qt::DisplayRole,(double)-40);
+            QMessageBox::warning(this,"Warning","Gain value '" + QString::number(calibrationPointGain) + "' is too low (-40.0 ~ 40.0)");
+            calibrationPointGain = -40;
         }
-        else if(calibrationPointGain > 24){
-            ui->listView_DDCPoints->item(row,2)->setData(Qt::DisplayRole,(double)24);
-            QMessageBox::warning(this,"Warning","Gain value '" + QString::number(calibrationPointGain) + "' is too high (-24.0 ~ 24.0)");
-            calibrationPointGain = 24;
+        else if(calibrationPointGain > 40){
+            ui->listView_DDCPoints->item(row,3)->setData(Qt::DisplayRole,(double)40);
+            QMessageBox::warning(this,"Warning","Gain value '" + QString::number(calibrationPointGain) + "' is too high (-40.0 ~ 40.0)");
+            calibrationPointGain = 40;
         }
 
         //Check for duplicate frequencies
         for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
         {
-            if (ui->listView_DDCPoints->item(i,0)->data(Qt::DisplayRole).toString() == ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toString() && row != i)
+            if ((int)getValue(datatype::freq,i) == (int)getValue(datatype::freq,row) && row != i)
             {
-                ui->listView_DDCPoints->item(row,0)->setData(Qt::DisplayRole,Global::old_freq);
-                QMessageBox::warning(this,"Error","Point '" + ui->listView_DDCPoints->item(i,0)->data(Qt::DisplayRole).toString() + "' already exists");
+                ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,Global::old_freq);
+                QMessageBox::warning(this,"Error","Point '" + QString::number((int)getValue(datatype::freq,i)) + "' already exists");
                 return;
             }
         }
@@ -333,11 +376,12 @@ void MainWindow::editCell(QTableWidgetItem* item){
         cal.freq = result;
         cal.bw = calibrationPointBandwidth;
         cal.gain = calibrationPointGain;
+        cal.type = getType(row);
         calibrationPoint_t oldcal;
         oldcal.freq = nOldFreq;
         oldcal.bw = Global::old_bw;
         oldcal.gain = Global::old_gain;
-
+        oldcal.type = Global::old_type;
 
         QUndoCommand *editCommand = new EditCommand(ui->listView_DDCPoints,g_dcDDCContext,
                                                     row,cal,oldcal,&mtx,&lock_actions,this);
@@ -351,16 +395,17 @@ void MainWindow::addPoint(){
     addpoint *dlg = new addpoint;
     if(dlg->exec()){
         setActiveFile(currentFile,true);
-        std::list<double> rawdata = dlg->returndata();
-        std::vector<double> data(rawdata.begin(), rawdata.end());
+        addp_response_t rawdata = dlg->returndata();
+
         calibrationPoint_t cal;
-        cal.freq = (int)data.at(0);
-        cal.bw = data.at(1);
-        cal.gain = data.at(2);
+        cal.freq = (int)rawdata.values.at(0);
+        cal.bw = rawdata.values.at(1);
+        cal.gain = rawdata.values.at(2);
+        cal.type = stringToType(rawdata.filtertype);
 
         for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
         {
-            if (ui->listView_DDCPoints->item(i,0)->data(Qt::DisplayRole).toInt() == cal.freq)
+            if ((int)getValue(datatype::freq,i) == cal.freq)
             {
                 QMessageBox::warning(this,"Error","Point already exists");
                 return;
@@ -390,9 +435,10 @@ void MainWindow::removePoint(){
             removeRows.push_back(row);
 
             calibrationPoint_t cal;
-            cal.freq = ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toInt();
-            cal.bw = ui->listView_DDCPoints->item(row,1)->data(Qt::DisplayRole).toFloat();
-            cal.gain = ui->listView_DDCPoints->item(row,2)->data(Qt::DisplayRole).toFloat();
+            cal.freq = (int)getValue(datatype::freq,i);
+            cal.bw = getValue(datatype::bw,i);
+            cal.gain = getValue(datatype::gain,i);
+            cal.type = getType(i);
             cal_table.push_back(cal);
         }
         QUndoCommand *removeCommand = new RemoveCommand(ui->listView_DDCPoints,
@@ -400,7 +446,7 @@ void MainWindow::removePoint(){
         undoStack->push(removeCommand);
 
         ui->listView_DDCPoints->setSortingEnabled(true);
-        ui->listView_DDCPoints->sortItems(0);
+        ui->listView_DDCPoints->sortItems(1);
         drawGraph();
     }
     lock_actions=false;
@@ -472,6 +518,17 @@ void MainWindow::showIntroduction(){
     TextPopup *t = new TextPopup(data);
     t->show();
 }
+void MainWindow::showHelp(){
+    QString data = "Unable to open HTML file";
+    QFile file(":/html/help.html");
+    if(!file.open(QIODevice::ReadOnly))
+        qDebug()<<"Unable to open HTML file. Line: " << __LINE__;
+    else
+        data = file.readAll();
+    file.close();
+    TextPopup *t = new TextPopup(data);
+    t->show();
+}
 void MainWindow::showKeycombos(){
     QString data = "Unable to open HTML file";
     QFile file(":/html/keycombos.html");
@@ -486,6 +543,9 @@ void MainWindow::showKeycombos(){
 void MainWindow::showCalc(){
     calc *t = new calc();
     t->show();
+    QMessageBox::information(this,"",QString::number(getValue(datatype::freq,0))+","+
+                             QString::number(getValue(datatype::freq,1))+","+
+                             QString::number(getValue(datatype::freq,2)));
 }
 void MainWindow::showUndoView(){
     undoView = new QUndoView(undoStack);
@@ -495,6 +555,9 @@ void MainWindow::showUndoView(){
 }
 
 //---Import/Export
+void MainWindow::exportCompatVDCProj(){
+    saveAsDDCProject(true,"",true);
+}
 void MainWindow::importVDC(){
     int i;
     QString fileName = QFileDialog::getOpenFileName(this,
@@ -625,7 +688,7 @@ void MainWindow::importParametricAutoEQ(){
             bool flag = false;
             for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
             {
-                if (ui->listView_DDCPoints->item(i,0)->data(Qt::DisplayRole).toInt() == cal.freq)
+                if ((int)getValue(datatype::freq,i) == cal.freq)
                 {
                     flag = true;
                     break;
@@ -634,17 +697,17 @@ void MainWindow::importParametricAutoEQ(){
             if (!flag)
             {
                 lock_actions = true;
-                insertData(cal.freq,(double)cal.bw,(double)cal.gain);
+                insertData(biquad::Type::PEAKING,cal.freq,(double)cal.bw,(double)cal.gain);
                 lock_actions = false;
-                g_dcDDCContext->AddFilter(cal.freq, (double)cal.gain, (double)cal.bw, 44100.0);
+                g_dcDDCContext->AddFilter(biquad::Type::PEAKING,cal.freq, (double)cal.gain, (double)cal.bw, 44100.0,true);
             }
         }
-        ui->listView_DDCPoints->sortItems(0,Qt::SortOrder::AscendingOrder);
+        ui->listView_DDCPoints->sortItems(1,Qt::SortOrder::AscendingOrder);
         drawGraph();
     }
 }
 //---Parser/Writer
-bool MainWindow::writeProjectFile(std::vector<calibrationPoint_t> points,QString fileName){
+bool MainWindow::writeProjectFile(std::vector<calibrationPoint_t> points,QString fileName,bool compatibilitymode){
     QString n("\n");
     QFile caFile(fileName);
     caFile.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -654,14 +717,24 @@ bool MainWindow::writeProjectFile(std::vector<calibrationPoint_t> points,QString
         return false;
     }
     QTextStream outStream(&caFile);
-    outStream << "# ViPER-DDC Project File, v1.0.0.0" + n;
-    outStream << "# Generated by DDCToolbox/Qt (@ThePBone)" + n;
-    outStream << n;
-    for (size_t i = 0; i < points.size(); i++)
-    {
-        calibrationPoint_t cal = points.at(i);
-        outStream << "# Calibration Point " + QString::number(i + 1) + n;
-        outStream << QString::number(cal.freq) + "," + QString::number(cal.bw) + "," + QString::number(cal.gain) + n;
+    if(compatibilitymode){
+        outStream << "# DDCToolbox Project File, v1.0.0.0 (@ThePBone)" + n;
+        outStream << n;
+        for (size_t i = 0; i < points.size(); i++)
+        {
+            calibrationPoint_t cal = points.at(i);
+            outStream << "# Calibration Point " + QString::number(i + 1) + n;
+            outStream << QString::number(cal.freq) + "," + QString::number(cal.bw) + "," + QString::number(cal.gain) + n;
+        }
+    }else{
+        outStream << "# DDCToolbox Project File, v2.0.0.0 (@ThePBone)" + n;
+        outStream << n;
+        for (size_t i = 0; i < points.size(); i++)
+        {
+            calibrationPoint_t cal = points.at(i);
+            outStream << "# Calibration Point " + QString::number(i + 1) + n;
+            outStream << QString::number(cal.freq) + "," + QString::number(cal.bw) + "," + QString::number(cal.gain) + "," + typeToString(cal.type) + n;
+        }
     }
     outStream << n;
     outStream << "#File End" + n;
@@ -712,6 +785,7 @@ std::vector<calibrationPoint_t> MainWindow::parseParametricEQ(QString path){
                     cal.freq = freq;
                     cal.bw = bw;
                     cal.gain = gain;
+                    cal.type = biquad::Type::PEAKING; //TODO: add filtertype to eapo/autoeq parser
                     points.push_back(cal);
                 }
             }
@@ -789,7 +863,7 @@ void MainWindow::batch_parametric2vdcprj(){
                 return;
             }
             QFileInfo fi(filenames.at(l));
-            if(!writeProjectFile(points,QDir(dir).filePath(fi.completeBaseName()+".vdcprj")))
+            if(!writeProjectFile(points,QDir(dir).filePath(fi.completeBaseName()+".vdcprj"),false))
                 QMessageBox::warning(this,"Error","Cannot write file at: " + QDir(dir).filePath(fi.completeBaseName()+".vdcprj"));
         }
         QMessageBox::information(this,"Note","Conversion finished!\nYou can find the files here:\n"+dir);
@@ -825,4 +899,21 @@ void MainWindow::closeProject(){
         clearPoint(false);
         undoStack->clear();
     }
+}
+
+double MainWindow::getValue(datatype dat,int row){
+    switch(dat){
+    case type:
+        return ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toInt();
+    case freq:
+        return ui->listView_DDCPoints->item(row,1)->data(Qt::DisplayRole).toInt();
+    case bw:
+        return ui->listView_DDCPoints->item(row,2)->data(Qt::DisplayRole).toDouble();
+    case gain:
+        return ui->listView_DDCPoints->item(row,3)->data(Qt::DisplayRole).toDouble();
+    }
+}
+biquad::Type MainWindow::getType(int row){
+    QString type = ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toString();
+    return stringToType(type);
 }

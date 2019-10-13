@@ -4,5 +4,6 @@
         <file>html/introduction.html</file>
         <file>img/arrows.png</file>
         <file>img/icon.png</file>
+        <file>html/help.html</file>
     </qresource>
 </RCC>

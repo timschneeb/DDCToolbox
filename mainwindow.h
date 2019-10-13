@@ -10,19 +10,29 @@
 #include <mutex>
 #include <regex>
 #include "ddccontext.h"
+#include "filtertypes.h"
 namespace Ui {
 class MainWindow;
 }
 typedef struct calibrationPoint_s{
+    biquad::Type type;
     int freq;
-    float bw;
-    float gain;
+    double bw;
+    double gain;
 }calibrationPoint_t;
 namespace Global {
-   static int old_freq = 0;
-   static double old_bw = 0;
-   static double old_gain = 0;
+static biquad::Type old_type = biquad::Type::PEAKING;
+static int old_freq = 0;
+static double old_bw = 0;
+static double old_gain = 0;
 }
+enum datatype{
+    type,
+    freq,
+    bw,
+    gain
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -35,8 +45,9 @@ public:
     ~MainWindow();
 
 private slots:
-    void saveAsDDCProject(bool=true,QString="");
+    void saveAsDDCProject(bool=true,QString="",bool compatibilitymode=false);
     void loadDDCProject();
+    void exportCompatVDCProj();
     void exportVDC();
     void clearPoint(bool = true);
     void addPoint();
@@ -58,6 +69,7 @@ private slots:
     void showUndoView();
     void invertSelection();
     void shiftSelection();
+    void showHelp();
 
 private:
     Ui::MainWindow *ui;
@@ -67,30 +79,89 @@ private:
     QUndoStack *undoStack;
     QUndoView *undoView;
 
-    void insertData(int freq,double band,double gain);
+    biquad::Type getType(int row);
+    double getValue(datatype dat,int row);
+    void insertData(biquad::Type type,int freq,double band,double gain);
     std::vector<calibrationPoint_t> parseParametricEQ(QString);
-    bool writeProjectFile(std::vector<calibrationPoint_t> points,QString fileName);
+    bool writeProjectFile(std::vector<calibrationPoint_t> points,QString fileName,bool compatibilitymode);
 };
 class SaveItemDelegate : public QStyledItemDelegate {
-    public:
-    QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-                                 const QModelIndex &index) const Q_DECL_OVERRIDE
-   {
-       auto w = QStyledItemDelegate::createEditor(
-           parent, option, index);
+public:
+    biquad::Type getType(const QModelIndex &index) const{
+        QString _type = index.sibling(index.row(),0).data(Qt::DisplayRole).toString();
+        if(_type=="Peaking")return biquad::Type::PEAKING;
+        else if(_type=="Low Pass")return biquad::Type::LOW_PASS;
+        else if(_type=="High Pass")return biquad::Type::HIGH_PASS;
+        else if(_type=="Band Pass")return biquad::Type::BAND_PASS;
+        else if(_type=="All Pass")return biquad::Type::ALL_PASS;
+        else if(_type=="Notch")return biquad::Type::NOTCH;
+        else if(_type=="Low Shelf")return biquad::Type::LOW_SHELF;
+        else if(_type=="High Shelf")return biquad::Type::HIGH_SHELF;
+        return biquad::Type::PEAKING;
+    }
 
-       auto sp = qobject_cast<QDoubleSpinBox*>(w);
-       if (sp)
-       {
-           sp->setDecimals(6);
-       }
-       if(index.model()->columnCount()==3){
-              Global::old_freq = index.sibling(index.row(),0).data(Qt::DisplayRole).toInt();
-              Global::old_bw = index.sibling(index.row(),1).data(Qt::DisplayRole).toDouble();
-              Global::old_gain = index.sibling(index.row(),2).data(Qt::DisplayRole).toDouble();
+    QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+                          const QModelIndex &index) const Q_DECL_OVERRIDE
+    {
+        auto w = QStyledItemDelegate::createEditor(
+                    parent, option, index);
+
+        auto sp = qobject_cast<QDoubleSpinBox*>(w);
+        if (sp)
+        {
+            sp->setDecimals(6);
         }
-       return w;
-   }
+        if(index.model()->columnCount()>3){
+
+            Global::old_freq = index.sibling(index.row(),1).data(Qt::DisplayRole).toInt();
+            Global::old_bw = index.sibling(index.row(),2).data(Qt::DisplayRole).toDouble();
+            Global::old_gain = index.sibling(index.row(),3).data(Qt::DisplayRole).toDouble();
+        }
+
+        if(index.column()==0){
+            QComboBox *cb = new QComboBox(parent);
+            const int row = index.row();
+            cb->addItem(QString("Peaking"));
+            cb->addItem(QString("Low Pass"));
+            cb->addItem(QString("High Pass"));
+            cb->addItem(QString("Band Pass"));
+            cb->addItem(QString("Notch"));
+            cb->addItem(QString("All Pass"));
+            cb->addItem(QString("Low Shelf"));
+            cb->addItem(QString("High Shelf"));
+            return cb;
+        }
+        return w;
+    }
+
+    void setEditorData(QWidget *editor, const QModelIndex &index) const Q_DECL_OVERRIDE
+    {
+        if(index.column()==0){
+            QComboBox *cb = qobject_cast<QComboBox *>(editor);
+            Q_ASSERT(cb);
+            // get the index of the text in the combobox that matches the current value of the item
+            const QString currentText = index.data(Qt::EditRole).toString();
+            const int cbIndex = cb->findText(currentText);
+            // if it is valid, adjust the combobox
+            if (cbIndex >= 0)
+                cb->setCurrentIndex(cbIndex);
+
+        }
+        else
+            QStyledItemDelegate::setEditorData(editor,index);
+    }
+
+    void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const Q_DECL_OVERRIDE
+    {
+        if(index.column()==0){
+            QComboBox *cb = qobject_cast<QComboBox *>(editor);
+            Q_ASSERT(cb);
+            model->setData(index, cb->currentText(), Qt::EditRole);
+            Global::old_type = getType(index);
+        }
+        else
+            QStyledItemDelegate::setModelData(editor, model, index);
+    }
 };
 
 

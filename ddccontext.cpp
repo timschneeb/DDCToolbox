@@ -18,13 +18,13 @@ void DDCContext::UnlockFilter()
 {
     mtx.unlock();
 }
-bool DDCContext::AddFilter(int nFreq, double dGain, double dBandwidth, double dSRate)
+bool DDCContext::AddFilter(biquad::Type type,int nFreq, double dGain, double dBandwidth, double dSRate, bool isBWorS)
 {
     LockFilter();
     if (m_lstFilterBank.count(nFreq) <= 0)
     {
         biquad *biquad = new class biquad();
-        biquad->RefreshFilter(dGain, (double) nFreq, dSRate, dBandwidth);
+        biquad->RefreshFilter(type, dGain, (double) nFreq, dSRate, dBandwidth, isBWorS);
         m_lstFilterBank[nFreq] = biquad;
     }
     UnlockFilter();
@@ -38,14 +38,14 @@ void DDCContext::ClearFilters()
     UnlockFilter();
 }
 
-void DDCContext::ModifyFilter(int nOldFreq, int nNewFreq, double dGain, double dBandwidth, double dSRate)
+void DDCContext::ModifyFilter(biquad::Type type,int nOldFreq, int nNewFreq, double dGain, double dBandwidth, double dSRate,bool isBWorS)
 {
     LockFilter();
     if (nOldFreq == nNewFreq)
     {
         if (m_lstFilterBank.count(nOldFreq)>0)
         {
-            m_lstFilterBank[nOldFreq]->RefreshFilter(dGain, (double) nNewFreq, dSRate, dBandwidth);
+            m_lstFilterBank[nOldFreq]->RefreshFilter(type,dGain, (double) nNewFreq, dSRate, dBandwidth,isBWorS);
         }
     }
     else if (m_lstFilterBank.count(nOldFreq) > 0 && m_lstFilterBank.count(nNewFreq) <= 0)
@@ -62,7 +62,7 @@ void DDCContext::ModifyFilter(int nOldFreq, int nNewFreq, double dGain, double d
 
 
         biquad *biquad = new class biquad();
-        biquad->RefreshFilter(dGain, (double) nNewFreq, dSRate, dBandwidth);
+        biquad->RefreshFilter(type,dGain, (double) nNewFreq, dSRate, dBandwidth,isBWorS);
         m_lstFilterBank[nNewFreq] = biquad;
     }
     UnlockFilter();

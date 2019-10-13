@@ -6,7 +6,10 @@
 namespace Ui {
 class addpoint;
 }
-
+typedef struct addp_response_s{
+    std::vector<double> values;
+    QString filtertype;
+}addp_response_t;
 class addpoint : public QDialog
 {
     Q_OBJECT
@@ -14,7 +17,7 @@ class addpoint : public QDialog
 public:
     explicit addpoint(QWidget *parent = nullptr);
     ~addpoint();
-    std::list<double> returndata();
+    addp_response_t returndata();
 
 private:
     Ui::addpoint *ui;

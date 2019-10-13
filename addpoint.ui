@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>279</width>
-    <height>249</height>
+    <height>281</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -64,21 +64,72 @@
    <item>
     <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>Gain [-24.0 ~ +24.0]</string>
+      <string>Gain [-40.0 ~ +40.0]</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QDoubleSpinBox" name="gain">
      <property name="minimum">
-      <double>-24.000000000000000</double>
+      <double>-40.000000000000000</double>
      </property>
      <property name="maximum">
-      <double>24.000000000000000</double>
+      <double>40.000000000000000</double>
      </property>
      <property name="singleStep">
       <double>0.200000000000000</double>
      </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Filtertype</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="ftype">
+     <item>
+      <property name="text">
+       <string>Peaking</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Low Pass</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>High Pass</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Band Pass</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Notch</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>All Pass</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Low Shelf</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>High Shelf</string>
+      </property>
+     </item>
     </widget>
    </item>
    <item>
