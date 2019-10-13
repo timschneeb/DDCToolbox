@@ -33,7 +33,7 @@ void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs
     else if (type == LOW_SHELF || type == HIGH_SHELF) // S
         alpha = num3 / 2 * sqrt((d + 1 / d) * (1 / dBandwidthOrQOrS - 1) + 2);
     else // BW
-        alpha = num3 * sinh(M_LN2 / 2 * dBandwidthOrQOrS * a / num3);
+        alpha = num3 * sinh(0.693147180559945309417 / 2 * dBandwidthOrQOrS * a / num3);
 
     double beta = 2 * sqrt(d) * alpha;
     double B0, B1, B2, A0, A1, A2;
@@ -134,7 +134,7 @@ std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFre
     else if (type == LOW_SHELF || type == HIGH_SHELF) // S
         alpha = num3 / 2 * sqrt((d + 1 / d) * (1 / dBandwidthOrQOrS - 1) + 2);
     else // BW
-        alpha = num3 * sinh(M_LN2 / 2 * dBandwidthOrQOrS * a / num3);
+        alpha = num3 * sinh(0.693147180559945309417 / 2 * dBandwidthOrQOrS * a / num3);
 
     double beta = 2 * sqrt(d) * alpha;
     double B0, B1, B2, A0, A1, A2;
