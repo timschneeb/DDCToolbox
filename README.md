@@ -20,8 +20,6 @@ Create and edit ViPER DDC files on Linux
 ## Installation
 Primarily developed for Linux. It should work on other platforms too, but you need to compile it yourself.
 
-I will try to provide Windows binary packages every now and then.
-
   * [Windows](#windows)
   * [Ubuntu](#ubuntu-ppa)
   * [Debian](#debian)
@@ -40,7 +38,10 @@ sudo apt install ddc-toolbox
 [View PPA on GitHub](https://github.com/ThePBone/PPA-Repository)
 
 ### Windows
-Binaries for Windows are available [here](https://github.com/ThePBone/DDCToolbox/releases).
+Windows builds are automatically built and deployed when a new commit has been pushed.
+
+You can download one of these builds [from my server](https://nightly.thebone.cf/ddctoolbox-win/?C=M;O=D).
+If the server is down, you can also get one from the [AppVeyor cloud](https://ci.appveyor.com/project/ThePBone/ddctoolbox) (select one of the two jobs (32/64-bit) and go to the tab 'Artifacts')
 
 **NOTE:** The current release triggers a SmartScreen warning, you can ignore it though [(Virustotal scan here)](https://www.virustotal.com/gui/file/f54e6a9502a4f09cf9aa8b136d8f2c9ae9f643f9940af7af40027cbadc3ec004/detection)
 
