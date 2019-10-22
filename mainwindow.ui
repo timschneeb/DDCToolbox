@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>749</width>
-    <height>382</height>
+    <width>865</width>
+    <height>414</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -78,7 +78,7 @@
          </column>
          <column>
           <property name="text">
-           <string>Bandwidth</string>
+           <string>Bandwidth/S</string>
           </property>
          </column>
          <column>
@@ -146,7 +146,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>749</width>
+     <width>865</width>
      <height>22</height>
     </rect>
    </property>

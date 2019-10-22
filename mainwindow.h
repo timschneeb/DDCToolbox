@@ -87,8 +87,7 @@ private:
 };
 class SaveItemDelegate : public QStyledItemDelegate {
 public:
-    biquad::Type getType(const QModelIndex &index) const{
-        QString _type = index.sibling(index.row(),0).data(Qt::DisplayRole).toString();
+    biquad::Type getType(const QString &_type) const{
         if(_type=="Peaking")return biquad::Type::PEAKING;
         else if(_type=="Low Pass")return biquad::Type::LOW_PASS;
         else if(_type=="High Pass")return biquad::Type::HIGH_PASS;
@@ -98,6 +97,10 @@ public:
         else if(_type=="Low Shelf")return biquad::Type::LOW_SHELF;
         else if(_type=="High Shelf")return biquad::Type::HIGH_SHELF;
         return biquad::Type::PEAKING;
+    }
+    biquad::Type getType(const QModelIndex &index) const{
+        QString _type = index.sibling(index.row(),0).data(Qt::DisplayRole).toString();
+        return getType(_type);
     }
 
     QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option,
@@ -117,6 +120,7 @@ public:
             Global::old_bw = index.sibling(index.row(),2).data(Qt::DisplayRole).toDouble();
             Global::old_gain = index.sibling(index.row(),3).data(Qt::DisplayRole).toDouble();
         }
+        const QString currentType = index.sibling(index.row(),0).data(Qt::DisplayRole).toString();
 
         if(index.column()==0){
             QComboBox *cb = new QComboBox(parent);
@@ -131,22 +135,69 @@ public:
             cb->addItem(QString("High Shelf"));
             return cb;
         }
+        else if (index.column()==2&&sp) {
+            //auto p = qobject_cast<QTableWidget*>(sp->parent()->parent());
+            switch (getType(currentType)) {
+            case biquad::LOW_SHELF:
+            case biquad::HIGH_SHELF:
+                sp->setPrefix("S: ");
+                break;
+            default:
+                sp->setPrefix("BW: ");
+            }
+        }
+        else if (index.column()==3&&sp) {
+            //auto p = qobject_cast<QTableWidget*>(sp->parent()->parent());
+            switch (getType(currentType)) {
+            case biquad::PEAKING:
+            case biquad::LOW_SHELF:
+            case biquad::HIGH_SHELF:
+                sp->setEnabled(true);
+                //if (p)p->item(index.row(),3)->setFlags(p->item(index.row(),3)->flags() | Qt::ItemIsEditable | Qt::ItemIsEnabled);
+
+                break;
+            default:
+                sp->setEnabled(false);
+                //if (p)p->item(index.row(),3)->setFlags(p->item(index.row(),3)->flags() & (~Qt::ItemIsEditable) & (~Qt::ItemIsEnabled));
+            }
+        }
         return w;
+    }
+
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE
+    {
+        const QString currentType = index.sibling(index.row(),0).data(Qt::DisplayRole).toString();
+        if (index.column()==3) {
+            switch (getType(currentType)) {
+            case biquad::PEAKING:
+            case biquad::LOW_SHELF:
+            case biquad::HIGH_SHELF:
+                QStyledItemDelegate::paint(painter,option,index);
+                return;
+            default:
+                //Leave item empty
+                return;
+            }
+        }
+        else
+            QStyledItemDelegate::paint(painter,option,index);
     }
 
     void setEditorData(QWidget *editor, const QModelIndex &index) const Q_DECL_OVERRIDE
     {
+        // get the index of the text in the combobox that matches the current value of the item
+        const QString currentText = index.data(Qt::EditRole).toString();
+
         if(index.column()==0){
             QComboBox *cb = qobject_cast<QComboBox *>(editor);
             Q_ASSERT(cb);
-            // get the index of the text in the combobox that matches the current value of the item
-            const QString currentText = index.data(Qt::EditRole).toString();
             const int cbIndex = cb->findText(currentText);
             // if it is valid, adjust the combobox
             if (cbIndex >= 0)
                 cb->setCurrentIndex(cbIndex);
 
         }
+
         else
             QStyledItemDelegate::setEditorData(editor,index);
     }
@@ -162,6 +213,8 @@ public:
         else
             QStyledItemDelegate::setModelData(editor, model, index);
     }
+
+
 };
 
 

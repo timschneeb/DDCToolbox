@@ -297,7 +297,7 @@ void MainWindow::clearPoint(bool trackundo){
         ui->listView_DDCPoints->clear();
         ui->listView_DDCPoints->setRowCount(0);
         ui->listView_DDCPoints->reset();
-        ui->listView_DDCPoints->setHorizontalHeaderLabels(QStringList() << "Type" << "Frequency" << "Bandwidth" << "Gain");
+        ui->listView_DDCPoints->setHorizontalHeaderLabels(QStringList() << "Type" << "Frequency" << "Bandwidth/S" << "Gain");
 
         drawGraph();
         lock_actions = false;
