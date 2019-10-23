@@ -716,6 +716,16 @@ bool MainWindow::writeProjectFile(std::vector<calibrationPoint_t> points,QString
         qDebug() << "Error, unable to open" << "outputFilename" << "for output";
         return false;
     }
+
+    if(!compatibilitymode){
+        //Check if compatibility with vipers toolbox v2.0 is possible
+        bool compatible = true;
+        for(calibrationPoint_t point:points)
+            if(point.type!=biquad::PEAKING)
+                compatible = false;
+        compatibilitymode = compatible;
+    }
+
     QTextStream outStream(&caFile);
     if(compatibilitymode){
         outStream << "# DDCToolbox Project File, v1.0.0.0 (@ThePBone)" + n;
