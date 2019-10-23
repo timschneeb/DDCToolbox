@@ -9,29 +9,36 @@
 #include "qcustomplot.h"
 #include <mutex>
 #include <regex>
+#include <QSimpleUpdater.h>
 #include "ddccontext.h"
 #include "filtertypes.h"
 namespace Ui {
 class MainWindow;
 }
+
 typedef struct calibrationPoint_s{
     biquad::Type type;
     int freq;
     double bw;
     double gain;
 }calibrationPoint_t;
+
 namespace Global {
 static biquad::Type old_type = biquad::Type::PEAKING;
 static int old_freq = 0;
 static double old_bw = 0;
 static double old_gain = 0;
 }
+
 enum datatype{
     type,
     freq,
     bw,
     gain
 };
+
+static const QString DEFS_URL = "http://nightly.thebone.cf/updater/ddctoolbox.json";
+static const QString VERSION = "1.2.8";
 
 class MainWindow : public QMainWindow
 {
@@ -43,6 +50,9 @@ public:
     void setActiveFile(QString,bool=false);
     QString currentFile = "";
     ~MainWindow();
+
+public slots:
+    void checkForUpdates();
 
 private slots:
     void saveAsDDCProject(bool=true,QString="",bool compatibilitymode=false);
@@ -78,6 +88,7 @@ private:
     bool lock_actions = false;
     QUndoStack *undoStack;
     QUndoView *undoView;
+    QSimpleUpdater* m_updater;
 
     biquad::Type getType(int row);
     double getValue(datatype dat,int row);

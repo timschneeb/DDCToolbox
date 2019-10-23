@@ -21,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     undoStack = new QUndoStack(this);
 
+    m_updater = QSimpleUpdater::getInstance();
+
     QAction* actionUndo = undoStack->createUndoAction(this, tr("Undo"));
     actionUndo->setShortcuts(QKeySequence::Undo);
 
@@ -889,6 +891,22 @@ void MainWindow::showPointToolTip(QMouseEvent *event)
     ui->graph->setToolTip(QString("%1Hz").arg(x));
 
 }
+double MainWindow::getValue(datatype dat,int row){
+    switch(dat){
+    case type:
+        return ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toInt();
+    case freq:
+        return ui->listView_DDCPoints->item(row,1)->data(Qt::DisplayRole).toInt();
+    case bw:
+        return ui->listView_DDCPoints->item(row,2)->data(Qt::DisplayRole).toDouble();
+    case gain:
+        return ui->listView_DDCPoints->item(row,3)->data(Qt::DisplayRole).toDouble();
+    }
+}
+biquad::Type MainWindow::getType(int row){
+    QString type = ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toString();
+    return stringToType(type);
+}
 //---Session
 void MainWindow::setActiveFile(QString path,bool unsaved){
     QFileInfo fi(path);
@@ -910,20 +928,18 @@ void MainWindow::closeProject(){
         undoStack->clear();
     }
 }
+//---Updater
+void MainWindow::checkForUpdates()
+{
+    /* Apply the settings */
+    m_updater->setModuleVersion (DEFS_URL, VERSION);
+    m_updater->setNotifyOnFinish (DEFS_URL, true);
+    m_updater->setNotifyOnUpdate (DEFS_URL, true);
+    m_updater->setUseCustomAppcast (DEFS_URL, false);
+    m_updater->setDownloaderEnabled (DEFS_URL, true);
+    m_updater->setMandatoryUpdate (DEFS_URL, false);
+    m_updater->setUseCustomInstallProcedures(DEFS_URL,true);
 
-double MainWindow::getValue(datatype dat,int row){
-    switch(dat){
-    case type:
-        return ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toInt();
-    case freq:
-        return ui->listView_DDCPoints->item(row,1)->data(Qt::DisplayRole).toInt();
-    case bw:
-        return ui->listView_DDCPoints->item(row,2)->data(Qt::DisplayRole).toDouble();
-    case gain:
-        return ui->listView_DDCPoints->item(row,3)->data(Qt::DisplayRole).toDouble();
-    }
-}
-biquad::Type MainWindow::getType(int row){
-    QString type = ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toString();
-    return stringToType(type);
+    /* Check for updates */
+    m_updater->checkForUpdates (DEFS_URL);
 }
