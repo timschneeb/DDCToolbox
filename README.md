@@ -2,7 +2,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/7akte2nk20j6u9w1?svg=true)](https://ci.appveyor.com/project/ThePBone/ddctoolbox)
 ![GitHub](https://img.shields.io/github/license/ThePBone/DDCToolbox) ![GitHub release](https://img.shields.io/github/release/ThePBone/DDCToolbox)
 
-Create and edit ViPER DDC files on Linux
+Create and edit ViPER DDC files on Linux and Windows
 
 ## Features
  * Add/edit/remove calibration points
@@ -39,7 +39,12 @@ sudo apt install ddc-toolbox
 [View PPA on GitHub](https://github.com/ThePBone/PPA-Repository)
 
 ### Windows
-Windows builds are automatically built and deployed when a new commit has been pushed.
+
+#### Stable
+You can find stable windows packages attached on the [release page](https://github.com/ThePBone/DDCToolbox/releases).
+
+#### Nightly
+These windows builds are automatically built and deployed once a new commit has been pushed.
 
 You can download one of these builds [from my server](https://nightly.thebone.cf/ddctoolbox-win/?C=M;O=D).
 If the server is down, you can also get one from the [AppVeyor cloud](https://ci.appveyor.com/project/ThePBone/ddctoolbox) (select one of the two jobs (32/64-bit) and go to the tab 'Artifacts')
