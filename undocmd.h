@@ -65,7 +65,7 @@ private:
 class RemoveCommand : public QUndoCommand
 {
 public:
-    RemoveCommand(QTableWidget*,DDCContext*,std::vector<int> rows,QModelIndexList model_list,std::vector<calibrationPoint_t>,std::mutex*,bool*,
+    RemoveCommand(QTableWidget*,DDCContext*,std::vector<int> rows,QModelIndexList model_list,std::mutex*,bool*,
                MainWindow* host,QUndoCommand *parent = 0);
 
     void undo() override;

@@ -427,7 +427,6 @@ void MainWindow::removePoint(){
         setActiveFile(currentFile,true);
         ui->listView_DDCPoints->setSortingEnabled(false);
         std::vector<int> removeRows;
-        std::vector<calibrationPoint_t> cal_table;
         QItemSelectionModel *selected = ui->listView_DDCPoints->selectionModel();
         QModelIndexList list = selected->selectedRows();
         for (int i = 0; i < list.count(); i++)
@@ -435,16 +434,9 @@ void MainWindow::removePoint(){
             QModelIndex index = list.at(i);
             int row = index.row();
             removeRows.push_back(row);
-
-            calibrationPoint_t cal;
-            cal.freq = (int)getValue(datatype::freq,i);
-            cal.bw = getValue(datatype::bw,i);
-            cal.gain = getValue(datatype::gain,i);
-            cal.type = getType(i);
-            cal_table.push_back(cal);
         }
         QUndoCommand *removeCommand = new RemoveCommand(ui->listView_DDCPoints,
-                                                        g_dcDDCContext,removeRows,list,cal_table,&mtx,&lock_actions,this);
+                                                        g_dcDDCContext,removeRows,list,&mtx,&lock_actions,this);
         undoStack->push(removeCommand);
 
         ui->listView_DDCPoints->setSortingEnabled(true);
@@ -545,9 +537,6 @@ void MainWindow::showKeycombos(){
 void MainWindow::showCalc(){
     calc *t = new calc();
     t->show();
-    QMessageBox::information(this,"",QString::number(getValue(datatype::freq,0))+","+
-                             QString::number(getValue(datatype::freq,1))+","+
-                             QString::number(getValue(datatype::freq,2)));
 }
 void MainWindow::showUndoView(){
     undoView = new QUndoView(undoStack);

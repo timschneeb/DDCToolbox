@@ -199,11 +199,10 @@ QString ClearCommand::createCommandString(){
 }
 
 RemoveCommand::RemoveCommand(QTableWidget* _tw,DDCContext* _ddcContext,std::vector<int> _rows,QModelIndexList _model_list,
-                             std::vector<calibrationPoint_t> _cal_table,std::mutex* _mtx,bool* _lockActions,MainWindow* _host, QUndoCommand *parent)
+                             std::mutex* _mtx,bool* _lockActions,MainWindow* _host, QUndoCommand *parent)
     : QUndoCommand(parent)
 {
     static int itemCount = 0;
-    cal_table = _cal_table;
     tw = _tw;
     mtx = _mtx;
     host = _host;
@@ -251,12 +250,23 @@ void RemoveCommand::redo()
     mtx->lock();
     *lockActions = true;
     tw->setSortingEnabled(false);
+    cal_table.clear();
 
     QList<int> removeRows;
     for (size_t i = 0; i < rows.size(); i++)
     {
-        removeRows.append(rows.at(i));
         int freq = tw->item(rows.at(i),1)->data(Qt::DisplayRole).toInt();
+        double bw = tw->item(rows.at(i),2)->data(Qt::DisplayRole).toDouble();
+        double gain = tw->item(rows.at(i),3)->data(Qt::DisplayRole).toDouble();
+        biquad::Type type = stringToType(tw->item(rows.at(i),0)->data(Qt::DisplayRole).toString());
+        calibrationPoint_t cal;
+        cal.freq = freq;
+        cal.bw = bw;
+        cal.gain = gain;
+        cal.type = type;
+        cal_table.push_back(cal);
+
+        removeRows.append(rows.at(i));
         ddcContext->RemoveFilter(freq);
     }
     for(int i=0;i<removeRows.count();++i)
