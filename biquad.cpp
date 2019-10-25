@@ -1,5 +1,6 @@
 #include "biquad.h"
 #include <cmath>
+#include <cfloat>
 #include <list>
 
 biquad::biquad()

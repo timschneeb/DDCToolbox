@@ -38,7 +38,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->listView_DDCPoints->setItemDelegate(new SaveItemDelegate());
 
     ui->listView_DDCPoints->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->graph->yAxis->setRange(QCPRange(-1, 1));
+    ui->graph->yAxis->setRange(QCPRange(-24, 24));
+    ui->graph->yAxis->setLabel("Gain (dB)");
     ui->graph->xAxis->setRange(QCPRange(20, 24000));
     ui->graph->xAxis->setScaleType(QCPAxis::stLogarithmic);
     ui->graph->xAxis->setLabel("Frequency (Hz)");
@@ -446,44 +447,34 @@ void MainWindow::removePoint(){
     lock_actions=false;
 }
 void MainWindow::drawGraph(){
-    int bandCount = 240;
+    int bandCount = 8192;
     std::vector<float> responseTable = g_dcDDCContext->GetResponseTable(bandCount, 44100.0);
-    if (responseTable.size()<=0)
-    {
+    if (responseTable.size()<=0||ui->listView_DDCPoints->rowCount() <= 0)
         return;
-    }
-    float num2 = 0.0f;
-    for (size_t i = 0; i < (size_t)bandCount; i++)
-        if (abs(responseTable.at(i)) > num2)
-            num2 = abs(responseTable.at(i));
-    if (num2 <= 1E-08f)
-    {
-        qDebug() << "Cannot draw graph. Currently at line: " << __LINE__;
-        ui->graph->clearItems();
-        ui->graph->clearGraphs();
-    }
-    else
-    {
-        if (num2 > 24.0f)
-        {
-            float num4 = 24.0f / num2;
-            for (size_t n = 0; n < (size_t)bandCount; n++)
-                responseTable.at(n) *= num4;
-        }
-        for (size_t k = 0; k < (size_t)bandCount; k++)
-            responseTable.at(k) /= 24.0f;
+    float max = 24.0f;
+    float min = -24.0f;
 
-        ui->graph->clearPlottables();
-        ui->graph->clearItems();
-        ui->graph->clearGraphs();
-        ui->graph->yAxis->setRange(QCPRange(-1, 1));
-        QCPGraph *plot = ui->graph->addGraph();
+    for (size_t i = 0; i < (size_t)bandCount; i++){
+        if (responseTable.at(i) > max)
+            max = responseTable.at(i);
+        if (responseTable.at(i) < min)
+            min = responseTable.at(i);
+    }
 
-        for (size_t m = 0; m < (size_t)bandCount; m++)
-        {
-            plot->addData(m*100,(double)responseTable.at(m)); //m * 100 -> to fit the scale to 24000hz
-            ui->graph->xAxis->setRange(QCPRange(20, m*100));
-        }
+    ui->graph->clearPlottables();
+    ui->graph->clearItems();
+    ui->graph->clearGraphs();
+
+
+    ui->graph->yAxis->setRange(QCPRange(min, max));
+    QCPGraph *plot = ui->graph->addGraph();
+    plot->setAdaptiveSampling(false);
+
+    for (size_t m = 0; m < (size_t)bandCount; m++)
+    {
+        double num3 = (44100.0 / 2.0) / ((double) bandCount);
+        plot->addData(num3 * (m + 1.0),(double)responseTable.at(m)); //m * 100 -> to fit the scale to 24000hz
+        ui->graph->xAxis->setRange(QCPRange(20, num3 * (m + 1.0)));
     }
     ui->graph->replot();
 }
