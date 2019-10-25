@@ -220,16 +220,30 @@ std::list<double> biquad::ExportCoeffs(double dSamplingRate)
     return ExportCoeffs(m_dFilterType,m_dFilterGain,m_dFilterFreq,dSamplingRate,m_dFilterBQ,m_isBandwidthOrS);
 }
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 double biquad::GainAt(double centreFreq, double fs)
 {
-    double num = (6.2831853071795862 * centreFreq) / fs;
-    double num2 = sin(num / 2.0);
-    double num3 = num2 * num2;
-    double cs = a0;
-    double alpha = internalBiquadCoeffs[0];
-    double num6 = internalBiquadCoeffs[1];
-    double A0 = 1.0;
-    double A1 = -internalBiquadCoeffs[2];
-    double A2 = -internalBiquadCoeffs[3];
-    return ((10.0 * log10((pow((cs + alpha) + num6, 2.0) - ((4.0 * (((cs * alpha) + ((4.0 * cs) * num6)) + (alpha * num6))) * num3)) + ((((16.0 * cs) * num6) * num3) * num3))) - (10.0 * log10((pow((A0 + A1) + A2, 2.0) - ((4.0 * (((A0 * A1) + ((4.0 * A0) * A2)) + (A1 * A2))) * num3)) + ((((16.0 * A0) * A2) * num3) * num3))));
+    double Arg;
+    double z1Real, z1Imag, z2Real, z2Imag, HofZReal, HofZImag, DenomReal, DenomImag, tmpReal, tmpImag;
+    Arg = M_PI * centreFreq / (fs * 0.5);
+    z1Real = cos(Arg), z1Imag = -sin(Arg);  // z = e^(j*omega)
+    complexMultiplicationRI(&z2Real, &z2Imag, z1Real, z1Imag, z1Real, z1Imag); // z squared
+    HofZReal = 1.0, HofZImag = 0.0;
+    //HofZ *= IIR->a0[n];
+    tmpReal = a0 + internalBiquadCoeffs[0] * z1Real + internalBiquadCoeffs[1] * z2Real;
+    tmpImag = internalBiquadCoeffs[0] * z1Imag + internalBiquadCoeffs[1] * z2Imag;
+    complexMultiplicationRI(&HofZReal, &HofZImag, HofZReal, HofZImag, tmpReal, tmpImag);
+    DenomReal = 1.0 + -internalBiquadCoeffs[2] * z1Real + -internalBiquadCoeffs[3] * z2Real;
+    DenomImag = -internalBiquadCoeffs[2] * z1Imag + -internalBiquadCoeffs[3] * z2Imag;
+    double magnitude;
+    if (sqrt(DenomReal * DenomReal + DenomImag * DenomImag) < DBL_EPSILON)
+        magnitude = 0.0;
+    else
+    {
+        complexDivisionRI(&HofZReal, &HofZImag, HofZReal, HofZImag, DenomReal, DenomImag);
+        magnitude = 20.0 * log10(sqrt(HofZReal * HofZReal + HofZImag * HofZImag + DBL_EPSILON));
+    }
+    return magnitude;
 }

@@ -24,6 +24,16 @@ private:
     double m_dFilterGain;
     Type m_dFilterType;
     bool m_isBandwidthOrS;
+    inline void complexMultiplicationRI(double *zReal, double *zImag, double xReal, double xImag, double yReal, double yImag)
+    {
+        *zReal = xReal * yReal - xImag * yImag;
+        *zImag = xReal * yImag + xImag * yReal;
+    }
+    inline void complexDivisionRI(double *zReal, double *zImag, double xReal, double xImag, double yReal, double yImag)
+    {
+        *zReal = (xReal * yReal + xImag * yImag) / (yReal * yReal + yImag * yImag);
+        *zImag = (xImag * yReal - xReal * yImag) / (yReal * yReal + yImag * yImag);
+    }
 };
 
 
