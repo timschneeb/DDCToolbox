@@ -460,21 +460,25 @@ void MainWindow::removePoint(){
     }
     lock_actions=false;
 }
-void MainWindow::drawGraph(){
-    ui->graph->clearPlottables();
-    ui->graph->clearItems();
-    ui->graph->clearGraphs();
-    ui->gdelay_graph->clearPlottables();
-    ui->gdelay_graph->clearItems();
-    ui->gdelay_graph->clearGraphs();
+void MainWindow::drawGraph(graphtype t){
+    if(t == graphtype::magnitude || t == graphtype::all){
+        ui->graph->clearPlottables();
+        ui->graph->clearItems();
+        ui->graph->clearGraphs();
+    }
+    if(t == graphtype::groupdelay || t == graphtype::all){
+        ui->gdelay_graph->clearPlottables();
+        ui->gdelay_graph->clearItems();
+        ui->gdelay_graph->clearGraphs();
+    }
 
     if (ui->listView_DDCPoints->rowCount() <= 0)
         return;
     const int bandCount = 8192;
     std::vector<float> responseTable = g_dcDDCContext->GetResponseTable(bandCount, 44100.0);
     std::vector<float> gdelayTable = g_dcDDCContext->GetGroupDelayTable(bandCount, 44100.0);
-    Graph::drawMagnitudeResponse(ui->graph,responseTable,bandCount);
-    Graph::drawGroupDelayGraph(ui->gdelay_graph,gdelayTable,bandCount);
+    if(t == graphtype::magnitude || t == graphtype::all)Graph::drawMagnitudeResponse(ui->graph,responseTable,bandCount);
+    if(t == graphtype::groupdelay || t == graphtype::all)Graph::drawGroupDelayGraph(ui->gdelay_graph,gdelayTable,bandCount);
 }
 void MainWindow::toggleGraph(bool state){
     ui->graphBox->setVisible(!state);
@@ -869,10 +873,10 @@ void MainWindow::drawGroupDelayMenu(const QPoint & pos){
         ui->gdelay_graph->setInteraction(QCP::Interaction::iRangeDrag,val);
         ui->gdelay_graph->setInteraction(QCP::Interaction::iRangeZoom,val);
         if(!val)
-            this->drawGraph();
+            this->drawGraph(graphtype::groupdelay);
     });
     QAction reload("Reload", this);
-    connect(&reload, &QAction::triggered, this, [this](){this->drawGraph();});
+    connect(&reload, &QAction::triggered, this, [this](){this->drawGraph(graphtype::groupdelay);});
 
     menu->addAction(&move);
     menu->addAction(&reload);
@@ -888,10 +892,10 @@ void MainWindow::drawMagnitudeMenu(const QPoint & pos){
         ui->graph->setInteraction(QCP::Interaction::iRangeDrag,val);
         ui->graph->setInteraction(QCP::Interaction::iRangeZoom,val);
         if(!val)
-            this->drawGraph();
+            this->drawGraph(graphtype::magnitude);
     });
     QAction reload("Reload", this);
-    connect(&reload, &QAction::triggered, this, [this](){this->drawGraph();});
+    connect(&reload, &QAction::triggered, this, [this](){this->drawGraph(graphtype::magnitude);});
 
     menu->addAction(&move);
     menu->addAction(&reload);

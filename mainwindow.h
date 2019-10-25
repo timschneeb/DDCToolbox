@@ -45,8 +45,13 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    enum graphtype{
+        magnitude,
+        groupdelay,
+        all
+    };
     explicit MainWindow(QWidget *parent = nullptr);
-    void drawGraph();
+    void drawGraph(graphtype = graphtype::all);
     void setActiveFile(QString,bool=false);
     QString currentFile = "";
     ~MainWindow();
