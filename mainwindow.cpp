@@ -13,6 +13,7 @@
 #include <vector>
 #include <map>
 #include "shiftfreq.h"
+#include "graph.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -36,19 +37,30 @@ MainWindow::MainWindow(QWidget *parent) :
     g_dcDDCContext = new class DDCContext;
 
     ui->listView_DDCPoints->setItemDelegate(new SaveItemDelegate());
-
     ui->listView_DDCPoints->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
     ui->graph->yAxis->setRange(QCPRange(-24, 24));
     ui->graph->yAxis->setLabel("Gain (dB)");
     ui->graph->xAxis->setRange(QCPRange(20, 24000));
     ui->graph->xAxis->setScaleType(QCPAxis::stLogarithmic);
     ui->graph->xAxis->setLabel("Frequency (Hz)");
-
     QSharedPointer<QCPAxisTickerLog> logTicker(new QCPAxisTickerLog);
     ui->graph->xAxis->setTicker(logTicker);
     ui->graph->xAxis->setScaleType(QCPAxis::stLogarithmic);
     ui->graph->rescaleAxes();
     connect(ui->graph, SIGNAL(mouseMove(QMouseEvent*)), this,SLOT(showPointToolTip(QMouseEvent*)));
+
+    ui->gdelay_graph->yAxis->setRange(QCPRange(-12, 12));
+    ui->gdelay_graph->yAxis->setLabel("Sample delay (ms)");
+    ui->gdelay_graph->xAxis->setRange(QCPRange(20, 24000));
+    ui->gdelay_graph->xAxis->setScaleType(QCPAxis::stLogarithmic);
+    ui->gdelay_graph->xAxis->setLabel("Frequency (Hz)");
+    QSharedPointer<QCPAxisTickerLog> logTickerGD(new QCPAxisTickerLog);
+    ui->gdelay_graph->xAxis->setTicker(logTickerGD);
+    ui->gdelay_graph->xAxis->setScaleType(QCPAxis::stLogarithmic);
+    ui->gdelay_graph->rescaleAxes();
+    connect(ui->gdelay_graph, SIGNAL(mouseMove(QMouseEvent*)), this,SLOT(showPointToolTip(QMouseEvent*)));
+
 }
 
 MainWindow::~MainWindow()
@@ -447,36 +459,13 @@ void MainWindow::removePoint(){
     lock_actions=false;
 }
 void MainWindow::drawGraph(){
-    int bandCount = 8192;
-    std::vector<float> responseTable = g_dcDDCContext->GetResponseTable(bandCount, 44100.0);
-    if (responseTable.size()<=0||ui->listView_DDCPoints->rowCount() <= 0)
+    if (ui->listView_DDCPoints->rowCount() <= 0)
         return;
-    float max = 24.0f;
-    float min = -24.0f;
-
-    for (size_t i = 0; i < (size_t)bandCount; i++){
-        if (responseTable.at(i) > max)
-            max = responseTable.at(i);
-        if (responseTable.at(i) < min)
-            min = responseTable.at(i);
-    }
-
-    ui->graph->clearPlottables();
-    ui->graph->clearItems();
-    ui->graph->clearGraphs();
-
-
-    ui->graph->yAxis->setRange(QCPRange(min, max));
-    QCPGraph *plot = ui->graph->addGraph();
-    plot->setAdaptiveSampling(false);
-
-    for (size_t m = 0; m < (size_t)bandCount; m++)
-    {
-        double num3 = (44100.0 / 2.0) / ((double) bandCount);
-        plot->addData(num3 * (m + 1.0),(double)responseTable.at(m)); //m * 100 -> to fit the scale to 24000hz
-        ui->graph->xAxis->setRange(QCPRange(20, num3 * (m + 1.0)));
-    }
-    ui->graph->replot();
+    const int bandCount = 8192;
+    std::vector<float> responseTable = g_dcDDCContext->GetResponseTable(bandCount, 44100.0);
+    std::vector<float> gdelayTable = g_dcDDCContext->GetGroupDelayTable(bandCount, 44100.0);
+    Graph::drawMagnitudeResponse(ui->graph,responseTable,bandCount);
+    Graph::drawGroupDelayGraph(ui->gdelay_graph,gdelayTable,bandCount);
 }
 void MainWindow::toggleGraph(bool state){
     ui->graphBox->setVisible(!state);
@@ -865,11 +854,17 @@ void MainWindow::batch_parametric2vdcprj(){
 ///Tooltip with x-value while hovering graph
 void MainWindow::showPointToolTip(QMouseEvent *event)
 {
-    int x = (int)ui->graph->xAxis->pixelToCoord(event->pos().x());
-    if(x<0||x>24000)return;
-    //int y = this->yAxis->pixelToCoord(event->pos().y());
-    ui->graph->setToolTip(QString("%1Hz").arg(x));
-
+    if(ui->tabWidget->currentIndex()==0){
+        int x = (int)ui->graph->xAxis->pixelToCoord(event->pos().x());
+        if(x<0||x>24000)return;
+        //int y = this->yAxis->pixelToCoord(event->pos().y());
+        ui->graph->setToolTip(QString("%1Hz").arg(x));
+    }else{
+        int x = (int)ui->gdelay_graph->xAxis->pixelToCoord(event->pos().x());
+        if(x<0||x>24000)return;
+        //int y = this->yAxis->pixelToCoord(event->pos().y());
+        ui->gdelay_graph->setToolTip(QString("%1Hz").arg(x));
+    }
 }
 double MainWindow::getValue(datatype dat,int row){
     switch(dat){

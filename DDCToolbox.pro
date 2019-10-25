@@ -42,6 +42,7 @@ HEADERS += \
         calc.h \
         ddccontext.h \
         filtertypes.h \
+        graph.h \
         mainwindow.h \
         qcustomplot.h \
         shiftfreq.h \

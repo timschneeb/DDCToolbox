@@ -14,6 +14,7 @@ public:
     void ClearFilters();
     void RemoveFilter(int nFreq);
     std::vector<float> GetResponseTable(int nBandCount, double dSRate);
+    std::vector<float> GetGroupDelayTable(int nBandCount, double dSRate);
     std::list<double> ExportCoeffs(double dSamplingRate);
 
 private:
