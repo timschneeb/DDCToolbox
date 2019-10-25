@@ -14,6 +14,7 @@ public:
     std::list<double> ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
     std::list<double> ExportCoeffs(double dSamplingRate);
     double GainAt(double centreFreq, double fs);
+    double GroupDelayAt(double centreFreq, double fs);
 
 
 private:

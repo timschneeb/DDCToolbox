@@ -231,7 +231,6 @@ double biquad::GainAt(double centreFreq, double fs)
     z1Real = cos(Arg), z1Imag = -sin(Arg);  // z = e^(j*omega)
     complexMultiplicationRI(&z2Real, &z2Imag, z1Real, z1Imag, z1Real, z1Imag); // z squared
     HofZReal = 1.0, HofZImag = 0.0;
-    //HofZ *= IIR->a0[n];
     tmpReal = a0 + internalBiquadCoeffs[0] * z1Real + internalBiquadCoeffs[1] * z2Real;
     tmpImag = internalBiquadCoeffs[0] * z1Imag + internalBiquadCoeffs[1] * z2Imag;
     complexMultiplicationRI(&HofZReal, &HofZImag, HofZReal, HofZImag, tmpReal, tmpImag);
@@ -246,4 +245,34 @@ double biquad::GainAt(double centreFreq, double fs)
         magnitude = 20.0 * log10(sqrt(HofZReal * HofZReal + HofZImag * HofZImag + DBL_EPSILON));
     }
     return magnitude;
+}
+// Simplified Shpak group delay algorithm
+// The algorithm only valid when first order / second order IIR filters is provided
+// You must break down high order transfer function into N-SOS in order apply the Shpak algorithm
+// which is out-of-scope here, since break down high order transfer function require find roots of polynomials
+// Root finder may often require the computation of eigenvalue of companion matrix of polynomials
+// Which will bloat 6000+ lines of code, and perhaps not the main purpose here.
+// We need to calculate group delay of a bunch of second order IIR filters, so the following code already do the job
+// Provided by: James34602
+double biquad::GroupDelayAt(double centreFreq, double fs)
+{
+	double Arg = M_PI * centreFreq / (fs * 0.5);
+	double cw = cos(Arg);
+	double cw2 = cos(2.0 * Arg);
+	double sw = sin(Arg);
+	double sw2 = sin(2.0 * Arg);
+	double b1 = a0, b2 = internalBiquadCoeffs[0], b3 = internalBiquadCoeffs[1];
+	double u = b1 * sw2 + b2 * sw;
+	double v = b1 * cw2 + b2 * cw + b3;
+	double du = 2.0 * b1*cw2 + b2 * cw;
+	double dv = -(2.0 * b1*sw2 + b2 * sw);
+	double u2v2 = (b1*b1) + (b2*b2) + (b3*b3) + 2.0 * (b1*b2 + b2 * b3)*cw + 2.0 * (b1*b3)*cw2;
+	double gdB = (2.0 - (v*du - u * dv) / u2v2);
+	b2 = -internalBiquadCoeffs[2], b3 = -internalBiquadCoeffs[3];
+	u = sw2 + b2 * sw;
+	v = cw2 + b2 * cw + b3;
+	du = 2.0 * cw2 + b2 * cw;
+	dv = -(2.0 * sw2 + b2 * sw);
+	u2v2 = 1.0 + (b2*b2) + (b3*b3) + 2.0 * (b2 + b2 * b3)*cw + 2.0 * b3*cw2;
+	return gdB - (2.0 - (v*du - u * dv) / u2v2);
 }
