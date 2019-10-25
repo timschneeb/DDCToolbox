@@ -21,9 +21,6 @@ public:
                 min = table.at(i);
         }
 
-        graph->clearPlottables();
-        graph->clearItems();
-        graph->clearGraphs();
         graph->yAxis->setRange(QCPRange(min, max));
         QCPGraph *plot = graph->addGraph();
         plot->setAdaptiveSampling(false);
@@ -52,9 +49,6 @@ public:
         if(std::isinf(min_gd))min_gd=-12.0;
         if(std::isinf(max_gd))max_gd=12.0;
 
-        graph->clearPlottables();
-        graph->clearItems();
-        graph->clearGraphs();
         graph->yAxis->setRange(QCPRange(min_gd, max_gd));
         QCPGraph *plot_gd = graph->addGraph();
         plot_gd->setAdaptiveSampling(false);

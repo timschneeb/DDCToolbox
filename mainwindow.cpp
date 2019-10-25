@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QAction>
 #include <QMessageBox>
+#include <QtGlobal>
 #include <vector>
 #include <map>
 #include "shiftfreq.h"
@@ -61,6 +62,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->gdelay_graph->rescaleAxes();
     connect(ui->gdelay_graph, SIGNAL(mouseMove(QMouseEvent*)), this,SLOT(showPointToolTip(QMouseEvent*)));
 
+    setupMenus();
 }
 
 MainWindow::~MainWindow()
@@ -459,6 +461,13 @@ void MainWindow::removePoint(){
     lock_actions=false;
 }
 void MainWindow::drawGraph(){
+    ui->graph->clearPlottables();
+    ui->graph->clearItems();
+    ui->graph->clearGraphs();
+    ui->gdelay_graph->clearPlottables();
+    ui->gdelay_graph->clearItems();
+    ui->gdelay_graph->clearGraphs();
+
     if (ui->listView_DDCPoints->rowCount() <= 0)
         return;
     const int bandCount = 8192;
@@ -524,7 +533,6 @@ void MainWindow::showUndoView(){
     undoView->show();
     undoView->setAttribute(Qt::WA_QuitOnClose, false);
 }
-
 //---Import/Export
 void MainWindow::exportCompatVDCProj(){
     saveAsDDCProject(true,"",true);
@@ -851,6 +859,52 @@ void MainWindow::batch_parametric2vdcprj(){
     }
 }
 //---Misc
+void MainWindow::drawGroupDelayMenu(const QPoint & pos){
+    QMenu* menu = new QMenu(tr("Group Delay"), this);
+    QAction move("Enable move/drag", this);
+    move.setCheckable(true);
+    move.setChecked(ui->gdelay_graph->interactions() & (QCP::Interaction::iRangeDrag));
+    connect(&move, &QAction::changed, this, [&move,this]() {
+        bool val = move.isChecked();
+        ui->gdelay_graph->setInteraction(QCP::Interaction::iRangeDrag,val);
+        ui->gdelay_graph->setInteraction(QCP::Interaction::iRangeZoom,val);
+        if(!val)
+            this->drawGraph();
+    });
+    QAction reload("Reload", this);
+    connect(&reload, &QAction::triggered, this, [this](){this->drawGraph();});
+
+    menu->addAction(&move);
+    menu->addAction(&reload);
+    menu->exec(ui->tabWidget->mapToGlobal(pos));
+}
+void MainWindow::drawMagnitudeMenu(const QPoint & pos){
+    QMenu* menu = new QMenu(tr("Magnitude Response"), this);
+    QAction move("Enable move/drag", this);
+    move.setCheckable(true);
+    move.setChecked(ui->graph->interactions() & (QCP::Interaction::iRangeDrag));
+    connect(&move, &QAction::changed, this, [&move,this]() {
+        bool val = move.isChecked();
+        ui->graph->setInteraction(QCP::Interaction::iRangeDrag,val);
+        ui->graph->setInteraction(QCP::Interaction::iRangeZoom,val);
+        if(!val)
+            this->drawGraph();
+    });
+    QAction reload("Reload", this);
+    connect(&reload, &QAction::triggered, this, [this](){this->drawGraph();});
+
+    menu->addAction(&move);
+    menu->addAction(&reload);
+    menu->exec(ui->tabWidget->mapToGlobal(pos));
+}
+void MainWindow::setupMenus(){
+    ui->graph->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+    connect(ui->graph, SIGNAL(customContextMenuRequested(const QPoint &)),
+            this, SLOT(drawMagnitudeMenu(const QPoint &)));
+    ui->gdelay_graph->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->gdelay_graph, SIGNAL(customContextMenuRequested(const QPoint &)),
+            this, SLOT(drawGroupDelayMenu(const QPoint &)));
+}
 ///Tooltip with x-value while hovering graph
 void MainWindow::showPointToolTip(QMouseEvent *event)
 {
@@ -900,6 +954,7 @@ void MainWindow::closeProject(){
     if (reply == QMessageBox::Yes) {
         setActiveFile("");
         clearPoint(false);
+        drawGraph();
         undoStack->clear();
     }
 }

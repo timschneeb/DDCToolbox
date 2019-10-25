@@ -80,6 +80,9 @@ private slots:
     void invertSelection();
     void shiftSelection();
     void showHelp();
+    void drawGroupDelayMenu(const QPoint &);
+    void drawMagnitudeMenu(const QPoint &);
+    void setupMenus();
 
 private:
     Ui::MainWindow *ui;
