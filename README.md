@@ -105,6 +105,9 @@ sudo wget -O /usr/share/pixmaps/ddc-toolbox.png https://raw.githubusercontent.co
 ```
 
 ## Contributors
-  * VDC Importer (vdc2vdcprj) - [James Fung (@james34602)](https://github.com/james34602)
+* [James Fung (@james34602):](https://github.com/james34602)
+  * VDC Importer
+  * Group delay plot
+  * Unity gain filter 
 _____________
 Based on ViPERs Toolbox 2.0 for Windows
