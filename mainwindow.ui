@@ -20,183 +20,195 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QGroupBox" name="groupBox">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
-      <property name="title">
-       <string>Calibration Points</string>
+      <property name="opaqueResize">
+       <bool>true</bool>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="leftMargin">
-        <number>9</number>
-       </property>
-       <property name="topMargin">
-        <number>9</number>
-       </property>
-       <property name="rightMargin">
-        <number>9</number>
-       </property>
-       <property name="bottomMargin">
-        <number>9</number>
-       </property>
-       <item>
-        <widget class="QTableWidget" name="listView_DDCPoints">
-         <property name="sizeAdjustPolicy">
-          <enum>QAbstractScrollArea::AdjustIgnored</enum>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::ExtendedSelection</enum>
-         </property>
-         <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
-         </property>
-         <property name="gridStyle">
-          <enum>Qt::SolidLine</enum>
-         </property>
-         <property name="sortingEnabled">
-          <bool>true</bool>
-         </property>
-         <property name="cornerButtonEnabled">
-          <bool>false</bool>
-         </property>
-         <attribute name="horizontalHeaderStretchLastSection">
-          <bool>false</bool>
-         </attribute>
-         <column>
-          <property name="text">
-           <string>Type</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Frequency</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Bandwidth/S</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Gain</string>
-          </property>
-         </column>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="graphBox">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+      <property name="handleWidth">
+       <number>4</number>
       </property>
-      <property name="title">
-       <string>Graph</string>
+      <property name="childrenCollapsible">
+       <bool>true</bool>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QTabWidget" name="tabWidget">
-         <property name="tabPosition">
-          <enum>QTabWidget::East</enum>
-         </property>
-         <property name="currentIndex">
-          <number>0</number>
-         </property>
-         <property name="elideMode">
-          <enum>Qt::ElideMiddle</enum>
-         </property>
-         <widget class="QWidget" name="magnitude">
-          <attribute name="title">
-           <string>Magnitude Response</string>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title">
+        <string>Calibration Points</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="leftMargin">
+         <number>9</number>
+        </property>
+        <property name="topMargin">
+         <number>9</number>
+        </property>
+        <property name="rightMargin">
+         <number>9</number>
+        </property>
+        <property name="bottomMargin">
+         <number>9</number>
+        </property>
+        <item>
+         <widget class="QTableWidget" name="listView_DDCPoints">
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustIgnored</enum>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="gridStyle">
+           <enum>Qt::SolidLine</enum>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="cornerButtonEnabled">
+           <bool>false</bool>
+          </property>
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>false</bool>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_34">
-           <property name="leftMargin">
-            <number>0</number>
+          <column>
+           <property name="text">
+            <string>Type</string>
            </property>
-           <property name="topMargin">
-            <number>0</number>
+          </column>
+          <column>
+           <property name="text">
+            <string>Frequency</string>
            </property>
-           <property name="rightMargin">
-            <number>0</number>
+          </column>
+          <column>
+           <property name="text">
+            <string>Bandwidth/S</string>
            </property>
-           <property name="bottomMargin">
-            <number>0</number>
+          </column>
+          <column>
+           <property name="text">
+            <string>Gain</string>
            </property>
-           <item>
-            <widget class="QFrame" name="magnitude_frame">
-             <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 255, 255);</string>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_2">
-              <item>
-               <widget class="QCustomPlot" name="graph" native="true"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
+          </column>
          </widget>
-         <widget class="QWidget" name="groupdelay">
-          <attribute name="title">
-           <string>Group Delay</string>
-          </attribute>
-          <layout class="QHBoxLayout" name="horizontalLayout_19">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QFrame" name="groupdelay_frame">
-             <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 255, 255);</string>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_18">
-              <property name="leftMargin">
-               <number>9</number>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QGroupBox" name="graphBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title">
+        <string>Graph</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QTabWidget" name="tabWidget">
+          <property name="tabPosition">
+           <enum>QTabWidget::East</enum>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <property name="elideMode">
+           <enum>Qt::ElideMiddle</enum>
+          </property>
+          <widget class="QWidget" name="magnitude">
+           <attribute name="title">
+            <string>Magnitude Response</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_34">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QFrame" name="magnitude_frame">
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(255, 255, 255);</string>
               </property>
-              <property name="topMargin">
-               <number>9</number>
+              <property name="frameShape">
+               <enum>QFrame::NoFrame</enum>
               </property>
-              <item>
-               <widget class="QCustomPlot" name="gdelay_graph" native="true"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_2">
+               <item>
+                <widget class="QCustomPlot" name="graph" native="true"/>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="groupdelay">
+           <attribute name="title">
+            <string>Group Delay</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_19">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QFrame" name="groupdelay_frame">
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(255, 255, 255);</string>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::NoFrame</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_18">
+               <property name="leftMargin">
+                <number>9</number>
+               </property>
+               <property name="topMargin">
+                <number>9</number>
+               </property>
+               <item>
+                <widget class="QCustomPlot" name="gdelay_graph" native="true"/>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
-        </widget>
-       </item>
-      </layout>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>

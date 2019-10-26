@@ -23,14 +23,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     undoStack = new QUndoStack(this);
 
+    ui->splitter->setSizes(QList<int>({INT_MAX, INT_MAX}));
+
     m_updater = QSimpleUpdater::getInstance();
 
     QAction* actionUndo = undoStack->createUndoAction(this, tr("Undo"));
     actionUndo->setShortcuts(QKeySequence::Undo);
-
     QAction* actionRedo = undoStack->createRedoAction(this, tr("Redo"));
     actionRedo->setShortcuts(QKeySequence::Redo);
-
     QAction* first = ui->menuEdit->actions().at(0);
     ui->menuEdit->insertAction(first,actionUndo);
     ui->menuEdit->insertAction(first,actionRedo);
