@@ -153,7 +153,7 @@ public:
             cb->addItem(QString("All Pass"));
             cb->addItem(QString("Low Shelf"));
             cb->addItem(QString("High Shelf"));
-            cb->addItem(QString("Unity gain"));
+            cb->addItem(QString("Unity Gain"));
             return cb;
         }
         else if (index.column()==2&&sp) {
