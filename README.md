@@ -5,15 +5,15 @@
 Create and edit ViPER DDC files on Linux and Windows
 
 ## Features
- * Add/edit/remove calibration points
  * Save/load *.vdcprj files
  * Export as *.vdc
- * Live preview
- * Edit values directly in the table
  * Import VDCs (to *.vdcprj)
  * Import AutoEQ configurations (*ParametricEQ.txt)
+ * Proper undo/redo framework 
+ * Edit values directly in the table
+ * Interactive magnitude response and group delay plot
+ * Various IIR filter types (peaking, low/high pass/shelf, notch, all/band pass and unity gain)
 
- 
 ## Screenshot
 
 ![Screenshot](https://github.com/ThePBone/DDCToolbox/blob/master/img/screenshot.png?raw=true)
