@@ -157,30 +157,32 @@ public:
             return cb;
         }
         else if (index.column()==2&&sp) {
-            //auto p = qobject_cast<QTableWidget*>(sp->parent()->parent());
             switch (getType(currentType)) {
             case biquad::LOW_SHELF:
             case biquad::HIGH_SHELF:
                 sp->setPrefix("S: ");
+                sp->setEnabled(true);
+                break;
+            case biquad::UNITY_GAIN:
+                sp->setPrefix("");
+                sp->setEnabled(false);
                 break;
             default:
                 sp->setPrefix("BW: ");
+                sp->setEnabled(true);
+
             }
         }
         else if (index.column()==3&&sp) {
-            //auto p = qobject_cast<QTableWidget*>(sp->parent()->parent());
             switch (getType(currentType)) {
             case biquad::PEAKING:
             case biquad::LOW_SHELF:
             case biquad::UNITY_GAIN:
             case biquad::HIGH_SHELF:
                 sp->setEnabled(true);
-                //if (p)p->item(index.row(),3)->setFlags(p->item(index.row(),3)->flags() | Qt::ItemIsEditable | Qt::ItemIsEnabled);
-
                 break;
             default:
                 sp->setEnabled(false);
-                //if (p)p->item(index.row(),3)->setFlags(p->item(index.row(),3)->flags() & (~Qt::ItemIsEditable) & (~Qt::ItemIsEnabled));
             }
         }
         return w;
@@ -202,6 +204,16 @@ public:
                 return;
             }
         }
+        else if (index.column()==2) {
+                switch (getType(currentType)) {
+                case biquad::UNITY_GAIN:
+                    //Leave item empty
+                    return;
+                default:
+                    QStyledItemDelegate::paint(painter,option,index);
+                    return;
+                }
+            }
         else
             QStyledItemDelegate::paint(painter,option,index);
     }
