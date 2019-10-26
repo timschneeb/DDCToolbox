@@ -115,6 +115,7 @@ public:
         else if(_type=="Notch")return biquad::Type::NOTCH;
         else if(_type=="Low Shelf")return biquad::Type::LOW_SHELF;
         else if(_type=="High Shelf")return biquad::Type::HIGH_SHELF;
+        else if(_type=="Unity Gain")return biquad::Type::UNITY_GAIN;
         return biquad::Type::PEAKING;
     }
     biquad::Type getType(const QModelIndex &index) const{
@@ -152,6 +153,7 @@ public:
             cb->addItem(QString("All Pass"));
             cb->addItem(QString("Low Shelf"));
             cb->addItem(QString("High Shelf"));
+            cb->addItem(QString("Unity gain"));
             return cb;
         }
         else if (index.column()==2&&sp) {
@@ -170,6 +172,7 @@ public:
             switch (getType(currentType)) {
             case biquad::PEAKING:
             case biquad::LOW_SHELF:
+            case biquad::UNITY_GAIN:
             case biquad::HIGH_SHELF:
                 sp->setEnabled(true);
                 //if (p)p->item(index.row(),3)->setFlags(p->item(index.row(),3)->flags() | Qt::ItemIsEditable | Qt::ItemIsEnabled);
@@ -190,6 +193,7 @@ public:
             switch (getType(currentType)) {
             case biquad::PEAKING:
             case biquad::LOW_SHELF:
+            case biquad::UNITY_GAIN:
             case biquad::HIGH_SHELF:
                 QStyledItemDelegate::paint(painter,option,index);
                 return;

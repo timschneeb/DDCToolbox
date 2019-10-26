@@ -234,7 +234,7 @@
      <x>0</x>
      <y>0</y>
      <width>865</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -392,7 +392,7 @@
   </action>
   <action name="actionimportVDC_file">
    <property name="text">
-    <string>VDC file</string>
+    <string>VDC file (Classic Viper format)</string>
    </property>
   </action>
   <action name="action_batchVDC_to_Project_File">

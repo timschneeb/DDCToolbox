@@ -12,6 +12,7 @@ inline biquad::Type stringToType(QString _type){
     else if(_type=="Notch")return biquad::Type::NOTCH;
     else if(_type=="Low Shelf")return biquad::Type::LOW_SHELF;
     else if(_type=="High Shelf")return biquad::Type::HIGH_SHELF;
+    else if(_type=="Unity Gain")return biquad::Type::UNITY_GAIN;
     return biquad::Type::PEAKING;
 }
 inline QString typeToString(biquad::Type _type){
@@ -23,6 +24,7 @@ inline QString typeToString(biquad::Type _type){
     else if(_type==biquad::Type::NOTCH)return "Notch";
     else if(_type==biquad::Type::LOW_SHELF)return "Low Shelf";
     else if(_type==biquad::Type::HIGH_SHELF)return "High Shelf";
+    else if(_type==biquad::Type::UNITY_GAIN)return "Unity Gain";
     return "Peaking";
 }
 

@@ -105,6 +105,14 @@ void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs
         A1 = 2.0 * ((d - 1.0) - (d + 1.0) * cs);
         A2 = (d + 1.0) - (d - 1.0) * cs - beta;
         break;
+    case UNITY_GAIN:
+        B0 = d;
+        B1 = 0.0;
+        B2 = 0.0;
+        A0 = 1.0;
+        A1 = 0.0;
+        A2 = 0.0;
+        break;
     }
 
     a0 = B0 / A0;
@@ -205,6 +213,14 @@ std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A0 = (d + 1.0) - (d - 1.0) * cs + beta;
         A1 = 2.0 * ((d - 1.0) - (d + 1.0) * cs);
         A2 = (d + 1.0) - (d - 1.0) * cs - beta;
+        break;
+    case UNITY_GAIN:
+        B0 = d;
+        B1 = 0.0;
+        B2 = 0.0;
+        A0 = 1.0;
+        A1 = 0.0;
+        A2 = 0.0;
         break;
     }
 

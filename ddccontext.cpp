@@ -115,7 +115,7 @@ std::list<double> DDCContext::ExportCoeffs(double dSamplingRate)
     return numArray;
 }
 
-std::vector<float> DDCContext::GetResponseTable(int nBandCount, double dSRate)
+std::vector<float> DDCContext::GetMagnitudeResponseTable(int nBandCount, double dSRate)
 {
     std::vector<float> vector;
     if (nBandCount <= 0)

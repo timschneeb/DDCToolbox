@@ -475,7 +475,7 @@ void MainWindow::drawGraph(graphtype t){
     if (ui->listView_DDCPoints->rowCount() <= 0)
         return;
     const int bandCount = 8192;
-    std::vector<float> responseTable = g_dcDDCContext->GetResponseTable(bandCount, 44100.0);
+    std::vector<float> responseTable = g_dcDDCContext->GetMagnitudeResponseTable(bandCount, 44100.0);
     std::vector<float> gdelayTable = g_dcDDCContext->GetGroupDelayTable(bandCount, 44100.0);
     if(t == graphtype::magnitude || t == graphtype::all)Graph::drawMagnitudeResponse(ui->graph,responseTable,bandCount);
     if(t == graphtype::groupdelay || t == graphtype::all)Graph::drawGroupDelayGraph(ui->gdelay_graph,gdelayTable,bandCount);
@@ -544,7 +544,7 @@ void MainWindow::exportCompatVDCProj(){
 void MainWindow::importVDC(){
     int i;
     QString fileName = QFileDialog::getOpenFileName(this,
-                                                    "Open VDC", "", "VDC file (*.vdc)");
+                                                    "Open classic VDC", "", "Viper VDC file (*.vdc)");
     if (fileName != "" && fileName != nullptr){
         clearPoint(false);
         setActiveFile("");

@@ -130,6 +130,11 @@
        <string>High Shelf</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>Unity Gain</string>
+      </property>
+     </item>
     </widget>
    </item>
    <item>
