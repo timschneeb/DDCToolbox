@@ -52,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->graph, SIGNAL(mouseMove(QMouseEvent*)), this,SLOT(showPointToolTip(QMouseEvent*)));
 
     ui->gdelay_graph->yAxis->setRange(QCPRange(-12, 12));
-    ui->gdelay_graph->yAxis->setLabel("Sample delay (ms)");
+    ui->gdelay_graph->yAxis->setLabel("Delay (Samples)");
     ui->gdelay_graph->xAxis->setRange(QCPRange(20, 24000));
     ui->gdelay_graph->xAxis->setScaleType(QCPAxis::stLogarithmic);
     ui->gdelay_graph->xAxis->setLabel("Frequency (Hz)");

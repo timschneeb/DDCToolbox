@@ -92,7 +92,6 @@ void EditCommand::undo()
     *lockActions = true;
 
     if(row < tw->rowCount()){
-        qDebug() << row << ", FREQ:" << oldcal.freq << ", TYPE:" << oldcal.type << ",UNDO_EDIT";
         tw->item(row,0)->setData(Qt::DisplayRole,typeToString(oldcal.type));
         tw->item(row,1)->setData(Qt::DisplayRole,oldcal.freq);
         tw->item(row,2)->setData(Qt::DisplayRole,(double)oldcal.bw);
