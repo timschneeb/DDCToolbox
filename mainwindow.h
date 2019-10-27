@@ -38,7 +38,7 @@ enum datatype{
 };
 
 static const QString DEFS_URL = "http://nightly.thebone.cf/updater/ddctoolbox.json";
-static const QString VERSION = "1.2.8";
+static const QString VERSION = "1.3.0";
 
 class MainWindow : public QMainWindow
 {
