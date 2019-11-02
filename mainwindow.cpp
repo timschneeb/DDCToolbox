@@ -39,6 +39,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->listView_DDCPoints->setItemDelegate(new SaveItemDelegate());
     ui->listView_DDCPoints->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    connect(
+     ui->listView_DDCPoints->selectionModel(),
+     SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+     this,
+     SLOT(drawGraph())
+    );
 
     ui->graph->yAxis->setRange(QCPRange(-24, 24));
     ui->graph->yAxis->setLabel("Gain (dB)");

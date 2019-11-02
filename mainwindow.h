@@ -51,13 +51,13 @@ public:
         all
     };
     explicit MainWindow(QWidget *parent = nullptr);
-    void drawGraph(graphtype = graphtype::all);
     void setActiveFile(QString,bool=false);
     QString currentFile = "";
     ~MainWindow();
 
 public slots:
     void checkForUpdates();
+    void drawGraph(graphtype = graphtype::all);
 
 private slots:
     void saveAsDDCProject(bool=true,QString="",bool compatibilitymode=false);
@@ -99,6 +99,7 @@ private:
     QUndoView *undoView;
     QSimpleUpdater* m_updater;
     bool markerPointsVisible = false;
+    QCPDataSelection* magnitudeSelection;
 
     biquad::Type getType(int row);
     double getValue(datatype dat,int row);

@@ -496,7 +496,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Toggle marker points</string>
+    <string>Show all marker points</string>
    </property>
   </action>
  </widget>
