@@ -474,14 +474,21 @@ void MainWindow::drawGraph(graphtype t){
 
     if (ui->listView_DDCPoints->rowCount() <= 0)
         return;
-    const int bandCount = 8192;
+    const int bandCount = 8192 * 2;
     std::vector<float> responseTable = g_dcDDCContext->GetMagnitudeResponseTable(bandCount, 44100.0);
     std::vector<float> gdelayTable = g_dcDDCContext->GetGroupDelayTable(bandCount, 44100.0);
-    if(t == graphtype::magnitude || t == graphtype::all)Graph::drawMagnitudeResponse(ui->graph,responseTable,bandCount);
-    if(t == graphtype::groupdelay || t == graphtype::all)Graph::drawGroupDelayGraph(ui->gdelay_graph,gdelayTable,bandCount);
+    if(t == graphtype::magnitude || t == graphtype::all)Graph::drawMagnitudeResponse(ui->graph,responseTable,bandCount,
+                                                                                     ui->listView_DDCPoints,markerPointsVisible);
+    if(t == graphtype::groupdelay || t == graphtype::all)Graph::drawGroupDelayGraph(ui->gdelay_graph,gdelayTable,bandCount,
+                                                                                    ui->listView_DDCPoints,markerPointsVisible);
 }
 void MainWindow::toggleGraph(bool state){
     ui->graphBox->setVisible(!state);
+}
+void MainWindow::hidePoints(bool state){
+    //True: shown, False: hidden
+    markerPointsVisible = state;
+    drawGraph();
 }
 void MainWindow::ScreenshotGraph(){
     QString fileName = QFileDialog::getSaveFileName(this,

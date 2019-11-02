@@ -88,6 +88,7 @@ private slots:
     void drawGroupDelayMenu(const QPoint &);
     void drawMagnitudeMenu(const QPoint &);
     void setupMenus();
+    void hidePoints(bool state);
 
 private:
     Ui::MainWindow *ui;
@@ -97,6 +98,7 @@ private:
     QUndoStack *undoStack;
     QUndoView *undoView;
     QSimpleUpdater* m_updater;
+    bool markerPointsVisible = false;
 
     biquad::Type getType(int row);
     double getValue(datatype dat,int row);

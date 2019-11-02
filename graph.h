@@ -2,12 +2,15 @@
 #define GRAPH_H
 #include <QObject>
 #include <cmath>
+#include <QTableWidget>
+#include "ddccontext.h"
+#include "filtertypes.h"
 #include "qcustomplot.h"
 
 class Graph
 {
 public:
-    static void drawMagnitudeResponse(QCustomPlot* graph,std::vector<float> table,int bandCount=8192){
+    static void drawMagnitudeResponse(QCustomPlot* graph,std::vector<float> table,int bandCount,QTableWidget* tb,bool pointsVisible){
         if (table.size()<=0)
             return;
 
@@ -25,15 +28,38 @@ public:
         QCPGraph *plot = graph->addGraph();
         plot->setAdaptiveSampling(false);
 
+        QCPGraph *points = graph->addGraph();
+        points->setAdaptiveSampling(false);
+        points->removeFromLegend();
+        points->setLineStyle(QCPGraph::lsNone);
+        points->setScatterStyle(QCPScatterStyle::ssDot);
+        points->setPen(QPen(QBrush(Qt::red),3));
+
         for (size_t m = 0; m < (size_t)bandCount; m++)
         {
             double num3 = (44100.0 / 2.0) / ((double) bandCount);
             plot->addData(num3 * (m + 1.0),(double)table.at(m));
             graph->xAxis->setRange(QCPRange(20, num3 * (m + 1.0)));
         }
+
+        if(pointsVisible){
+            QCPItemTracer *tracer = new QCPItemTracer(graph);
+            tracer->setGraph(plot);
+            tracer->setStyle(QCPItemTracer::TracerStyle::tsNone);
+
+            for (int i = 0; i < tb->rowCount(); i++) {
+                if(stringToType(tb->item(i,0)->text()) == biquad::UNITY_GAIN)
+                    continue;
+
+                int freq = tb->item(i,1)->data(Qt::DisplayRole).toInt();
+                tracer->setGraphKey(freq);
+                tracer->updatePosition();
+                points->addData(freq,tracer->position->value());
+            }
+        }
         graph->replot();
     }
-    static void drawGroupDelayGraph(QCustomPlot* graph,std::vector<float> table,int bandCount=8192){
+    static void drawGroupDelayGraph(QCustomPlot* graph,std::vector<float> table,int bandCount,QTableWidget* tb,bool pointsVisible){
         if (table.size()<=0)
             return;
 
@@ -59,6 +85,37 @@ public:
             plot_gd->addData(num3 * (m + 1.0),(double)table.at(m));
             graph->xAxis->setRange(QCPRange(20, num3 * (m + 1.0)));
         }
+
+        QCPGraph *points = graph->addGraph();
+        points->setAdaptiveSampling(false);
+        points->removeFromLegend();
+        points->setLineStyle(QCPGraph::lsNone);
+        points->setScatterStyle(QCPScatterStyle::ssDot);
+        points->setPen(QPen(QBrush(Qt::red),3));
+
+        for (size_t m = 0; m < (size_t)bandCount; m++)
+        {
+            double num3 = (44100.0 / 2.0) / ((double) bandCount);
+            plot_gd->addData(num3 * (m + 1.0),(double)table.at(m));
+            graph->xAxis->setRange(QCPRange(20, num3 * (m + 1.0)));
+        }
+
+        if(pointsVisible){
+            QCPItemTracer *tracer = new QCPItemTracer(graph);
+            tracer->setGraph(plot_gd);
+            tracer->setStyle(QCPItemTracer::TracerStyle::tsNone);
+
+            for (int i = 0; i < tb->rowCount(); i++) {
+                if(stringToType(tb->item(i,0)->text()) == biquad::UNITY_GAIN)
+                    continue;
+
+                int freq = tb->item(i,1)->data(Qt::DisplayRole).toInt();
+                tracer->setGraphKey(freq);
+                tracer->updatePosition();
+                points->addData(freq,tracer->position->value());
+            }
+        }
+
         graph->replot();
     }
 };
