@@ -47,10 +47,10 @@ MainWindow::MainWindow(QWidget *parent) :
     );
 
     ui->graph->yAxis->setRange(QCPRange(-24, 24));
-    ui->graph->yAxis->setLabel("Gain (dB)");
+    ui->graph->yAxis->setLabel(tr("Gain (dB)"));
     ui->graph->xAxis->setRange(QCPRange(20, 24000));
     ui->graph->xAxis->setScaleType(QCPAxis::stLogarithmic);
-    ui->graph->xAxis->setLabel("Frequency (Hz)");
+    ui->graph->xAxis->setLabel(tr("Frequency (Hz)"));
     QSharedPointer<QCPAxisTickerLog> logTicker(new QCPAxisTickerLog);
     ui->graph->xAxis->setTicker(logTicker);
     ui->graph->xAxis->setScaleType(QCPAxis::stLogarithmic);
@@ -58,16 +58,17 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->graph, SIGNAL(mouseMove(QMouseEvent*)), this,SLOT(showPointToolTip(QMouseEvent*)));
 
     ui->gdelay_graph->yAxis->setRange(QCPRange(-12, 12));
-    ui->gdelay_graph->yAxis->setLabel("Delay (Samples)");
+    ui->gdelay_graph->yAxis->setLabel(tr("Delay (Samples)"));
     ui->gdelay_graph->xAxis->setRange(QCPRange(20, 24000));
     ui->gdelay_graph->xAxis->setScaleType(QCPAxis::stLogarithmic);
-    ui->gdelay_graph->xAxis->setLabel("Frequency (Hz)");
+    ui->gdelay_graph->xAxis->setLabel(tr("Frequency (Hz)"));
     QSharedPointer<QCPAxisTickerLog> logTickerGD(new QCPAxisTickerLog);
     ui->gdelay_graph->xAxis->setTicker(logTickerGD);
     ui->gdelay_graph->xAxis->setScaleType(QCPAxis::stLogarithmic);
     ui->gdelay_graph->rescaleAxes();
     connect(ui->gdelay_graph, SIGNAL(mouseMove(QMouseEvent*)), this,SLOT(showPointToolTip(QMouseEvent*)));
 
+    createLanguageMenu();
     setupMenus();
 }
 
@@ -88,8 +89,8 @@ void MainWindow::saveAsDDCProject(bool ask,QString path,bool compatibilitymode)
 {
     QString n("\n");
     QString fileName = path;
-    QString dialogtitle = "Save VDC Project File";
-    if(compatibilitymode) dialogtitle.append(" (Compatibility Mode)");
+    QString dialogtitle = tr("Save VDC Project File");
+    if(compatibilitymode) dialogtitle.append(" " + tr("(Compatibility Mode)"));
     if(ask)fileName = QFileDialog::getSaveFileName(this,dialogtitle, "", "ViPER DDC Project (*.vdcprj)");
     if (fileName != "" && fileName != nullptr)
     {
@@ -117,14 +118,14 @@ void MainWindow::saveAsDDCProject(bool ask,QString path,bool compatibilitymode)
 void MainWindow::loadDDCProject()
 {
     QString fileName = QFileDialog::getOpenFileName(this,
-                                                    "Open VDC Project File", "", "ViPER DDC Project (*.vdcprj)");
+                                                    tr("Open VDC Project File"), "", tr("ViPER DDC Project (*.vdcprj)"));
     if (fileName != "" && fileName != nullptr){
         mtx.lock();
         try
         {
             QFile file(fileName);
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-                QMessageBox::warning(this,"Error","Cannot open file for reading");
+                QMessageBox::warning(this,tr("Error"),tr("Cannot open file for reading"));
                 return;
             }
             QTextStream in(&file);
@@ -263,7 +264,7 @@ void MainWindow::invertSelection(){
         undoStack->push(invertCommand);
     }
     else
-        QMessageBox::information(this,"Invert selection","No rows selected");
+        QMessageBox::information(this,tr("Invert selection"),tr("No rows selected"));
 }
 void MainWindow::shiftSelection(){
     if (ui->listView_DDCPoints->currentRow() >= 0 && ui->listView_DDCPoints->selectedItems().count() >= 1)
@@ -295,7 +296,7 @@ void MainWindow::shiftSelection(){
         }
     }
     else
-        QMessageBox::information(this,"Shift selection","No rows selected");
+        QMessageBox::information(this,tr("Shift selection"),tr("No rows selected"));
 }
 void MainWindow::clearPoint(bool trackundo){
     if(trackundo){
@@ -320,7 +321,7 @@ void MainWindow::clearPoint(bool trackundo){
         ui->listView_DDCPoints->clear();
         ui->listView_DDCPoints->setRowCount(0);
         ui->listView_DDCPoints->reset();
-        ui->listView_DDCPoints->setHorizontalHeaderLabels(QStringList() << "Type" << "Frequency" << "Bandwidth/S" << "Gain");
+        ui->listView_DDCPoints->setHorizontalHeaderLabels(QStringList() << tr("Type") << tr("Frequency") << tr("Bandwidth/S") << tr("Gain"));
 
         drawGraph();
         lock_actions = false;
@@ -336,7 +337,6 @@ void MainWindow::editCell(QTableWidgetItem* item){
     double calibrationPointGain = 0.0;
 
     if(ui->listView_DDCPoints->rowCount() <= 0){
-        qDebug() << "No data to edit!";
         return;
     }
 
@@ -351,12 +351,12 @@ void MainWindow::editCell(QTableWidgetItem* item){
         //Validate frequency value
         if(result < 0){
             ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,0);
-            QMessageBox::warning(this,"Warning","Frequency value '" + QString::number(result) + "' is too low (0.0 ~ 24000.0)");
+            QMessageBox::warning(this,tr("Warning"),tr("Frequency value '%1' is too low (0.0 ~ 24000.0)").arg(result));
             result = 0;
         }
         else if(result > 24000){
             ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,24000);
-            QMessageBox::warning(this,"Warning","Frequency value '" + QString::number(result) + "' is too high (0.0 ~ 24000.0)");
+            QMessageBox::warning(this,tr("Warning"),tr("Frequency value '%1' is too high (0.0 ~ 24000.0)"));
             result = 24000;
         }
 
@@ -375,12 +375,12 @@ void MainWindow::editCell(QTableWidgetItem* item){
         //Validate gain value
         else if(calibrationPointGain < -40){
             ui->listView_DDCPoints->item(row,3)->setData(Qt::DisplayRole,(double)-40);
-            QMessageBox::warning(this,"Warning","Gain value '" + QString::number(calibrationPointGain) + "' is too low (-40.0 ~ 40.0)");
+            QMessageBox::warning(this,tr("Warning"),tr("Gain value '%1' is too low (-40.0 ~ 40.0)").arg(calibrationPointGain));
             calibrationPointGain = -40;
         }
         else if(calibrationPointGain > 40){
             ui->listView_DDCPoints->item(row,3)->setData(Qt::DisplayRole,(double)40);
-            QMessageBox::warning(this,"Warning","Gain value '" + QString::number(calibrationPointGain) + "' is too high (-40.0 ~ 40.0)");
+            QMessageBox::warning(this,tr("Warning"),tr("Gain value '%1' is too high (-40.0 ~ 40.0)").arg(calibrationPointGain));
             calibrationPointGain = 40;
         }
 
@@ -390,7 +390,7 @@ void MainWindow::editCell(QTableWidgetItem* item){
             if ((int)getValue(datatype::freq,i) == (int)getValue(datatype::freq,row) && row != i)
             {
                 ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,Global::old_freq);
-                QMessageBox::warning(this,"Error","Point '" + QString::number((int)getValue(datatype::freq,i)) + "' already exists");
+                QMessageBox::warning(this,tr("Error"),tr("Point '%1' already exists").arg((int)getValue(datatype::freq,i)));
                 return;
             }
         }
@@ -412,7 +412,7 @@ void MainWindow::editCell(QTableWidgetItem* item){
 
         drawGraph();
     }
-    else qDebug() << "Invalid input data";
+    //else qDebug() << "Invalid input data";
 }
 void MainWindow::addPoint(){
     addpoint *dlg = new addpoint;
@@ -430,7 +430,7 @@ void MainWindow::addPoint(){
         {
             if ((int)getValue(datatype::freq,i) == cal.freq)
             {
-                QMessageBox::warning(this,"Error","Point already exists");
+                QMessageBox::warning(this,tr("Error"),tr("Point already exists"));
                 return;
             }
         }
@@ -498,7 +498,7 @@ void MainWindow::hidePoints(bool state){
 }
 void MainWindow::ScreenshotGraph(){
     QString fileName = QFileDialog::getSaveFileName(this,
-                                                    "Save Screenshot", "", "PNG screenshot (*.png)");
+                                                    tr("Save Screenshot"), "", tr("PNG screenshot (*.png)"));
     if (fileName != "" && fileName != nullptr){
         QFileInfo fi(fileName);
         QString ext = fi.suffix();
@@ -508,33 +508,27 @@ void MainWindow::ScreenshotGraph(){
 }
 //---Dialogs
 void MainWindow::showIntroduction(){
-    QString data = "Unable to open HTML file";
+    QString data = tr("Unable to open HTML file");
     QFile file(":/html/introduction.html");
-    if(!file.open(QIODevice::ReadOnly))
-        qDebug()<<"Unable to open HTML file. Line: " << __LINE__;
-    else
+    if(file.open(QIODevice::ReadOnly))
         data = file.readAll();
     file.close();
     TextPopup *t = new TextPopup(data);
     t->show();
 }
 void MainWindow::showHelp(){
-    QString data = "Unable to open HTML file";
+    QString data = tr("Unable to open HTML file");
     QFile file(":/html/help.html");
-    if(!file.open(QIODevice::ReadOnly))
-        qDebug()<<"Unable to open HTML file. Line: " << __LINE__;
-    else
+    if(file.open(QIODevice::ReadOnly))
         data = file.readAll();
     file.close();
     TextPopup *t = new TextPopup(data);
     t->show();
 }
 void MainWindow::showKeycombos(){
-    QString data = "Unable to open HTML file";
+    QString data = tr("Unable to open HTML file");
     QFile file(":/html/keycombos.html");
-    if(!file.open(QIODevice::ReadOnly))
-        qDebug()<<"Unable to open HTML file. Line: " << __LINE__;
-    else
+    if(file.open(QIODevice::ReadOnly))
         data = file.readAll();
     file.close();
     TextPopup *t = new TextPopup(data);
@@ -557,7 +551,7 @@ void MainWindow::exportCompatVDCProj(){
 void MainWindow::importVDC(){
     int i;
     QString fileName = QFileDialog::getOpenFileName(this,
-                                                    "Open classic VDC", "", "Viper VDC file (*.vdc)");
+                                                    tr("Open classic VDC"), "", tr("Viper VDC file (*.vdc)"));
     if (fileName != "" && fileName != nullptr){
         clearPoint(false);
         setActiveFile("");
@@ -568,7 +562,7 @@ void MainWindow::importVDC(){
         QString str;
         QFile file(fileName);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-            QMessageBox::warning(this,"Error","Cannot open file for reading");
+            QMessageBox::warning(this,tr("Error"),tr("Cannot open file for reading"));
             return;
         }
         QTextStream in(&file);
@@ -607,11 +601,11 @@ void MainWindow::exportVDC()
 
     if (p1.empty() || p2.empty())
     {
-        QMessageBox::warning(this,"Error","Failed to export to VDC");
+        QMessageBox::warning(this,tr("Error"),tr("Failed to export to VDC"));
         return;
     }
     QString fileName = QFileDialog::getSaveFileName(this,
-                                                    "Save VDC", "", "VDC File (*.vdc)");
+                                                    tr("Save VDC"), "", tr("VDC File (*.vdc)"));
     if (fileName != "" && fileName != nullptr)
     {
         QFileInfo fi(fileName);
@@ -624,7 +618,7 @@ void MainWindow::exportVDC()
             caFile.open(QIODevice::WriteOnly | QIODevice::Text);
 
             if(!caFile.isOpen()){
-                qDebug() << "- Error, unable to open" << "outputFilename" << "for output";
+                //qDebug() << "- Error, unable to open" << "outputFilename" << "for output";
             }
             QTextStream outStream(&caFile);
             outStream << "SR_44100:";
@@ -666,7 +660,7 @@ void MainWindow::exportVDC()
 }
 void MainWindow::importParametricAutoEQ(){
     QString fileName = QFileDialog::getOpenFileName(this,
-                                                    "Import AutoEQ config 'ParametricEQ.txt'", "", "AutoEQ ParametricEQ.txt (*ParametricEQ.txt);;All files (*.*)");
+                                                   tr("Import AutoEQ config 'ParametricEQ.txt'"), "",tr( "AutoEQ ParametricEQ.txt (*ParametricEQ.txt);;All files (*.*)"));
     if (fileName != "" && fileName != nullptr){
         ui->listView_DDCPoints->clear();
         clearPoint(false);
@@ -675,7 +669,7 @@ void MainWindow::importParametricAutoEQ(){
 
         std::vector<calibrationPoint_t> points = parseParametricEQ(fileName);
         if(points.size() < 1){
-            QMessageBox::warning(this,"Error","Unable to convert this file; no data found: " + fileName);
+            QMessageBox::warning(this,tr("Error"),tr("Unable to convert this file; no data found: %1").arg(fileName));
             return;
         }
 
@@ -709,7 +703,7 @@ bool MainWindow::writeProjectFile(std::vector<calibrationPoint_t> points,QString
     caFile.open(QIODevice::WriteOnly | QIODevice::Text);
 
     if(!caFile.isOpen()){
-        qDebug() << "Error, unable to open" << "outputFilename" << "for output";
+        //qDebug() << "Error, unable to open" << "outputFilename" << "for output";
         return false;
     }
 
@@ -801,11 +795,11 @@ std::vector<calibrationPoint_t> MainWindow::parseParametricEQ(QString path){
 }
 //---Batch conversion
 void MainWindow::batch_vdc2vdcprj(){
-    QStringList filenames = QFileDialog::getOpenFileNames(this,"Select all VDC files to convert",QDir::currentPath(),tr("VDC files (*.vdc)") );
+    QStringList filenames = QFileDialog::getOpenFileNames(this,tr("Select all VDC files to convert"),QDir::currentPath(),tr("VDC files (*.vdc)") );
     if( !filenames.isEmpty() )
     {
-        QMessageBox::information(this,"Note",QString::number((int)filenames.count()) +
-                                 " files will be converted.\nYou will now be prompted to select an output directory.");
+        QMessageBox::information(this,tr("Note"),tr(
+                                 "%1 files will be converted.\nYou will now be prompted to select an output directory.").arg((int)filenames.count()));
         QString dir = QFileDialog::getExistingDirectory(this, tr("Select Output-Directory"),
                                                         "",
                                                         QFileDialog::ShowDirsOnly
@@ -818,7 +812,7 @@ void MainWindow::batch_vdc2vdcprj(){
             QString str;
             QFile file(filenames.at(l));
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-                QMessageBox::warning(this,"Error","Cannot open file " + filenames.at(l) + " for reading");
+                QMessageBox::warning(this,tr("Error"),tr("Cannot open file %1 for reading").arg(filenames.at(l)));
                 continue;
             }
             QTextStream in(&file);
@@ -847,15 +841,15 @@ void MainWindow::batch_vdc2vdcprj(){
             free(df441);
             free(df48);
         }
-        QMessageBox::information(this,"Note","Conversion finished!\nYou can find the files here:\n"+dir);
+        QMessageBox::information(this,tr("Note"),tr("Conversion finished!\nYou can find the files here:\n%1").arg(dir));
     }
 }
 void MainWindow::batch_parametric2vdcprj(){
-    QStringList filenames = QFileDialog::getOpenFileNames(this,"Select all AutoEQ ParametricEQ.txt files to convert",QDir::currentPath(),tr("AutoEQ ParametricEQ.txt (*ParametricEQ.txt);;All files (*.*)") );
+    QStringList filenames = QFileDialog::getOpenFileNames(this,tr("Select all AutoEQ ParametricEQ.txt files to convert"),QDir::currentPath(),tr("AutoEQ ParametricEQ.txt (*ParametricEQ.txt);;All files (*.*)") );
     if( !filenames.isEmpty() )
     {
-        QMessageBox::information(this,"Note",QString::number((int)filenames.count()) +
-                                 " files will be converted.\nYou will now be prompted to select an output directory.");
+        QMessageBox::information(this,"Note",tr(
+                                 "%1 files will be converted.\nYou will now be prompted to select an output directory.").arg(filenames.count()));
         QString dir = QFileDialog::getExistingDirectory(this, tr("Select Output-Directory"),
                                                         "",
                                                         QFileDialog::ShowDirsOnly
@@ -865,20 +859,20 @@ void MainWindow::batch_parametric2vdcprj(){
             int i = 0;
             std::vector<calibrationPoint_t> points = parseParametricEQ(filenames.at(l));
             if(points.size() < 1){
-                QMessageBox::warning(this,"Error","Unable to convert this file: " + filenames.at(l));
+                QMessageBox::warning(this,tr("Error"),tr("Unable to convert this file: %1").arg(filenames.at(l)));
                 return;
             }
             QFileInfo fi(filenames.at(l));
             if(!writeProjectFile(points,QDir(dir).filePath(fi.completeBaseName()+".vdcprj"),false))
-                QMessageBox::warning(this,"Error","Cannot write file at: " + QDir(dir).filePath(fi.completeBaseName()+".vdcprj"));
+                QMessageBox::warning(this,tr("Error"),tr("Cannot write file at: %1").arg(QDir(dir).filePath(fi.completeBaseName()+".vdcprj")));
         }
-        QMessageBox::information(this,"Note","Conversion finished!\nYou can find the files here:\n"+dir);
+        QMessageBox::information(this,tr("Note"),tr("Conversion finished!\nYou can find the files here:\n%1").arg(dir));
     }
 }
 //---Misc
 void MainWindow::drawGroupDelayMenu(const QPoint & pos){
     QMenu* menu = new QMenu(tr("Group Delay"), this);
-    QAction move("Enable move/drag", this);
+    QAction move(tr("Enable move/drag"), this);
     move.setCheckable(true);
     move.setChecked(ui->gdelay_graph->interactions() & (QCP::Interaction::iRangeDrag));
     connect(&move, &QAction::changed, this, [&move,this]() {
@@ -888,7 +882,7 @@ void MainWindow::drawGroupDelayMenu(const QPoint & pos){
         if(!val)
             this->drawGraph(graphtype::groupdelay);
     });
-    QAction reload("Reload", this);
+    QAction reload(tr("Reload"), this);
     connect(&reload, &QAction::triggered, this, [this](){this->drawGraph(graphtype::groupdelay);});
 
     menu->addAction(&move);
@@ -897,7 +891,7 @@ void MainWindow::drawGroupDelayMenu(const QPoint & pos){
 }
 void MainWindow::drawMagnitudeMenu(const QPoint & pos){
     QMenu* menu = new QMenu(tr("Magnitude Response"), this);
-    QAction move("Enable move/drag", this);
+    QAction move(tr("Enable move/drag"), this);
     move.setCheckable(true);
     move.setChecked(ui->graph->interactions() & (QCP::Interaction::iRangeDrag));
     connect(&move, &QAction::changed, this, [&move,this]() {
@@ -907,7 +901,7 @@ void MainWindow::drawMagnitudeMenu(const QPoint & pos){
         if(!val)
             this->drawGraph(graphtype::magnitude);
     });
-    QAction reload("Reload", this);
+    QAction reload(tr("Reload"), this);
     connect(&reload, &QAction::triggered, this, [this](){this->drawGraph(graphtype::magnitude);});
 
     menu->addAction(&move);
@@ -966,7 +960,7 @@ void MainWindow::setActiveFile(QString path,bool unsaved){
 }
 void MainWindow::closeProject(){
     QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "DDC Toolbox", "Are you sure? All unsaved changes will be lost.",
+    reply = QMessageBox::question(this, "DDC Toolbox", tr("Are you sure? All unsaved changes will be lost."),
                                   QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes) {
         setActiveFile("");
@@ -989,4 +983,109 @@ void MainWindow::checkForUpdates()
 
     /* Check for updates */
     m_updater->checkForUpdates (DEFS_URL);
+}
+//---Localization
+void MainWindow::createLanguageMenu(void)
+{
+    // format systems language
+    QString defaultLocale = QLocale::system().name(); // e.g. "de_DE"
+    defaultLocale.truncate(defaultLocale.lastIndexOf('_')); // e.g. "de"
+    QString m_langPath = ":/translations";
+    QDir dir(m_langPath);
+
+    // Create Language Menu to match qm translation files found
+    QActionGroup* langGroup = new QActionGroup(ui->actionLanguage);
+    langGroup->setExclusive(true);
+    connect(langGroup, SIGNAL (triggered(QAction *)), this, SLOT (slotLanguageChanged(QAction *)));
+
+    QMenu* submenu = ui->menuToold->addMenu(tr("Language"));
+
+    QStringList fileNames = dir.entryList(QStringList("ddctoolbox_*.qm"));
+    for (int i = 0; i < fileNames.size(); ++i) {
+        // get locale extracted by filename
+        QString locale;
+        locale = fileNames[i]; // "TranslationExample_de.qm"
+
+        locale.truncate(locale.lastIndexOf('.')); // "TranslationExample_de"
+        locale.remove(0, locale.indexOf('_') + 1); // "de"
+
+        QString lang = QLocale::languageToString(QLocale(locale).language());
+
+        QAction *action = new QAction(lang, this);
+        action->setCheckable(true);
+        // action->setData(resourceFileName);
+        action->setData(locale);
+
+        submenu->addAction(action);
+        langGroup->addAction(action);
+
+        // set default translators and language checked
+        if (defaultLocale == locale)
+        {
+            action->setChecked(true);
+        }
+    }
+}
+void MainWindow::slotLanguageChanged(QAction* action)
+{
+    if(0 == action) {
+        return;
+    }
+    loadLanguage(action->data().toString());
+}
+
+void MainWindow::loadLanguage(const QString& rLanguage)
+{
+    if(m_currLang == rLanguage) {
+        return;
+    }
+    m_currLang = rLanguage;
+
+    QLocale locale = QLocale(m_currLang);
+    QLocale::setDefault(locale);
+    QString languageName = QLocale::languageToString(locale.language());
+
+    // m_translator contains the app's translations
+    QString resourceFileName = QString("%1/ddctoolbox_%2.qm").arg(":/translations").arg(rLanguage);
+    switchTranslator(m_translator, resourceFileName);
+
+}
+
+void MainWindow::changeEvent(QEvent* event)
+{
+    if(0 != event) {
+        switch(event->type()) {
+        // this event is send if a translator is loaded
+        case QEvent::LanguageChange:
+            // UI will not update unless you call retranslateUi
+            ui->retranslateUi(this);
+            break;
+
+            // this event is send, if the system, language changes
+        case QEvent::LocaleChange:
+        {
+            QString locale = QLocale::system().name();
+            locale.truncate(locale.lastIndexOf('_'));
+            loadLanguage(locale);
+        }
+            break;
+        default:
+            break;
+        }
+    }
+    QMainWindow::changeEvent(event);
+}
+void MainWindow::switchTranslator(QTranslator& translator, const QString& filename)
+{
+    // remove the old translator
+    qApp->removeTranslator(&translator);
+
+    // load the new translator
+    bool result = translator.load(filename);
+
+    if(!result) {
+        qWarning("*** Failed translator.load(\"%s\")", filename.toLatin1().data());
+        return;
+    }
+    qApp->installTranslator(&translator);
 }

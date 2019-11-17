@@ -57,6 +57,10 @@ FORMS += \
         shiftfreq.ui \
         textpopup.ui
 
+TRANSLATIONS += \
+        translations/ddctoolbox_de.ts \
+        translations/ddctoolbox_en.ts
+
 include ($$PWD/3rdparty/QSimpleUpdater/QSimpleUpdater.pri)
 
 # Default rules for deployment.
@@ -66,3 +70,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resources.qrc
+
+DISTFILES += \
+    translations/ddctoolbox_de.ts \
+    translations/ddctoolbox_en.ts

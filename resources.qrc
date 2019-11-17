@@ -5,5 +5,7 @@
         <file>img/arrows.png</file>
         <file>img/icon.png</file>
         <file>html/help.html</file>
+        <file>translations/ddctoolbox_en.qm</file>
+        <file>translations/ddctoolbox_de.qm</file>
     </qresource>
 </RCC>

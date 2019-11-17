@@ -234,7 +234,7 @@
      <x>0</x>
      <y>0</y>
      <width>865</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -290,6 +290,7 @@
     </widget>
     <addaction name="menuBatch_Conversion_2"/>
     <addaction name="actionQ_BW_Calculator"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -497,6 +498,11 @@
    </property>
    <property name="text">
     <string>Show all marker points</string>
+   </property>
+  </action>
+  <action name="actionLanguage">
+   <property name="text">
+    <string>Language</string>
    </property>
   </action>
  </widget>

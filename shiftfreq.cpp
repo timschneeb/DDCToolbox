@@ -37,7 +37,7 @@ void shiftfreq::confirm(){
         int result = cal.freq + ui->shift->value();
         if(result<1||result>24000){
            ui->warning->setVisible(true);
-           QMessageBox::warning(this,"Shift frequencies","Invalid number");
+           QMessageBox::warning(this,tr("Shift frequencies"),tr("Invalid number"));
            return;
         }
         else accept();

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTranslator>
 #include <QTableWidgetItem>
 #include <QItemDelegate>
 #include <QStyledItemDelegate>
@@ -89,9 +90,17 @@ private slots:
     void drawMagnitudeMenu(const QPoint &);
     void setupMenus();
     void hidePoints(bool state);
+    void switchTranslator(QTranslator& translator, const QString& filename);
+protected:
+    void changeEvent(QEvent*);
+
+protected slots:
+    void slotLanguageChanged(QAction* action);
 
 private:
     Ui::MainWindow *ui;
+    QTranslator m_translator;
+    QString m_currLang;
     std::mutex mtx;
     DDCContext *g_dcDDCContext;
     bool lock_actions = false;
@@ -106,6 +115,8 @@ private:
     void insertData(biquad::Type type,int freq,double band,double gain);
     std::vector<calibrationPoint_t> parseParametricEQ(QString);
     bool writeProjectFile(std::vector<calibrationPoint_t> points,QString fileName,bool compatibilitymode);
+    void createLanguageMenu();
+    void loadLanguage(const QString& rLanguage);
 };
 class SaveItemDelegate : public QStyledItemDelegate {
 public:
@@ -254,6 +265,5 @@ public:
 
 
 };
-
 
 #endif // MAINWINDOW_H

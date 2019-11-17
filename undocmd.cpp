@@ -187,7 +187,7 @@ void ClearCommand::redo()
     tw->clear();
     tw->setRowCount(0);
     tw->reset();
-    tw->setHorizontalHeaderLabels(QStringList() << "Type" << "Frequency" << "Bandwidth/S" << "Gain");
+    tw->setHorizontalHeaderLabels(QStringList() << QObject::tr("Type") << QObject::tr("Frequency") << QObject::tr("Bandwidth/S") << QObject::tr("Gain"));
 
     host->drawGraph();
     *lockActions = false;
