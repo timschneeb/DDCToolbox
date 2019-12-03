@@ -1042,7 +1042,8 @@ void MainWindow::loadLanguage(const QString& rLanguage)
     m_currLang = rLanguage;
 
     QLocale locale = QLocale(m_currLang);
-    QLocale::setDefault(locale);
+    QLocale::setDefault(QLocale::c());
+
     QString languageName = QLocale::languageToString(locale.language());
 
     // m_translator contains the app's translations
