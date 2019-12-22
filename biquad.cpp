@@ -4,6 +4,9 @@
 #include <list>
 #include <cstdio>
 #include <QDebug>
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 biquad::biquad()
 {
@@ -275,9 +278,6 @@ bool biquad::IsStable() const{
     //Check if filter is stable/usable
     return m_isStable;
 }
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
 double biquad::GainAt(double centreFreq, double fs)
 {
     double Arg;
