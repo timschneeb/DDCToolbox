@@ -45,6 +45,12 @@ MainWindow::MainWindow(QWidget *parent) :
      this,
      SLOT(drawGraph())
     );
+    connect(
+     ui->listView_DDCPoints->selectionModel(),
+     SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+     this,
+     SLOT(drawGraph())
+    );
 
     ui->graph->yAxis->setRange(QCPRange(-24, 24));
     ui->graph->yAxis->setLabel(tr("Gain (dB)"));
@@ -150,6 +156,7 @@ void MainWindow::loadDDCProject()
         ui->listView_DDCPoints->sortItems(1,Qt::SortOrder::AscendingOrder);
 
         drawGraph();
+        emit loadFinished();
     }
 }
 void MainWindow::readLine_DDCProject(QString str){
@@ -506,6 +513,27 @@ void MainWindow::ScreenshotGraph(){
         ui->graph->saveJpg(fileName);
     }
 }
+void MainWindow::CheckStability(){
+    if(lock_actions)return;
+    int unstableCount = 0;
+    QString stringbuilder("");
+    for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++){
+        int freq = (int)getValue(datatype::freq,i);
+        QString filtertype = typeToString((biquad::Type)(int)getValue(datatype::type,i));
+        const biquad* filter = g_dcDDCContext->GetFilter(freq);
+        if(filter != nullptr){
+            if(!filter->IsStable()){
+                unstableCount++;
+                stringbuilder += QString(tr("%1 at %2Hz (row %3)\n")).arg(filtertype).arg(freq).arg(i+1);
+            }
+        }
+    }
+    if(unstableCount <= 0)
+        QMessageBox::information(this,tr("Stability check"),QString(tr("All filters appear to be stable.")));
+    else{
+        QMessageBox::warning(this,tr("Stability check"),QString(tr("One or more filters are unstable/unusable:\n\n%1\nPlease review these filter and run this check again.")).arg(stringbuilder));
+    }
+}
 //---Dialogs
 void MainWindow::showIntroduction(){
     QString data = tr("Unable to open HTML file");
@@ -591,6 +619,7 @@ void MainWindow::importVDC(){
         free(df48);
         mtx.unlock();
         drawGraph();
+        emit loadFinished();
     }
 }
 void MainWindow::exportVDC()
@@ -694,6 +723,7 @@ void MainWindow::importParametricAutoEQ(){
         }
         ui->listView_DDCPoints->sortItems(1,Qt::SortOrder::AscendingOrder);
         drawGraph();
+        emit loadFinished();
     }
 }
 //---Parser/Writer

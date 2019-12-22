@@ -13,6 +13,7 @@ public:
     void ModifyFilter(biquad::Type type,int nOldFreq, int nNewFreq, double dGain, double dBandwidth, double dSRate, bool isBWorS);
     void ClearFilters();
     void RemoveFilter(int nFreq);
+    const biquad* GetFilter(int nFreq);
     std::vector<float> GetMagnitudeResponseTable(int nBandCount, double dSRate);
     std::vector<float> GetGroupDelayTable(int nBandCount, double dSRate);
     std::list<double> ExportCoeffs(double dSamplingRate);

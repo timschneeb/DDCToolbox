@@ -62,14 +62,26 @@ void DDCContext::ModifyFilter(biquad::Type type,int nOldFreq, int nNewFreq, doub
 
 
         biquad *biquad = new class biquad();
-        biquad->RefreshFilter(type,dGain, (double) nNewFreq, dSRate, dBandwidth,isBWorS);
+       biquad->RefreshFilter(type,dGain, (double) nNewFreq, dSRate, dBandwidth,isBWorS);
         m_lstFilterBank[nNewFreq] = biquad;
     }
     UnlockFilter();
 }
 
-void DDCContext::RemoveFilter(int nFreq)
+const biquad* DDCContext::GetFilter(int nFreq)
 {
+    LockFilter();
+    biquad* result = nullptr;
+    if (m_lstFilterBank.count(nFreq) > 0)
+    {
+        std::map<int,biquad*>::iterator iter = m_lstFilterBank.find(nFreq) ;
+        if( iter != m_lstFilterBank.end() )
+            result = m_lstFilterBank[nFreq];
+    }
+    UnlockFilter();
+    return (biquad const*)result;
+}
+void DDCContext::RemoveFilter(int nFreq){
     LockFilter();
     if (m_lstFilterBank.count(nFreq) > 0)
     {
@@ -79,7 +91,6 @@ void DDCContext::RemoveFilter(int nFreq)
     }
     UnlockFilter();
 }
-
 std::list<double> DDCContext::ExportCoeffs(double dSamplingRate)
 {
     LockFilter();

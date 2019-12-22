@@ -91,11 +91,16 @@ private slots:
     void setupMenus();
     void hidePoints(bool state);
     void switchTranslator(QTranslator& translator, const QString& filename);
+    void CheckStability();
+
 protected:
     void changeEvent(QEvent*);
 
 protected slots:
     void slotLanguageChanged(QAction* action);
+
+signals:
+    void loadFinished();
 
 private:
     Ui::MainWindow *ui;

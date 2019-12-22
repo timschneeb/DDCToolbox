@@ -79,6 +79,9 @@
           <attribute name="horizontalHeaderStretchLastSection">
            <bool>false</bool>
           </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>true</bool>
+          </attribute>
           <column>
            <property name="text">
             <string>Type</string>
@@ -234,7 +237,7 @@
      <x>0</x>
      <y>0</y>
      <width>865</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -290,6 +293,8 @@
     </widget>
     <addaction name="menuBatch_Conversion_2"/>
     <addaction name="actionQ_BW_Calculator"/>
+    <addaction name="separator"/>
+    <addaction name="actionCheck_for_unstable_filters"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -503,6 +508,14 @@
   <action name="actionLanguage">
    <property name="text">
     <string>Language</string>
+   </property>
+  </action>
+  <action name="actionCheck_for_unstable_filters">
+   <property name="text">
+    <string>Check for unstable filters</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
    </property>
   </action>
  </widget>
@@ -919,6 +932,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionCheck_for_unstable_filters</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>CheckStability()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>432</x>
+     <y>206</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>clearPoint()</slot>
@@ -947,5 +976,6 @@
   <slot>exportCompatVDCProj()</slot>
   <slot>checkForUpdates()</slot>
   <slot>hidePoints(bool)</slot>
+  <slot>CheckStability()</slot>
  </slots>
 </ui>

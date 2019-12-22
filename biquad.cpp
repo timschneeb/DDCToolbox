@@ -2,6 +2,8 @@
 #include <cmath>
 #include <cfloat>
 #include <list>
+#include <cstdio>
+#include <QDebug>
 
 biquad::biquad()
 {
@@ -115,7 +117,19 @@ void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs
         break;
     }
 
-    a0 = B0 / A0;
+    //Check if filter is stable/usable
+    double res;
+    double d1 = pow(A1,2)-4*a0*A2;
+    double realpart = -A1 / (2*a0);
+    double ipart = sqrt(-d1)/(2*A1);
+    double magnitude = sqrt(pow(realpart,2)+pow(ipart,2));
+    double realroot1 = (-A1-sqrt(d1))/2*a0;
+
+    if(d1 < 0) res = magnitude;
+    else res = realroot1;
+
+    m_isStable = fabs(res)<1;
+
     internalBiquadCoeffs[0] = B1 / A0;
     internalBiquadCoeffs[1] = B2 / A0;
     internalBiquadCoeffs[2] = -A1 / A0;
@@ -222,7 +236,7 @@ std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A1 = 0.0;
         A2 = 0.0;
         break;
-    }
+    }   
 
     std::list<double> result;
     result.push_back(B0 / A0);
@@ -236,7 +250,10 @@ std::list<double> biquad::ExportCoeffs(double dSamplingRate)
 {
     return ExportCoeffs(m_dFilterType,m_dFilterGain,m_dFilterFreq,dSamplingRate,m_dFilterBQ,m_isBandwidthOrS);
 }
-
+bool biquad::IsStable() const{
+    //Check if filter is stable/usable
+    return m_isStable;
+}
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif

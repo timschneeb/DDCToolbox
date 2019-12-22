@@ -8,14 +8,14 @@ public:
     enum Type
     {
         LOW_PASS, HIGH_PASS, BAND_PASS, NOTCH, ALL_PASS, PEAKING, LOW_SHELF, HIGH_SHELF, UNITY_GAIN
-    };
+    }
     biquad();
     void RefreshFilter(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
     std::list<double> ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
     std::list<double> ExportCoeffs(double dSamplingRate);
     double GainAt(double centreFreq, double fs);
     double GroupDelayAt(double centreFreq, double fs);
-
+    bool IsStable() const;
 
 private:
     double internalBiquadCoeffs[4];
@@ -25,6 +25,7 @@ private:
     double m_dFilterGain;
     Type m_dFilterType;
     bool m_isBandwidthOrS;
+    bool m_isStable = true;
     inline void complexMultiplicationRI(double *zReal, double *zImag, double xReal, double xImag, double yReal, double yImag)
     {
         *zReal = xReal * yReal - xImag * yImag;
