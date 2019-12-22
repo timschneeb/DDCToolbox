@@ -115,6 +115,27 @@ void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs
         A1 = 0.0;
         A2 = 0.0;
         break;
+    case ONEPOLE_LOWPASS:
+        B1 = exp(-2.0 * M_PI * (centreFreq / fs));
+        A0 = 1.0 - B1;
+        B1 = -B1;
+        A1 = A2 = B2 = B0 = 0;
+        break;
+    case ONEPOLE_HIGHPASS:
+        B1 = -exp(-2.0 * M_PI * (0.5 - centreFreq / fs));
+        A0 = 1.0 + B1;
+        B1 = -B1;
+        A1 = A2 = B2 = B0 = 0;
+        break;
+    }
+
+    switch (type) {
+    case ONEPOLE_LOWPASS:
+    case ONEPOLE_HIGHPASS:
+        a0 = A0;
+        break;
+    default:
+        a0 = B0 / A0;
     }
 
     //Check if filter is stable/usable

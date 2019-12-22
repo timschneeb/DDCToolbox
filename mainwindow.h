@@ -135,6 +135,8 @@ public:
         else if(_type=="Low Shelf")return biquad::Type::LOW_SHELF;
         else if(_type=="High Shelf")return biquad::Type::HIGH_SHELF;
         else if(_type=="Unity Gain")return biquad::Type::UNITY_GAIN;
+        else if(_type=="One-Pole Low Pass")return biquad::Type::ONEPOLE_LOWPASS;
+        else if(_type=="One-Pole High Pass")return biquad::Type::ONEPOLE_HIGHPASS;
         return biquad::Type::PEAKING;
     }
     biquad::Type getType(const QModelIndex &index) const{
@@ -173,6 +175,8 @@ public:
             cb->addItem(QString("Low Shelf"));
             cb->addItem(QString("High Shelf"));
             cb->addItem(QString("Unity Gain"));
+            cb->addItem(QString("One-Pole Low Pass"));
+            cb->addItem(QString("One-Pole High Pass"));
             return cb;
         }
         else if (index.column()==2&&sp) {
@@ -183,6 +187,8 @@ public:
                 sp->setEnabled(true);
                 break;
             case biquad::UNITY_GAIN:
+            case biquad::ONEPOLE_LOWPASS:
+            case biquad::ONEPOLE_HIGHPASS:
                 sp->setPrefix("");
                 sp->setEnabled(false);
                 break;
@@ -226,6 +232,8 @@ public:
         else if (index.column()==2) {
                 switch (getType(currentType)) {
                 case biquad::UNITY_GAIN:
+                case biquad::ONEPOLE_LOWPASS:
+                case biquad::ONEPOLE_HIGHPASS:
                     //Leave item empty
                     return;
                 default:

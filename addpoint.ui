@@ -135,6 +135,16 @@
        <string>Unity Gain</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>One-Pole Low Pass</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>One-Pole High Pass</string>
+      </property>
+     </item>
     </widget>
    </item>
    <item>

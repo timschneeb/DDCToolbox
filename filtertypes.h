@@ -13,6 +13,8 @@ inline biquad::Type stringToType(QString _type){
     else if(_type=="Low Shelf")return biquad::Type::LOW_SHELF;
     else if(_type=="High Shelf")return biquad::Type::HIGH_SHELF;
     else if(_type=="Unity Gain")return biquad::Type::UNITY_GAIN;
+    else if(_type=="One-Pole Low Pass")return biquad::Type::ONEPOLE_LOWPASS;
+    else if(_type=="One-Pole High Pass")return biquad::Type::ONEPOLE_HIGHPASS;
     return biquad::Type::PEAKING;
 }
 inline QString typeToString(biquad::Type _type){
@@ -25,6 +27,8 @@ inline QString typeToString(biquad::Type _type){
     else if(_type==biquad::Type::LOW_SHELF)return "Low Shelf";
     else if(_type==biquad::Type::HIGH_SHELF)return "High Shelf";
     else if(_type==biquad::Type::UNITY_GAIN)return "Unity Gain";
+    else if(_type==biquad::Type::ONEPOLE_LOWPASS)return "One-Pole Low Pass";
+    else if(_type==biquad::Type::ONEPOLE_HIGHPASS)return "One-Pole High Pass";
     return "Peaking";
 }
 
