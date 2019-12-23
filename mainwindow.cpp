@@ -515,7 +515,7 @@ void MainWindow::CheckStability(){
     QString stringbuilder("");
     for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++){
         int freq = (int)getValue(datatype::freq,i);
-        QString filtertype = typeToString((biquad::Type)(int)getValue(datatype::type,i));
+        QString filtertype = typeToString(getType(i));
         const biquad* filter = g_dcDDCContext->GetFilter(freq);
         if(filter != nullptr){
             if(!filter->IsStable()){
