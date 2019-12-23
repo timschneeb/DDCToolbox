@@ -10,7 +10,7 @@
 template <typename Ty>
 inline bool is_nan (Ty v)
 {
-  return !(v == v);
+    return !(v == v);
 }
 
 biquad::biquad()
@@ -298,7 +298,7 @@ std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         B1 = -B1;
         A1 = A2 = B2 = B0 = 0;
         break;
-    }   
+    }
 
     std::list<double> result;
     result.push_back(B0 / A0);
@@ -349,23 +349,23 @@ double biquad::GainAt(double centreFreq, double fs)
 // Provided by: James34602
 double biquad::GroupDelayAt(double centreFreq, double fs)
 {
-	double Arg = M_PI * centreFreq / (fs * 0.5);
-	double cw = cos(Arg);
-	double cw2 = cos(2.0 * Arg);
-	double sw = sin(Arg);
-	double sw2 = sin(2.0 * Arg);
-	double b1 = a0, b2 = internalBiquadCoeffs[0], b3 = internalBiquadCoeffs[1];
-	double u = b1 * sw2 + b2 * sw;
-	double v = b1 * cw2 + b2 * cw + b3;
-	double du = 2.0 * b1*cw2 + b2 * cw;
-	double dv = -(2.0 * b1*sw2 + b2 * sw);
-	double u2v2 = (b1*b1) + (b2*b2) + (b3*b3) + 2.0 * (b1*b2 + b2 * b3)*cw + 2.0 * (b1*b3)*cw2;
-	double gdB = (2.0 - (v*du - u * dv) / u2v2);
-	b2 = -internalBiquadCoeffs[2], b3 = -internalBiquadCoeffs[3];
-	u = sw2 + b2 * sw;
-	v = cw2 + b2 * cw + b3;
-	du = 2.0 * cw2 + b2 * cw;
-	dv = -(2.0 * sw2 + b2 * sw);
-	u2v2 = 1.0 + (b2*b2) + (b3*b3) + 2.0 * (b2 + b2 * b3)*cw + 2.0 * b3*cw2;
-	return gdB - (2.0 - (v*du - u * dv) / u2v2);
+    double Arg = M_PI * centreFreq / (fs * 0.5);
+    double cw = cos(Arg);
+    double cw2 = cos(2.0 * Arg);
+    double sw = sin(Arg);
+    double sw2 = sin(2.0 * Arg);
+    double b1 = a0, b2 = internalBiquadCoeffs[0], b3 = internalBiquadCoeffs[1];
+    double u = b1 * sw2 + b2 * sw;
+    double v = b1 * cw2 + b2 * cw + b3;
+    double du = 2.0 * b1*cw2 + b2 * cw;
+    double dv = -(2.0 * b1*sw2 + b2 * sw);
+    double u2v2 = (b1*b1) + (b2*b2) + (b3*b3) + 2.0 * (b1*b2 + b2 * b3)*cw + 2.0 * (b1*b3)*cw2;
+    double gdB = (2.0 - (v*du - u * dv) / u2v2);
+    b2 = -internalBiquadCoeffs[2], b3 = -internalBiquadCoeffs[3];
+    u = sw2 + b2 * sw;
+    v = cw2 + b2 * cw + b3;
+    du = 2.0 * cw2 + b2 * cw;
+    dv = -(2.0 * sw2 + b2 * sw);
+    u2v2 = 1.0 + (b2*b2) + (b3*b3) + 2.0 * (b2 + b2 * b3)*cw + 2.0 * b3*cw2;
+    return gdB - (2.0 - (v*du - u * dv) / u2v2);
 }

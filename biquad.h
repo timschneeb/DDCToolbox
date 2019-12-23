@@ -7,7 +7,18 @@ class biquad
 public:
     enum Type
     {
-        LOW_PASS, HIGH_PASS, BAND_PASS1, BAND_PASS2, NOTCH, ALL_PASS, PEAKING, LOW_SHELF, HIGH_SHELF, UNITY_GAIN, ONEPOLE_HIGHPASS, ONEPOLE_LOWPASS
+        PEAKING = 0x00,
+        LOW_PASS,
+        HIGH_PASS,
+        BAND_PASS1,
+        BAND_PASS2,
+        NOTCH,
+        ALL_PASS,
+        LOW_SHELF,
+        HIGH_SHELF,
+        UNITY_GAIN,
+        ONEPOLE_LOWPASS,
+        ONEPOLE_HIGHPASS
     };
     biquad();
     void RefreshFilter(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
