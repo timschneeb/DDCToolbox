@@ -58,7 +58,7 @@ public:
 
 public slots:
     void checkForUpdates();
-    void drawGraph(graphtype = graphtype::all);
+    void drawGraph(graphtype = graphtype::all, bool onlyUpdatePoints = false);
 
 private slots:
     void saveAsDDCProject(bool=true,QString="",bool compatibilitymode=false);

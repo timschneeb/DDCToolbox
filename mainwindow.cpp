@@ -39,18 +39,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->listView_DDCPoints->setItemDelegate(new SaveItemDelegate());
     ui->listView_DDCPoints->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
     connect(
      ui->listView_DDCPoints->selectionModel(),
-     SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-     this,
-     SLOT(drawGraph())
-    );
-    connect(
-     ui->listView_DDCPoints->selectionModel(),
-     SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-     this,
-     SLOT(drawGraph())
-    );
+                static_cast<void (QItemSelectionModel::*)(const QItemSelection &, const QItemSelection &)>(&QItemSelectionModel::selectionChanged),
+                this,[=](){
+        if(lock_actions)return;
+        drawGraph(graphtype::all,true);
+    });
 
     ui->graph->yAxis->setRange(QCPRange(-24, 24));
     ui->graph->yAxis->setLabel(tr("Gain (dB)"));
@@ -473,13 +469,13 @@ void MainWindow::removePoint(){
     }
     lock_actions=false;
 }
-void MainWindow::drawGraph(graphtype t){
-    if(t == graphtype::magnitude || t == graphtype::all){
+void MainWindow::drawGraph(graphtype t, bool onlyUpdatePoints){
+    if((t == graphtype::magnitude || t == graphtype::all) && !onlyUpdatePoints){
         ui->graph->clearPlottables();
         ui->graph->clearItems();
         ui->graph->clearGraphs();
     }
-    if(t == graphtype::groupdelay || t == graphtype::all){
+    if((t == graphtype::groupdelay || t == graphtype::all) && !onlyUpdatePoints){
         ui->gdelay_graph->clearPlottables();
         ui->gdelay_graph->clearItems();
         ui->gdelay_graph->clearGraphs();
@@ -491,9 +487,9 @@ void MainWindow::drawGraph(graphtype t){
     std::vector<float> responseTable = g_dcDDCContext->GetMagnitudeResponseTable(bandCount, 44100.0);
     std::vector<float> gdelayTable = g_dcDDCContext->GetGroupDelayTable(bandCount, 44100.0);
     if(t == graphtype::magnitude || t == graphtype::all)Graph::drawMagnitudeResponse(ui->graph,responseTable,bandCount,
-                                                                                     ui->listView_DDCPoints,markerPointsVisible);
+                                                                                     ui->listView_DDCPoints,markerPointsVisible,onlyUpdatePoints);
     if(t == graphtype::groupdelay || t == graphtype::all)Graph::drawGroupDelayGraph(ui->gdelay_graph,gdelayTable,bandCount,
-                                                                                    ui->listView_DDCPoints,markerPointsVisible);
+                                                                                    ui->listView_DDCPoints,markerPointsVisible,onlyUpdatePoints);
 }
 void MainWindow::toggleGraph(bool state){
     ui->graphBox->setVisible(!state);

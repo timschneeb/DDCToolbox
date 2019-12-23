@@ -237,7 +237,7 @@
      <x>0</x>
      <y>0</y>
      <width>865</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -502,7 +502,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show all marker points</string>
+    <string>Show marker points</string>
    </property>
   </action>
   <action name="actionLanguage">
