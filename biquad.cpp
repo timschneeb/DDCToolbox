@@ -7,6 +7,11 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
+template <typename Ty>
+inline bool is_nan (Ty v)
+{
+  return !(v == v);
+}
 
 biquad::biquad()
 {
@@ -62,7 +67,17 @@ void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs
         A1 = -2.0 * cs;
         A2 = 1.0 - alpha;
         break;
-    case BAND_PASS:
+    case BAND_PASS1:
+        //BPF, constant skirt gain (peak gain = BW)
+        B0 = dBandwidthOrQOrS * alpha;// sn / 2;
+        B1 = 0;
+        B2 = -dBandwidthOrQOrS * alpha;//-sn / 2;
+        A0 = 1 + alpha;
+        A1 = -2 * cs;
+        A2 = 1 - alpha;
+        break;
+    case BAND_PASS2:
+        //BPF, constant 0dB peak gain
         B0 = alpha;
         B1 = 0.0;
         B2 = -alpha;
@@ -159,6 +174,7 @@ void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs
     internalBiquadCoeffs[2] = -A1 / A0;
     internalBiquadCoeffs[3] = -A2 / A0;
 }
+
 std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
 {
     if (centreFreq <= 2.2204460492503131e-016 || fs <= 2.2204460492503131e-016){
@@ -204,7 +220,17 @@ std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A1 = -2.0 * cs;
         A2 = 1.0 - alpha;
         break;
-    case BAND_PASS:
+    case BAND_PASS1:
+        //BPF, constant skirt gain (peak gain = BW)
+        B0 = dBandwidthOrQOrS * alpha;// sn / 2;
+        B1 = 0;
+        B2 = -dBandwidthOrQOrS * alpha;//-sn / 2;
+        A0 = 1 + alpha;
+        A1 = -2 * cs;
+        A2 = 1 - alpha;
+        break;
+    case BAND_PASS2:
+        //BPF, constant 0dB peak gain
         B0 = alpha;
         B1 = 0.0;
         B2 = -alpha;

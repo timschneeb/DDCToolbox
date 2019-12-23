@@ -112,6 +112,11 @@
      </item>
      <item>
       <property name="text">
+       <string>Band Pass (peak gain = bw)</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>Notch</string>
       </property>
      </item>
