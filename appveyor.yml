@@ -43,12 +43,3 @@ artifacts:
   - path: release
     name: ddctoolbox-win%bits%_%APPVEYOR_BUILD_VERSION%
     type: zip
-
-deploy:
-- provider: FTP
-  host: local.thebone.cf
-  protocol: sftp
-  username: pi
-  password:
-    secure: HM7M4NQaCulL3HMC/t6VHw==
-  folder: /disks/sandisk/www/nightly/ddctoolbox-win
