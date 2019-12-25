@@ -59,7 +59,7 @@ public:
 
 public slots:
     void checkForUpdates();
-    void drawGraph(graphtype = graphtype::all);
+    void drawGraph(graphtype = graphtype::all, bool onlyUpdatePoints = false);
 
 private slots:
     void saveAsDDCProject(bool=true,QString="",bool compatibilitymode=false);
@@ -131,7 +131,8 @@ public:
         if(_type=="Peaking")return biquad::Type::PEAKING;
         else if(_type=="Low Pass")return biquad::Type::LOW_PASS;
         else if(_type=="High Pass")return biquad::Type::HIGH_PASS;
-        else if(_type=="Band Pass")return biquad::Type::BAND_PASS;
+        else if(_type=="Band Pass")return biquad::Type::BAND_PASS2;
+        else if(_type=="Band Pass (peak gain = bw)")return biquad::Type::BAND_PASS1;
         else if(_type=="All Pass")return biquad::Type::ALL_PASS;
         else if(_type=="Notch")return biquad::Type::NOTCH;
         else if(_type=="Low Shelf")return biquad::Type::LOW_SHELF;
@@ -172,6 +173,7 @@ public:
             cb->addItem(QString("Low Pass"));
             cb->addItem(QString("High Pass"));
             cb->addItem(QString("Band Pass"));
+            cb->addItem(QString("Band Pass (peak gain = bw)"));
             cb->addItem(QString("Notch"));
             cb->addItem(QString("All Pass"));
             cb->addItem(QString("Low Shelf"));

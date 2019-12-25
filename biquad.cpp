@@ -8,6 +8,11 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
+template <typename Ty>
+inline bool is_nan (Ty v)
+{
+    return !(v == v);
+}
 
 biquad::biquad()
 {
@@ -64,7 +69,17 @@ void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs
         A1 = -2.0 * cs;
         A2 = 1.0 - alpha;
         break;
-    case BAND_PASS:
+    case BAND_PASS1:
+        //BPF, constant skirt gain (peak gain = BW)
+        B0 = dBandwidthOrQOrS * alpha;// sn / 2;
+        B1 = 0;
+        B2 = -dBandwidthOrQOrS * alpha;//-sn / 2;
+        A0 = 1 + alpha;
+        A1 = -2 * cs;
+        A2 = 1 - alpha;
+        break;
+    case BAND_PASS2:
+        //BPF, constant 0dB peak gain
         B0 = alpha;
         B1 = 0.0;
         B2 = -alpha;
@@ -162,6 +177,7 @@ void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs
     internalBiquadCoeffs[3] = -A2 / A0;
     internalBiquadCoeffs[4] = B0 / A0;
 }
+
 std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
 {
     if (centreFreq <= 2.2204460492503131e-016 || fs <= 2.2204460492503131e-016){
@@ -207,7 +223,17 @@ std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A1 = -2.0 * cs;
         A2 = 1.0 - alpha;
         break;
-    case BAND_PASS:
+    case BAND_PASS1:
+        //BPF, constant skirt gain (peak gain = BW)
+        B0 = dBandwidthOrQOrS * alpha;// sn / 2;
+        B1 = 0;
+        B2 = -dBandwidthOrQOrS * alpha;//-sn / 2;
+        A0 = 1 + alpha;
+        A1 = -2 * cs;
+        A2 = 1 - alpha;
+        break;
+    case BAND_PASS2:
+        //BPF, constant 0dB peak gain
         B0 = alpha;
         B1 = 0.0;
         B2 = -alpha;
@@ -263,7 +289,19 @@ std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A1 = 0.0;
         A2 = 0.0;
         break;
-    }   
+    case ONEPOLE_LOWPASS:
+        B1 = exp(-2.0 * M_PI * (centreFreq / fs));
+        A0 = 1.0 - B1;
+        B1 = -B1;
+        A1 = A2 = B2 = B0 = 0;
+        break;
+    case ONEPOLE_HIGHPASS:
+        B1 = -exp(-2.0 * M_PI * (0.5 - centreFreq / fs));
+        A0 = 1.0 + B1;
+        B1 = -B1;
+        A1 = A2 = B2 = B0 = 0;
+        break;
+    }
 
     std::list<double> result;
     result.push_back(B0 / A0);
@@ -349,23 +387,23 @@ double biquad::PhaseResponseAt(double centreFreq, double fs)
 // Provided by: James34602
 double biquad::GroupDelayAt(double centreFreq, double fs)
 {
-	double Arg = M_PI * centreFreq / (fs * 0.5);
-	double cw = cos(Arg);
-	double cw2 = cos(2.0 * Arg);
-	double sw = sin(Arg);
-	double sw2 = sin(2.0 * Arg);
-	double b1 = a0, b2 = internalBiquadCoeffs[0], b3 = internalBiquadCoeffs[1];
-	double u = b1 * sw2 + b2 * sw;
-	double v = b1 * cw2 + b2 * cw + b3;
-	double du = 2.0 * b1*cw2 + b2 * cw;
-	double dv = -(2.0 * b1*sw2 + b2 * sw);
-	double u2v2 = (b1*b1) + (b2*b2) + (b3*b3) + 2.0 * (b1*b2 + b2 * b3)*cw + 2.0 * (b1*b3)*cw2;
-	double gdB = (2.0 - (v*du - u * dv) / u2v2);
-	b2 = -internalBiquadCoeffs[2], b3 = -internalBiquadCoeffs[3];
-	u = sw2 + b2 * sw;
-	v = cw2 + b2 * cw + b3;
-	du = 2.0 * cw2 + b2 * cw;
-	dv = -(2.0 * sw2 + b2 * sw);
-	u2v2 = 1.0 + (b2*b2) + (b3*b3) + 2.0 * (b2 + b2 * b3)*cw + 2.0 * b3*cw2;
-	return gdB - (2.0 - (v*du - u * dv) / u2v2);
+    double Arg = M_PI * centreFreq / (fs * 0.5);
+    double cw = cos(Arg);
+    double cw2 = cos(2.0 * Arg);
+    double sw = sin(Arg);
+    double sw2 = sin(2.0 * Arg);
+    double b1 = a0, b2 = internalBiquadCoeffs[0], b3 = internalBiquadCoeffs[1];
+    double u = b1 * sw2 + b2 * sw;
+    double v = b1 * cw2 + b2 * cw + b3;
+    double du = 2.0 * b1*cw2 + b2 * cw;
+    double dv = -(2.0 * b1*sw2 + b2 * sw);
+    double u2v2 = (b1*b1) + (b2*b2) + (b3*b3) + 2.0 * (b1*b2 + b2 * b3)*cw + 2.0 * (b1*b3)*cw2;
+    double gdB = (2.0 - (v*du - u * dv) / u2v2);
+    b2 = -internalBiquadCoeffs[2], b3 = -internalBiquadCoeffs[3];
+    u = sw2 + b2 * sw;
+    v = cw2 + b2 * cw + b3;
+    du = 2.0 * cw2 + b2 * cw;
+    dv = -(2.0 * sw2 + b2 * sw);
+    u2v2 = 1.0 + (b2*b2) + (b3*b3) + 2.0 * (b2 + b2 * b3)*cw + 2.0 * b3*cw2;
+    return gdB - (2.0 - (v*du - u * dv) / u2v2);
 }

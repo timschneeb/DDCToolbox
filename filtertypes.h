@@ -7,7 +7,8 @@ inline biquad::Type stringToType(QString _type){
     if(_type=="Peaking")return biquad::Type::PEAKING;
     else if(_type=="Low Pass")return biquad::Type::LOW_PASS;
     else if(_type=="High Pass")return biquad::Type::HIGH_PASS;
-    else if(_type=="Band Pass")return biquad::Type::BAND_PASS;
+    else if(_type=="Band Pass")return biquad::Type::BAND_PASS2;
+    else if(_type=="Band Pass (peak gain = bw)")return biquad::Type::BAND_PASS1;
     else if(_type=="All Pass")return biquad::Type::ALL_PASS;
     else if(_type=="Notch")return biquad::Type::NOTCH;
     else if(_type=="Low Shelf")return biquad::Type::LOW_SHELF;
@@ -21,7 +22,8 @@ inline QString typeToString(biquad::Type _type){
     if(_type==biquad::Type::PEAKING)return "Peaking";
     else if(_type==biquad::Type::LOW_PASS)return "Low Pass";
     else if(_type==biquad::Type::HIGH_PASS)return "High Pass";
-    else if(_type==biquad::Type::BAND_PASS)return "Band Pass";
+    else if(_type==biquad::Type::BAND_PASS2)return "Band Pass";
+    else if(_type==biquad::Type::BAND_PASS1)return "Band Pass (peak gain = bw)";
     else if(_type==biquad::Type::ALL_PASS)return "All Pass";
     else if(_type==biquad::Type::NOTCH)return "Notch";
     else if(_type==biquad::Type::LOW_SHELF)return "Low Shelf";
