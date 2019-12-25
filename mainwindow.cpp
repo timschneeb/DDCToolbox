@@ -74,6 +74,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->gdelay_graph->rescaleAxes();
     connect(ui->gdelay_graph, SIGNAL(mouseMove(QMouseEvent*)), this,SLOT(showPointToolTip(QMouseEvent*)));
 
+    ui->phase_graph->yAxis->setRange(QCPRange(-24, 24));
+    ui->phase_graph->yAxis->setLabel(tr("Phase (deg)"));
+    ui->phase_graph->xAxis->setRange(QCPRange(20, 24000));
+    ui->phase_graph->xAxis->setScaleType(QCPAxis::stLogarithmic);
+    ui->phase_graph->xAxis->setLabel(tr("Frequency (Hz)"));
+    QSharedPointer<QCPAxisTickerLog> logTickerP(new QCPAxisTickerLog);
+    ui->phase_graph->xAxis->setTicker(logTickerP);
+    ui->phase_graph->xAxis->setScaleType(QCPAxis::stLogarithmic);
+    ui->phase_graph->rescaleAxes();
+    connect(ui->phase_graph, SIGNAL(mouseMove(QMouseEvent*)), this,SLOT(showPointToolTip(QMouseEvent*)));
+
+
     createLanguageMenu();
     setupMenus();
 }
@@ -484,14 +496,22 @@ void MainWindow::drawGraph(graphtype t){
         ui->gdelay_graph->clearItems();
         ui->gdelay_graph->clearGraphs();
     }
+    if(t == graphtype::phase || t == graphtype::all){
+        ui->phase_graph->clearPlottables();
+        ui->phase_graph->clearItems();
+        ui->phase_graph->clearGraphs();
+    }
 
     if (ui->listView_DDCPoints->rowCount() <= 0)
         return;
     const int bandCount = 8192 * 2;
     std::vector<float> responseTable = g_dcDDCContext->GetMagnitudeResponseTable(bandCount, 44100.0);
+    std::vector<float> phaseTable = g_dcDDCContext->GetPhaseResponseTable(bandCount, 44100.0);
     std::vector<float> gdelayTable = g_dcDDCContext->GetGroupDelayTable(bandCount, 44100.0);
     if(t == graphtype::magnitude || t == graphtype::all)Graph::drawMagnitudeResponse(ui->graph,responseTable,bandCount,
                                                                                      ui->listView_DDCPoints,markerPointsVisible);
+    if(t == graphtype::phase || t == graphtype::all)Graph::drawPhaseResponseGraph(ui->phase_graph,phaseTable,bandCount,
+                                                                                    ui->listView_DDCPoints,markerPointsVisible);
     if(t == graphtype::groupdelay || t == graphtype::all)Graph::drawGroupDelayGraph(ui->gdelay_graph,gdelayTable,bandCount,
                                                                                     ui->listView_DDCPoints,markerPointsVisible);
 }
@@ -902,7 +922,7 @@ void MainWindow::batch_parametric2vdcprj(){
 //---Misc
 void MainWindow::drawGroupDelayMenu(const QPoint & pos){
     QMenu* menu = new QMenu(tr("Group Delay"), this);
-    QAction move(tr("Enable move/drag"), this);
+    QAction move(tr("Enable zoom/drag"), this);
     move.setCheckable(true);
     move.setChecked(ui->gdelay_graph->interactions() & (QCP::Interaction::iRangeDrag));
     connect(&move, &QAction::changed, this, [&move,this]() {
@@ -921,7 +941,7 @@ void MainWindow::drawGroupDelayMenu(const QPoint & pos){
 }
 void MainWindow::drawMagnitudeMenu(const QPoint & pos){
     QMenu* menu = new QMenu(tr("Magnitude Response"), this);
-    QAction move(tr("Enable move/drag"), this);
+    QAction move(tr("Enable zoom/drag"), this);
     move.setCheckable(true);
     move.setChecked(ui->graph->interactions() & (QCP::Interaction::iRangeDrag));
     connect(&move, &QAction::changed, this, [&move,this]() {
@@ -938,6 +958,25 @@ void MainWindow::drawMagnitudeMenu(const QPoint & pos){
     menu->addAction(&reload);
     menu->exec(ui->tabWidget->mapToGlobal(pos));
 }
+void MainWindow::drawPhaseMenu(const QPoint & pos){
+    QMenu* menu = new QMenu(tr("Phase Response"), this);
+    QAction move(tr("Enable zoom/drag"), this);
+    move.setCheckable(true);
+    move.setChecked(ui->phase_graph->interactions() & (QCP::Interaction::iRangeDrag));
+    connect(&move, &QAction::changed, this, [&move,this]() {
+        bool val = move.isChecked();
+        ui->phase_graph->setInteraction(QCP::Interaction::iRangeDrag,val);
+        ui->phase_graph->setInteraction(QCP::Interaction::iRangeZoom,val);
+        if(!val)
+            this->drawGraph(graphtype::phase);
+    });
+    QAction reload(tr("Reload"), this);
+    connect(&reload, &QAction::triggered, this, [this](){this->drawGraph(graphtype::phase);});
+
+    menu->addAction(&move);
+    menu->addAction(&reload);
+    menu->exec(ui->tabWidget->mapToGlobal(pos));
+}
 void MainWindow::setupMenus(){
     ui->graph->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
     connect(ui->graph, SIGNAL(customContextMenuRequested(const QPoint &)),
@@ -945,20 +984,28 @@ void MainWindow::setupMenus(){
     ui->gdelay_graph->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->gdelay_graph, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(drawGroupDelayMenu(const QPoint &)));
+    ui->phase_graph->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->phase_graph, SIGNAL(customContextMenuRequested(const QPoint &)),
+            this, SLOT(drawPhaseMenu(const QPoint &)));
 }
 ///Tooltip with x-value while hovering graph
 void MainWindow::showPointToolTip(QMouseEvent *event)
 {
-    if(ui->tabWidget->currentIndex()==0){
+     if(ui->tabWidget->currentIndex()==0){
         int x = (int)ui->graph->xAxis->pixelToCoord(event->pos().x());
         if(x<0||x>24000)return;
         //int y = this->yAxis->pixelToCoord(event->pos().y());
         ui->graph->setToolTip(QString("%1Hz").arg(x));
-    }else{
+    }else if (ui->tabWidget->currentIndex()==1){
         int x = (int)ui->gdelay_graph->xAxis->pixelToCoord(event->pos().x());
         if(x<0||x>24000)return;
         //int y = this->yAxis->pixelToCoord(event->pos().y());
         ui->gdelay_graph->setToolTip(QString("%1Hz").arg(x));
+    }else{
+        int x = (int)ui->phase_graph->xAxis->pixelToCoord(event->pos().x());
+        if(x<0||x>24000)return;
+        //int y = this->yAxis->pixelToCoord(event->pos().y());
+        ui->phase_graph->setToolTip(QString("%1Hz").arg(x));
     }
 }
 double MainWindow::getValue(datatype dat,int row){

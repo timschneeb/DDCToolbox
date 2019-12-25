@@ -4,6 +4,7 @@
 #include <list>
 #include <cstdio>
 #include <QDebug>
+#include <complex>
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -14,6 +15,7 @@ biquad::biquad()
     internalBiquadCoeffs[1] = 0.0;
     internalBiquadCoeffs[2] = 0.0;
     internalBiquadCoeffs[3] = 0.0;
+    internalBiquadCoeffs[4] = 0.0;
     a0 = 0.0;
 }
 
@@ -158,6 +160,7 @@ void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs
     internalBiquadCoeffs[1] = B2 / A0;
     internalBiquadCoeffs[2] = -A1 / A0;
     internalBiquadCoeffs[3] = -A2 / A0;
+    internalBiquadCoeffs[4] = B0 / A0;
 }
 std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
 {
@@ -301,6 +304,41 @@ double biquad::GainAt(double centreFreq, double fs)
     }
     return magnitude;
 }
+template <typename Ty, typename To>
+inline std::complex<Ty> addmul (const std::complex<Ty>& c,
+                                Ty v,
+                                const std::complex<To>& c1)
+{
+  return std::complex <Ty> (
+    c.real() + v * c1.real(), c.imag() + v * c1.imag());
+}
+double biquad::PhaseResponseAt(double centreFreq, double fs)
+{
+    double b0 = internalBiquadCoeffs[4];
+    double a1 = -internalBiquadCoeffs[2];
+    double a2 = -internalBiquadCoeffs[3];
+    double b1 = internalBiquadCoeffs[0];
+    double b2 = internalBiquadCoeffs[1];
+    double w = (6.2831853071795862 * centreFreq) / fs;
+
+    const std::complex<double> czn1 = std::polar (1., -w);
+    const std::complex<double> czn2 = std::polar (1., -2 * w);
+    std::complex<double> ch (1);
+    std::complex<double> cbot (1);
+
+    std::complex<double> ct (b0/a0);
+    std::complex<double> cb (1);
+    ct = addmul (ct, b1/a0, czn1);
+    ct = addmul (ct, b2/a0, czn2);
+    cb = addmul (cb, a1/a0, czn1);
+    cb = addmul (cb, a2/a0, czn2);
+    ch   *= ct;
+    cbot *= cb;
+
+    double y = double (90 * (std::arg(ch / cbot) / 2*M_PI));
+    return y;
+}
+
 // Simplified Shpak group delay algorithm
 // The algorithm only valid when first order / second order IIR filters is provided
 // You must break down high order transfer function into N-SOS in order apply the Shpak algorithm

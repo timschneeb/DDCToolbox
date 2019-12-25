@@ -49,6 +49,7 @@ public:
     enum graphtype{
         magnitude,
         groupdelay,
+        phase,
         all
     };
     explicit MainWindow(QWidget *parent = nullptr);
@@ -88,6 +89,7 @@ private slots:
     void showHelp();
     void drawGroupDelayMenu(const QPoint &);
     void drawMagnitudeMenu(const QPoint &);
+    void drawPhaseMenu(const QPoint &);
     void setupMenus();
     void hidePoints(bool state);
     void switchTranslator(QTranslator& translator, const QString& filename);

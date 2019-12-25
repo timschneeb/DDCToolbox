@@ -14,11 +14,12 @@ public:
     std::list<double> ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
     std::list<double> ExportCoeffs(double dSamplingRate);
     double GainAt(double centreFreq, double fs);
+    double PhaseResponseAt(double centreFreq, double fs);
     double GroupDelayAt(double centreFreq, double fs);
     bool IsStable() const;
 
 private:
-    double internalBiquadCoeffs[4];
+    double internalBiquadCoeffs[5];
     double a0;
     double m_dFilterBQ;
     double m_dFilterFreq;

@@ -153,6 +153,33 @@ std::vector<float> DDCContext::GetMagnitudeResponseTable(int nBandCount, double 
     }
     return vector;
 }
+std::vector<float> DDCContext::GetPhaseResponseTable(int nBandCount, double dSRate)
+{
+    std::vector<float> vector;
+    if (nBandCount <= 0)
+    {
+        return vector;
+    }
+    std::vector<biquad*> list;
+    LockFilter();
+
+    std::map<int,biquad*>::iterator it;
+
+    for ( it = m_lstFilterBank.begin(); it != m_lstFilterBank.end(); it++ )
+        list.push_back(it->second);
+
+    UnlockFilter();
+
+    for (int j = 0; j < nBandCount; j++)
+    {
+        double num3 = (dSRate / 2.0) / ((double) nBandCount);
+        float val = 0.0f;
+        for (size_t k = 0;k < list.size(); k++)
+            val += (float) list[k]->PhaseResponseAt(num3 * (j + 1.0), dSRate);
+        vector.push_back(val);
+    }
+    return vector;
+}
 
 std::vector<float> DDCContext::GetGroupDelayTable(int nBandCount, double dSRate)
 {

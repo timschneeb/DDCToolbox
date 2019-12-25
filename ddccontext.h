@@ -15,6 +15,7 @@ public:
     void RemoveFilter(int nFreq);
     const biquad* GetFilter(int nFreq);
     std::vector<float> GetMagnitudeResponseTable(int nBandCount, double dSRate);
+    std::vector<float> GetPhaseResponseTable(int nBandCount, double dSRate);
     std::vector<float> GetGroupDelayTable(int nBandCount, double dSRate);
     std::list<double> ExportCoeffs(double dSamplingRate);
 
