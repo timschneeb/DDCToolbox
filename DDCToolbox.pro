@@ -25,38 +25,38 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        addpoint.cpp \
         biquad.cpp \
-        calc.cpp \
         ddccontext.cpp \
+        dialog/addpoint.cpp \
+        dialog/calc.cpp \
+        dialog/shiftfreq.cpp \
+        dialog/textpopup.cpp \
         main.cpp \
         mainwindow.cpp \
         plot/frequencyplot.cpp \
         plot/qcustomplot.cpp \
-        shiftfreq.cpp \
-        textpopup.cpp \
         undocmd.cpp
 
 HEADERS += \
-        addpoint.h \
         biquad.h \
-        calc.h \
         ddccontext.h \
+        dialog/addpoint.h \
+        dialog/calc.h \
+        dialog/shiftfreq.h \
+        dialog/textpopup.h \
         filtertypes.h \
         mainwindow.h \
         plot/frequencyplot.h \
         plot/qcustomplot.h \
-        shiftfreq.h \
-        textpopup.h \
         undocmd.h \
         vdcimporter.h
 
 FORMS += \
-        addpoint.ui \
-        calc.ui \
-        mainwindow.ui \
-        shiftfreq.ui \
-        textpopup.ui
+        dialog/addpoint.ui \
+        dialog/calc.ui \
+        dialog/shiftfreq.ui \
+        dialog/textpopup.ui \
+        mainwindow.ui
 
 TRANSLATIONS += \
         translations/ddctoolbox_de.ts \

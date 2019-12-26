@@ -1,9 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "ddccontext.h"
-#include "addpoint.h"
-#include "textpopup.h"
-#include "calc.h"
+#include "dialog/addpoint.h"
+#include "dialog/textpopup.h"
+#include "dialog/calc.h"
 #include "vdcimporter.h"
 #include "undocmd.h"
 #include <QFileDialog>
@@ -13,7 +13,7 @@
 #include <QtGlobal>
 #include <vector>
 #include <map>
-#include "shiftfreq.h"
+#include "dialog/shiftfreq.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
