@@ -1,6 +1,6 @@
 #ifndef FREQUENCYPLOT_H
 #define FREQUENCYPLOT_H
-#include "../qcustomplot.h"
+#include "qcustomplot.h"
 #include <QObject>
 #include <cmath>
 #include <QTableWidget>

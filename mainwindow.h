@@ -7,12 +7,12 @@
 #include <QItemDelegate>
 #include <QStyledItemDelegate>
 #include <QDoubleSpinBox>
-#include "qcustomplot.h"
 #include <mutex>
 #include <regex>
 #include <QSimpleUpdater.h>
 #include "ddccontext.h"
 #include "filtertypes.h"
+#include "plot/qcustomplot.h"
 namespace Ui {
 class MainWindow;
 }

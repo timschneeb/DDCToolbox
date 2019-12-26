@@ -32,7 +32,7 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         plot/frequencyplot.cpp \
-        qcustomplot.cpp \
+        plot/qcustomplot.cpp \
         shiftfreq.cpp \
         textpopup.cpp \
         undocmd.cpp
@@ -45,7 +45,7 @@ HEADERS += \
         filtertypes.h \
         mainwindow.h \
         plot/frequencyplot.h \
-        qcustomplot.h \
+        plot/qcustomplot.h \
         shiftfreq.h \
         textpopup.h \
         undocmd.h \
