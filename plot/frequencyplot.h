@@ -32,6 +32,7 @@ private slots:
 private:
     PlotType m_type;
     std::vector<float> m_table;
+    QDialog* m_externalWindow;
 };
 
 #endif // FREQUENCYPLOT_H

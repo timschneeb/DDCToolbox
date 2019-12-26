@@ -22,7 +22,25 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     undoStack = new QUndoStack(this);
 
-    ui->splitter->setSizes(QList<int>({INT_MAX, INT_MAX}));
+
+    QMainWindow* subMainWindow = new QMainWindow(0);
+    QHBoxLayout* lay = new QHBoxLayout;
+    subMainWindow->setWindowTitle("sub-mainwindow") ;
+    subMainWindow->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea,
+                                 ui->magnitude_dock);
+    subMainWindow->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea,
+                                 ui->phase_dock);
+    subMainWindow->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea,
+                                 ui->groupdelay_dock);
+    subMainWindow->tabifyDockWidget(ui->magnitude_dock,ui->phase_dock);
+    subMainWindow->tabifyDockWidget(ui->phase_dock,ui->groupdelay_dock);
+    subMainWindow->setDockOptions(DockOption::VerticalTabs
+                                  | DockOption::AllowTabbedDocks
+                                  | DockOption::AnimatedDocks);
+    ui->magnitude_dock->show();
+    ui->magnitude_dock->raise();
+    lay->addWidget(subMainWindow);
+    ui->plotcontainer->setLayout(lay);
 
     m_updater = QSimpleUpdater::getInstance();
 
@@ -44,6 +62,18 @@ MainWindow::MainWindow(QWidget *parent) :
                 this,[=](){
         if(lock_actions)return;
         drawGraph(graphtype::all,true);
+    });
+    connect(ui->actionReset_plot_layout,&QAction::triggered,this,[subMainWindow,this]{
+        ui->magnitude_dock->setFloating(false);
+        ui->phase_dock->setFloating(false);
+        ui->groupdelay_dock->setFloating(false);
+        subMainWindow->tabifyDockWidget(ui->magnitude_dock,ui->phase_dock);
+        subMainWindow->tabifyDockWidget(ui->phase_dock,ui->groupdelay_dock);
+        subMainWindow->setDockOptions(DockOption::VerticalTabs
+                                      | DockOption::AllowTabbedDocks
+                                      | DockOption::AnimatedDocks);
+        ui->magnitude_dock->show();
+        ui->magnitude_dock->raise();
     });
 
     ui->graph->setMode(FrequencyPlot::PlotType::magnitude,this);
@@ -471,7 +501,7 @@ void MainWindow::drawGraph(graphtype t, bool onlyUpdatePoints){
     ui->gdelay_graph->updatePoints(ui->listView_DDCPoints,markerPointsVisible);
 }
 void MainWindow::toggleGraph(bool state){
-    ui->graphBox->setVisible(!state);
+    //ui->graphBox->setVisible(!state);
 }
 void MainWindow::hidePoints(bool state){
     //True: shown, False: hidden
