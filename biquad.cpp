@@ -4,7 +4,6 @@
 #include <list>
 #include <cstdio>
 #include <QDebug>
-#include <complex>
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -20,7 +19,6 @@ biquad::biquad()
     internalBiquadCoeffs[1] = 0.0;
     internalBiquadCoeffs[2] = 0.0;
     internalBiquadCoeffs[3] = 0.0;
-    internalBiquadCoeffs[4] = 0.0;
     a0 = 0.0;
 }
 
@@ -175,7 +173,6 @@ void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs
     internalBiquadCoeffs[1] = B2 / A0;
     internalBiquadCoeffs[2] = -A1 / A0;
     internalBiquadCoeffs[3] = -A2 / A0;
-    internalBiquadCoeffs[4] = B0 / A0;
 }
 
 std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
@@ -319,71 +316,54 @@ bool biquad::IsStable() const{
     //Check if filter is stable/usable
     return m_isStable;
 }
-double biquad::GainAt(double centreFreq, double fs)
+
+// Provided by: James34602
+int biquad::complexResponse(double centreFreq, double fs, double *HofZReal, double *HofZImag)
 {
     double Arg;
-    double z1Real, z1Imag, z2Real, z2Imag, HofZReal, HofZImag, DenomReal, DenomImag, tmpReal, tmpImag;
+    double z1Real, z1Imag, z2Real, z2Imag, DenomReal, DenomImag, tmpReal, tmpImag;
     Arg = M_PI * centreFreq / (fs * 0.5);
     z1Real = cos(Arg), z1Imag = -sin(Arg);  // z = e^(j*omega)
     complexMultiplicationRI(&z2Real, &z2Imag, z1Real, z1Imag, z1Real, z1Imag); // z squared
-    HofZReal = 1.0, HofZImag = 0.0;
+    *HofZReal = 1.0, *HofZImag = 0.0;
     tmpReal = a0 + internalBiquadCoeffs[0] * z1Real + internalBiquadCoeffs[1] * z2Real;
     tmpImag = internalBiquadCoeffs[0] * z1Imag + internalBiquadCoeffs[1] * z2Imag;
-    complexMultiplicationRI(&HofZReal, &HofZImag, HofZReal, HofZImag, tmpReal, tmpImag);
+    complexMultiplicationRI(HofZReal, HofZImag, *HofZReal, *HofZImag, tmpReal, tmpImag);
     DenomReal = 1.0 + -internalBiquadCoeffs[2] * z1Real + -internalBiquadCoeffs[3] * z2Real;
     DenomImag = -internalBiquadCoeffs[2] * z1Imag + -internalBiquadCoeffs[3] * z2Imag;
-    double magnitude;
     if (sqrt(DenomReal * DenomReal + DenomImag * DenomImag) < DBL_EPSILON)
-        magnitude = 0.0;
+        return 0; // Division by zero, you know what to do
     else
     {
-        complexDivisionRI(&HofZReal, &HofZImag, HofZReal, HofZImag, DenomReal, DenomImag);
-        magnitude = 20.0 * log10(sqrt(HofZReal * HofZReal + HofZImag * HofZImag + DBL_EPSILON));
+        complexDivisionRI(HofZReal, HofZImag, *HofZReal, *HofZImag, DenomReal, DenomImag);
+        return 1;
     }
-    return magnitude;
 }
-template <typename Ty, typename To>
-inline std::complex<Ty> addmul (const std::complex<Ty>& c,
-                                Ty v,
-                                const std::complex<To>& c1)
+double biquad::GainAt(double centreFreq, double fs)
 {
-  return std::complex <Ty> (
-    c.real() + v * c1.real(), c.imag() + v * c1.imag());
+    double HofZReal, HofZImag;
+    int divZero = complexResponse(centreFreq, fs, &HofZReal, &HofZImag);
+    if (!divZero)
+        return 0.0;
+    else
+        return 20.0 * log10(sqrt(HofZReal * HofZReal + HofZImag * HofZImag + DBL_EPSILON));
 }
 double biquad::PhaseResponseAt(double centreFreq, double fs)
 {
-    double b0 = internalBiquadCoeffs[4];
-    double a1 = -internalBiquadCoeffs[2];
-    double a2 = -internalBiquadCoeffs[3];
-    double b1 = internalBiquadCoeffs[0];
-    double b2 = internalBiquadCoeffs[1];
-    double w = (6.2831853071795862 * centreFreq) / fs;
-
-    const std::complex<double> czn1 = std::polar (1., -w);
-    const std::complex<double> czn2 = std::polar (1., -2 * w);
-    std::complex<double> ch (1);
-    std::complex<double> cbot (1);
-
-    std::complex<double> ct (b0/a0);
-    std::complex<double> cb (1);
-    ct = addmul (ct, b1/a0, czn1);
-    ct = addmul (ct, b2/a0, czn2);
-    cb = addmul (cb, a1/a0, czn1);
-    cb = addmul (cb, a2/a0, czn2);
-    ch   *= ct;
-    cbot *= cb;
-
-    double y = double (90 * (std::arg(ch / cbot) / 2*M_PI));
-    return y;
+    double HofZReal, HofZImag;
+    int divZero = complexResponse(centreFreq, fs, &HofZReal, &HofZImag);
+    if (!divZero)
+        return 0.0;
+    else
+        return atan2(HofZImag, HofZReal) * 180.0 / M_PI;
 }
-
 // Simplified Shpak group delay algorithm
 // The algorithm only valid when first order / second order IIR filters is provided
 // You must break down high order transfer function into N-SOS in order apply the Shpak algorithm
 // which is out-of-scope here, since break down high order transfer function require find roots of polynomials
 // Root finder may often require the computation of eigenvalue of companion matrix of polynomials
-// Which will bloat 6000+ lines of code, and perhaps not the main purpose here.
-// We need to calculate group delay of a bunch of second order IIR filters, so the following code already do the job
+// Which will bloat 1000+ lines of code, and perhaps not the main purpose here.
+// We just need to calculate group delay of a bunch of second order IIR filters, so the following code already do the job
 // Provided by: James34602
 double biquad::GroupDelayAt(double centreFreq, double fs)
 {
