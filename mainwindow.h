@@ -74,7 +74,6 @@ private slots:
     void showKeycombos();
     void importParametricAutoEQ();
     void showCalc();
-    void showPointToolTip(QMouseEvent *event);
     void importVDC();
     void readLine_DDCProject(QString);
     void batch_vdc2vdcprj();
@@ -87,10 +86,6 @@ private slots:
     void invertSelection();
     void shiftSelection();
     void showHelp();
-    void drawGroupDelayMenu(const QPoint &);
-    void drawMagnitudeMenu(const QPoint &);
-    void drawPhaseMenu(const QPoint &);
-    void setupMenus();
     void hidePoints(bool state);
     void switchTranslator(QTranslator& translator, const QString& filename);
     void CheckStability();

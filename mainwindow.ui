@@ -158,7 +158,7 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>
-                <widget class="QCustomPlot" name="graph" native="true"/>
+                <widget class="FrequencyPlot" name="graph" native="true"/>
                </item>
               </layout>
              </widget>
@@ -201,7 +201,7 @@
                 <number>9</number>
                </property>
                <item>
-                <widget class="QCustomPlot" name="phase_graph" native="true"/>
+                <widget class="FrequencyPlot" name="phase_graph" native="true"/>
                </item>
               </layout>
              </widget>
@@ -244,7 +244,7 @@
                 <number>9</number>
                </property>
                <item>
-                <widget class="QCustomPlot" name="gdelay_graph" native="true"/>
+                <widget class="FrequencyPlot" name="gdelay_graph" native="true"/>
                </item>
               </layout>
              </widget>
@@ -565,9 +565,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QCustomPlot</class>
+   <class>FrequencyPlot</class>
    <extends>QWidget</extends>
-   <header>qcustomplot.h</header>
+   <header>plot/frequencyplot.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -31,6 +31,7 @@ SOURCES += \
         ddccontext.cpp \
         main.cpp \
         mainwindow.cpp \
+        plot/frequencyplot.cpp \
         qcustomplot.cpp \
         shiftfreq.cpp \
         textpopup.cpp \
@@ -42,8 +43,8 @@ HEADERS += \
         calc.h \
         ddccontext.h \
         filtertypes.h \
-        graph.h \
         mainwindow.h \
+        plot/frequencyplot.h \
         qcustomplot.h \
         shiftfreq.h \
         textpopup.h \
