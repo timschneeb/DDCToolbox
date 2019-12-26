@@ -14,7 +14,6 @@
 #include <vector>
 #include <map>
 #include "shiftfreq.h"
-#include "graph.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -480,7 +479,12 @@ void MainWindow::hidePoints(bool state){
     drawGraph();
 }
 void MainWindow::ScreenshotGraph(){
-    ui->graph->saveScreenshot();
+    QObject* obj = sender();
+    if(obj == nullptr) return;
+
+    if(obj == ui->actionScr_Magnitude_response) ui->graph->saveScreenshot();
+    else if(obj == ui->actionScr_Phase_response) ui->phase_graph->saveScreenshot();
+    else if(obj == ui->actionScr_Group_delay) ui->gdelay_graph->saveScreenshot();
 }
 void MainWindow::CheckStability(){
     if(lock_actions)return;

@@ -344,10 +344,18 @@
     <property name="title">
      <string>View</string>
     </property>
+    <widget class="QMenu" name="menuSave_screenshot">
+     <property name="title">
+      <string>Save screenshot</string>
+     </property>
+     <addaction name="actionScr_Magnitude_response"/>
+     <addaction name="actionScr_Phase_response"/>
+     <addaction name="actionScr_Group_delay"/>
+    </widget>
     <addaction name="actionHide_Graph"/>
     <addaction name="actionToggle_marker_points"/>
     <addaction name="separator"/>
-    <addaction name="actionTake_screenshot"/>
+    <addaction name="menuSave_screenshot"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -461,14 +469,6 @@
     <string>Ctrl+H</string>
    </property>
   </action>
-  <action name="actionTake_screenshot">
-   <property name="text">
-    <string>Save screenshot</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Print</string>
-   </property>
-  </action>
   <action name="actionSave">
    <property name="text">
     <string>Save</string>
@@ -559,6 +559,21 @@
    </property>
    <property name="shortcut">
     <string>F2</string>
+   </property>
+  </action>
+  <action name="actionScr_Magnitude_response">
+   <property name="text">
+    <string>Magnitude response</string>
+   </property>
+  </action>
+  <action name="actionScr_Phase_response">
+   <property name="text">
+    <string>Phase response</string>
+   </property>
+  </action>
+  <action name="actionScr_Group_delay">
+   <property name="text">
+    <string>Group delay</string>
    </property>
   </action>
  </widget>
@@ -784,22 +799,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionTake_screenshot</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>ScreenshotGraph()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>374</x>
-     <y>190</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionClose_Project</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -988,6 +987,54 @@
     <hint type="destinationlabel">
      <x>432</x>
      <y>206</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionScr_Magnitude_response</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>ScreenshotGraph()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>862</x>
+     <y>307</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>499</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionScr_Phase_response</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>ScreenshotGraph()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>499</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionScr_Group_delay</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>ScreenshotGraph()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>499</x>
+     <y>270</y>
     </hint>
    </hints>
   </connection>
