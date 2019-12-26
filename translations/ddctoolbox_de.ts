@@ -168,6 +168,49 @@
     </message>
 </context>
 <context>
+    <name>FrequencyPlot</name>
+    <message>
+        <location filename="../plot/frequencyplot.cpp" line="17"/>
+        <source>Gain (dB)</source>
+        <translation>Verstärkung (dB)</translation>
+    </message>
+    <message>
+        <location filename="../plot/frequencyplot.cpp" line="21"/>
+        <source>Delay (Samples)</source>
+        <translation>Verzögerung (Samples)</translation>
+    </message>
+    <message>
+        <location filename="../plot/frequencyplot.cpp" line="25"/>
+        <source>Phase (deg)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../plot/frequencyplot.cpp" line="50"/>
+        <source>Options</source>
+        <translation>Optionen</translation>
+    </message>
+    <message>
+        <location filename="../plot/frequencyplot.cpp" line="52"/>
+        <source>Enable zoom/drag</source>
+        <translation>Bewegen/Zoomen</translation>
+    </message>
+    <message>
+        <location filename="../plot/frequencyplot.cpp" line="64"/>
+        <source>Reload</source>
+        <translation>Neu laden</translation>
+    </message>
+    <message>
+        <location filename="../plot/frequencyplot.cpp" line="215"/>
+        <source>Save Screenshot</source>
+        <translation>Screenshot speichern</translation>
+    </message>
+    <message>
+        <location filename="../plot/frequencyplot.cpp" line="215"/>
+        <source>PNG screenshot (*.png)</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.ui" line="14"/>
@@ -180,530 +223,576 @@
         <translation>Kalibrierungspunkte</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="84"/>
-        <location filename="../mainwindow.cpp" line="324"/>
+        <location filename="../mainwindow.ui" line="87"/>
+        <location filename="../mainwindow.cpp" line="307"/>
         <source>Type</source>
         <translation>Filtertyp</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="89"/>
-        <location filename="../mainwindow.cpp" line="324"/>
+        <location filename="../mainwindow.ui" line="92"/>
+        <location filename="../mainwindow.cpp" line="307"/>
         <source>Frequency</source>
         <translation>Frequenz</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="94"/>
-        <location filename="../mainwindow.cpp" line="324"/>
+        <location filename="../mainwindow.ui" line="97"/>
+        <location filename="../mainwindow.cpp" line="307"/>
         <source>Bandwidth/S</source>
         <translation>Bandweite/S</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="99"/>
-        <location filename="../mainwindow.cpp" line="324"/>
+        <location filename="../mainwindow.ui" line="102"/>
+        <location filename="../mainwindow.cpp" line="307"/>
         <source>Gain</source>
         <translation>Verstärkung</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="114"/>
+        <location filename="../mainwindow.ui" line="117"/>
         <source>Graph</source>
         <translation>Graph</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="130"/>
-        <location filename="../mainwindow.cpp" line="893"/>
+        <location filename="../mainwindow.ui" line="133"/>
         <source>Magnitude Response</source>
         <translation>Betragsfrequenzgang</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="167"/>
-        <location filename="../mainwindow.cpp" line="874"/>
+        <location filename="../mainwindow.ui" line="170"/>
+        <source>Phase Response</source>
+        <translation>Phasengang</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="213"/>
         <source>Group Delay</source>
         <translation>Gruppenlaufzeit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="218"/>
+        <location filename="../mainwindow.ui" line="264"/>
         <source>toolBar</source>
         <translation>Werkzeugleiste</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="242"/>
+        <location filename="../mainwindow.ui" line="288"/>
         <source>Project</source>
         <translation>Projekt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="246"/>
+        <location filename="../mainwindow.ui" line="292"/>
         <source>Import</source>
         <translation>Importieren</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="253"/>
+        <location filename="../mainwindow.ui" line="299"/>
         <source>Export</source>
         <translation>Exportieren</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="270"/>
+        <location filename="../mainwindow.ui" line="316"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="282"/>
+        <location filename="../mainwindow.ui" line="328"/>
         <source>Tools</source>
         <translation>Werkzeuge</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="286"/>
+        <location filename="../mainwindow.ui" line="332"/>
         <source>Batch Conversion</source>
         <translation>Stapel-Konvertierung</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="297"/>
+        <location filename="../mainwindow.ui" line="345"/>
         <source>View</source>
         <translation>Ansicht</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="306"/>
+        <location filename="../mainwindow.ui" line="362"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="314"/>
+        <location filename="../mainwindow.ui" line="370"/>
         <source>Selection</source>
         <translation>Auswahl</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="328"/>
-        <location filename="../mainwindow.ui" line="331"/>
+        <location filename="../mainwindow.ui" line="384"/>
+        <location filename="../mainwindow.ui" line="387"/>
         <source>Add Point</source>
         <translation>Punkt hinzufügen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="334"/>
+        <location filename="../mainwindow.ui" line="390"/>
         <source>Add point</source>
         <translation>Punkt hinzufügen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="337"/>
+        <location filename="../mainwindow.ui" line="393"/>
         <source>Ctrl+N</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="342"/>
+        <location filename="../mainwindow.ui" line="398"/>
         <source>Remove Point</source>
         <translation>Punkt entfernen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="345"/>
+        <location filename="../mainwindow.ui" line="401"/>
         <source>Remove selected point(s)</source>
         <translation>Ausgewälte(r) Punkt(e) entfernen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="348"/>
+        <location filename="../mainwindow.ui" line="404"/>
         <source>Ctrl+R</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="353"/>
+        <location filename="../mainwindow.ui" line="409"/>
         <source>Clear all</source>
         <translation>Alles löschen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="358"/>
+        <location filename="../mainwindow.ui" line="414"/>
         <source>Load</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="361"/>
+        <location filename="../mainwindow.ui" line="417"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="366"/>
+        <location filename="../mainwindow.ui" line="422"/>
         <source>Save as...</source>
         <translation>Speichern unter...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="369"/>
+        <location filename="../mainwindow.ui" line="425"/>
         <source>Ctrl+Shift+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="374"/>
+        <location filename="../mainwindow.ui" line="430"/>
         <source>About</source>
         <translation>Über...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="379"/>
+        <location filename="../mainwindow.ui" line="435"/>
         <source>Shortcuts</source>
         <translation>Tastenkombinationen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="382"/>
+        <location filename="../mainwindow.ui" line="438"/>
         <source>Shift+F1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="387"/>
+        <location filename="../mainwindow.ui" line="443"/>
         <source>AutoEQ (ParametricEQ.txt)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="392"/>
+        <location filename="../mainwindow.ui" line="448"/>
         <source>Q/BW Calculator</source>
         <translation>Q/BW Rechner</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="397"/>
+        <location filename="../mainwindow.ui" line="453"/>
         <source>VDC file (Classic Viper format)</source>
         <translation>VDC Datei (klassisches Viper-Format)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="402"/>
+        <location filename="../mainwindow.ui" line="458"/>
         <source>VDC to Project File</source>
         <translation>VDC zu Projektdatei</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="410"/>
+        <location filename="../mainwindow.ui" line="466"/>
         <source>Hide Graph</source>
         <translation>Graph verstecken</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="413"/>
+        <location filename="../mainwindow.ui" line="469"/>
         <source>Ctrl+H</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="418"/>
+        <location filename="../mainwindow.ui" line="548"/>
+        <source>Show marker points</source>
+        <translation>Kalibrierungspunkte anzeigen</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="558"/>
+        <source>Check for unstable filters</source>
+        <translation>Auf instabile Filter untersuchen</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="561"/>
+        <source>F2</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="566"/>
+        <source>Magnitude response</source>
+        <translation>Betragsfrequenzgang</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="571"/>
+        <source>Phase response</source>
+        <translation>Phasengang</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="576"/>
+        <source>Group delay</source>
+        <translation>Gruppenlaufzeit</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="349"/>
         <source>Save screenshot</source>
         <translation>Screenshot speichern</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="421"/>
-        <source>Ctrl+Print</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="426"/>
+        <location filename="../mainwindow.ui" line="474"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="429"/>
+        <location filename="../mainwindow.ui" line="477"/>
         <source>Ctrl+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="434"/>
+        <location filename="../mainwindow.ui" line="482"/>
         <source>Close Project</source>
         <translation>Projekt schließen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="437"/>
+        <location filename="../mainwindow.ui" line="485"/>
         <source>Ctrl+X</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="442"/>
+        <location filename="../mainwindow.ui" line="490"/>
         <source>AutoEQ (Parametric) to Project File</source>
         <translation>AutoEQ (Parametrisch) zu Projektdatei</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="447"/>
+        <location filename="../mainwindow.ui" line="495"/>
         <source>View undo history</source>
         <translation>Undo-Protokoll anzeigen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="450"/>
+        <location filename="../mainwindow.ui" line="498"/>
         <source>Alt+Z</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="455"/>
+        <location filename="../mainwindow.ui" line="503"/>
         <source>Invert gain</source>
         <translation>Verstärkung umkehren</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="458"/>
+        <location filename="../mainwindow.ui" line="506"/>
         <source>Ctrl+Shift+I</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="463"/>
-        <location filename="../mainwindow.ui" line="466"/>
+        <location filename="../mainwindow.ui" line="511"/>
+        <location filename="../mainwindow.ui" line="514"/>
         <source>Shift frequencies</source>
         <translation>Frequenzen verschieben</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="469"/>
+        <location filename="../mainwindow.ui" line="517"/>
         <source>Ctrl+Shift+F</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="474"/>
+        <location filename="../mainwindow.ui" line="522"/>
         <source>Dev Notes</source>
         <translation>Notizen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="477"/>
+        <location filename="../mainwindow.ui" line="525"/>
         <source>F1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="482"/>
+        <location filename="../mainwindow.ui" line="530"/>
         <source>VDC file</source>
         <translation>VDC Datei</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="487"/>
+        <location filename="../mainwindow.ui" line="535"/>
         <source>Project File (v1.0)</source>
         <translation>Projektdatei (v1.0)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="492"/>
+        <location filename="../mainwindow.ui" line="540"/>
         <source>Check for updates...</source>
         <translation>Auf Updates überprüfen...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="500"/>
         <source>Show all marker points</source>
-        <translation>Alle Punkte anzeigen</translation>
+        <translation type="vanished">Alle Punkte anzeigen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="505"/>
-        <location filename="../mainwindow.cpp" line="1001"/>
+        <location filename="../mainwindow.ui" line="553"/>
+        <location filename="../mainwindow.cpp" line="943"/>
         <source>Language</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="30"/>
+        <location filename="../mainwindow.cpp" line="29"/>
         <source>Undo</source>
         <translation>Rückgängig</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="32"/>
+        <location filename="../mainwindow.cpp" line="31"/>
         <source>Redo</source>
         <translation>Wiederherstellen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="50"/>
         <source>Gain (dB)</source>
-        <translation>Verstärkung (dB)</translation>
+        <translation type="vanished">Verstärkung (dB)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="53"/>
-        <location filename="../mainwindow.cpp" line="64"/>
         <source>Frequency (Hz)</source>
-        <translation>Frequenz (Hz)</translation>
+        <translation type="vanished">Frequenz (Hz)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="61"/>
         <source>Delay (Samples)</source>
-        <translation>Verzögerung (Samples)</translation>
+        <translation type="vanished">Verzögerung (Samples)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="92"/>
+        <location filename="../mainwindow.cpp" line="74"/>
         <source>Save VDC Project File</source>
         <translation>VDC Projektdatei speichern</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="93"/>
+        <location filename="../mainwindow.cpp" line="75"/>
         <source>(Compatibility Mode)</source>
         <translation>(Kompatibilitätsmodus)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="121"/>
+        <location filename="../mainwindow.cpp" line="103"/>
         <source>Open VDC Project File</source>
         <translation>VDC Projektdatei öffnen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="121"/>
+        <location filename="../mainwindow.cpp" line="103"/>
         <source>ViPER DDC Project (*.vdcprj)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="128"/>
-        <location filename="../mainwindow.cpp" line="393"/>
-        <location filename="../mainwindow.cpp" line="433"/>
-        <location filename="../mainwindow.cpp" line="565"/>
-        <location filename="../mainwindow.cpp" line="604"/>
-        <location filename="../mainwindow.cpp" line="672"/>
-        <location filename="../mainwindow.cpp" line="815"/>
-        <location filename="../mainwindow.cpp" line="862"/>
-        <location filename="../mainwindow.cpp" line="867"/>
+        <location filename="../mainwindow.cpp" line="110"/>
+        <location filename="../mainwindow.cpp" line="376"/>
+        <location filename="../mainwindow.cpp" line="416"/>
+        <location filename="../mainwindow.cpp" line="566"/>
+        <location filename="../mainwindow.cpp" line="606"/>
+        <location filename="../mainwindow.cpp" line="674"/>
+        <location filename="../mainwindow.cpp" line="818"/>
+        <location filename="../mainwindow.cpp" line="865"/>
+        <location filename="../mainwindow.cpp" line="870"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="128"/>
-        <location filename="../mainwindow.cpp" line="565"/>
+        <location filename="../mainwindow.cpp" line="110"/>
+        <location filename="../mainwindow.cpp" line="566"/>
         <source>Cannot open file for reading</source>
         <translation>Die Datei konnte zum Lesen nicht geöffnet werden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="267"/>
+        <location filename="../mainwindow.cpp" line="250"/>
         <source>Invert selection</source>
         <translation>Auswahl umkehren</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="267"/>
-        <location filename="../mainwindow.cpp" line="299"/>
+        <location filename="../mainwindow.cpp" line="250"/>
+        <location filename="../mainwindow.cpp" line="282"/>
         <source>No rows selected</source>
         <translation>Keine Reihen ausgewählt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="299"/>
+        <location filename="../mainwindow.cpp" line="282"/>
         <source>Shift selection</source>
         <translation>Auswahl verschieben</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="354"/>
-        <location filename="../mainwindow.cpp" line="359"/>
-        <location filename="../mainwindow.cpp" line="378"/>
-        <location filename="../mainwindow.cpp" line="383"/>
+        <location filename="../mainwindow.cpp" line="337"/>
+        <location filename="../mainwindow.cpp" line="342"/>
+        <location filename="../mainwindow.cpp" line="361"/>
+        <location filename="../mainwindow.cpp" line="366"/>
         <source>Warning</source>
         <translation>Warnung</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="354"/>
+        <location filename="../mainwindow.cpp" line="337"/>
         <source>Frequency value &apos;%1&apos; is too low (0.0 ~ 24000.0)</source>
         <translation>Frequenz &apos;%1&apos; ist zu niedrig (0.0~24000.0)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="359"/>
+        <location filename="../mainwindow.cpp" line="342"/>
         <source>Frequency value &apos;%1&apos; is too high (0.0 ~ 24000.0)</source>
         <translation>Frequenz &apos;%1&apos; ist zu hoch (0.0~24000.0)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="378"/>
+        <location filename="../mainwindow.cpp" line="361"/>
         <source>Gain value &apos;%1&apos; is too low (-40.0 ~ 40.0)</source>
         <translation>Verstärkungswert &apos;%1&apos; ist zu tief (-40.0 ~ 40.0dB)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="383"/>
+        <location filename="../mainwindow.cpp" line="366"/>
         <source>Gain value &apos;%1&apos; is too high (-40.0 ~ 40.0)</source>
         <translation>Verstärkungswert &apos;%1&apos; ist zu hoch (-40.0 ~ 40.0dB)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="393"/>
+        <location filename="../mainwindow.cpp" line="376"/>
         <source>Point &apos;%1&apos; already exists</source>
         <translation>Punkt &apos;%1&apos; existiert bereits</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="433"/>
+        <location filename="../mainwindow.cpp" line="416"/>
         <source>Point already exists</source>
         <translation>Punkt existiert bereits</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="501"/>
         <source>Save Screenshot</source>
-        <translation>Screenshot speichern</translation>
+        <translation type="vanished">Screenshot speichern</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="501"/>
-        <source>PNG screenshot (*.png)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="511"/>
-        <location filename="../mainwindow.cpp" line="520"/>
-        <location filename="../mainwindow.cpp" line="529"/>
+        <location filename="../mainwindow.cpp" line="512"/>
+        <location filename="../mainwindow.cpp" line="521"/>
+        <location filename="../mainwindow.cpp" line="530"/>
         <source>Unable to open HTML file</source>
         <translation>HTML-Datei konnte nicht geöffnet werden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="543"/>
+        <location filename="../mainwindow.cpp" line="544"/>
         <source>Undo History</source>
         <translation>Undo-Protokoll</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="554"/>
+        <location filename="../mainwindow.cpp" line="555"/>
         <source>Open classic VDC</source>
         <translation>Öffne klassische VDC Datei</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="554"/>
+        <location filename="../mainwindow.cpp" line="555"/>
         <source>Viper VDC file (*.vdc)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="604"/>
+        <location filename="../mainwindow.cpp" line="606"/>
         <source>Failed to export to VDC</source>
         <translation>VDC Datei konnte nicht exportiert werden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="608"/>
+        <location filename="../mainwindow.cpp" line="610"/>
         <source>Save VDC</source>
         <translation>VDC speichern</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="608"/>
+        <location filename="../mainwindow.cpp" line="610"/>
         <source>VDC File (*.vdc)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="663"/>
+        <location filename="../mainwindow.cpp" line="665"/>
         <source>Import AutoEQ config &apos;ParametricEQ.txt&apos;</source>
         <translation>AutoEQ config &apos;ParametricEQ.txt&apos; importieren</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="663"/>
-        <location filename="../mainwindow.cpp" line="848"/>
+        <location filename="../mainwindow.cpp" line="665"/>
+        <location filename="../mainwindow.cpp" line="851"/>
         <source>AutoEQ ParametricEQ.txt (*ParametricEQ.txt);;All files (*.*)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="672"/>
+        <location filename="../mainwindow.cpp" line="674"/>
         <source>Unable to convert this file; no data found: %1</source>
         <translation>Datei konnte nicht konvertiert werden, keine Daten gefunden: %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="798"/>
+        <location filename="../mainwindow.cpp" line="801"/>
         <source>Select all VDC files to convert</source>
         <translation>Wähle alle VDC Datei aus, die konvertiert werden sollen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="798"/>
+        <location filename="../mainwindow.cpp" line="801"/>
         <source>VDC files (*.vdc)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="801"/>
-        <location filename="../mainwindow.cpp" line="844"/>
-        <location filename="../mainwindow.cpp" line="869"/>
+        <location filename="../mainwindow.cpp" line="804"/>
+        <location filename="../mainwindow.cpp" line="847"/>
+        <location filename="../mainwindow.cpp" line="872"/>
         <source>Note</source>
         <translation>Hinweis</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="803"/>
-        <location filename="../mainwindow.cpp" line="853"/>
+        <location filename="../mainwindow.cpp" line="806"/>
+        <location filename="../mainwindow.cpp" line="856"/>
         <source>Select Output-Directory</source>
         <translation>Ausgangsordner auswählen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="848"/>
+        <location filename="../mainwindow.cpp" line="851"/>
         <source>Select all AutoEQ ParametricEQ.txt files to convert</source>
         <translation>Wähle alle AutoEQ ParametricEQ.txt-Dateien aus, die konvertiert werden sollen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="801"/>
-        <location filename="../mainwindow.cpp" line="851"/>
+        <location filename="../mainwindow.cpp" line="804"/>
+        <location filename="../mainwindow.cpp" line="854"/>
         <source>%1 files will be converted.
 You will now be prompted to select an output directory.</source>
         <translation>%1 Dateien werden konvertiert.
 Wähle nun einen Ordner aus, in dem die fertigen Dateien gespeichert werden sollen.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="815"/>
+        <location filename="../mainwindow.cpp" line="500"/>
+        <source>%1 at %2Hz (row %3)
+</source>
+        <translation>%1 bei %2Hz (Reihe %3)
+</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="505"/>
+        <location filename="../mainwindow.cpp" line="507"/>
+        <source>Stability check</source>
+        <translation>Stabilitätscheck</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="505"/>
+        <source>All filters appear to be stable.</source>
+        <translation>Alle Filter erscheinen stabil.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="507"/>
+        <source>One or more filters are unstable/unusable:
+
+%1
+Please review these filter and run this check again.</source>
+        <translation>Ein oder mehr Filter sind instabil:
+
+%1
+Bitte überprufen Sie diese Filter.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="818"/>
         <source>Cannot open file %1 for reading</source>
         <translation>Konnte Datei %1 nicht zum Lesen öffnen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="862"/>
+        <location filename="../mainwindow.cpp" line="865"/>
         <source>Unable to convert this file: %1</source>
         <translation>Datei konnte nicht konvertiert werden: %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="844"/>
-        <location filename="../mainwindow.cpp" line="869"/>
+        <location filename="../mainwindow.cpp" line="847"/>
+        <location filename="../mainwindow.cpp" line="872"/>
         <source>Conversion finished!
 You can find the files here:
 %1</source>
@@ -711,24 +800,20 @@ You can find the files here:
 Ausgangsordner: %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="867"/>
+        <location filename="../mainwindow.cpp" line="870"/>
         <source>Cannot write file at: %1</source>
         <translation>Datei kann nicht beschrieben werden: %1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="875"/>
-        <location filename="../mainwindow.cpp" line="894"/>
         <source>Enable move/drag</source>
-        <translation>Bewegen/Zoomen</translation>
+        <translation type="vanished">Bewegen/Zoomen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="885"/>
-        <location filename="../mainwindow.cpp" line="904"/>
         <source>Reload</source>
-        <translation>Neu laden</translation>
+        <translation type="vanished">Neu laden</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="963"/>
+        <location filename="../mainwindow.cpp" line="905"/>
         <source>Are you sure? All unsaved changes will be lost.</source>
         <translation>Sicher? Alle ungespeicherten Änderungen gehen verloren.</translation>
     </message>
@@ -882,27 +967,42 @@ Eine Liste der Änderungen, sowie Update-Pakete können dort gefunden werden.</t
     </message>
     <message>
         <location filename="../addpoint.ui" line="115"/>
-        <source>Notch</source>
+        <source>Band Pass (peak gain = bw)</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../addpoint.ui" line="120"/>
-        <source>All Pass</source>
+        <source>Notch</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../addpoint.ui" line="125"/>
-        <source>Low Shelf</source>
+        <source>All Pass</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../addpoint.ui" line="130"/>
-        <source>High Shelf</source>
+        <source>Low Shelf</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../addpoint.ui" line="135"/>
+        <source>High Shelf</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../addpoint.ui" line="140"/>
         <source>Unity Gain</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../addpoint.ui" line="145"/>
+        <source>One-Pole Low Pass</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../addpoint.ui" line="150"/>
+        <source>One-Pole High Pass</source>
         <translation></translation>
     </message>
 </context>
