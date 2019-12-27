@@ -378,6 +378,10 @@ double biquad::PhaseResponseAt(double centreFreq, double fs)
 // Which will bloat 1000+ lines of code, and perhaps not the main purpose here.
 // We just need to calculate group delay of a bunch of second order IIR filters, so the following code already do the job
 // Provided by: James34602
+double toMs(double sample, double fs)
+{
+    return sample / (fs / 1000.0);
+}
 double biquad::GroupDelayAt(double centreFreq, double fs)
 {
     double Arg = M_PI * centreFreq / (fs * 0.5);
@@ -398,5 +402,5 @@ double biquad::GroupDelayAt(double centreFreq, double fs)
     du = 2.0 * cw2 + b2 * cw;
     dv = -(2.0 * sw2 + b2 * sw);
     u2v2 = 1.0 + (b2*b2) + (b3*b3) + 2.0 * (b2 + b2 * b3)*cw + 2.0 * b3*cw2;
-    return gdB - (2.0 - (v*du - u * dv) / u2v2);
+    return toMs(gdB - (2.0 - (v*du - u * dv) / u2v2), fs);
 }

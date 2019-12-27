@@ -17,13 +17,13 @@ void FrequencyPlot::setMode(PlotType type, QWidget* parent){
         yLabel = tr("Gain (dB)");
         yRange = QCPRange(-24,24);
         break;
-    case PlotType::group_delay:
-        yLabel = tr("Delay (Samples)");
-        yRange = QCPRange(-12,12);
-        break;
     case PlotType::phase_response:
         yLabel = tr("Phase (deg)");
         yRange = QCPRange(-24,24);
+        break;
+    case PlotType::group_delay:
+        yLabel = tr("Group delay (ms)");
+        yRange = QCPRange(-5,5);
         break;
     }
 
@@ -175,8 +175,8 @@ void FrequencyPlot::updatePlot(std::vector<float> table,int bandCount){
         }
         break;
     case PlotType::group_delay:
-        max = 12.0f;
-        min = -12.0f;
+        max = 5.0f;
+        min = -5.0f;
 
         for (size_t i = 0; i < (size_t)m_table.size(); i++){
             if (m_table.at(i) > max)
@@ -184,8 +184,8 @@ void FrequencyPlot::updatePlot(std::vector<float> table,int bandCount){
             if (m_table.at(i) < min)
                 min = m_table.at(i);
         }
-        if(std::isinf(min))min=-12.0;
-        if(std::isinf(max))max=12.0;
+        if(std::isinf(min))min=-5.0;
+        if(std::isinf(max))max=5.0;
 
         yAxis->setRange(QCPRange(min, max));
         plot = addGraph();
