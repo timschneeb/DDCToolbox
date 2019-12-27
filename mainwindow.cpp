@@ -525,16 +525,21 @@ void MainWindow::CheckStability(){
         QString filtertype = typeToString(getType(i));
         const biquad* filter = g_dcDDCContext->GetFilter(freq);
         if(filter != nullptr){
-            if(!filter->IsStable()){
+            int stability = filter->IsStable();
+            if(stability == 0){
                 unstableCount++;
-                stringbuilder += QString(tr("%1 at %2Hz (row %3)\n")).arg(filtertype).arg(freq).arg(i+1);
+                stringbuilder += QString(tr("Fatal error: Pole of %1 at %2Hz (row %3) outside the unit circle\n")).arg(filtertype).arg(freq).arg(i+1);
+            }
+            else if(stability == 2){
+                unstableCount++;
+                stringbuilder += QString(tr("Warning: Pole of %1 at %2Hz (row %3) approach to unit circle\n")).arg(filtertype).arg(freq).arg(i+1);
             }
         }
     }
     if(unstableCount <= 0)
         QMessageBox::information(this,tr("Stability check"),QString(tr("All filters appear to be stable.")));
     else{
-        QMessageBox::warning(this,tr("Stability check"),QString(tr("One or more filters are unstable/unusable:\n\n%1\nPlease review these filter and run this check again.")).arg(stringbuilder));
+        QMessageBox::warning(this,tr("Stability check"),QString(tr("One or more filters are potentially unstable:\n\n%1\nPlease review these filter and run this check again.")).arg(stringbuilder));
     }
 }
 //---Dialogs

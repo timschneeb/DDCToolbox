@@ -28,7 +28,7 @@ public:
     double GainAt(double centreFreq, double fs);
     double PhaseResponseAt(double centreFreq, double fs);
     double GroupDelayAt(double centreFreq, double fs);
-    bool IsStable() const;
+    int IsStable() const;
 
 private:
     double internalBiquadCoeffs[4];
@@ -38,7 +38,7 @@ private:
     double m_dFilterGain;
     Type m_dFilterType;
     bool m_isBandwidthOrS;
-    bool m_isStable = true;
+    int m_isStable;
     inline void complexMultiplicationRI(double *zReal, double *zImag, double xReal, double xImag, double yReal, double yImag)
     {
         *zReal = xReal * yReal - xImag * yImag;

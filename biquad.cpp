@@ -7,11 +7,6 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
-template <typename Ty>
-inline bool is_nan (Ty v)
-{
-    return !(v == v);
-}
 
 biquad::biquad()
 {
@@ -22,6 +17,23 @@ biquad::biquad()
     a0 = 0.0;
 }
 
+void iirroots(double b, double c, double *roots)
+{
+    double delta = b * b - 4.0 * c;
+    if (delta >= 0.0)
+    {
+        roots[0] = (-b - sqrt(delta)) / 2.0;
+        roots[1] = 0.0;
+        roots[2] = (-b + sqrt(delta)) / 2.0;
+        roots[3] = 0.0;
+    }
+    else
+    {
+        roots[0] = roots[2] = -b / 2.0;
+        roots[1] = sqrt(-delta) / 2.0;
+        roots[3] = -sqrt(-delta) / 2.0;
+    }
+}
 void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
 {
     m_dFilterType = type;
@@ -157,22 +169,23 @@ void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs
     }
 
     //Check if filter is stable/usable
-    double res;
-    double d1 = pow(A1,2)-4*a0*A2;
-    double realpart = -A1 / (2*a0);
-    double ipart = sqrt(-d1)/(2*A1);
-    double magnitude = sqrt(pow(realpart,2)+pow(ipart,2));
-    double realroot1 = (-A1-sqrt(d1))/2*a0;
-
-    if(d1 < 0) res = magnitude;
-    else res = realroot1;
-
-    m_isStable = fabs(res)<1;
 
     internalBiquadCoeffs[0] = B1 / A0;
     internalBiquadCoeffs[1] = B2 / A0;
     internalBiquadCoeffs[2] = -A1 / A0;
     internalBiquadCoeffs[3] = -A2 / A0;
+    double roots[4];
+    iirroots(-internalBiquadCoeffs[2], -internalBiquadCoeffs[3], roots);
+    double pole1Magnitude = sqrt(roots[0] * roots[0] + roots[1] * roots[1]);
+    double pole2Magnitude = sqrt(roots[2] * roots[2] + roots[3] * roots[3]);
+    m_isStable = 0; // Assume all pole is unstable
+    if (pole1Magnitude < 1.0 && pole2Magnitude < 1.0)
+    {
+        if (1.0 - pole1Magnitude < 8e-14 || 1.0 - pole2Magnitude < 8e-14)
+            m_isStable = 2; // Not so stable, due to our tool text formatting OR V4A string inaccuracy
+        else
+            m_isStable = 1; // Perfectly stable
+    }
 }
 
 std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
@@ -312,8 +325,8 @@ std::list<double> biquad::ExportCoeffs(double dSamplingRate)
 {
     return ExportCoeffs(m_dFilterType,m_dFilterGain,m_dFilterFreq,dSamplingRate,m_dFilterBQ,m_isBandwidthOrS);
 }
-bool biquad::IsStable() const{
-    //Check if filter is stable/usable
+int biquad::IsStable() const{
+    // Check if filter is stable/usable/barely numerically stable
     return m_isStable;
 }
 
