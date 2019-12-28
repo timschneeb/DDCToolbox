@@ -197,7 +197,7 @@ void MainWindow::readLine_DDCProject(QString str){
                     if (!flag)
                     {
                         insertData(biquad::Type::PEAKING,result,num2,num3);
-                        g_dcDDCContext->AddFilter(biquad::Type::PEAKING,result, num3, num2, 44100.0,true);
+                        g_dcDDCContext->AddFilter(biquad::Type::PEAKING,result, num3, num2, 48000.0,true);
                     }
                 }
             }
@@ -228,7 +228,7 @@ void MainWindow::readLine_DDCProject(QString str){
                     if (!flag)
                     {
                         insertData(filtertype,result,num2,num3);
-                        g_dcDDCContext->AddFilter(filtertype,result, num3, num2, 44100.0,true);
+                        g_dcDDCContext->AddFilter(filtertype,result, num3, num2, 48000.0,true);
                     }
                 }
             }
@@ -726,7 +726,7 @@ void MainWindow::importParametricAutoEQ(){
                 lock_actions = true;
                 insertData(biquad::Type::PEAKING,cal.freq,(double)cal.bw,(double)cal.gain);
                 lock_actions = false;
-                g_dcDDCContext->AddFilter(biquad::Type::PEAKING,cal.freq, (double)cal.gain, (double)cal.bw, 44100.0,true);
+                g_dcDDCContext->AddFilter(biquad::Type::PEAKING,cal.freq, (double)cal.gain, (double)cal.bw, 48000.0,true);
             }
         }
         ui->listView_DDCPoints->sortItems(1,Qt::SortOrder::AscendingOrder);
