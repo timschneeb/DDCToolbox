@@ -490,9 +490,9 @@ void MainWindow::drawGraph(graphtype t, bool onlyUpdatePoints){
     if (ui->listView_DDCPoints->rowCount() <= 0)
         return;
     const int bandCount = 8192 * 2;
-    std::vector<float> responseTable = g_dcDDCContext->GetMagnitudeResponseTable(bandCount, 44100.0);
-    std::vector<float> phaseTable = g_dcDDCContext->GetPhaseResponseTable(bandCount, 44100.0);
-    std::vector<float> gdelayTable = g_dcDDCContext->GetGroupDelayTable(bandCount, 44100.0);
+    std::vector<float> responseTable = g_dcDDCContext->GetMagnitudeResponseTable(bandCount, 48000.0);
+    std::vector<float> phaseTable = g_dcDDCContext->GetPhaseResponseTable(bandCount, 48000.0);
+    std::vector<float> gdelayTable = g_dcDDCContext->GetGroupDelayTable(bandCount, 48000.0);
     if((t == graphtype::magnitude || t == graphtype::all) && !onlyUpdatePoints) ui->graph->updatePlot(responseTable,bandCount);
     if((t == graphtype::phase || t == graphtype::all) && !onlyUpdatePoints) ui->phase_graph->updatePlot(phaseTable,bandCount);
     if((t == graphtype::groupdelay || t == graphtype::all) && !onlyUpdatePoints) ui->gdelay_graph->updatePlot(gdelayTable,bandCount);
