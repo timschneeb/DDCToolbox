@@ -31,8 +31,7 @@ public:
     int IsStable() const;
 
 private:
-    double internalBiquadCoeffs[4];
-    double a0;
+    double internalBiquadCoeffs[5];
     double m_dFilterBQ;
     double m_dFilterFreq;
     double m_dFilterGain;

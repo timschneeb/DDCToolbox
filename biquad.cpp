@@ -14,7 +14,7 @@ biquad::biquad()
     internalBiquadCoeffs[1] = 0.0;
     internalBiquadCoeffs[2] = 0.0;
     internalBiquadCoeffs[3] = 0.0;
-    a0 = 0.0;
+    internalBiquadCoeffs[4] = 0.0;
 }
 
 void iirroots(double b, double c, double *roots)
@@ -146,36 +146,30 @@ void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs
         A2 = 0.0;
         break;
     case ONEPOLE_LOWPASS:
-        B1 = exp(-2.0 * M_PI * (centreFreq / fs));
-        A0 = 1.0 - B1;
-        B1 = -B1;
-        A1 = A2 = B2 = B0 = 0;
+        B0 = tan(M_PI * centreFreq / fs * 0.5);
+        A1 = -(1.0 - B0) / (1.0 + B0);
+        B1 = B0 = B0 / (1.0 + B0);
+        A0 = 1.0;
+        A2 = 0.0;
         break;
     case ONEPOLE_HIGHPASS:
-        B1 = -exp(-2.0 * M_PI * (0.5 - centreFreq / fs));
-        A0 = 1.0 + B1;
-        B1 = -B1;
-        A1 = A2 = B2 = B0 = 0;
+        B0 = tan(M_PI * centreFreq / fs * 0.5);
+        A1 = -(1.0 - B0) / (1.0 + B0);
+        B0 = 1.0 - (B0 / (1.0 + B0));
+        B1 = -B0;
+        A0 = 1.0;
+        A2 = 0.0;
         break;
-    }
-
-    switch (type) {
-    case ONEPOLE_LOWPASS:
-    case ONEPOLE_HIGHPASS:
-        a0 = A0;
-        break;
-    default:
-        a0 = B0 / A0;
     }
 
     //Check if filter is stable/usable
-
-    internalBiquadCoeffs[0] = B1 / A0;
-    internalBiquadCoeffs[1] = B2 / A0;
-    internalBiquadCoeffs[2] = -A1 / A0;
-    internalBiquadCoeffs[3] = -A2 / A0;
+    internalBiquadCoeffs[0] = B0 / A0;
+    internalBiquadCoeffs[1] = B1 / A0;
+    internalBiquadCoeffs[2] = B2 / A0;
+    internalBiquadCoeffs[3] = -A1 / A0;
+    internalBiquadCoeffs[4] = -A2 / A0;
     double roots[4];
-    iirroots(-internalBiquadCoeffs[2], -internalBiquadCoeffs[3], roots);
+    iirroots(-internalBiquadCoeffs[3], -internalBiquadCoeffs[4], roots);
     double pole1Magnitude = sqrt(roots[0] * roots[0] + roots[1] * roots[1]);
     double pole2Magnitude = sqrt(roots[2] * roots[2] + roots[3] * roots[3]);
     m_isStable = 0; // Assume all pole is unstable
@@ -300,16 +294,19 @@ std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A2 = 0.0;
         break;
     case ONEPOLE_LOWPASS:
-        B1 = exp(-2.0 * M_PI * (centreFreq / fs));
-        A0 = 1.0 - B1;
-        B1 = -B1;
-        A1 = A2 = B2 = B0 = 0;
+        B0 = tan(M_PI * centreFreq / fs * 0.5);
+        A1 = -(1.0 - B0) / (1.0 + B0);
+        B1 = B0 = B0 / (1.0 + B0);
+        A0 = 1.0;
+        A2 = 0.0;
         break;
     case ONEPOLE_HIGHPASS:
-        B1 = -exp(-2.0 * M_PI * (0.5 - centreFreq / fs));
-        A0 = 1.0 + B1;
-        B1 = -B1;
-        A1 = A2 = B2 = B0 = 0;
+        B0 = tan(M_PI * centreFreq / fs * 0.5);
+        A1 = -(1.0 - B0) / (1.0 + B0);
+        B0 = 1.0 - (B0 / (1.0 + B0));
+        B1 = -B0;
+        A0 = 1.0;
+        A2 = 0.0;
         break;
     }
 
@@ -339,11 +336,11 @@ int biquad::complexResponse(double centreFreq, double fs, double *HofZReal, doub
     z1Real = cos(Arg), z1Imag = -sin(Arg);  // z = e^(j*omega)
     complexMultiplicationRI(&z2Real, &z2Imag, z1Real, z1Imag, z1Real, z1Imag); // z squared
     *HofZReal = 1.0, *HofZImag = 0.0;
-    tmpReal = a0 + internalBiquadCoeffs[0] * z1Real + internalBiquadCoeffs[1] * z2Real;
-    tmpImag = internalBiquadCoeffs[0] * z1Imag + internalBiquadCoeffs[1] * z2Imag;
+    tmpReal = internalBiquadCoeffs[0] + internalBiquadCoeffs[1] * z1Real + internalBiquadCoeffs[2] * z2Real;
+    tmpImag = internalBiquadCoeffs[1] * z1Imag + internalBiquadCoeffs[2] * z2Imag;
     complexMultiplicationRI(HofZReal, HofZImag, *HofZReal, *HofZImag, tmpReal, tmpImag);
-    DenomReal = 1.0 + -internalBiquadCoeffs[2] * z1Real + -internalBiquadCoeffs[3] * z2Real;
-    DenomImag = -internalBiquadCoeffs[2] * z1Imag + -internalBiquadCoeffs[3] * z2Imag;
+    DenomReal = 1.0 + -internalBiquadCoeffs[3] * z1Real + -internalBiquadCoeffs[4] * z2Real;
+    DenomImag = -internalBiquadCoeffs[3] * z1Imag + -internalBiquadCoeffs[4] * z2Imag;
     if (sqrt(DenomReal * DenomReal + DenomImag * DenomImag) < DBL_EPSILON)
         return 0; // Division by zero, you know what to do
     else
@@ -389,14 +386,14 @@ double biquad::GroupDelayAt(double centreFreq, double fs)
     double cw2 = cos(2.0 * Arg);
     double sw = sin(Arg);
     double sw2 = sin(2.0 * Arg);
-    double b1 = a0, b2 = internalBiquadCoeffs[0], b3 = internalBiquadCoeffs[1];
+    double b1 = internalBiquadCoeffs[0], b2 = internalBiquadCoeffs[1], b3 = internalBiquadCoeffs[2];
     double u = b1 * sw2 + b2 * sw;
     double v = b1 * cw2 + b2 * cw + b3;
     double du = 2.0 * b1*cw2 + b2 * cw;
     double dv = -(2.0 * b1*sw2 + b2 * sw);
     double u2v2 = (b1*b1) + (b2*b2) + (b3*b3) + 2.0 * (b1*b2 + b2 * b3)*cw + 2.0 * (b1*b3)*cw2;
     double gdB = (2.0 - (v*du - u * dv) / u2v2);
-    b2 = -internalBiquadCoeffs[2], b3 = -internalBiquadCoeffs[3];
+    b2 = -internalBiquadCoeffs[3], b3 = -internalBiquadCoeffs[4];
     u = sw2 + b2 * sw;
     v = cw2 + b2 * cw + b3;
     du = 2.0 * cw2 + b2 * cw;
