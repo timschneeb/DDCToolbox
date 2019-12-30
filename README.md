@@ -130,7 +130,7 @@ Compile it
 
 Run it
     
-    ./DDCToolbox.app
+    open ./DDCToolbox.app
 
 ## Contributors
 * [James Fung (@james34602):](https://github.com/james34602)
