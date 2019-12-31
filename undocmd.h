@@ -2,6 +2,7 @@
 #define UNDOCMD_H
 #include <QUndoCommand>
 #include "mainwindow.h"
+#include "item/customfilteritem.h"
 
 class AddCommand : public QUndoCommand
 {

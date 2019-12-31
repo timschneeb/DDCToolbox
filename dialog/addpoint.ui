@@ -14,7 +14,7 @@
    <string>Add Point</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset resource="../resources.qrc">
     <normaloff>:/img/icon.png</normaloff>:/img/icon.png</iconset>
   </property>
   <property name="modal">
@@ -150,6 +150,11 @@
        <string>One-Pole High Pass</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>Custom</string>
+      </property>
+     </item>
     </widget>
    </item>
    <item>
@@ -178,7 +183,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections>
   <connection>

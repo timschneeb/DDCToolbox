@@ -29,8 +29,10 @@ SOURCES += \
         ddccontext.cpp \
         dialog/addpoint.cpp \
         dialog/calc.cpp \
+        dialog/customfilterdialog.cpp \
         dialog/shiftfreq.cpp \
         dialog/textpopup.cpp \
+        item/customfilteritem.cpp \
         main.cpp \
         mainwindow.cpp \
         plot/frequencyplot.cpp \
@@ -42,9 +44,12 @@ HEADERS += \
         ddccontext.h \
         dialog/addpoint.h \
         dialog/calc.h \
+        dialog/customfilterdialog.h \
         dialog/shiftfreq.h \
         dialog/textpopup.h \
         filtertypes.h \
+        item/customfilterfactory.h \
+        item/customfilteritem.h \
         mainwindow.h \
         plot/frequencyplot.h \
         plot/qcustomplot.h \
@@ -54,8 +59,10 @@ HEADERS += \
 FORMS += \
         dialog/addpoint.ui \
         dialog/calc.ui \
+        dialog/customfilterdialog.ui \
         dialog/shiftfreq.ui \
         dialog/textpopup.ui \
+        item/customfilteritem.ui \
         mainwindow.ui
 
 TRANSLATIONS += \

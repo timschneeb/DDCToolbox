@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>691</width>
+    <width>976</width>
     <height>541</height>
    </rect>
   </property>
@@ -77,7 +77,7 @@
            <enum>Qt::SolidLine</enum>
           </property>
           <property name="sortingEnabled">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <property name="cornerButtonEnabled">
            <bool>false</bool>
@@ -141,7 +141,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>691</width>
+     <width>976</width>
      <height>22</height>
     </rect>
    </property>

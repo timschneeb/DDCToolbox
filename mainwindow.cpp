@@ -14,6 +14,7 @@
 #include <vector>
 #include <map>
 #include "dialog/shiftfreq.h"
+#include "item/customfilteritem.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -44,10 +45,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_updater = QSimpleUpdater::getInstance();
 
-    QAction* actionUndo = undoStack->createUndoAction(this, tr("Undo"));
+    //TODO: Fix issues the the undo/redo framework!
+    //-> Disabled for now
+    QAction* actionUndo = new QAction(tr("Undo"),this);
+    actionUndo->setEnabled(false);
+    QAction* actionRedo = new QAction(tr("Redo"),this);
+    actionRedo->setEnabled(false);
+    ui->actionView_undo_history->setEnabled(false);
+    /*QAction* actionUndo = undoStack->createUndoAction(this, tr("Undo"));
     actionUndo->setShortcuts(QKeySequence::Undo);
     QAction* actionRedo = undoStack->createRedoAction(this, tr("Redo"));
-    actionRedo->setShortcuts(QKeySequence::Redo);
+    actionRedo->setShortcuts(QKeySequence::Redo);*/
     QAction* first = ui->menuEdit->actions().at(0);
     ui->menuEdit->insertAction(first,actionUndo);
     ui->menuEdit->insertAction(first,actionRedo);
@@ -58,8 +66,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->listView_DDCPoints->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     connect(ui->listView_DDCPoints->selectionModel(),
-        static_cast<void (QItemSelectionModel::*)(const QItemSelection &, const QItemSelection &)>(&QItemSelectionModel::selectionChanged),
-                this,[=](){
+            static_cast<void (QItemSelectionModel::*)(const QItemSelection &, const QItemSelection &)>(&QItemSelectionModel::selectionChanged),
+            this,[=](){
         if(lock_actions)return;
         drawGraph(graphtype::all,true);
     });
@@ -270,7 +278,7 @@ void MainWindow::invertSelection(){
             cal.bw = getValue(datatype::bw,row);
             cal.gain = getValue(datatype::gain,row);
             cal.type = getType(row);
-            cal_table.push_back(cal);
+            if(cal.type != biquad::CUSTOM)cal_table.push_back(cal);
         }
         QUndoCommand *invertCommand = new InvertCommand(ui->listView_DDCPoints,
                                                         g_dcDDCContext,cal_table,&mtx,&lock_actions,this);
@@ -321,6 +329,8 @@ void MainWindow::clearPoint(bool trackundo){
             cal.bw = getValue(datatype::bw,i);
             cal.gain = getValue(datatype::gain,i);
             cal.type = getType(i);
+            if(cal.type == biquad::CUSTOM)
+                cal.custom = ((CustomFilterItem*)ui->listView_DDCPoints->cellWidget(i,3))->getCoefficients();
             cal_table.push_back(cal);
         }
         QUndoCommand *clearCommand = new ClearCommand(ui->listView_DDCPoints,
@@ -349,81 +359,113 @@ void MainWindow::editCell(QTableWidgetItem* item){
     double calibrationPointBandwidth = 0.0;
     double calibrationPointGain = 0.0;
 
+    qDebug() << "slot reached";
+
     if(ui->listView_DDCPoints->rowCount() <= 0){
         return;
     }
-
-    if ((sscanf(QString::number((int)getValue(datatype::freq,row)).toUtf8().constData(), "%d", &result) == 1 &&
-         sscanf(QString::number(getValue(datatype::bw,row)).toUtf8().constData(), "%lf", &calibrationPointBandwidth) == 1) &&
-            sscanf(QString::number(getValue(datatype::gain,row)).toUtf8().constData(), "%lf", &calibrationPointGain) == 1){
-
-        ui->listView_DDCPoints->setSortingEnabled(false);
-        nOldFreq = Global::old_freq;
-
-
-        //Validate frequency value
-        if(result < 0){
-            ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,0);
-            QMessageBox::warning(this,tr("Warning"),tr("Frequency value '%1' is too low (0.0 ~ 24000.0)").arg(result));
-            result = 0;
+    if(getType(row)==biquad::CUSTOM){
+        if(sender()==ui->listView_DDCPoints){
+            Global::old_freq = (int)getValue(datatype::freq,row);
+            //dirty check if custom element is new created by addpoint.
+            //If true, make sure we set the initial old value to the current frequency value for compatibility
         }
-        else if(result > 24000){
-            ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,24000);
-            QMessageBox::warning(this,tr("Warning"),tr("Frequency value '%1' is too high (0.0 ~ 24000.0)"));
-            result = 24000;
+        //ui->listView_DDCPoints->setSpan(row,2,1,2);
+        if(ui->listView_DDCPoints->cellWidget(row,3)==nullptr ){
+            CustomFilterItem* cf_item = new CustomFilterItem();
+            ui->listView_DDCPoints->setCellWidget(row,3,cf_item);
         }
-
-        //Validate bandwidth value
-        else if(calibrationPointBandwidth < 0){
-            ui->listView_DDCPoints->item(row,2)->setData(Qt::DisplayRole,(double)0);
-            QMessageBox::warning(this,"Warning","Bandwidth value '" + QString::number(calibrationPointBandwidth) + "' is too low (0.0 ~ 100.0)");
-            calibrationPointBandwidth = 0;
-        }
-        else if(calibrationPointBandwidth > 100){
-            ui->listView_DDCPoints->item(row,2)->setData(Qt::DisplayRole,(double)100);
-            QMessageBox::warning(this,"Warning","Bandwidth value '" + QString::number(calibrationPointBandwidth) + "' is too high (0.0 ~ 100.0)");
-            calibrationPointBandwidth = 100;
-        }
-
-        //Validate gain value
-        else if(calibrationPointGain < -40){
-            ui->listView_DDCPoints->item(row,3)->setData(Qt::DisplayRole,(double)-40);
-            QMessageBox::warning(this,tr("Warning"),tr("Gain value '%1' is too low (-40.0 ~ 40.0)").arg(calibrationPointGain));
-            calibrationPointGain = -40;
-        }
-        else if(calibrationPointGain > 40){
-            ui->listView_DDCPoints->item(row,3)->setData(Qt::DisplayRole,(double)40);
-            QMessageBox::warning(this,tr("Warning"),tr("Gain value '%1' is too high (-40.0 ~ 40.0)").arg(calibrationPointGain));
-            calibrationPointGain = 40;
-        }
-
-        //Check for duplicate frequencies
-        for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
-        {
-            if ((int)getValue(datatype::freq,i) == (int)getValue(datatype::freq,row) && row != i)
-            {
-                ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,Global::old_freq);
-                QMessageBox::warning(this,tr("Error"),tr("Point '%1' already exists").arg((int)getValue(datatype::freq,i)));
-                return;
-            }
-        }
-
         calibrationPoint_t cal;
-        cal.freq = result;
-        cal.bw = calibrationPointBandwidth;
-        cal.gain = calibrationPointGain;
+        cal.freq = (int)getValue(datatype::freq,row);
         cal.type = getType(row);
+        cal.bw = getValue(datatype::bw,row);
+        cal.gain = getValue(datatype::bw,row);
+        cal.custom = ((CustomFilterItem*)ui->listView_DDCPoints->cellWidget(row,3))->getCoefficients();
         calibrationPoint_t oldcal;
-        oldcal.freq = nOldFreq;
+        oldcal.freq = Global::old_freq;
         oldcal.bw = Global::old_bw;
         oldcal.gain = Global::old_gain;
-        oldcal.type = Global::old_type;
+        oldcal.custom = Global::old_custom;
+        oldcal.type = biquad::CUSTOM;
 
         QUndoCommand *editCommand = new EditCommand(ui->listView_DDCPoints,g_dcDDCContext,
                                                     row,cal,oldcal,&mtx,&lock_actions,this);
         undoStack->push(editCommand);
-
         drawGraph();
+    }
+    else{
+        //ui->listView_DDCPoints->setSpan(row,2,1,1);
+        ui->listView_DDCPoints->removeCellWidget(row,3);
+        if ((sscanf(QString::number((int)getValue(datatype::freq,row)).toUtf8().constData(), "%d", &result) == 1 &&
+             sscanf(QString::number(getValue(datatype::bw,row)).toUtf8().constData(), "%lf", &calibrationPointBandwidth) == 1) &&
+                sscanf(QString::number(getValue(datatype::gain,row)).toUtf8().constData(), "%lf", &calibrationPointGain) == 1){
+
+            ui->listView_DDCPoints->setSortingEnabled(false);
+            nOldFreq = Global::old_freq;
+
+            //Validate frequency value
+            if(result < 0){
+                ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,0);
+                QMessageBox::warning(this,tr("Warning"),tr("Frequency value '%1' is too low (0.0 ~ 24000.0)").arg(result));
+                result = 0;
+            }
+            else if(result > 24000){
+                ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,24000);
+                QMessageBox::warning(this,tr("Warning"),tr("Frequency value '%1' is too high (0.0 ~ 24000.0)"));
+                result = 24000;
+            }
+
+            //Validate bandwidth value
+            else if(calibrationPointBandwidth < 0){
+                ui->listView_DDCPoints->item(row,2)->setData(Qt::DisplayRole,(double)0);
+                QMessageBox::warning(this,"Warning","Bandwidth value '" + QString::number(calibrationPointBandwidth) + "' is too low (0.0 ~ 100.0)");
+                calibrationPointBandwidth = 0;
+            }
+            else if(calibrationPointBandwidth > 100){
+                ui->listView_DDCPoints->item(row,2)->setData(Qt::DisplayRole,(double)100);
+                QMessageBox::warning(this,"Warning","Bandwidth value '" + QString::number(calibrationPointBandwidth) + "' is too high (0.0 ~ 100.0)");
+                calibrationPointBandwidth = 100;
+            }
+
+            //Validate gain value
+            else if(calibrationPointGain < -40){
+                ui->listView_DDCPoints->item(row,3)->setData(Qt::DisplayRole,(double)-40);
+                QMessageBox::warning(this,tr("Warning"),tr("Gain value '%1' is too low (-40.0 ~ 40.0)").arg(calibrationPointGain));
+                calibrationPointGain = -40;
+            }
+            else if(calibrationPointGain > 40){
+                ui->listView_DDCPoints->item(row,3)->setData(Qt::DisplayRole,(double)40);
+                QMessageBox::warning(this,tr("Warning"),tr("Gain value '%1' is too high (-40.0 ~ 40.0)").arg(calibrationPointGain));
+                calibrationPointGain = 40;
+            }
+
+            //Check for duplicate frequencies
+            for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
+            {
+                if ((int)getValue(datatype::freq,i) == (int)getValue(datatype::freq,row) && row != i)
+                {
+                    ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,Global::old_freq);
+                    QMessageBox::warning(this,tr("Error"),tr("Point '%1' already exists").arg((int)getValue(datatype::freq,i)));
+                    return;
+                }
+            }
+            calibrationPoint_t cal;
+            cal.freq = result;
+            cal.bw = calibrationPointBandwidth;
+            cal.gain = calibrationPointGain;
+            cal.type = getType(row);
+            calibrationPoint_t oldcal;
+            oldcal.freq = nOldFreq;
+            oldcal.bw = Global::old_bw;
+            oldcal.gain = Global::old_gain;
+            oldcal.type = Global::old_type;
+
+            QUndoCommand *editCommand = new EditCommand(ui->listView_DDCPoints,g_dcDDCContext,
+                                                        row,cal,oldcal,&mtx,&lock_actions,this);
+            undoStack->push(editCommand);
+
+            drawGraph();
+        }
     }
     //else qDebug() << "Invalid input data";
 }

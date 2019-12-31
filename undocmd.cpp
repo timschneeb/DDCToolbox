@@ -1,5 +1,6 @@
 #include "undocmd.h"
 #include "ddccontext.h"
+#include "item/customfilterfactory.h"
 
 AddCommand::AddCommand(QTableWidget* _tw,DDCContext* _ddcContext,
                        calibrationPoint_t _cal,std::mutex* _mtx,bool* _lockActions,MainWindow* _host, QUndoCommand *parent)
@@ -43,6 +44,7 @@ void AddCommand::redo()
     *lockActions = true;
 
     tw->setSortingEnabled(false);
+
     QTableWidgetItem *c0 = new QTableWidgetItem();
     QTableWidgetItem *c1 = new QTableWidgetItem();
     QTableWidgetItem *c2 = new QTableWidgetItem();
@@ -56,7 +58,16 @@ void AddCommand::redo()
     tw->setItem(tw->rowCount()-1, 1, c1);
     tw->setItem(tw->rowCount()-1, 2, c2);
     tw->setItem(tw->rowCount()-1, 3, c3);
-    ddcContext->AddFilter(cal.type,cal.freq, cal.gain, cal.bw, 44100.0,true);
+
+    if(cal.type==biquad::CUSTOM){
+        newCustomFilter(defaultCustomFilter(),tw,tw->rowCount()-1);
+        ddcContext->AddFilter(cal.type,cal.freq, defaultCustomFilter(), 44100.0);
+    }
+    else{
+        tw->removeCellWidget(tw->rowCount()-1,3);
+        ddcContext->AddFilter(cal.type,cal.freq, cal.gain, cal.bw, 44100.0,true);
+    }
+
     tw->setSortingEnabled(true);
     tw->sortItems(1);
     tw->update();
@@ -98,7 +109,15 @@ void EditCommand::undo()
         tw->item(row,3)->setData(Qt::DisplayRole,(double)oldcal.gain);
     }
 
-    ddcContext->ModifyFilter(oldcal.type,cal.freq, oldcal.freq, oldcal.gain, oldcal.bw, 44100.0,true);
+    if(oldcal.type==biquad::CUSTOM){
+        newCustomFilter(oldcal.custom,tw,row);
+        ddcContext->ModifyFilter(oldcal.type, cal.freq, oldcal.freq, oldcal.custom, 44100.0);
+    }
+    else{
+        tw->removeCellWidget(row,3);
+        ddcContext->ModifyFilter(oldcal.type,cal.freq, oldcal.freq, oldcal.gain, oldcal.bw, 44100.0,true);
+    }
+
     tw->setSortingEnabled(true);
     tw->sortItems(1);
 
@@ -111,6 +130,15 @@ void EditCommand::redo()
     mtx->lock();
     *lockActions = true;
 
+    if(cal.type==biquad::CUSTOM){
+        newCustomFilter(cal.custom,tw,row);
+        ddcContext->ModifyFilter(cal.type, oldcal.freq, cal.freq, cal.custom, 44100.0);
+    }
+    else{
+        tw->removeCellWidget(row,3);
+        ddcContext->ModifyFilter(cal.type,oldcal.freq, cal.freq, cal.gain, cal.bw, 44100.0,true);
+    }
+
     if(row < tw->rowCount()){
         tw->item(row,0)->setData(Qt::DisplayRole,typeToString(cal.type));
         tw->item(row,1)->setData(Qt::DisplayRole,cal.freq);
@@ -118,7 +146,6 @@ void EditCommand::redo()
         tw->item(row,3)->setData(Qt::DisplayRole,(double)cal.gain);
     }
 
-    ddcContext->ModifyFilter(cal.type,oldcal.freq, cal.freq, cal.gain, cal.bw, 44100.0,true);
     tw->setSortingEnabled(true);
     tw->sortItems(1);
 
@@ -359,7 +386,7 @@ QString InvertCommand::createCommandString(){
 }
 
 ShiftCommand::ShiftCommand(QTableWidget* _tw,DDCContext* _ddcContext,int _shift,
-                             std::vector<calibrationPoint_t> _cal_table,std::mutex* _mtx,bool* _lockActions,MainWindow* _host, QUndoCommand *parent)
+                           std::vector<calibrationPoint_t> _cal_table,std::mutex* _mtx,bool* _lockActions,MainWindow* _host, QUndoCommand *parent)
     : QUndoCommand(parent)
 {
     static int itemCount = 0;

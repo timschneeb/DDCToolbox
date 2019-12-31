@@ -16,6 +16,7 @@ addpoint::addpoint(QWidget *parent) :
         case biquad::UNITY_GAIN:
         case biquad::ONEPOLE_LOWPASS:
         case biquad::ONEPOLE_HIGHPASS:
+        case biquad::CUSTOM:
             ui->bw->setEnabled(false);
             break;
         default:

@@ -13,6 +13,7 @@
 #include "ddccontext.h"
 #include "filtertypes.h"
 #include "plot/qcustomplot.h"
+#include "item/customfilteritem.h"
 namespace Ui {
 class MainWindow;
 }
@@ -20,15 +21,20 @@ class MainWindow;
 typedef struct calibrationPoint_s{
     biquad::Type type;
     int freq;
+    ///[Applies when type != custom] vvv
     double bw;
     double gain;
+    ///[Applies when type == custom] vvv
+    customFilter_t custom;
 }calibrationPoint_t;
+
 
 namespace Global {
 static biquad::Type old_type = biquad::Type::PEAKING;
 static int old_freq = 0;
 static double old_bw = 0;
 static double old_gain = 0;
+static customFilter_t old_custom;
 }
 
 enum datatype{
@@ -135,6 +141,7 @@ public:
         else if(_type=="Unity Gain")return biquad::Type::UNITY_GAIN;
         else if(_type=="One-Pole Low Pass")return biquad::Type::ONEPOLE_LOWPASS;
         else if(_type=="One-Pole High Pass")return biquad::Type::ONEPOLE_HIGHPASS;
+        else if(_type=="Custom")return biquad::Type::CUSTOM;
         return biquad::Type::PEAKING;
     }
     biquad::Type getType(const QModelIndex &index) const{
@@ -154,7 +161,6 @@ public:
             sp->setDecimals(6);
         }
         if(index.model()->columnCount()>3){
-
             Global::old_freq = index.sibling(index.row(),1).data(Qt::DisplayRole).toInt();
             Global::old_bw = index.sibling(index.row(),2).data(Qt::DisplayRole).toDouble();
             Global::old_gain = index.sibling(index.row(),3).data(Qt::DisplayRole).toDouble();
@@ -176,6 +182,7 @@ public:
             cb->addItem(QString("Unity Gain"));
             cb->addItem(QString("One-Pole Low Pass"));
             cb->addItem(QString("One-Pole High Pass"));
+            cb->addItem(QString("Custom"));
             return cb;
         }
         else if (index.column()==2&&sp) {
@@ -188,6 +195,7 @@ public:
             case biquad::UNITY_GAIN:
             case biquad::ONEPOLE_LOWPASS:
             case biquad::ONEPOLE_HIGHPASS:
+            case biquad::CUSTOM:
                 sp->setPrefix("");
                 sp->setEnabled(false);
                 break;
@@ -233,6 +241,7 @@ public:
                 case biquad::UNITY_GAIN:
                 case biquad::ONEPOLE_LOWPASS:
                 case biquad::ONEPOLE_HIGHPASS:
+                case biquad::CUSTOM:
                     //Leave item empty
                     return;
                 default:
