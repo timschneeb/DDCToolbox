@@ -61,7 +61,7 @@ void AddCommand::redo()
 
     if(cal.type==biquad::CUSTOM){
         newCustomFilter(defaultCustomFilter(),tw,tw->rowCount()-1);
-        ddcContext->AddFilter(cal.type,cal.freq, defaultCustomFilter(), 48000.0);
+        ddcContext->AddFilter(cal.type,cal.freq, defaultCustomFilter());
     }
     else{
         tw->removeCellWidget(tw->rowCount()-1,3);
@@ -111,7 +111,7 @@ void EditCommand::undo()
 
     if(oldcal.type==biquad::CUSTOM){
         newCustomFilter(oldcal.custom,tw,row);
-        ddcContext->ModifyFilter(oldcal.type, cal.freq, oldcal.freq, oldcal.custom, 48000.0);
+        ddcContext->ModifyFilter(oldcal.type, cal.freq, oldcal.freq, oldcal.custom);
     }
     else{
         tw->removeCellWidget(row,3);
@@ -132,7 +132,7 @@ void EditCommand::redo()
 
     if(cal.type==biquad::CUSTOM){
         newCustomFilter(cal.custom,tw,row);
-        ddcContext->ModifyFilter(cal.type, oldcal.freq, cal.freq, cal.custom, 48000.0);
+        ddcContext->ModifyFilter(cal.type, oldcal.freq, cal.freq, cal.custom);
     }
     else{
         tw->removeCellWidget(row,3);

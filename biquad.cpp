@@ -182,15 +182,12 @@ void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs
             m_isStable = 1; // Perfectly stable
     }
 }
-void biquad::RefreshFilter(Type type, customFilter_t coeffs, double centreFreq, double fs)
+void biquad::RefreshFilter(Type type, customFilter_t coeffs)
 {
     m_isCustom = true;
     m_custom = coeffs;
     m_dFilterType = type;
-    m_dFilterFreq = centreFreq;
 
-    qDebug().noquote().nospace() << QString("Custom filter refreshed at %1Hz").arg(centreFreq);
-    qDebug().noquote().nospace() << QString("--> a0: %1, a1: %2, a2: %3, b0: %4, b1: %5, b2: %6").arg(coeffs.a0).arg(coeffs.a1).arg(coeffs.a2).arg(coeffs.b0).arg(coeffs.b1).arg(coeffs.b2);
     double B0, B1, B2, A0, A1, A2;
 
     internalBiquadCoeffs[0] = coeffs.b0 / coeffs.a0;
@@ -350,13 +347,8 @@ std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFre
     result.push_back(-A2 / A0);
     return result;
 }
-std::list<double> biquad::ExportCoeffs(Type type, customFilter_t coeffs, double centreFreq, double fs)
+std::list<double> biquad::ExportCoeffs(Type type, customFilter_t coeffs)
 {
-    if (centreFreq <= 2.2204460492503131e-016 || fs <= 2.2204460492503131e-016){
-        std::list<double> nulllist;
-        return nulllist;
-    }
-
     std::list<double> result;
     double A0 = coeffs.a0;
     result.push_back(coeffs.b0 / A0);
@@ -369,7 +361,7 @@ std::list<double> biquad::ExportCoeffs(Type type, customFilter_t coeffs, double 
 std::list<double> biquad::ExportCoeffs(double dSamplingRate)
 {
     if(m_isCustom)
-        return ExportCoeffs(m_dFilterType,m_custom,m_dFilterFreq,dSamplingRate);
+        return ExportCoeffs(m_dFilterType,m_custom);
     else
         return ExportCoeffs(m_dFilterType,m_dFilterGain,m_dFilterFreq,dSamplingRate,m_dFilterBQ,m_isBandwidthOrS);
 }

@@ -32,10 +32,10 @@ public:
     };
     biquad();
     void RefreshFilter(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
-    void RefreshFilter(Type type, customFilter_t coeffs, double centreFreq, double fs);
+    void RefreshFilter(Type type, customFilter_t coeffs);
     std::list<double> ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
     std::list<double> ExportCoeffs(double dSamplingRate);
-    std::list<double> ExportCoeffs(Type type, customFilter_t coeffs, double centreFreq, double fs);
+    std::list<double> ExportCoeffs(Type type, customFilter_t coeffs);
     int complexResponse(double centreFreq, double fs, double *HofZReal, double *HofZImag);
     double GainAt(double centreFreq, double fs);
     double PhaseResponseAt(double centreFreq, double fs);
