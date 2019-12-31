@@ -14,6 +14,7 @@
 #include "filtertypes.h"
 #include "plot/qcustomplot.h"
 #include "item/customfilteritem.h"
+#include "item/customfilterfactory.h"
 namespace Ui {
 class MainWindow;
 }

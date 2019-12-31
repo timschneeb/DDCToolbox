@@ -129,6 +129,8 @@ void MainWindow::saveAsDDCProject(bool ask,QString path,bool compatibilitymode)
             cal.bw = getValue(datatype::bw,i);
             cal.gain = getValue(datatype::gain,i);
             cal.type = getType(i);
+            if(cal.type == biquad::CUSTOM)
+                cal.custom = ((CustomFilterItem*)ui->listView_DDCPoints->cellWidget(i,3))->getCoefficients();
             points.push_back(cal);
         }
         mtx.unlock();
@@ -179,7 +181,14 @@ void MainWindow::readLine_DDCProject(QString str){
     {
         if ((str.length() > 0) && !str.startsWith("#"))
         {
-            QStringList strArray = str.split(',');
+            bool isCustomLine = false;
+            QStringList strArray;
+            if(str.contains(";")){
+                strArray = str.split(";")[0].split(',');
+
+                isCustomLine = true;
+            }
+            else strArray = str.split(',');
             if ((!strArray.empty()) && (strArray.length() == 3))
             {
                 int result = 0;
@@ -222,6 +231,9 @@ void MainWindow::readLine_DDCProject(QString str){
                     if(isnan(num2)||isnan(num3))return;
                     if(isinf(num2)||isinf(num3))return;
 
+
+
+
                     biquad::Type filtertype = stringToType(strArray[3].trimmed());
 
                     bool flag = false;
@@ -235,8 +247,40 @@ void MainWindow::readLine_DDCProject(QString str){
                     }
                     if (!flag)
                     {
-                        insertData(filtertype,result,num2,num3);
-                        g_dcDDCContext->AddFilter(filtertype,result, num3, num2, 48000.0,true);
+                        if(isCustomLine){
+                            QString coeffpart = str.split(";")[1];
+                            customFilter_t customFilter;
+                            int counter = 0;
+                            for(auto coeff:coeffpart.split(",")){
+                                switch(counter){
+                                case 0:
+                                    customFilter.a0 = coeff.toDouble();
+                                    break;
+                                case 1:
+                                    customFilter.a1 = coeff.toDouble();
+                                    break;
+                                case 2:
+                                    customFilter.a2 = coeff.toDouble();
+                                    break;
+                                case 3:
+                                    customFilter.b0 = coeff.toDouble();
+                                    break;
+                                case 4:
+                                    customFilter.b1 = coeff.toDouble();
+                                    break;
+                                case 5:
+                                    customFilter.b2 = coeff.toDouble();
+                                    break;
+                                }
+                                counter++;
+                            }
+                            insertData(filtertype,result,num2,num3);
+                            newCustomFilter(customFilter,ui->listView_DDCPoints,ui->listView_DDCPoints->rowCount()-1);
+                            g_dcDDCContext->AddFilter(biquad::CUSTOM,result, customFilter);
+                        }else{
+                            insertData(filtertype,result,num2,num3);
+                            g_dcDDCContext->AddFilter(filtertype,result, num3, num2, 48000.0,true);
+                        }
                     }
                 }
             }
@@ -805,13 +849,18 @@ bool MainWindow::writeProjectFile(std::vector<calibrationPoint_t> points,QString
             outStream << QString::number(cal.freq) + "," + QString::number(cal.bw) + "," + QString::number(cal.gain) + n;
         }
     }else{
-        outStream << "# DDCToolbox Project File, v2.0.0.0 (@ThePBone)" + n;
+        outStream << "# DDCToolbox Project File, v3.0.0.0 (@ThePBone)" + n;
         outStream << n;
         for (size_t i = 0; i < points.size(); i++)
         {
             calibrationPoint_t cal = points.at(i);
             outStream << "# Calibration Point " + QString::number(i + 1) + n;
-            outStream << QString::number(cal.freq) + "," + QString::number(cal.bw) + "," + QString::number(cal.gain) + "," + typeToString(cal.type) + n;
+            if(cal.type==biquad::CUSTOM){
+                outStream << QString::number(cal.freq) + ",0,0," + typeToString(cal.type) + ";";
+                outStream << QString::number(cal.custom.a0,'f',16) + "," + QString::number(cal.custom.a1,'f',16) + "," + QString::number(cal.custom.a2,'f',16) + ",";
+                outStream << QString::number(cal.custom.b0,'f',16) + "," + QString::number(cal.custom.b1,'f',16) + "," + QString::number(cal.custom.b2,'f',16)  + n;
+            } else
+                outStream << QString::number(cal.freq) + "," + QString::number(cal.bw) + "," + QString::number(cal.gain) + "," + typeToString(cal.type) + n;
         }
     }
     outStream << n;
