@@ -201,7 +201,7 @@ void biquad::RefreshFilter(Type type, customFilter_t coeffs, double centreFreq, 
 
     //Check if filter is stable/usable
     double roots[4];
-    iirroots(-internalBiquadCoeffs[2], -internalBiquadCoeffs[3], roots);
+    iirroots(-internalBiquadCoeffs[3], -internalBiquadCoeffs[4], roots);
     double pole1Magnitude = sqrt(roots[0] * roots[0] + roots[1] * roots[1]);
     double pole2Magnitude = sqrt(roots[2] * roots[2] + roots[3] * roots[3]);
     m_isStable = 0; // Assume all pole is unstable
