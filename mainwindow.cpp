@@ -205,7 +205,7 @@ void MainWindow::readLine_DDCProject(QString str){
                     if (!flag)
                     {
                         insertData(biquad::Type::PEAKING,result,num2,num3);
-                        g_dcDDCContext->AddFilter(biquad::Type::PEAKING,result, num3, num2, 44100.0,true);
+                        g_dcDDCContext->AddFilter(biquad::Type::PEAKING,result, num3, num2, 48000.0,true);
                     }
                 }
             }
@@ -236,7 +236,7 @@ void MainWindow::readLine_DDCProject(QString str){
                     if (!flag)
                     {
                         insertData(filtertype,result,num2,num3);
-                        g_dcDDCContext->AddFilter(filtertype,result, num3, num2, 44100.0,true);
+                        g_dcDDCContext->AddFilter(filtertype,result, num3, num2, 48000.0,true);
                     }
                 }
             }
@@ -358,8 +358,6 @@ void MainWindow::editCell(QTableWidgetItem* item){
     int nOldFreq = 0;
     double calibrationPointBandwidth = 0.0;
     double calibrationPointGain = 0.0;
-
-    qDebug() << "slot reached";
 
     if(ui->listView_DDCPoints->rowCount() <= 0){
         return;
@@ -532,9 +530,9 @@ void MainWindow::drawGraph(graphtype t, bool onlyUpdatePoints){
     if (ui->listView_DDCPoints->rowCount() <= 0)
         return;
     const int bandCount = 8192 * 2;
-    std::vector<float> responseTable = g_dcDDCContext->GetMagnitudeResponseTable(bandCount, 44100.0);
-    std::vector<float> phaseTable = g_dcDDCContext->GetPhaseResponseTable(bandCount, 44100.0);
-    std::vector<float> gdelayTable = g_dcDDCContext->GetGroupDelayTable(bandCount, 44100.0);
+    std::vector<float> responseTable = g_dcDDCContext->GetMagnitudeResponseTable(bandCount, 48000.0);
+    std::vector<float> phaseTable = g_dcDDCContext->GetPhaseResponseTable(bandCount, 48000.0);
+    std::vector<float> gdelayTable = g_dcDDCContext->GetGroupDelayTable(bandCount, 48000.0);
     if((t == graphtype::magnitude || t == graphtype::all) && !onlyUpdatePoints) ui->graph->updatePlot(responseTable,bandCount);
     if((t == graphtype::phase || t == graphtype::all) && !onlyUpdatePoints) ui->phase_graph->updatePlot(phaseTable,bandCount);
     if((t == graphtype::groupdelay || t == graphtype::all) && !onlyUpdatePoints) ui->gdelay_graph->updatePlot(gdelayTable,bandCount);
@@ -768,7 +766,7 @@ void MainWindow::importParametricAutoEQ(){
                 lock_actions = true;
                 insertData(biquad::Type::PEAKING,cal.freq,(double)cal.bw,(double)cal.gain);
                 lock_actions = false;
-                g_dcDDCContext->AddFilter(biquad::Type::PEAKING,cal.freq, (double)cal.gain, (double)cal.bw, 44100.0,true);
+                g_dcDDCContext->AddFilter(biquad::Type::PEAKING,cal.freq, (double)cal.gain, (double)cal.bw, 48000.0,true);
             }
         }
         ui->listView_DDCPoints->sortItems(1,Qt::SortOrder::AscendingOrder);

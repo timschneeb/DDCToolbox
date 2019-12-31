@@ -19,12 +19,12 @@ Create and edit ViPER DDC files on Linux and Windows
 ![Screenshot](https://github.com/ThePBone/DDCToolbox/blob/master/img/screenshot.png?raw=true)
 
 ## Installation
-Primarily developed for Linux. It should work on other platforms too, but you need to compile it yourself.
-
+Primarily developed for Linux. You can also find Windows and macOS installation instructions below.
   * [Windows](#windows)
   * [Ubuntu](#ubuntu-ppa)
   * [Debian](#debian)
-  * [Manually/Portable (Linux)](#manuallyportable)
+  * [Manually (Linux)](#manuallyportable-linux)
+  * [Manually (macOS)](#manually-macos)
 ### Ubuntu (PPA)
 Add PPA Repo
 ```bash
@@ -54,7 +54,7 @@ If the server is down, you can also get one from the [AppVeyor cloud](https://ci
 ### Debian
 Users of debian-based distros can use the DEB-packages that are attached on the [release page](https://github.com/ThePBone/DDCToolbox/releases).
 
-### Manually/Portable
+### Manually/Portable (Linux)
 #### Build from sources
 _(You can find precompiled binaries [here](https://github.com/ThePBone/DDCToolbox/releases))_
 
@@ -103,6 +103,34 @@ Download Icon
 ```bash
 sudo wget -O /usr/share/pixmaps/ddc-toolbox.png https://raw.githubusercontent.com/ThePBone/DDCToolbox/master/img/icon.png -q --show-progress
 ```
+### Manually (macOS)
+Note: these installation steps are untested but should still work.
+
+Install Homebrew
+   
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+Install QT
+    
+    brew install qt5
+
+Symlink QT
+
+    brew link qt5 --force
+
+Clone the repo
+    
+    git clone https://github.com/ThePBone/DDCToolbox
+
+Compile it
+
+    cd DDCToolbox
+    qmake
+    make
+
+Run it
+    
+    open ./DDCToolbox.app
 
 ## Contributors
 * [James Fung (@james34602):](https://github.com/james34602)

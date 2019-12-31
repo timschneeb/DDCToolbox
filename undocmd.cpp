@@ -61,11 +61,11 @@ void AddCommand::redo()
 
     if(cal.type==biquad::CUSTOM){
         newCustomFilter(defaultCustomFilter(),tw,tw->rowCount()-1);
-        ddcContext->AddFilter(cal.type,cal.freq, defaultCustomFilter(), 44100.0);
+        ddcContext->AddFilter(cal.type,cal.freq, defaultCustomFilter(), 48000.0);
     }
     else{
         tw->removeCellWidget(tw->rowCount()-1,3);
-        ddcContext->AddFilter(cal.type,cal.freq, cal.gain, cal.bw, 44100.0,true);
+        ddcContext->AddFilter(cal.type,cal.freq, cal.gain, cal.bw, 48000.0,true);
     }
 
     tw->setSortingEnabled(true);
@@ -111,11 +111,11 @@ void EditCommand::undo()
 
     if(oldcal.type==biquad::CUSTOM){
         newCustomFilter(oldcal.custom,tw,row);
-        ddcContext->ModifyFilter(oldcal.type, cal.freq, oldcal.freq, oldcal.custom, 44100.0);
+        ddcContext->ModifyFilter(oldcal.type, cal.freq, oldcal.freq, oldcal.custom, 48000.0);
     }
     else{
         tw->removeCellWidget(row,3);
-        ddcContext->ModifyFilter(oldcal.type,cal.freq, oldcal.freq, oldcal.gain, oldcal.bw, 44100.0,true);
+        ddcContext->ModifyFilter(oldcal.type,cal.freq, oldcal.freq, oldcal.gain, oldcal.bw, 48000.0,true);
     }
 
     tw->setSortingEnabled(true);
@@ -132,11 +132,11 @@ void EditCommand::redo()
 
     if(cal.type==biquad::CUSTOM){
         newCustomFilter(cal.custom,tw,row);
-        ddcContext->ModifyFilter(cal.type, oldcal.freq, cal.freq, cal.custom, 44100.0);
+        ddcContext->ModifyFilter(cal.type, oldcal.freq, cal.freq, cal.custom, 48000.0);
     }
     else{
         tw->removeCellWidget(row,3);
-        ddcContext->ModifyFilter(cal.type,oldcal.freq, cal.freq, cal.gain, cal.bw, 44100.0,true);
+        ddcContext->ModifyFilter(cal.type,oldcal.freq, cal.freq, cal.gain, cal.bw, 48000.0,true);
     }
 
     if(row < tw->rowCount()){
@@ -194,7 +194,7 @@ void ClearCommand::undo()
         tw->setItem(tw->rowCount()-1, 1, c1);
         tw->setItem(tw->rowCount()-1, 2, c2);
         tw->setItem(tw->rowCount()-1, 3, c3);
-        ddcContext->AddFilter(cal.type,cal.freq, cal.gain, cal.bw, 44100.0,true);
+        ddcContext->AddFilter(cal.type,cal.freq, cal.gain, cal.bw, 48000.0,true);
     }
 
     tw->setSortingEnabled(true);
@@ -261,7 +261,7 @@ void RemoveCommand::undo()
         tw->setItem(tw->rowCount()-1, 1, c1);
         tw->setItem(tw->rowCount()-1, 2, c2);
         tw->setItem(tw->rowCount()-1, 3, c3);
-        ddcContext->AddFilter(cal.type,cal.freq, cal.gain, cal.bw, 44100.0,true);
+        ddcContext->AddFilter(cal.type,cal.freq, cal.gain, cal.bw, 48000.0,true);
     }
 
     tw->setSortingEnabled(true);
@@ -341,7 +341,7 @@ void InvertCommand::undo()
             if (tw->item(j,1)->data(Qt::DisplayRole).toInt() == cal.freq)
             {
                 tw->item(j,3)->setData(Qt::DisplayRole,(double)cal.gain);
-                ddcContext->ModifyFilter(cal.type,cal.freq, cal.freq, cal.gain, cal.bw, 44100.0,true);
+                ddcContext->ModifyFilter(cal.type,cal.freq, cal.freq, cal.gain, cal.bw, 48000.0,true);
                 break;
             }
         }
@@ -368,7 +368,7 @@ void InvertCommand::redo()
             if (tw->item(j,1)->data(Qt::DisplayRole).toInt() == cal.freq)
             {
                 tw->item(j,3)->setData(Qt::DisplayRole,(double)-cal.gain);
-                ddcContext->ModifyFilter(cal.type,cal.freq, cal.freq, -cal.gain, cal.bw, 44100.0,true);
+                ddcContext->ModifyFilter(cal.type,cal.freq, cal.freq, -cal.gain, cal.bw, 48000.0,true);
                 break;
             }
         }
@@ -414,7 +414,7 @@ void ShiftCommand::undo()
             if (tw->item(j,1)->data(Qt::DisplayRole).toInt() == cal.freq + shift)
             {
                 tw->item(j,1)->setData(Qt::DisplayRole,(int)cal.freq);
-                ddcContext->ModifyFilter(cal.type,cal.freq + shift, cal.freq, cal.gain, cal.bw, 44100.0,true);
+                ddcContext->ModifyFilter(cal.type,cal.freq + shift, cal.freq, cal.gain, cal.bw, 48000.0,true);
                 break;
             }
         }
@@ -450,7 +450,7 @@ void ShiftCommand::redo()
                 }
                 if(skip)break;
                 tw->item(j,1)->setData(Qt::DisplayRole,(int)cal.freq+shift);
-                ddcContext->ModifyFilter(cal.type,cal.freq, cal.freq+shift, cal.gain, cal.bw, 44100.0,true);
+                ddcContext->ModifyFilter(cal.type,cal.freq, cal.freq+shift, cal.gain, cal.bw, 48000.0,true);
                 break;
             }
         }

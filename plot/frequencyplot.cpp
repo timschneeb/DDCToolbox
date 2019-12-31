@@ -150,7 +150,7 @@ void FrequencyPlot::updatePlot(std::vector<float> table,int bandCount){
 
         for (size_t m = 0; m < (size_t)bandCount; m++)
         {
-            double num3 = (44100.0 / 2.0) / ((double) bandCount);
+            double num3 = (48000.0 / 2.0) / ((double) bandCount);
             plot->addData(num3 * (m + 1.0),(double)m_table.at(m));
             xAxis->setRange(QCPRange(20, num3 * (m + 1.0)));
         }
@@ -169,7 +169,7 @@ void FrequencyPlot::updatePlot(std::vector<float> table,int bandCount){
 
         for (size_t m = 0; m < (size_t)bandCount; m++)
         {
-            double num3 = (44100.0 / 2.0) / ((double) bandCount);
+            double num3 = (48000.0 / 2.0) / ((double) bandCount);
             plot->addData(num3 * (m + 1.0),(double)m_table.at(m));
             xAxis->setRange(QCPRange(20, num3 * (m + 1.0)));
         }
@@ -193,7 +193,7 @@ void FrequencyPlot::updatePlot(std::vector<float> table,int bandCount){
 
         for (size_t m = 0; m < (size_t)bandCount; m++)
         {
-            double num3 = (44100.0 / 2.0) / ((double) bandCount);
+            double num3 = (48000.0 / 2.0) / ((double) bandCount);
             plot->addData(num3 * (m + 1.0),(double)m_table.at(m));
             xAxis->setRange(QCPRange(20, num3 * (m + 1.0)));
         }
