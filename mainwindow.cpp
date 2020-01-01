@@ -14,6 +14,7 @@
 #include <vector>
 #include <map>
 #include "dialog/shiftfreq.h"
+#include "delegate.h"
 #include "item/customfilteritem.h"
 
 MainWindow::MainWindow(QWidget *parent) :

@@ -43,6 +43,7 @@ SOURCES += \
 HEADERS += \
         biquad.h \
         ddccontext.h \
+        delegate.h \
         dialog/addpoint.h \
         dialog/calc.h \
         dialog/customfilterdialog.h \

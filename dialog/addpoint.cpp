@@ -14,6 +14,14 @@ addpoint::addpoint(QWidget *parent) :
         biquad::Type type = (biquad::Type)(index);
         switch (type) {
         case biquad::UNITY_GAIN:
+        case biquad::CUSTOM:
+            ui->freq->setEnabled(false);
+            break;
+        default:
+            ui->freq->setEnabled(true);
+        }
+        switch (type) {
+        case biquad::UNITY_GAIN:
         case biquad::ONEPOLE_LOWPASS:
         case biquad::ONEPOLE_HIGHPASS:
         case biquad::CUSTOM:
