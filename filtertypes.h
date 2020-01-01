@@ -36,5 +36,15 @@ inline QString typeToString(biquad::Type _type){
     return "Peaking";
 }
 
+typedef struct calibrationPoint_s{
+    uint32_t id;
+    biquad::Type type;
+    int freq;
+    ///[Applies when type != custom] vvv
+    double bw;
+    double gain;
+    ///[Applies when type == custom] vvv
+    customFilter_t custom;
+}calibrationPoint_t;
 
 #endif // FILTERTYPES_H

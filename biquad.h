@@ -1,6 +1,9 @@
 #ifndef BIQUAD_H
 #define BIQUAD_H
 #include <list>
+#include <cmath>
+#include <cfloat>
+#include <cstdint>
 
 typedef struct customFilter_s{
     double a0;
@@ -31,8 +34,8 @@ public:
         CUSTOM
     };
     biquad();
-    void RefreshFilter(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
-    void RefreshFilter(Type type, customFilter_t coeffs);
+    void RefreshFilter(uint32_t id, Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
+    void RefreshFilter(uint32_t id, Type type, customFilter_t coeffs);
     std::list<double> ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
     std::list<double> ExportCoeffs(double dSamplingRate);
     std::list<double> ExportCoeffs(Type type, customFilter_t coeffs);
@@ -41,6 +44,7 @@ public:
     double PhaseResponseAt(double centreFreq, double fs);
     double GroupDelayAt(double centreFreq, double fs);
     int IsStable() const;
+    uint32_t getId();
 
 private:
     double internalBiquadCoeffs[5];
@@ -51,6 +55,7 @@ private:
     bool m_isBandwidthOrS;
     int m_isStable;
     bool m_isCustom;
+    uint32_t m_id;
     customFilter_t m_custom;
     inline void complexMultiplicationRI(double *zReal, double *zImag, double xReal, double xImag, double yReal, double yImag)
     {
@@ -63,6 +68,5 @@ private:
         *zImag = (xImag * yReal - xReal * yImag) / (yReal * yReal + yImag * yImag);
     }
 };
-
 
 #endif // BIQUAD_H

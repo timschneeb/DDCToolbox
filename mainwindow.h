@@ -15,20 +15,10 @@
 #include "plot/qcustomplot.h"
 #include "item/customfilteritem.h"
 #include "item/customfilterfactory.h"
+#include "tableproxy.h"
 namespace Ui {
 class MainWindow;
 }
-
-typedef struct calibrationPoint_s{
-    biquad::Type type;
-    int freq;
-    ///[Applies when type != custom] vvv
-    double bw;
-    double gain;
-    ///[Applies when type == custom] vvv
-    customFilter_t custom;
-}calibrationPoint_t;
-
 
 namespace Global {
 static biquad::Type old_type = biquad::Type::PEAKING;
@@ -120,8 +110,9 @@ private:
     QCPDataSelection* magnitudeSelection;
 
     biquad::Type getType(int row);
+    uint32_t getId(int row);
     double getValue(datatype dat,int row);
-    void insertData(biquad::Type type,int freq,double band,double gain);
+    uint32_t insertData(biquad::Type type,int freq,double band,double gain);
     std::vector<calibrationPoint_t> parseParametricEQ(QString);
     bool writeProjectFile(std::vector<calibrationPoint_t> points,QString fileName,bool compatibilitymode);
     void createLanguageMenu();

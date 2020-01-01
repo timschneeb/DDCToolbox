@@ -2,6 +2,7 @@
 #define DDCCONTEXT_H
 #include <mutex>
 #include <map>
+#include <random>
 #include <vector>
 #include "biquad.h"
 
@@ -9,13 +10,15 @@ class DDCContext
 {
 public:
     DDCContext();
-    bool AddFilter(biquad::Type type,int nFreq, double dGain, double dBandwidth, double dSRate, bool isBWorS);
-    bool AddFilter(biquad::Type type, int nFreq, customFilter_t coeffs);
-    void ModifyFilter(biquad::Type type,int nOldFreq, int nNewFreq, double dGain, double dBandwidth, double dSRate, bool isBWorS);
-    void ModifyFilter(biquad::Type type,int nOldFreq, int nNewFreq, customFilter_t coeffs);
+    bool AddFilter(uint32_t id, biquad::Type type,int nFreq, double dGain, double dBandwidth, double dSRate, bool isBWorS);
+    bool AddFilter(uint32_t id, customFilter_t coeffs);
+    bool ModifyFilter(uint32_t id, biquad::Type type,int nFreq, double dGain, double dBandwidth, double dSRate, bool isBWorS);
+    bool ModifyFilter(uint32_t id, customFilter_t coeffs);
     void ClearFilters();
-    void RemoveFilter(int nFreq);
-    const biquad* GetFilter(int nFreq);
+    bool RemoveFilter(uint32_t id);
+    bool Exists(uint32_t id);
+    uint32_t GenerateId();
+    const biquad* GetFilter(uint32_t id);
     std::vector<float> GetMagnitudeResponseTable(int nBandCount, double dSRate);
     std::vector<float> GetPhaseResponseTable(int nBandCount, double dSRate);
     std::vector<float> GetGroupDelayTable(int nBandCount, double dSRate);
@@ -24,6 +27,8 @@ public:
 private:
     std::mutex mtx;
     std::map<int,biquad*> m_lstFilterBank;
+    std::mt19937 mt;
+    std::uniform_int_distribution<uint32_t> rnd;
     void LockFilter();
     void UnlockFilter();
 };

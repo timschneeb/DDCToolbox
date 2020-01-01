@@ -37,6 +37,7 @@ SOURCES += \
         mainwindow.cpp \
         plot/frequencyplot.cpp \
         plot/qcustomplot.cpp \
+        tableproxy.cpp \
         undocmd.cpp
 
 HEADERS += \
@@ -53,6 +54,7 @@ HEADERS += \
         mainwindow.h \
         plot/frequencyplot.h \
         plot/qcustomplot.h \
+        tableproxy.h \
         undocmd.h \
         vdcimporter.h
 

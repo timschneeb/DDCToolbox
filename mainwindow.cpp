@@ -129,6 +129,7 @@ void MainWindow::saveAsDDCProject(bool ask,QString path,bool compatibilitymode)
             cal.bw = getValue(datatype::bw,i);
             cal.gain = getValue(datatype::gain,i);
             cal.type = getType(i);
+            cal.id = getId(i);
             if(cal.type == biquad::CUSTOM)
                 cal.custom = ((CustomFilterItem*)ui->listView_DDCPoints->cellWidget(i,3))->getCoefficients();
             points.push_back(cal);
@@ -202,20 +203,9 @@ void MainWindow::readLine_DDCProject(QString str){
                     if(isnan(num2)||isnan(num3))return;
                     if(isinf(num2)||isinf(num3))return;
 
-                    bool flag = false;
-                    for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
-                    {
-                        if ((int)getValue(datatype::freq,i) == result)
-                        {
-                            flag = true;
-                            break;
-                        }
-                    }
-                    if (!flag)
-                    {
-                        insertData(biquad::Type::PEAKING,result,num2,num3);
-                        g_dcDDCContext->AddFilter(biquad::Type::PEAKING,result, num3, num2, 48000.0,true);
-                    }
+                    uint32_t id = insertData(biquad::Type::PEAKING,result,num2,num3);
+                    g_dcDDCContext->AddFilter(id,biquad::Type::PEAKING,result, num3, num2, 48000.0,true);
+
                 }
             }
             else if ((!strArray.empty()) && (strArray.length() == 4))
@@ -231,57 +221,43 @@ void MainWindow::readLine_DDCProject(QString str){
                     if(isnan(num2)||isnan(num3))return;
                     if(isinf(num2)||isinf(num3))return;
 
-
-
-
                     biquad::Type filtertype = stringToType(strArray[3].trimmed());
 
-                    bool flag = false;
-                    for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
-                    {
-                        if ((int)getValue(datatype::freq,i) == result)
-                        {
-                            flag = true;
-                            break;
-                        }
-                    }
-                    if (!flag)
-                    {
-                        if(isCustomLine){
-                            QString coeffpart = str.split(";")[1];
-                            customFilter_t customFilter;
-                            int counter = 0;
-                            for(auto coeff:coeffpart.split(",")){
-                                switch(counter){
-                                case 0:
-                                    customFilter.a0 = coeff.toDouble();
-                                    break;
-                                case 1:
-                                    customFilter.a1 = coeff.toDouble();
-                                    break;
-                                case 2:
-                                    customFilter.a2 = coeff.toDouble();
-                                    break;
-                                case 3:
-                                    customFilter.b0 = coeff.toDouble();
-                                    break;
-                                case 4:
-                                    customFilter.b1 = coeff.toDouble();
-                                    break;
-                                case 5:
-                                    customFilter.b2 = coeff.toDouble();
-                                    break;
-                                }
-                                counter++;
+                    if(isCustomLine){
+                        QString coeffpart = str.split(";")[1];
+                        customFilter_t customFilter;
+                        int counter = 0;
+                        for(auto coeff:coeffpart.split(",")){
+                            switch(counter){
+                            case 0:
+                                customFilter.a0 = coeff.toDouble();
+                                break;
+                            case 1:
+                                customFilter.a1 = coeff.toDouble();
+                                break;
+                            case 2:
+                                customFilter.a2 = coeff.toDouble();
+                                break;
+                            case 3:
+                                customFilter.b0 = coeff.toDouble();
+                                break;
+                            case 4:
+                                customFilter.b1 = coeff.toDouble();
+                                break;
+                            case 5:
+                                customFilter.b2 = coeff.toDouble();
+                                break;
                             }
-                            insertData(filtertype,result,num2,num3);
-                            newCustomFilter(customFilter,ui->listView_DDCPoints,ui->listView_DDCPoints->rowCount()-1);
-                            g_dcDDCContext->AddFilter(biquad::CUSTOM,result, customFilter);
-                        }else{
-                            insertData(filtertype,result,num2,num3);
-                            g_dcDDCContext->AddFilter(filtertype,result, num3, num2, 48000.0,true);
+                            counter++;
                         }
+                        uint32_t id = insertData(filtertype,result,num2,num3);
+                        newCustomFilter(customFilter,ui->listView_DDCPoints,ui->listView_DDCPoints->rowCount()-1);
+                        g_dcDDCContext->AddFilter(id,customFilter);
+                    }else{
+                        uint32_t id = insertData(filtertype,result,num2,num3);
+                        g_dcDDCContext->AddFilter(id,filtertype,result, num3, num2, 48000.0,true);
                     }
+
                 }
             }
         }
@@ -289,22 +265,17 @@ void MainWindow::readLine_DDCProject(QString str){
     lock_actions = false;
 }
 //---Editor
-void MainWindow::insertData(biquad::Type type,int freq,double band,double gain){
+uint32_t MainWindow::insertData(biquad::Type type,int freq,double band,double gain){
     ui->listView_DDCPoints->setSortingEnabled(false);
-    QTableWidgetItem *c0 = new QTableWidgetItem();
-    QTableWidgetItem *c1 = new QTableWidgetItem();
-    QTableWidgetItem *c2 = new QTableWidgetItem();
-    QTableWidgetItem *c3 = new QTableWidgetItem();
-    c0->setData(Qt::DisplayRole, typeToString(type));
-    c1->setData(Qt::DisplayRole, freq);
-    c2->setData(Qt::DisplayRole, band);
-    c3->setData(Qt::DisplayRole, gain);
-    ui->listView_DDCPoints->insertRow ( ui->listView_DDCPoints->rowCount() );
-    ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 0, c0);
-    ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 1, c1);
-    ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 2, c2);
-    ui->listView_DDCPoints->setItem(ui->listView_DDCPoints->rowCount()-1, 3, c3);
+    calibrationPoint_t c;
+    c.id = g_dcDDCContext->GenerateId();
+    c.freq = freq;
+    c.bw = band;
+    c.gain = gain;
+    c.type = type;
+    (new tableproxy(ui->listView_DDCPoints))->addRow(c);
     ui->listView_DDCPoints->setSortingEnabled(true);
+    return c.id;
 }
 void MainWindow::invertSelection(){
     if (ui->listView_DDCPoints->currentRow() >= 0 && ui->listView_DDCPoints->selectedItems().count() >= 1)
@@ -322,6 +293,7 @@ void MainWindow::invertSelection(){
             cal.bw = getValue(datatype::bw,row);
             cal.gain = getValue(datatype::gain,row);
             cal.type = getType(row);
+            cal.id = getId(row);
             if(cal.type != biquad::CUSTOM)cal_table.push_back(cal);
         }
         QUndoCommand *invertCommand = new InvertCommand(ui->listView_DDCPoints,
@@ -348,6 +320,7 @@ void MainWindow::shiftSelection(){
             cal.bw = getValue(datatype::bw,row);
             cal.gain = getValue(datatype::gain,row);
             cal.type = getType(row);
+            cal.id = getId(row);
             cal_table.push_back(cal);
         }
 
@@ -373,6 +346,7 @@ void MainWindow::clearPoint(bool trackundo){
             cal.bw = getValue(datatype::bw,i);
             cal.gain = getValue(datatype::gain,i);
             cal.type = getType(i);
+            cal.id = getId(i);
             if(cal.type == biquad::CUSTOM)
                 cal.custom = ((CustomFilterItem*)ui->listView_DDCPoints->cellWidget(i,3))->getCoefficients();
             cal_table.push_back(cal);
@@ -385,10 +359,7 @@ void MainWindow::clearPoint(bool trackundo){
         lock_actions = true;
 
         g_dcDDCContext->ClearFilters();
-        ui->listView_DDCPoints->clear();
-        ui->listView_DDCPoints->setRowCount(0);
-        ui->listView_DDCPoints->reset();
-        ui->listView_DDCPoints->setHorizontalHeaderLabels(QStringList() << tr("Type") << tr("Frequency") << tr("Bandwidth/S") << tr("Gain"));
+        (new tableproxy(ui->listView_DDCPoints))->clearAll();
 
         drawGraph();
         lock_actions = false;
@@ -418,12 +389,14 @@ void MainWindow::editCell(QTableWidgetItem* item){
             ui->listView_DDCPoints->setCellWidget(row,3,cf_item);
         }
         calibrationPoint_t cal;
+        cal.id = getId(row);
         cal.freq = (int)getValue(datatype::freq,row);
         cal.type = getType(row);
         cal.bw = getValue(datatype::bw,row);
         cal.gain = getValue(datatype::bw,row);
         cal.custom = ((CustomFilterItem*)ui->listView_DDCPoints->cellWidget(row,3))->getCoefficients();
         calibrationPoint_t oldcal;
+        oldcal.id = getId(row);
         oldcal.freq = Global::old_freq;
         oldcal.bw = Global::old_bw;
         oldcal.gain = Global::old_gain;
@@ -481,22 +454,14 @@ void MainWindow::editCell(QTableWidgetItem* item){
                 calibrationPointGain = 40;
             }
 
-            //Check for duplicate frequencies
-            for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
-            {
-                if ((int)getValue(datatype::freq,i) == (int)getValue(datatype::freq,row) && row != i)
-                {
-                    ui->listView_DDCPoints->item(row,1)->setData(Qt::DisplayRole,Global::old_freq);
-                    QMessageBox::warning(this,tr("Error"),tr("Point '%1' already exists").arg((int)getValue(datatype::freq,i)));
-                    return;
-                }
-            }
             calibrationPoint_t cal;
+            cal.id = getId(row);
             cal.freq = result;
             cal.bw = calibrationPointBandwidth;
             cal.gain = calibrationPointGain;
             cal.type = getType(row);
             calibrationPoint_t oldcal;
+            oldcal.id = getId(row);
             oldcal.freq = nOldFreq;
             oldcal.bw = Global::old_bw;
             oldcal.gain = Global::old_gain;
@@ -522,15 +487,7 @@ void MainWindow::addPoint(){
         cal.bw = rawdata.values.at(1);
         cal.gain = rawdata.values.at(2);
         cal.type = stringToType(rawdata.filtertype);
-
-        for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
-        {
-            if ((int)getValue(datatype::freq,i) == cal.freq)
-            {
-                QMessageBox::warning(this,tr("Error"),tr("Point already exists"));
-                return;
-            }
-        }
+        cal.id = g_dcDDCContext->GenerateId();
 
         QUndoCommand *addCommand = new AddCommand(ui->listView_DDCPoints,
                                                   g_dcDDCContext,cal,&mtx,&lock_actions,this);
@@ -808,9 +765,9 @@ void MainWindow::importParametricAutoEQ(){
             if (!flag)
             {
                 lock_actions = true;
-                insertData(biquad::Type::PEAKING,cal.freq,(double)cal.bw,(double)cal.gain);
+                uint32_t id = insertData(biquad::Type::PEAKING,cal.freq,(double)cal.bw,(double)cal.gain);
                 lock_actions = false;
-                g_dcDDCContext->AddFilter(biquad::Type::PEAKING,cal.freq, (double)cal.gain, (double)cal.bw, 48000.0,true);
+                g_dcDDCContext->AddFilter(id,biquad::Type::PEAKING,cal.freq, (double)cal.gain, (double)cal.bw, 48000.0,true);
             }
         }
         ui->listView_DDCPoints->sortItems(1,Qt::SortOrder::AscendingOrder);
@@ -1012,6 +969,9 @@ double MainWindow::getValue(datatype dat,int row){
 biquad::Type MainWindow::getType(int row){
     QString type = ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toString();
     return stringToType(type);
+}
+uint32_t MainWindow::getId(int row){
+    return ui->listView_DDCPoints->item(row,0)->data(Qt::UserRole).toUInt();
 }
 //---Session
 void MainWindow::setActiveFile(QString path,bool unsaved){

@@ -1,6 +1,4 @@
 #include "biquad.h"
-#include <cmath>
-#include <cfloat>
 #include <list>
 #include <cstdio>
 #include <QDebug>
@@ -34,7 +32,11 @@ void iirroots(double b, double c, double *roots)
         roots[3] = -sqrt(-delta) / 2.0;
     }
 }
-void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
+uint32_t biquad::getId(){
+    return m_id;
+}
+
+void biquad::RefreshFilter(uint32_t id, Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
 {
     m_isCustom = false;
     m_dFilterType = type;
@@ -42,6 +44,8 @@ void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs
     m_dFilterFreq = centreFreq;
     m_dFilterBQ = dBandwidthOrQOrS;
     m_isBandwidthOrS = isBandwidthOrS;
+    m_id = id;
+
     double d;
     if (type == PEAKING || type == LOW_SHELF || type == HIGH_SHELF)
         d = pow(10.0, dbGain / 40.0);
@@ -182,11 +186,12 @@ void biquad::RefreshFilter(Type type,double dbGain, double centreFreq, double fs
             m_isStable = 1; // Perfectly stable
     }
 }
-void biquad::RefreshFilter(Type type, customFilter_t coeffs)
+void biquad::RefreshFilter(uint32_t id, Type type, customFilter_t coeffs)
 {
     m_isCustom = true;
     m_custom = coeffs;
     m_dFilterType = type;
+    m_id = id;
 
     double B0, B1, B2, A0, A1, A2;
 

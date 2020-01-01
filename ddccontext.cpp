@@ -5,9 +5,15 @@
 #include <utility>
 #include <list>
 #include <cstring>
+#include <limits>
 
 DDCContext::DDCContext()
 {
+    std::random_device rd;
+    std::mt19937 _mt(rd());
+    mt = _mt;
+    std::uniform_int_distribution<uint32_t> _rnd(1,UINT32_MAX);
+    rnd = _rnd;
     m_lstFilterBank.clear();
 }
 void DDCContext::LockFilter()
@@ -18,29 +24,31 @@ void DDCContext::UnlockFilter()
 {
     mtx.unlock();
 }
-bool DDCContext::AddFilter(biquad::Type type,int nFreq, double dGain, double dBandwidth, double dSRate, bool isBWorS)
+bool DDCContext::AddFilter(uint32_t id, biquad::Type type,int nFreq, double dGain, double dBandwidth, double dSRate, bool isBWorS)
 {
+    if(Exists(id))return false;
     LockFilter();
     if (m_lstFilterBank.count(nFreq) <= 0)
     {
         biquad *biquad = new class biquad();
-        biquad->RefreshFilter(type, dGain, (double) nFreq, dSRate, dBandwidth, isBWorS);
-        m_lstFilterBank[nFreq] = biquad;
+        biquad->RefreshFilter(id, type, dGain, (double) nFreq, dSRate, dBandwidth, isBWorS);
+        m_lstFilterBank[id] = biquad;
     }
     UnlockFilter();
-    return false;
+    return true;
 }
-bool DDCContext::AddFilter(biquad::Type type, int nFreq, customFilter_t coeffs)
+bool DDCContext::AddFilter(uint32_t id, customFilter_t coeffs)
 {
+    if(Exists(id))return false;
     LockFilter();
-    if (m_lstFilterBank.count(nFreq) <= 0)
+    if (m_lstFilterBank.count(id) <= 0)
     {
         biquad *biquad = new class biquad();
-        biquad->RefreshFilter(type, coeffs);
-        m_lstFilterBank[nFreq] = biquad;
+        biquad->RefreshFilter(id, biquad::CUSTOM, coeffs);
+        m_lstFilterBank[id] = biquad;
     }
     UnlockFilter();
-    return false;
+    return true;
 }
 
 void DDCContext::ClearFilters()
@@ -50,88 +58,75 @@ void DDCContext::ClearFilters()
     UnlockFilter();
 }
 
-void DDCContext::ModifyFilter(biquad::Type type,int nOldFreq, int nNewFreq, double dGain, double dBandwidth, double dSRate,bool isBWorS)
+bool DDCContext::ModifyFilter(uint32_t id, biquad::Type type, int nFreq, double dGain, double dBandwidth, double dSRate,bool isBWorS)
 {
+    if(!Exists(id))return false;
     LockFilter();
-    if (nOldFreq == nNewFreq)
+    if (m_lstFilterBank.count(id)>0)
     {
-        if (m_lstFilterBank.count(nOldFreq)>0)
-        {
-            m_lstFilterBank[nOldFreq]->RefreshFilter(type,dGain, (double) nNewFreq, dSRate, dBandwidth,isBWorS);
-        }
-    }
-    else if (m_lstFilterBank.count(nOldFreq) > 0 && m_lstFilterBank.count(nNewFreq) <= 0)
-    {
-        std::map<int,biquad*>::iterator iter = m_lstFilterBank.find(nOldFreq) ;
-        if( iter != m_lstFilterBank.end() )
-            m_lstFilterBank.erase(iter);
-
-        if(m_lstFilterBank.count(nNewFreq) > 0){
-            std::map<int,biquad*>::iterator iter2 = m_lstFilterBank.find(nNewFreq) ;
-            if( iter2 != m_lstFilterBank.end() )
-                m_lstFilterBank.erase(iter2);
-        }
-
-
-        biquad *biquad = new class biquad();
-       biquad->RefreshFilter(type,dGain, (double) nNewFreq, dSRate, dBandwidth,isBWorS);
-        m_lstFilterBank[nNewFreq] = biquad;
+        m_lstFilterBank[id]->RefreshFilter(id, type,dGain, (double) nFreq, dSRate, dBandwidth,isBWorS);
     }
     UnlockFilter();
+    return true;
 }
 
-void DDCContext::ModifyFilter(biquad::Type type,int nOldFreq, int nNewFreq, customFilter_t coeffs)
+bool DDCContext::ModifyFilter(uint32_t id, customFilter_t coeffs)
 {
+    if(!Exists(id))return false;
     LockFilter();
-    if (nOldFreq == nNewFreq)
+    if (m_lstFilterBank.count(id)>0)
     {
-        if (m_lstFilterBank.count(nOldFreq)>0)
-        {
-            m_lstFilterBank[nOldFreq]->RefreshFilter(type, coeffs);
-        }
-    }
-    else if (m_lstFilterBank.count(nOldFreq) > 0 && m_lstFilterBank.count(nNewFreq) <= 0)
-    {
-        std::map<int,biquad*>::iterator iter = m_lstFilterBank.find(nOldFreq) ;
-        if( iter != m_lstFilterBank.end() )
-            m_lstFilterBank.erase(iter);
-
-        if(m_lstFilterBank.count(nNewFreq) > 0){
-            std::map<int,biquad*>::iterator iter2 = m_lstFilterBank.find(nNewFreq) ;
-            if( iter2 != m_lstFilterBank.end() )
-                m_lstFilterBank.erase(iter2);
-        }
-
-
-        biquad *biquad = new class biquad();
-        biquad->RefreshFilter(type, coeffs);
-        m_lstFilterBank[nNewFreq] = biquad;
+        m_lstFilterBank[id]->RefreshFilter(id, biquad::CUSTOM, coeffs);
     }
     UnlockFilter();
+    return true;
 }
-
-const biquad* DDCContext::GetFilter(int nFreq)
+uint32_t DDCContext::GenerateId(){
+    uint32_t id;
+    bool flag = false;
+    while(!flag){
+        id = rnd(mt);
+        if(!Exists(id))
+            flag = true;
+    }
+    return id;
+}
+bool DDCContext::Exists(uint32_t id){
+    LockFilter();
+    if (m_lstFilterBank.count(id) > 0)
+    {
+        UnlockFilter();
+        return true;
+    }
+    UnlockFilter();
+    return false;
+}
+const biquad* DDCContext::GetFilter(uint32_t id)
 {
     LockFilter();
     biquad* result = nullptr;
-    if (m_lstFilterBank.count(nFreq) > 0)
+    if (m_lstFilterBank.count(id) > 0)
     {
-        std::map<int,biquad*>::iterator iter = m_lstFilterBank.find(nFreq) ;
+        std::map<int,biquad*>::iterator iter = m_lstFilterBank.find(id) ;
         if( iter != m_lstFilterBank.end() )
-            result = m_lstFilterBank[nFreq];
+            result = m_lstFilterBank[id];
     }
     UnlockFilter();
     return (biquad const*)result;
 }
-void DDCContext::RemoveFilter(int nFreq){
+bool DDCContext::RemoveFilter(uint32_t id){
     LockFilter();
-    if (m_lstFilterBank.count(nFreq) > 0)
+    if (m_lstFilterBank.count(id) > 0)
     {
-        std::map<int,biquad*>::iterator iter = m_lstFilterBank.find(nFreq) ;
-        if( iter != m_lstFilterBank.end() )
+        std::map<int,biquad*>::iterator iter = m_lstFilterBank.find(id) ;
+        if( iter != m_lstFilterBank.end() ){
             m_lstFilterBank.erase(iter);
+            UnlockFilter();
+            return true;
+        }
     }
     UnlockFilter();
+    return false;
 }
 std::list<double> DDCContext::ExportCoeffs(double dSamplingRate)
 {
