@@ -381,24 +381,25 @@ void MainWindow::editCell(QTableWidgetItem* item){
             //If true, make sure we set the initial old value to the current frequency value for compatibility
         }
         //ui->listView_DDCPoints->setSpan(row,2,1,2);
-        if(ui->listView_DDCPoints->cellWidget(row,3)==nullptr ){
-            CustomFilterItem* cf_item = new CustomFilterItem();
-            ui->listView_DDCPoints->setCellWidget(row,3,cf_item);
-        }
+
         calibrationPoint_t cal;
         cal.id = getId(row);
         cal.freq = (int)getValue(datatype::freq,row);
         cal.type = getType(row);
         cal.bw = getValue(datatype::bw,row);
         cal.gain = getValue(datatype::bw,row);
-        cal.custom = ((CustomFilterItem*)ui->listView_DDCPoints->cellWidget(row,3))->getCoefficients();
+        if(ui->listView_DDCPoints->cellWidget(row,3)==nullptr )
+            cal.custom = defaultCustomFilter();
+          else
+            cal.custom = ((CustomFilterItem*)ui->listView_DDCPoints->cellWidget(row,3))->getCoefficients();
+
         calibrationPoint_t oldcal;
         oldcal.id = getId(row);
         oldcal.freq = Global::old_freq;
         oldcal.bw = Global::old_bw;
         oldcal.gain = Global::old_gain;
         oldcal.custom = Global::old_custom;
-        oldcal.type = biquad::CUSTOM;
+        oldcal.type = Global::old_type;
 
         QUndoCommand *editCommand = new EditCommand(ui->listView_DDCPoints,g_dcDDCContext,
                                                     row,cal,oldcal,&mtx,&lock_actions,this);

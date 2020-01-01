@@ -114,6 +114,8 @@ void EditCommand::redo()
     mtx->lock();
     *lockActions = true;
 
+    (new tableproxy(tw))->editRow(cal,row);
+
     if(cal.type==biquad::CUSTOM){
         newCustomFilter(cal.custom,tw,row);
         ddcContext->ModifyFilter(cal.id, cal.custom);
@@ -122,8 +124,6 @@ void EditCommand::redo()
         tw->removeCellWidget(row,3);
         ddcContext->ModifyFilter(cal.id, cal.type, cal.freq, cal.gain, cal.bw, 48000.0,true);
     }
-
-    (new tableproxy(tw))->editRow(cal,row);
 
     tw->setSortingEnabled(true);
     tw->sortItems(1);

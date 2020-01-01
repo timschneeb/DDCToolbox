@@ -51,7 +51,12 @@ addpoint::~addpoint()
 
 addp_response_t addpoint::returndata(){
     std::vector<double> data;
-    data.push_back((double)ui->freq->value());
+    if(stringToType(ui->ftype->currentText())==biquad::CUSTOM ||
+            ui->ftype->currentText()==biquad::UNITY_GAIN)
+        data.push_back(1.0);
+        else
+        data.push_back((double)ui->freq->value());
+
     data.push_back(ui->bw->value());
     data.push_back(ui->gain->value());
 

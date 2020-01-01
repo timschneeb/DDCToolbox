@@ -19,7 +19,7 @@ inline customFilter_t defaultCustomFilter(){
 inline CustomFilterItem* newCustomFilter(customFilter_t custom,QTableWidget* tw, int row){
     CustomFilterItem* cf_item = new CustomFilterItem;
     cf_item->setCoefficients(custom);
-    tw->item(row,1)->setData(Qt::DisplayRole,1);
+
     tw->setCellWidget(row,3,cf_item);
     QObject::connect(cf_item,&CustomFilterItem::coefficientsUpdated,[tw,cf_item](customFilter_t previous){
         Global::old_custom = previous;
@@ -30,6 +30,7 @@ inline CustomFilterItem* newCustomFilter(customFilter_t custom,QTableWidget* tw,
             }
         }
     });
+    //tw->item(row,1)->setData(Qt::DisplayRole,1);
     return cf_item;
 }
 #endif // CUSTOMFILTERFACTORY_H
