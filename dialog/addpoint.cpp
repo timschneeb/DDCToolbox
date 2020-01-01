@@ -4,11 +4,15 @@
 #include "filtertypes.h"
 #include <list>
 #include <QDebug>
+
 addpoint::addpoint(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::addpoint)
 {
     ui->setupUi(this);
+
+    m_cfilter = defaultCustomFilter();
+    ui->custom_configure->setEnabled(false);
 
     connect(ui->ftype,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,[this](int index){
         biquad::Type type = (biquad::Type)(index);
@@ -40,7 +44,21 @@ addpoint::addpoint(QWidget *parent) :
         default:
             ui->gain->setEnabled(false);
         }
-        qDebug() << typeToString(type);
+        switch (type) {
+        case biquad::CUSTOM:
+            ui->custom_configure->setEnabled(true);
+            break;
+        default:
+            ui->custom_configure->setEnabled(false);
+        }
+    });
+
+    connect(ui->custom_configure,&QPushButton::clicked,this,[this]{
+        customfilterdialog* cd = new customfilterdialog;
+        cd->setCoefficients(defaultCustomFilter());
+        if(cd->exec()){
+            m_cfilter = cd->getCoefficients();
+        }
     });
 }
 
@@ -49,19 +67,17 @@ addpoint::~addpoint()
     delete ui;
 }
 
-addp_response_t addpoint::returndata(){
+calibrationPoint_t addpoint::returndata(){
     std::vector<double> data;
+    calibrationPoint_t ret;
     if(stringToType(ui->ftype->currentText())==biquad::CUSTOM ||
             ui->ftype->currentText()==biquad::UNITY_GAIN)
-        data.push_back(1.0);
-        else
-        data.push_back((double)ui->freq->value());
-
-    data.push_back(ui->bw->value());
-    data.push_back(ui->gain->value());
-
-    addp_response_t addp;
-    addp.values = data;
-    addp.filtertype = ui->ftype->currentText();
-    return addp;
+        ret.freq = 1;
+    else
+        ret.freq = ui->freq->value();
+    ret.bw = ui->bw->value();
+    ret.gain = ui->gain->value();
+    ret.custom = m_cfilter;
+    ret.type = stringToType(ui->ftype->currentText());
+    return ret;
 }

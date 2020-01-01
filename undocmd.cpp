@@ -48,7 +48,7 @@ void AddCommand::redo()
     (new tableproxy(tw))->addRow(cal);
 
     if(cal.type==biquad::CUSTOM){
-        newCustomFilter(defaultCustomFilter(),tw,tw->rowCount()-1);
+        newCustomFilter(cal.custom,tw,tw->rowCount()-1);
         ddcContext->AddFilter(cal.id, defaultCustomFilter());
     }
     else{

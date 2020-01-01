@@ -2,14 +2,13 @@
 #define ADDPOINT_H
 
 #include <QDialog>
+#include "dialog/customfilterdialog.h"
+#include "item/customfilterfactory.h"
 
 namespace Ui {
 class addpoint;
 }
-typedef struct addp_response_s{
-    std::vector<double> values;
-    QString filtertype;
-}addp_response_t;
+
 class addpoint : public QDialog
 {
     Q_OBJECT
@@ -17,10 +16,12 @@ class addpoint : public QDialog
 public:
     explicit addpoint(QWidget *parent = nullptr);
     ~addpoint();
-    addp_response_t returndata();
+    calibrationPoint_t returndata();
 
 private:
     Ui::addpoint *ui;
+    customFilter_t m_cfilter;
+
 };
 
 #endif // ADDPOINT_H

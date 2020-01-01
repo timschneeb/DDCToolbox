@@ -486,15 +486,8 @@ void MainWindow::addPoint(){
     addpoint *dlg = new addpoint;
     if(dlg->exec()){
         setActiveFile(currentFile,true);
-        addp_response_t rawdata = dlg->returndata();
-
-        calibrationPoint_t cal;
-        cal.freq = (int)rawdata.values.at(0);
-        cal.bw = rawdata.values.at(1);
-        cal.gain = rawdata.values.at(2);
-        cal.type = stringToType(rawdata.filtertype);
+        calibrationPoint_t cal = dlg->returndata();
         cal.id = g_dcDDCContext->GenerateId();
-
         QUndoCommand *addCommand = new AddCommand(ui->listView_DDCPoints,
                                                   g_dcDDCContext,cal,&mtx,&lock_actions,this);
         undoStack->push(addCommand);
