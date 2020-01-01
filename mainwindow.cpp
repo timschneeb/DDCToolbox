@@ -173,6 +173,7 @@ void MainWindow::loadDDCProject()
 }
 void MainWindow::readLine_DDCProject(QString str){
     lock_actions = true;
+    ui->listView_DDCPoints->setSortingEnabled(false);
     if (str != nullptr || str != "")
     {
         if ((str.length() > 0) && !str.startsWith("#"))
@@ -245,11 +246,11 @@ void MainWindow::readLine_DDCProject(QString str){
                             }
                             counter++;
                         }
-                        uint32_t id = insertData(filtertype,result,num2,num3);
+                        uint32_t id = insertData(filtertype,result,num2,num3,false);
                         newCustomFilter(customFilter,ui->listView_DDCPoints,ui->listView_DDCPoints->rowCount()-1);
                         g_dcDDCContext->AddFilter(id,customFilter);
                     }else{
-                        uint32_t id = insertData(filtertype,result,num2,num3);
+                        uint32_t id = insertData(filtertype,result,num2,num3,false);
                         g_dcDDCContext->AddFilter(id,filtertype,result, num3, num2, 48000.0,true);
                     }
 
@@ -257,11 +258,14 @@ void MainWindow::readLine_DDCProject(QString str){
             }
         }
     }
+    ui->listView_DDCPoints->setSortingEnabled(true);
+    ui->listView_DDCPoints->sortItems(1);
+    ui->listView_DDCPoints->update();
     lock_actions = false;
 }
 //---Editor
-uint32_t MainWindow::insertData(biquad::Type type,int freq,double band,double gain){
-    ui->listView_DDCPoints->setSortingEnabled(false);
+uint32_t MainWindow::insertData(biquad::Type type,int freq,double band,double gain, bool toggleSorting){
+    if(toggleSorting)ui->listView_DDCPoints->setSortingEnabled(false);
     calibrationPoint_t c;
     c.id = g_dcDDCContext->GenerateId();
     c.freq = freq;
@@ -269,7 +273,7 @@ uint32_t MainWindow::insertData(biquad::Type type,int freq,double band,double ga
     c.gain = gain;
     c.type = type;
     (new tableproxy(ui->listView_DDCPoints))->addRow(c);
-    ui->listView_DDCPoints->setSortingEnabled(true);
+    if(toggleSorting)ui->listView_DDCPoints->setSortingEnabled(true);
     return c.id;
 }
 void MainWindow::invertSelection(){
@@ -357,6 +361,11 @@ void MainWindow::clearPoint(bool trackundo){
 
         g_dcDDCContext->ClearFilters();
         (new tableproxy(ui->listView_DDCPoints))->clearAll();
+        Global::old_freq = 0;
+        Global::old_bw = 0;
+        Global::old_gain = 0;
+        Global::old_type = (biquad::Type)0;
+        Global::old_custom = defaultCustomFilter();
 
         drawGraph();
         lock_actions = false;

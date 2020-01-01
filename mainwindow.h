@@ -106,12 +106,11 @@ private:
     QUndoView *undoView;
     QSimpleUpdater* m_updater;
     bool markerPointsVisible = false;
-    QCPDataSelection* magnitudeSelection;
 
     biquad::Type getType(int row);
     uint32_t getId(int row);
     double getValue(datatype dat,int row);
-    uint32_t insertData(biquad::Type type,int freq,double band,double gain);
+    uint32_t insertData(biquad::Type type,int freq,double band,double gain,bool toggleSorting = true);
     std::vector<calibrationPoint_t> parseParametricEQ(QString);
     bool writeProjectFile(std::vector<calibrationPoint_t> points,QString fileName,bool compatibilitymode);
     void createLanguageMenu();

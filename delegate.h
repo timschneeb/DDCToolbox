@@ -80,11 +80,6 @@ public:
             Global::old_bw = index.sibling(index.row(),2).data(Qt::DisplayRole).toDouble();
             Global::old_gain = index.sibling(index.row(),3).data(Qt::DisplayRole).toDouble();
             Global::old_type = getType(index);
-
-            qDebug().noquote().nospace() << "Old type: " << Global::old_type;
-            qDebug().noquote().nospace() << "Old freq: " << Global::old_freq;
-            qDebug().noquote().nospace() << "Old bw: " << Global::old_bw;
-            qDebug().noquote().nospace() << "Old gain: " << Global::old_gain;
         }
 
         if(index.column()==0){
