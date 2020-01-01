@@ -2,7 +2,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/7akte2nk20j6u9w1?svg=true)](https://ci.appveyor.com/project/ThePBone/ddctoolbox)
 ![GitHub](https://img.shields.io/github/license/ThePBone/DDCToolbox) ![GitHub release](https://img.shields.io/github/release/ThePBone/DDCToolbox)
 
-Create and edit ViPER DDC files on Linux and Windows
+Create and edit ViPER DDC files on Linux, Windows and macOS
 
 ## Features
  * Save/load *.vdcprj files
@@ -11,8 +11,10 @@ Create and edit ViPER DDC files on Linux and Windows
  * Import AutoEQ configurations (*ParametricEQ.txt)
  * Proper undo/redo framework 
  * Edit values directly in the table
- * Interactive magnitude response and group delay plot
+ * Interactive magnitude response, phase response and group delay plot
  * Various IIR filter types (peaking, low/high pass/shelf, notch, all/band pass and unity gain)
+ * Embed custom IIR filters
+ * Stability check for filters
 
 ## Screenshot
 
