@@ -2,6 +2,28 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US">
 <context>
+    <name>CustomFilterItem</name>
+    <message>
+        <location filename="../item/customfilteritem.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../item/customfilteritem.ui" line="35"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;;&quot;&gt;a0 = 0.98, a1 = 1.77, a2 = 0.99, b0 = 1.45, b1 = 2.09, b2 = 0.78&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../item/customfilteritem.ui" line="46"/>
+        <source>Configure</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Downloader</name>
     <message>
         <location filename="../3rdparty/QSimpleUpdater/src/Downloader.ui" line="23"/>
@@ -176,12 +198,12 @@
     </message>
     <message>
         <location filename="../plot/frequencyplot.cpp" line="21"/>
-        <source>Delay (Samples)</source>
+        <source>Phase (deg)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../plot/frequencyplot.cpp" line="25"/>
-        <source>Phase (deg)</source>
+        <source>Group delay (ms)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -200,12 +222,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plot/frequencyplot.cpp" line="215"/>
+        <location filename="../plot/frequencyplot.cpp" line="217"/>
         <source>Save Screenshot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../plot/frequencyplot.cpp" line="215"/>
+        <location filename="../plot/frequencyplot.cpp" line="217"/>
         <source>PNG screenshot (*.png)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -218,568 +240,563 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="44"/>
+        <location filename="../mainwindow.ui" line="50"/>
         <source>Calibration Points</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="87"/>
-        <location filename="../mainwindow.cpp" line="307"/>
+        <location filename="../mainwindow.ui" line="93"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="92"/>
-        <location filename="../mainwindow.cpp" line="307"/>
+        <location filename="../mainwindow.ui" line="98"/>
         <source>Frequency</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="97"/>
-        <location filename="../mainwindow.cpp" line="307"/>
+        <location filename="../mainwindow.ui" line="103"/>
         <source>Bandwidth/S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="102"/>
-        <location filename="../mainwindow.cpp" line="307"/>
+        <location filename="../mainwindow.ui" line="108"/>
         <source>Gain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="117"/>
-        <source>Graph</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="133"/>
+        <location filename="../mainwindow.ui" line="249"/>
         <source>Magnitude Response</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="170"/>
+        <location filename="../mainwindow.ui" line="289"/>
         <source>Phase Response</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="213"/>
+        <location filename="../mainwindow.ui" line="335"/>
         <source>Group Delay</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="264"/>
-        <source>toolBar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="288"/>
+        <location filename="../mainwindow.ui" line="150"/>
         <source>Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="292"/>
+        <location filename="../mainwindow.ui" line="154"/>
         <source>Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="299"/>
+        <location filename="../mainwindow.ui" line="161"/>
         <source>Export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="316"/>
+        <location filename="../mainwindow.ui" line="178"/>
         <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="328"/>
+        <location filename="../mainwindow.ui" line="190"/>
         <source>Tools</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="332"/>
+        <location filename="../mainwindow.ui" line="194"/>
         <source>Batch Conversion</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="345"/>
+        <location filename="../mainwindow.ui" line="207"/>
         <source>View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="362"/>
+        <location filename="../mainwindow.ui" line="224"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="370"/>
+        <location filename="../mainwindow.ui" line="232"/>
         <source>Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="384"/>
-        <location filename="../mainwindow.ui" line="387"/>
+        <location filename="../mainwindow.ui" line="378"/>
+        <location filename="../mainwindow.ui" line="381"/>
         <source>Add Point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="390"/>
+        <location filename="../mainwindow.ui" line="384"/>
         <source>Add point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="393"/>
+        <location filename="../mainwindow.ui" line="387"/>
         <source>Ctrl+N</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="398"/>
+        <location filename="../mainwindow.ui" line="392"/>
         <source>Remove Point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="401"/>
+        <location filename="../mainwindow.ui" line="395"/>
         <source>Remove selected point(s)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="404"/>
+        <location filename="../mainwindow.ui" line="398"/>
         <source>Ctrl+R</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="409"/>
+        <location filename="../mainwindow.ui" line="403"/>
         <source>Clear all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="414"/>
+        <location filename="../mainwindow.ui" line="408"/>
         <source>Load</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="417"/>
+        <location filename="../mainwindow.ui" line="411"/>
         <source>Ctrl+O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="422"/>
+        <location filename="../mainwindow.ui" line="416"/>
         <source>Save as...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="425"/>
+        <location filename="../mainwindow.ui" line="419"/>
         <source>Ctrl+Shift+S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="430"/>
+        <location filename="../mainwindow.ui" line="424"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="435"/>
+        <location filename="../mainwindow.ui" line="429"/>
         <source>Shortcuts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="438"/>
+        <location filename="../mainwindow.ui" line="432"/>
         <source>Shift+F1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="443"/>
+        <location filename="../mainwindow.ui" line="437"/>
         <source>AutoEQ (ParametricEQ.txt)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="448"/>
+        <location filename="../mainwindow.ui" line="442"/>
         <source>Q/BW Calculator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="453"/>
+        <location filename="../mainwindow.ui" line="447"/>
         <source>VDC file (Classic Viper format)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="458"/>
+        <location filename="../mainwindow.ui" line="452"/>
         <source>VDC to Project File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="466"/>
+        <location filename="../mainwindow.ui" line="460"/>
         <source>Hide Graph</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="469"/>
+        <location filename="../mainwindow.ui" line="463"/>
         <source>Ctrl+H</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="548"/>
+        <location filename="../mainwindow.ui" line="542"/>
         <source>Show marker points</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="558"/>
+        <location filename="../mainwindow.ui" line="552"/>
         <source>Check for unstable filters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="561"/>
+        <location filename="../mainwindow.ui" line="555"/>
         <source>F2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="566"/>
+        <location filename="../mainwindow.ui" line="560"/>
         <source>Magnitude response</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="571"/>
+        <location filename="../mainwindow.ui" line="565"/>
         <source>Phase response</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="576"/>
+        <location filename="../mainwindow.ui" line="570"/>
         <source>Group delay</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="349"/>
+        <location filename="../mainwindow.ui" line="575"/>
+        <source>Reset plot layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="211"/>
         <source>Save screenshot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="474"/>
+        <location filename="../mainwindow.ui" line="117"/>
+        <source>Plots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="126"/>
+        <source>General Toolbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="468"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="477"/>
+        <location filename="../mainwindow.ui" line="471"/>
         <source>Ctrl+S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="482"/>
+        <location filename="../mainwindow.ui" line="476"/>
         <source>Close Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="485"/>
+        <location filename="../mainwindow.ui" line="479"/>
         <source>Ctrl+X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="490"/>
+        <location filename="../mainwindow.ui" line="484"/>
         <source>AutoEQ (Parametric) to Project File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="495"/>
+        <location filename="../mainwindow.ui" line="489"/>
         <source>View undo history</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="498"/>
+        <location filename="../mainwindow.ui" line="492"/>
         <source>Alt+Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="503"/>
+        <location filename="../mainwindow.ui" line="497"/>
         <source>Invert gain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="506"/>
+        <location filename="../mainwindow.ui" line="500"/>
         <source>Ctrl+Shift+I</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="511"/>
-        <location filename="../mainwindow.ui" line="514"/>
+        <location filename="../mainwindow.ui" line="505"/>
+        <location filename="../mainwindow.ui" line="508"/>
         <source>Shift frequencies</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="517"/>
+        <location filename="../mainwindow.ui" line="511"/>
         <source>Ctrl+Shift+F</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="522"/>
+        <location filename="../mainwindow.ui" line="516"/>
         <source>Dev Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="525"/>
+        <location filename="../mainwindow.ui" line="519"/>
         <source>F1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="530"/>
+        <location filename="../mainwindow.ui" line="524"/>
         <source>VDC file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="535"/>
+        <location filename="../mainwindow.ui" line="529"/>
         <source>Project File (v1.0)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="540"/>
+        <location filename="../mainwindow.ui" line="534"/>
         <source>Check for updates...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="553"/>
-        <location filename="../mainwindow.cpp" line="943"/>
+        <location filename="../mainwindow.ui" line="547"/>
+        <location filename="../mainwindow.cpp" line="1033"/>
         <source>Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="29"/>
+        <location filename="../mainwindow.cpp" line="50"/>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="31"/>
+        <location filename="../mainwindow.cpp" line="52"/>
         <source>Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="74"/>
+        <location filename="../mainwindow.cpp" line="107"/>
         <source>Save VDC Project File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="75"/>
+        <location filename="../mainwindow.cpp" line="108"/>
         <source>(Compatibility Mode)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="103"/>
+        <location filename="../mainwindow.cpp" line="139"/>
         <source>Open VDC Project File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="103"/>
+        <location filename="../mainwindow.cpp" line="139"/>
         <source>ViPER DDC Project (*.vdcprj)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="110"/>
-        <location filename="../mainwindow.cpp" line="376"/>
-        <location filename="../mainwindow.cpp" line="416"/>
-        <location filename="../mainwindow.cpp" line="566"/>
-        <location filename="../mainwindow.cpp" line="606"/>
-        <location filename="../mainwindow.cpp" line="674"/>
-        <location filename="../mainwindow.cpp" line="818"/>
-        <location filename="../mainwindow.cpp" line="865"/>
-        <location filename="../mainwindow.cpp" line="870"/>
+        <location filename="../mainwindow.cpp" line="146"/>
+        <location filename="../mainwindow.cpp" line="648"/>
+        <location filename="../mainwindow.cpp" line="688"/>
+        <location filename="../mainwindow.cpp" line="756"/>
+        <location filename="../mainwindow.cpp" line="905"/>
+        <location filename="../mainwindow.cpp" line="952"/>
+        <location filename="../mainwindow.cpp" line="957"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="110"/>
-        <location filename="../mainwindow.cpp" line="566"/>
+        <location filename="../mainwindow.cpp" line="146"/>
+        <location filename="../mainwindow.cpp" line="648"/>
         <source>Cannot open file for reading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="250"/>
+        <location filename="../mainwindow.cpp" line="304"/>
         <source>Invert selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="250"/>
-        <location filename="../mainwindow.cpp" line="282"/>
+        <location filename="../mainwindow.cpp" line="304"/>
+        <location filename="../mainwindow.cpp" line="338"/>
         <source>No rows selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="282"/>
+        <location filename="../mainwindow.cpp" line="338"/>
         <source>Shift selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="337"/>
-        <location filename="../mainwindow.cpp" line="342"/>
-        <location filename="../mainwindow.cpp" line="361"/>
-        <location filename="../mainwindow.cpp" line="366"/>
+        <location filename="../mainwindow.cpp" line="430"/>
+        <location filename="../mainwindow.cpp" line="435"/>
+        <location filename="../mainwindow.cpp" line="454"/>
+        <location filename="../mainwindow.cpp" line="459"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="337"/>
+        <location filename="../mainwindow.cpp" line="430"/>
         <source>Frequency value &apos;%1&apos; is too low (0.0 ~ 24000.0)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="342"/>
+        <location filename="../mainwindow.cpp" line="435"/>
         <source>Frequency value &apos;%1&apos; is too high (0.0 ~ 24000.0)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="361"/>
+        <location filename="../mainwindow.cpp" line="454"/>
         <source>Gain value &apos;%1&apos; is too low (-40.0 ~ 40.0)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="366"/>
+        <location filename="../mainwindow.cpp" line="459"/>
         <source>Gain value &apos;%1&apos; is too high (-40.0 ~ 40.0)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="376"/>
-        <source>Point &apos;%1&apos; already exists</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="416"/>
-        <source>Point already exists</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="512"/>
-        <location filename="../mainwindow.cpp" line="521"/>
-        <location filename="../mainwindow.cpp" line="530"/>
+        <location filename="../mainwindow.cpp" line="594"/>
+        <location filename="../mainwindow.cpp" line="603"/>
+        <location filename="../mainwindow.cpp" line="612"/>
         <source>Unable to open HTML file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="544"/>
+        <location filename="../mainwindow.cpp" line="626"/>
         <source>Undo History</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="555"/>
+        <location filename="../mainwindow.cpp" line="637"/>
         <source>Open classic VDC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="555"/>
+        <location filename="../mainwindow.cpp" line="637"/>
         <source>Viper VDC file (*.vdc)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="606"/>
+        <location filename="../mainwindow.cpp" line="688"/>
         <source>Failed to export to VDC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="610"/>
+        <location filename="../mainwindow.cpp" line="692"/>
         <source>Save VDC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="610"/>
+        <location filename="../mainwindow.cpp" line="692"/>
         <source>VDC File (*.vdc)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="665"/>
+        <location filename="../mainwindow.cpp" line="747"/>
         <source>Import AutoEQ config &apos;ParametricEQ.txt&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="665"/>
-        <location filename="../mainwindow.cpp" line="851"/>
+        <location filename="../mainwindow.cpp" line="747"/>
+        <location filename="../mainwindow.cpp" line="938"/>
         <source>AutoEQ ParametricEQ.txt (*ParametricEQ.txt);;All files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="674"/>
+        <location filename="../mainwindow.cpp" line="756"/>
         <source>Unable to convert this file; no data found: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="801"/>
+        <location filename="../mainwindow.cpp" line="888"/>
         <source>Select all VDC files to convert</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="801"/>
+        <location filename="../mainwindow.cpp" line="888"/>
         <source>VDC files (*.vdc)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="804"/>
-        <location filename="../mainwindow.cpp" line="847"/>
-        <location filename="../mainwindow.cpp" line="872"/>
+        <location filename="../mainwindow.cpp" line="891"/>
+        <location filename="../mainwindow.cpp" line="934"/>
+        <location filename="../mainwindow.cpp" line="959"/>
         <source>Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="806"/>
-        <location filename="../mainwindow.cpp" line="856"/>
+        <location filename="../mainwindow.cpp" line="893"/>
+        <location filename="../mainwindow.cpp" line="943"/>
         <source>Select Output-Directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="851"/>
+        <location filename="../mainwindow.cpp" line="938"/>
         <source>Select all AutoEQ ParametricEQ.txt files to convert</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="804"/>
-        <location filename="../mainwindow.cpp" line="854"/>
+        <location filename="../mainwindow.cpp" line="891"/>
+        <location filename="../mainwindow.cpp" line="941"/>
         <source>%1 files will be converted.
 You will now be prompted to select an output directory.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="500"/>
-        <source>%1 at %2Hz (row %3)
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="505"/>
-        <location filename="../mainwindow.cpp" line="507"/>
+        <location filename="../mainwindow.cpp" line="587"/>
+        <location filename="../mainwindow.cpp" line="589"/>
         <source>Stability check</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="505"/>
+        <location filename="../mainwindow.cpp" line="587"/>
         <source>All filters appear to be stable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="507"/>
-        <source>One or more filters are unstable/unusable:
-
-%1
-Please review these filter and run this check again.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="818"/>
+        <location filename="../mainwindow.cpp" line="905"/>
         <source>Cannot open file %1 for reading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="865"/>
+        <location filename="../mainwindow.cpp" line="952"/>
         <source>Unable to convert this file: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="847"/>
-        <location filename="../mainwindow.cpp" line="872"/>
+        <location filename="../mainwindow.cpp" line="934"/>
+        <location filename="../mainwindow.cpp" line="959"/>
         <source>Conversion finished!
 You can find the files here:
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="870"/>
+        <location filename="../mainwindow.cpp" line="578"/>
+        <source>Fatal error: Pole of %1 at %2Hz (row %3) outside the unit circle
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="582"/>
+        <source>Warning: Pole of %1 at %2Hz (row %3) approach to unit circle
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="589"/>
+        <source>One or more filters are potentially unstable:
+
+%1
+Please review these filter and run this check again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="957"/>
         <source>Cannot write file at: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="905"/>
+        <location filename="../mainwindow.cpp" line="995"/>
         <source>Are you sure? All unsaved changes will be lost.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -787,52 +804,52 @@ You can find the files here:
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../undocmd.cpp" line="69"/>
+        <location filename="../undocmd.cpp" line="68"/>
         <source>&quot;Add %1Hz&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../undocmd.cpp" line="130"/>
+        <location filename="../undocmd.cpp" line="136"/>
         <source>&quot;Edit row %1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../undocmd.cpp" line="190"/>
+        <location filename="../tableproxy.cpp" line="39"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../undocmd.cpp" line="190"/>
+        <location filename="../tableproxy.cpp" line="39"/>
         <source>Frequency</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../undocmd.cpp" line="190"/>
+        <location filename="../tableproxy.cpp" line="39"/>
         <source>Bandwidth/S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../undocmd.cpp" line="190"/>
+        <location filename="../tableproxy.cpp" line="39"/>
         <source>Gain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../undocmd.cpp" line="197"/>
+        <location filename="../undocmd.cpp" line="193"/>
         <source>&quot;Clear all points&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../undocmd.cpp" line="287"/>
+        <location filename="../undocmd.cpp" line="274"/>
         <source>&quot;Remove row(s)&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../undocmd.cpp" line="358"/>
+        <location filename="../undocmd.cpp" line="345"/>
         <source>&quot;Invert gain (selection)&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../undocmd.cpp" line="440"/>
+        <location filename="../undocmd.cpp" line="427"/>
         <source>&quot;Shift frequencies (selection)&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -840,12 +857,12 @@ You can find the files here:
 <context>
     <name>TextPopup</name>
     <message>
-        <location filename="../textpopup.ui" line="14"/>
+        <location filename="../dialog/textpopup.ui" line="14"/>
         <source>DDC Toolbox</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../textpopup.ui" line="27"/>
+        <location filename="../dialog/textpopup.ui" line="27"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -886,143 +903,186 @@ You can find the changelog and the update packages there.</source>
 <context>
     <name>addpoint</name>
     <message>
-        <location filename="../addpoint.ui" line="14"/>
+        <location filename="../dialog/addpoint.ui" line="14"/>
         <source>Add Point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../addpoint.ui" line="27"/>
+        <location filename="../dialog/addpoint.ui" line="27"/>
         <source>Frequency (1 ~ 24000)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../addpoint.ui" line="47"/>
+        <location filename="../dialog/addpoint.ui" line="47"/>
         <source>Bandwidth (0.0 ~ 100.0)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../addpoint.ui" line="67"/>
+        <location filename="../dialog/addpoint.ui" line="67"/>
         <source>Gain [-40.0 ~ +40.0]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../addpoint.ui" line="87"/>
+        <location filename="../dialog/addpoint.ui" line="87"/>
         <source>Filtertype</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../addpoint.ui" line="95"/>
+        <location filename="../dialog/addpoint.ui" line="95"/>
         <source>Peaking</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../addpoint.ui" line="100"/>
+        <location filename="../dialog/addpoint.ui" line="100"/>
         <source>Low Pass</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../addpoint.ui" line="105"/>
+        <location filename="../dialog/addpoint.ui" line="105"/>
         <source>High Pass</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../addpoint.ui" line="110"/>
+        <location filename="../dialog/addpoint.ui" line="110"/>
         <source>Band Pass</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../addpoint.ui" line="115"/>
+        <location filename="../dialog/addpoint.ui" line="115"/>
         <source>Band Pass (peak gain = bw)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../addpoint.ui" line="120"/>
+        <location filename="../dialog/addpoint.ui" line="120"/>
         <source>Notch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../addpoint.ui" line="125"/>
+        <location filename="../dialog/addpoint.ui" line="125"/>
         <source>All Pass</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../addpoint.ui" line="130"/>
+        <location filename="../dialog/addpoint.ui" line="130"/>
         <source>Low Shelf</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../addpoint.ui" line="135"/>
+        <location filename="../dialog/addpoint.ui" line="135"/>
         <source>High Shelf</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../addpoint.ui" line="140"/>
+        <location filename="../dialog/addpoint.ui" line="140"/>
         <source>Unity Gain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../addpoint.ui" line="145"/>
+        <location filename="../dialog/addpoint.ui" line="145"/>
         <source>One-Pole Low Pass</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../addpoint.ui" line="150"/>
+        <location filename="../dialog/addpoint.ui" line="150"/>
         <source>One-Pole High Pass</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/addpoint.ui" line="155"/>
+        <source>Custom</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>calc</name>
     <message>
-        <location filename="../calc.ui" line="14"/>
+        <location filename="../dialog/calc.ui" line="14"/>
         <source>Q/BW Calculator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../calc.ui" line="30"/>
+        <location filename="../dialog/calc.ui" line="30"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bandwidth&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../calc.ui" line="43"/>
+        <location filename="../dialog/calc.ui" line="43"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/img/arrows.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../calc.ui" line="56"/>
+        <location filename="../dialog/calc.ui" line="56"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Quality factor&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>customfilterdialog</name>
+    <message>
+        <location filename="../dialog/customfilterdialog.ui" line="14"/>
+        <source>Custom filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/customfilterdialog.ui" line="34"/>
+        <source>A0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/customfilterdialog.ui" line="41"/>
+        <source>A1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/customfilterdialog.ui" line="48"/>
+        <source>A2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/customfilterdialog.ui" line="55"/>
+        <source>B0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/customfilterdialog.ui" line="62"/>
+        <source>B1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/customfilterdialog.ui" line="69"/>
+        <source>B2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>shiftfreq</name>
     <message>
-        <location filename="../shiftfreq.ui" line="26"/>
+        <location filename="../dialog/shiftfreq.ui" line="26"/>
         <source>Dialog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shiftfreq.ui" line="54"/>
+        <location filename="../dialog/shiftfreq.ui" line="54"/>
         <source>Shift frequencies of selected rows by:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shiftfreq.ui" line="83"/>
+        <location filename="../dialog/shiftfreq.ui" line="83"/>
         <source>Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shiftfreq.ui" line="99"/>
+        <location filename="../dialog/shiftfreq.ui" line="99"/>
         <source>Number too high/low, some rows would be shifted out of range (&lt;1 or &gt;24000)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shiftfreq.cpp" line="40"/>
+        <location filename="../dialog/shiftfreq.cpp" line="40"/>
         <source>Shift frequencies</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shiftfreq.cpp" line="40"/>
+        <location filename="../dialog/shiftfreq.cpp" line="40"/>
         <source>Invalid number</source>
         <translation type="unfinished"></translation>
     </message>
