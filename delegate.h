@@ -79,6 +79,12 @@ public:
             Global::old_freq = index.sibling(index.row(),1).data(Qt::DisplayRole).toInt();
             Global::old_bw = index.sibling(index.row(),2).data(Qt::DisplayRole).toDouble();
             Global::old_gain = index.sibling(index.row(),3).data(Qt::DisplayRole).toDouble();
+            Global::old_type = getType(index);
+
+            qDebug().noquote().nospace() << "Old type: " << Global::old_type;
+            qDebug().noquote().nospace() << "Old freq: " << Global::old_freq;
+            qDebug().noquote().nospace() << "Old bw: " << Global::old_bw;
+            qDebug().noquote().nospace() << "Old gain: " << Global::old_gain;
         }
 
         if(index.column()==0){
@@ -187,7 +193,6 @@ public:
             QComboBox *cb = qobject_cast<QComboBox *>(editor);
             Q_ASSERT(cb);
             model->setData(index, cb->currentText(), Qt::EditRole);
-            Global::old_type = getType(index);
         }
         else
             QStyledItemDelegate::setModelData(editor, model, index);

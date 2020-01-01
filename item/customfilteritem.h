@@ -19,7 +19,7 @@ public:
     customFilter_t getCoefficients();
 
 signals:
-    void coefficientsUpdated();
+    void coefficientsUpdated(customFilter_t);
 
 private slots:
     void updateText();

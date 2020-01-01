@@ -16,6 +16,7 @@
 #include "dialog/shiftfreq.h"
 #include "delegate.h"
 #include "item/customfilteritem.h"
+#include "item/customfilterfactory.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -46,17 +47,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_updater = QSimpleUpdater::getInstance();
 
-    //TODO: Fix issues the the undo/redo framework!
-    //-> Disabled for now
-    QAction* actionUndo = new QAction(tr("Undo"),this);
-    actionUndo->setEnabled(false);
-    QAction* actionRedo = new QAction(tr("Redo"),this);
-    actionRedo->setEnabled(false);
-    ui->actionView_undo_history->setEnabled(false);
-    /*QAction* actionUndo = undoStack->createUndoAction(this, tr("Undo"));
+    QAction* actionUndo = undoStack->createUndoAction(this, tr("Undo"));
     actionUndo->setShortcuts(QKeySequence::Undo);
     QAction* actionRedo = undoStack->createRedoAction(this, tr("Redo"));
-    actionRedo->setShortcuts(QKeySequence::Redo);*/
+    actionRedo->setShortcuts(QKeySequence::Redo);
     QAction* first = ui->menuEdit->actions().at(0);
     ui->menuEdit->insertAction(first,actionUndo);
     ui->menuEdit->insertAction(first,actionRedo);
@@ -295,7 +289,8 @@ void MainWindow::invertSelection(){
             cal.gain = getValue(datatype::gain,row);
             cal.type = getType(row);
             cal.id = getId(row);
-            if(cal.type != biquad::CUSTOM)cal_table.push_back(cal);
+            if(cal.type != biquad::CUSTOM)
+                cal_table.push_back(cal);
         }
         QUndoCommand *invertCommand = new InvertCommand(ui->listView_DDCPoints,
                                                         g_dcDDCContext,cal_table,&mtx,&lock_actions,this);
@@ -322,7 +317,8 @@ void MainWindow::shiftSelection(){
             cal.gain = getValue(datatype::gain,row);
             cal.type = getType(row);
             cal.id = getId(row);
-            cal_table.push_back(cal);
+            if(cal.type != biquad::CUSTOM && cal.type != biquad::UNITY_GAIN)
+                cal_table.push_back(cal);
         }
 
         shiftfreq* sf = new shiftfreq;
@@ -417,7 +413,6 @@ void MainWindow::editCell(QTableWidgetItem* item){
                 sscanf(QString::number(getValue(datatype::gain,row)).toUtf8().constData(), "%lf", &calibrationPointGain) == 1){
 
             ui->listView_DDCPoints->setSortingEnabled(false);
-            nOldFreq = Global::old_freq;
 
             //Validate frequency value
             if(result < 0){
@@ -463,7 +458,7 @@ void MainWindow::editCell(QTableWidgetItem* item){
             cal.type = getType(row);
             calibrationPoint_t oldcal;
             oldcal.id = getId(row);
-            oldcal.freq = nOldFreq;
+            oldcal.freq = Global::old_freq;
             oldcal.bw = Global::old_bw;
             oldcal.gain = Global::old_gain;
             oldcal.type = Global::old_type;

@@ -25,7 +25,7 @@ CustomFilterItem::CustomFilterItem(QWidget *parent) :
             customFilter_t previous = m_cfilter;
             m_cfilter = cd->getCoefficients();
             updateText();
-            emit coefficientsUpdated();
+            emit coefficientsUpdated(previous);
         }
     });
 }

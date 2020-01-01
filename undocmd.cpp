@@ -23,11 +23,11 @@ void AddCommand::undo()
 
     for (int i = 0; i < tw->rowCount(); i++)
     {
-        if (tw->item(i,1)->data(Qt::DisplayRole).toInt() == cal.freq)
+        if (tw->item(i,0)->data(Qt::UserRole).toUInt() == cal.id)
         {
             *lockActions = true;
             tw->removeRow(i);
-            ddcContext->RemoveFilter(cal.freq);
+            ddcContext->RemoveFilter(cal.id);
             *lockActions = false;
             break;
         }
@@ -90,20 +90,16 @@ void EditCommand::undo()
     mtx->lock();
     *lockActions = true;
 
-    if(row < tw->rowCount()){
-        tw->item(row,0)->setData(Qt::DisplayRole,typeToString(oldcal.type));
-        tw->item(row,1)->setData(Qt::DisplayRole,oldcal.freq);
-        tw->item(row,2)->setData(Qt::DisplayRole,(double)oldcal.bw);
-        tw->item(row,3)->setData(Qt::DisplayRole,(double)oldcal.gain);
-    }
+    tw->setSortingEnabled(false);
+    (new tableproxy(tw))->editRow(oldcal,row);
 
     if(oldcal.type==biquad::CUSTOM){
         newCustomFilter(oldcal.custom,tw,row);
-        //ddcContext->ModifyFilter(oldcal.type, cal.freq, oldcal.freq, oldcal.custom);
+        ddcContext->ModifyFilter(oldcal.id, oldcal.custom);
     }
     else{
         tw->removeCellWidget(row,3);
-        //ddcContext->ModifyFilter(oldcal.type,cal.freq, oldcal.freq, oldcal.gain, oldcal.bw, 48000.0,true);
+        ddcContext->ModifyFilter(oldcal.id, oldcal.type, oldcal.freq, oldcal.gain, oldcal.bw, 48000.0,true);
     }
 
     tw->setSortingEnabled(true);
@@ -164,20 +160,13 @@ void ClearCommand::undo()
     for(size_t i=0;i < cal_table.size();i++)
     {
         calibrationPoint_t cal = cal_table.at(i);
-        QTableWidgetItem *c0 = new QTableWidgetItem();
-        QTableWidgetItem *c1 = new QTableWidgetItem();
-        QTableWidgetItem *c2 = new QTableWidgetItem();
-        QTableWidgetItem *c3 = new QTableWidgetItem();
-        c0->setData(Qt::DisplayRole, typeToString(cal.type));
-        c1->setData(Qt::DisplayRole, cal.freq);
-        c2->setData(Qt::DisplayRole, (double)cal.bw);
-        c3->setData(Qt::DisplayRole, (double)cal.gain);
-        tw->insertRow(tw->rowCount());
-        tw->setItem(tw->rowCount()-1, 0, c0);
-        tw->setItem(tw->rowCount()-1, 1, c1);
-        tw->setItem(tw->rowCount()-1, 2, c2);
-        tw->setItem(tw->rowCount()-1, 3, c3);
-        //ddcContext->AddFilter(cal.type,cal.freq, cal.gain, cal.bw, 48000.0,true);
+        (new tableproxy(tw))->addRow(cal);
+        if(cal.type==biquad::CUSTOM){
+            newCustomFilter(cal.custom,tw,tw->rowCount()-1);
+            ddcContext->AddFilter(cal.id,cal.custom);
+        }
+        else
+            ddcContext->AddFilter(cal.id,cal.type,cal.freq, cal.gain, cal.bw, 48000.0,true);
     }
 
     tw->setSortingEnabled(true);
@@ -228,20 +217,13 @@ void RemoveCommand::undo()
     for(size_t i=0;i < cal_table.size();i++)
     {
         calibrationPoint_t cal = cal_table.at(i);
-        QTableWidgetItem *c0 = new QTableWidgetItem();
-        QTableWidgetItem *c1 = new QTableWidgetItem();
-        QTableWidgetItem *c2 = new QTableWidgetItem();
-        QTableWidgetItem *c3 = new QTableWidgetItem();
-        c0->setData(Qt::DisplayRole, typeToString(cal.type));
-        c1->setData(Qt::DisplayRole, cal.freq);
-        c2->setData(Qt::DisplayRole, (double)cal.bw);
-        c3->setData(Qt::DisplayRole, (double)cal.gain);
-        tw->insertRow(tw->rowCount());
-        tw->setItem(tw->rowCount()-1, 0, c0);
-        tw->setItem(tw->rowCount()-1, 1, c1);
-        tw->setItem(tw->rowCount()-1, 2, c2);
-        tw->setItem(tw->rowCount()-1, 3, c3);
-        //ddcContext->AddFilter(cal.type,cal.freq, cal.gain, cal.bw, 48000.0,true);
+        (new tableproxy(tw))->addRow(cal);
+        if(cal.type==biquad::CUSTOM){
+            newCustomFilter(cal.custom,tw,tw->rowCount()-1);
+            ddcContext->AddFilter(cal.id,cal.custom);
+        }
+        else
+            ddcContext->AddFilter(cal.id,cal.type,cal.freq, cal.gain, cal.bw, 48000.0,true);
     }
 
     tw->setSortingEnabled(true);
@@ -257,19 +239,20 @@ void RemoveCommand::redo()
     *lockActions = true;
     tw->setSortingEnabled(false);
     cal_table.clear();
-
     QList<int> removeRows;
-    for (size_t i = 0; i < rows.size(); i++)
+    for (auto i : rows)
     {
         calibrationPoint_t cal;
-        cal.id = tw->item(rows.at(i),0)->data(Qt::UserRole).toUInt();
-        cal.freq = tw->item(rows.at(i),1)->data(Qt::DisplayRole).toInt();
-        cal.bw = tw->item(rows.at(i),2)->data(Qt::DisplayRole).toDouble();
-        cal.gain = tw->item(rows.at(i),3)->data(Qt::DisplayRole).toDouble();
-        cal.type = stringToType(tw->item(rows.at(i),0)->data(Qt::DisplayRole).toString());
+        cal.id = tw->item(i,0)->data(Qt::UserRole).toUInt();
+        cal.freq = tw->item(i,1)->data(Qt::DisplayRole).toInt();
+        cal.bw = tw->item(i,2)->data(Qt::DisplayRole).toDouble();
+        cal.gain = tw->item(i,3)->data(Qt::DisplayRole).toDouble();
+        cal.type = stringToType(tw->item(i,0)->data(Qt::DisplayRole).toString());
+        if(cal.type == biquad::CUSTOM)
+            cal.custom = ((CustomFilterItem*)tw->cellWidget(i,3))->getCoefficients();
         cal_table.push_back(cal);
 
-        removeRows.append(rows.at(i));
+        removeRows.append(i);
         ddcContext->RemoveFilter(cal.id);
     }
     for(int i=0;i<removeRows.count();++i)
@@ -318,7 +301,7 @@ void InvertCommand::undo()
             if (tw->item(j,1)->data(Qt::DisplayRole).toInt() == cal.freq)
             {
                 tw->item(j,3)->setData(Qt::DisplayRole,(double)cal.gain);
-                //ddcContext->ModifyFilter(cal.type,cal.freq, cal.freq, cal.gain, cal.bw, 48000.0,true);
+                ddcContext->ModifyFilter(cal.id,cal.type,cal.freq, cal.gain, cal.bw, 48000.0,true);
                 break;
             }
         }
@@ -391,7 +374,7 @@ void ShiftCommand::undo()
             if (tw->item(j,1)->data(Qt::DisplayRole).toInt() == cal.freq + shift)
             {
                 tw->item(j,1)->setData(Qt::DisplayRole,(int)cal.freq);
-                //ddcContext->ModifyFilter(cal.type,cal.freq + shift, cal.freq, cal.gain, cal.bw, 48000.0,true);
+                ddcContext->ModifyFilter(cal.id,cal.type,cal.freq, cal.gain, cal.bw, 48000.0,true);
                 break;
             }
         }
