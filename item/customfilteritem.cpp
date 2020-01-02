@@ -28,9 +28,9 @@ CustomFilterItem::CustomFilterItem(QWidget *parent) :
         customfilterdialog* cd = new customfilterdialog;
         cd->setCoefficients(m_cfilter441,m_cfilter48);
         if(cd->exec()){
-            emit coefficientsUpdated(m_cfilter441,m_cfilter48);
             m_cfilter441 = cd->getCoefficients(false);
             m_cfilter48 = cd->getCoefficients(true);
+            emit coefficientsUpdated(m_cfilter441,m_cfilter48);
             updateText();
         }
     });
