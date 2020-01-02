@@ -15,28 +15,11 @@ biquad::biquad()
     internalBiquadCoeffs[4] = 0.0;
 }
 
-void iirroots(double b, double c, double *roots)
-{
-    double delta = b * b - 4.0 * c;
-    if (delta >= 0.0)
-    {
-        roots[0] = (-b - sqrt(delta)) / 2.0;
-        roots[1] = 0.0;
-        roots[2] = (-b + sqrt(delta)) / 2.0;
-        roots[3] = 0.0;
-    }
-    else
-    {
-        roots[0] = roots[2] = -b / 2.0;
-        roots[1] = sqrt(-delta) / 2.0;
-        roots[3] = -sqrt(-delta) / 2.0;
-    }
-}
 uint32_t biquad::getId(){
     return m_id;
 }
 
-void biquad::RefreshFilter(uint32_t id, Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
+void biquad::RefreshFilter(uint32_t id, Type type, double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
 {
     m_isCustom = false;
     m_dFilterType = type;
@@ -64,7 +47,7 @@ void biquad::RefreshFilter(uint32_t id, Type type,double dbGain, double centreFr
         alpha = num3 * sinh(0.693147180559945309417 / 2 * dBandwidthOrQOrS * a / num3);
 
     double beta = 2 * sqrt(d) * alpha;
-    double B0, B1, B2, A0, A1, A2;
+    double B0 = 0.0, B1 = 0.0, B2 = 0.0, A0 = 0.0, A1 = 0.0, A2 = 0.0;
 
     switch (type)
     {
@@ -154,6 +137,7 @@ void biquad::RefreshFilter(uint32_t id, Type type,double dbGain, double centreFr
         B0 = tan(M_PI * centreFreq / fs * 0.5);
         A1 = -(1.0 - B0) / (1.0 + B0);
         B1 = B0 = B0 / (1.0 + B0);
+        B2 = 0.0;
         A0 = 1.0;
         A2 = 0.0;
         break;
@@ -161,6 +145,7 @@ void biquad::RefreshFilter(uint32_t id, Type type,double dbGain, double centreFr
         B0 = tan(M_PI * centreFreq / fs * 0.5);
         A1 = -(1.0 - B0) / (1.0 + B0);
         B0 = 1.0 - (B0 / (1.0 + B0));
+        B2 = 0.0;
         B1 = -B0;
         A0 = 1.0;
         A2 = 0.0;
@@ -192,8 +177,6 @@ void biquad::RefreshFilter(uint32_t id, Type type, customFilter_t coeffs)
     m_custom = coeffs;
     m_dFilterType = type;
     m_id = id;
-
-    double B0, B1, B2, A0, A1, A2;
 
     internalBiquadCoeffs[0] = coeffs.b0 / coeffs.a0;
     internalBiquadCoeffs[1] = coeffs.b1 / coeffs.a0;
@@ -241,7 +224,7 @@ std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         alpha = num3 * sinh(0.693147180559945309417 / 2 * dBandwidthOrQOrS * a / num3);
 
     double beta = 2 * sqrt(d) * alpha;
-    double B0, B1, B2, A0, A1, A2;
+    double B0 = 0.0, B1 = 0.0, B2 = 0.0, A0 = 0.0, A1 = 0.0, A2 = 0.0;
 
     switch (type)
     {
@@ -331,6 +314,7 @@ std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         B0 = tan(M_PI * centreFreq / fs * 0.5);
         A1 = -(1.0 - B0) / (1.0 + B0);
         B1 = B0 = B0 / (1.0 + B0);
+        B2 = 0.0;
         A0 = 1.0;
         A2 = 0.0;
         break;
@@ -338,6 +322,7 @@ std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         B0 = tan(M_PI * centreFreq / fs * 0.5);
         A1 = -(1.0 - B0) / (1.0 + B0);
         B0 = 1.0 - (B0 / (1.0 + B0));
+        B2 = 0.0;
         B1 = -B0;
         A0 = 1.0;
         A2 = 0.0;
@@ -376,14 +361,33 @@ int biquad::IsStable() const{
 }
 
 // Provided by: James34602
+void biquad::iirroots(double b, double c, double *roots)
+{
+    double delta = b * b - 4.0 * c;
+    if (delta >= 0.0)
+    {
+        roots[0] = (-b - sqrt(delta)) / 2.0;
+        roots[1] = 0.0;
+        roots[2] = (-b + sqrt(delta)) / 2.0;
+        roots[3] = 0.0;
+    }
+    else
+    {
+        roots[0] = roots[2] = -b / 2.0;
+        roots[1] = sqrt(-delta) / 2.0;
+        roots[3] = -sqrt(-delta) / 2.0;
+    }
+}
 int biquad::complexResponse(double centreFreq, double fs, double *HofZReal, double *HofZImag)
 {
     double Arg;
     double z1Real, z1Imag, z2Real, z2Imag, DenomReal, DenomImag, tmpReal, tmpImag;
     Arg = M_PI * centreFreq / (fs * 0.5);
-    z1Real = cos(Arg), z1Imag = -sin(Arg);  // z = e^(j*omega)
+    z1Real = cos(Arg);
+    z1Imag = -sin(Arg);  // z = e^(j*omega)
     complexMultiplicationRI(&z2Real, &z2Imag, z1Real, z1Imag, z1Real, z1Imag); // z squared
-    *HofZReal = 1.0, *HofZImag = 0.0;
+    *HofZReal = 1.0;
+    *HofZImag = 0.0;
     tmpReal = internalBiquadCoeffs[0] + internalBiquadCoeffs[1] * z1Real + internalBiquadCoeffs[2] * z2Real;
     tmpImag = internalBiquadCoeffs[1] * z1Imag + internalBiquadCoeffs[2] * z2Imag;
     complexMultiplicationRI(HofZReal, HofZImag, *HofZReal, *HofZImag, tmpReal, tmpImag);
@@ -423,7 +427,7 @@ double biquad::PhaseResponseAt(double centreFreq, double fs)
 // Which will bloat 1000+ lines of code, and perhaps not the main purpose here.
 // We just need to calculate group delay of a bunch of second order IIR filters, so the following code already do the job
 // Provided by: James34602
-double toMs(double sample, double fs)
+double biquad::toMs(double sample, double fs)
 {
     return sample / (fs / 1000.0);
 }
@@ -441,7 +445,8 @@ double biquad::GroupDelayAt(double centreFreq, double fs)
     double dv = -(2.0 * b1*sw2 + b2 * sw);
     double u2v2 = (b1*b1) + (b2*b2) + (b3*b3) + 2.0 * (b1*b2 + b2 * b3)*cw + 2.0 * (b1*b3)*cw2;
     double gdB = (2.0 - (v*du - u * dv) / u2v2);
-    b2 = -internalBiquadCoeffs[3], b3 = -internalBiquadCoeffs[4];
+    b2 = -internalBiquadCoeffs[3];
+    b3 = -internalBiquadCoeffs[4];
     u = sw2 + b2 * sw;
     v = cw2 + b2 * cw + b3;
     du = 2.0 * cw2 + b2 * cw;

@@ -855,14 +855,14 @@ std::vector<calibrationPoint_t> MainWindow::parseParametricEQ(QString path){
                 if ((!lineParts.empty()) && (lineParts.length() == 10))
                 {
                     int freq = lineParts[3].toInt();
-                    float gain = lineParts[6].toFloat();
-                    float q = lineParts[9].toFloat();
+                    double gain = lineParts[6].toDouble();
+                    double q = lineParts[9].toDouble();
                     if(freq < 0)continue;
 
                     //Convert Q to BW
-                    float QQ1st = ((2*q*q)+1)/(2*q*q);
-                    float QQ2nd = pow(2*QQ1st,2)/4;
-                    float bw = round(1000000*log(QQ1st+sqrt(QQ2nd-1))/log(2))/1000000;
+                    double QQ1st = ((2*q*q)+1)/(2*q*q);
+                    double QQ2nd = pow(2*QQ1st,2)/4;
+                    double bw = round(1000000*log(QQ1st+sqrt(QQ2nd-1))/log(2))/1000000;
 
                     calibrationPoint_t cal;
                     cal.freq = freq;
