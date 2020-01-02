@@ -37,14 +37,14 @@ bool DDCContext::AddFilter(uint32_t id, biquad::Type type,int nFreq, double dGai
     UnlockFilter();
     return true;
 }
-bool DDCContext::AddFilter(uint32_t id, customFilter_t coeffs)
+bool DDCContext::AddFilter(uint32_t id, customFilter_t c441, customFilter_t c48)
 {
     if(Exists(id))return false;
     LockFilter();
     if (m_lstFilterBank.count(id) <= 0)
     {
         biquad *biquad = new class biquad();
-        biquad->RefreshFilter(id, biquad::CUSTOM, coeffs);
+        biquad->RefreshFilter(id, biquad::CUSTOM, c441, c48);
         m_lstFilterBank[id] = biquad;
     }
     UnlockFilter();
@@ -70,13 +70,13 @@ bool DDCContext::ModifyFilter(uint32_t id, biquad::Type type, int nFreq, double 
     return true;
 }
 
-bool DDCContext::ModifyFilter(uint32_t id, customFilter_t coeffs)
+bool DDCContext::ModifyFilter(uint32_t id, customFilter_t c441, customFilter_t c48)
 {
     if(!Exists(id))return false;
     LockFilter();
     if (m_lstFilterBank.count(id)>0)
     {
-        m_lstFilterBank[id]->RefreshFilter(id, biquad::CUSTOM, coeffs);
+        m_lstFilterBank[id]->RefreshFilter(id, biquad::CUSTOM, c441, c48);
     }
     UnlockFilter();
     return true;

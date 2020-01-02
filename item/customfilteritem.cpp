@@ -10,22 +10,28 @@ CustomFilterItem::CustomFilterItem(QWidget *parent) :
 
     ui->coeffText->hide();
 
-    m_cfilter.a0 = 1.0;
-    m_cfilter.a1 = 0.0;
-    m_cfilter.a2 = 0.0;
-    m_cfilter.b0 = 1.0;
-    m_cfilter.b1 = 0.0;
-    m_cfilter.b2 = 0.0;
+    m_cfilter441.a0 = 1.0;
+    m_cfilter441.a1 = 0.0;
+    m_cfilter441.a2 = 0.0;
+    m_cfilter441.b0 = 1.0;
+    m_cfilter441.b1 = 0.0;
+    m_cfilter441.b2 = 0.0;
+    m_cfilter48.a0 = 1.0;
+    m_cfilter48.a1 = 0.0;
+    m_cfilter48.a2 = 0.0;
+    m_cfilter48.b0 = 1.0;
+    m_cfilter48.b1 = 0.0;
+    m_cfilter48.b2 = 0.0;
     updateText();
 
     connect(ui->configure,&QPushButton::clicked,this,[this]{
         customfilterdialog* cd = new customfilterdialog;
-        cd->setCoefficients(m_cfilter);
+        cd->setCoefficients(m_cfilter441,m_cfilter48);
         if(cd->exec()){
-            customFilter_t previous = m_cfilter;
-            m_cfilter = cd->getCoefficients();
+            emit coefficientsUpdated(m_cfilter441,m_cfilter48);
+            m_cfilter441 = cd->getCoefficients(false);
+            m_cfilter48 = cd->getCoefficients(true);
             updateText();
-            emit coefficientsUpdated(previous);
         }
     });
 }
@@ -37,20 +43,23 @@ CustomFilterItem::~CustomFilterItem()
 
 void CustomFilterItem::updateText(){
     QString strbuilder("");
-    strbuilder += "a0 = " + QString::number(m_cfilter.a0) + ", ";
-    strbuilder += "a1 = " + QString::number(m_cfilter.a1) + ", ";
-    strbuilder += "a2 = " + QString::number(m_cfilter.a2) + ", ";
-    strbuilder += "b0 = " + QString::number(m_cfilter.b0) + ", ";
-    strbuilder += "b1 = " + QString::number(m_cfilter.b1) + ", ";
-    strbuilder += "b2 = " + QString::number(m_cfilter.b2);
+    strbuilder += "a0 = " + QString::number(m_cfilter441.a0) + ", ";
+    strbuilder += "a1 = " + QString::number(m_cfilter441.a1) + ", ";
+    strbuilder += "a2 = " + QString::number(m_cfilter441.a2) + ", ";
+    strbuilder += "b0 = " + QString::number(m_cfilter441.b0) + ", ";
+    strbuilder += "b1 = " + QString::number(m_cfilter441.b1) + ", ";
+    strbuilder += "b2 = " + QString::number(m_cfilter441.b2);
     ui->coeffText->setText(strbuilder);
 }
 
-void CustomFilterItem::setCoefficients(customFilter_t coeffs){
-    m_cfilter = coeffs;
+void CustomFilterItem::setCoefficients(customFilter_t c441, customFilter_t c48){
+    m_cfilter441 = c441;
+    m_cfilter48 = c48;
     updateText();
 }
 
-customFilter_t CustomFilterItem::getCoefficients(){
-    return m_cfilter;
+customFilter_t CustomFilterItem::getCoefficients(bool use48000){
+    if(use48000)
+        return m_cfilter48;
+    return m_cfilter441;
 }

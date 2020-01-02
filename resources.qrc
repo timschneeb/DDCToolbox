@@ -7,5 +7,6 @@
         <file>html/help.html</file>
         <file>translations/ddctoolbox_en.qm</file>
         <file>translations/ddctoolbox_de.qm</file>
+        <file>html/customfilter.html</file>
     </qresource>
 </RCC>

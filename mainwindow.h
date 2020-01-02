@@ -24,7 +24,8 @@ static biquad::Type old_type = biquad::Type::PEAKING;
 static int old_freq = 0;
 static double old_bw = 0;
 static double old_gain = 0;
-static customFilter_t old_custom;
+static customFilter_t old_custom441;
+static customFilter_t old_custom48;
 }
 
 enum datatype{

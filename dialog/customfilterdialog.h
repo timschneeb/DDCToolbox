@@ -15,8 +15,8 @@ class customfilterdialog : public QDialog
 public:
     explicit customfilterdialog(QWidget *parent = nullptr);
     ~customfilterdialog();
-    customFilter_t getCoefficients();
-    void setCoefficients(customFilter_t coeff);
+    customFilter_t getCoefficients(bool use48000);
+    void setCoefficients(customFilter_t c441, customFilter_t c48);
 
 private:
     Ui::customfilterdialog *ui;

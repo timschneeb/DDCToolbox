@@ -171,18 +171,19 @@ void biquad::RefreshFilter(uint32_t id, Type type, double dbGain, double centreF
             m_isStable = 1; // Perfectly stable
     }
 }
-void biquad::RefreshFilter(uint32_t id, Type type, customFilter_t coeffs)
+void biquad::RefreshFilter(uint32_t id, Type type, customFilter_t c441, customFilter_t c48)
 {
     m_isCustom = true;
-    m_custom = coeffs;
+    m_custom441 = c441;
+    m_custom48 = c48;
     m_dFilterType = type;
     m_id = id;
 
-    internalBiquadCoeffs[0] = coeffs.b0 / coeffs.a0;
-    internalBiquadCoeffs[1] = coeffs.b1 / coeffs.a0;
-    internalBiquadCoeffs[2] = coeffs.b2 / coeffs.a0;
-    internalBiquadCoeffs[3] = -coeffs.a1 / coeffs.a0;
-    internalBiquadCoeffs[4] = -coeffs.a2 / coeffs.a0;
+    internalBiquadCoeffs[0] = m_custom48.b0 / m_custom48.a0;
+    internalBiquadCoeffs[1] = m_custom48.b1 / m_custom48.a0;
+    internalBiquadCoeffs[2] = m_custom48.b2 / m_custom48.a0;
+    internalBiquadCoeffs[3] = -m_custom48.a1 / m_custom48.a0;
+    internalBiquadCoeffs[4] = -m_custom48.a2 / m_custom48.a0;
 
     //Check if filter is stable/usable
     double roots[4];
@@ -350,8 +351,12 @@ std::list<double> biquad::ExportCoeffs(Type type, customFilter_t coeffs)
 }
 std::list<double> biquad::ExportCoeffs(double dSamplingRate)
 {
-    if(m_isCustom)
-        return ExportCoeffs(m_dFilterType,m_custom);
+    if(m_isCustom){
+        if(trunc(dSamplingRate)==44100.0)
+            return ExportCoeffs(m_dFilterType,m_custom441);
+        else if(trunc(dSamplingRate)==48000.0)
+            return ExportCoeffs(m_dFilterType,m_custom48);
+    }
     else
         return ExportCoeffs(m_dFilterType,m_dFilterGain,m_dFilterFreq,dSamplingRate,m_dFilterBQ,m_isBandwidthOrS);
 }

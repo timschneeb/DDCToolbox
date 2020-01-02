@@ -20,7 +20,8 @@ public:
 
 private:
     Ui::addpoint *ui;
-    customFilter_t m_cfilter;
+    customFilter_t m_cfilter441;
+    customFilter_t m_cfilter48;
 
 };
 

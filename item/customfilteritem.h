@@ -15,18 +15,19 @@ class CustomFilterItem : public QWidget
 public:
     explicit CustomFilterItem(QWidget *parent = nullptr);
     ~CustomFilterItem();
-    void setCoefficients(customFilter_t coeffs);
-    customFilter_t getCoefficients();
+    void setCoefficients(customFilter_t c441, customFilter_t c48);
+    customFilter_t getCoefficients(bool use48000);
 
 signals:
-    void coefficientsUpdated(customFilter_t);
+    void coefficientsUpdated(customFilter_t,customFilter_t);
 
 private slots:
     void updateText();
 
 private:
     Ui::CustomFilterItem *ui;
-    customFilter_t m_cfilter;
+    customFilter_t m_cfilter441;
+    customFilter_t m_cfilter48;
 };
 
 #endif // CUSTOMFILTERITEM_H

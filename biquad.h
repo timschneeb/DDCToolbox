@@ -35,7 +35,7 @@ public:
     };
     biquad();
     void RefreshFilter(uint32_t id, Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
-    void RefreshFilter(uint32_t id, Type type, customFilter_t coeffs);
+    void RefreshFilter(uint32_t id, Type type, customFilter_t c441, customFilter_t c48);
     std::list<double> ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
     std::list<double> ExportCoeffs(double dSamplingRate);
     std::list<double> ExportCoeffs(Type type, customFilter_t coeffs);
@@ -58,7 +58,8 @@ private:
     int m_isStable;
     bool m_isCustom;
     uint32_t m_id;
-    customFilter_t m_custom;
+    customFilter_t m_custom441;
+    customFilter_t m_custom48;
     inline void complexMultiplicationRI(double *zReal, double *zImag, double xReal, double xImag, double yReal, double yImag)
     {
         *zReal = xReal * yReal - xImag * yImag;

@@ -48,8 +48,8 @@ void AddCommand::redo()
     (new tableproxy(tw))->addRow(cal);
 
     if(cal.type==biquad::CUSTOM){
-        newCustomFilter(cal.custom,tw,tw->rowCount()-1);
-        ddcContext->AddFilter(cal.id, cal.custom);
+        newCustomFilter(cal.custom441,cal.custom48,tw,tw->rowCount()-1);
+        ddcContext->AddFilter(cal.id, cal.custom441, cal.custom48);
         emit tw->itemChanged(tw->item(tw->rowCount()-1,3));
     }
     else{
@@ -95,8 +95,8 @@ void EditCommand::undo()
     (new tableproxy(tw))->editRow(oldcal,row);
 
     if(oldcal.type==biquad::CUSTOM){
-        newCustomFilter(oldcal.custom,tw,row);
-        ddcContext->ModifyFilter(oldcal.id, oldcal.custom);
+        newCustomFilter(oldcal.custom441,oldcal.custom48,tw,row);
+        ddcContext->ModifyFilter(oldcal.id, oldcal.custom441, oldcal.custom48);
     }
     else{
         tw->removeCellWidget(row,3);
@@ -118,8 +118,8 @@ void EditCommand::redo()
     (new tableproxy(tw))->editRow(cal,row);
 
     if(cal.type==biquad::CUSTOM){
-        newCustomFilter(cal.custom,tw,row);
-        ddcContext->ModifyFilter(cal.id, cal.custom);
+        newCustomFilter(cal.custom441,cal.custom48,tw,row);
+        ddcContext->ModifyFilter(cal.id, cal.custom441, cal.custom48);
     }
     else{
         tw->removeCellWidget(row,3);
@@ -163,8 +163,8 @@ void ClearCommand::undo()
         calibrationPoint_t cal = cal_table.at(i);
         (new tableproxy(tw))->addRow(cal);
         if(cal.type==biquad::CUSTOM){
-            newCustomFilter(cal.custom,tw,tw->rowCount()-1);
-            ddcContext->AddFilter(cal.id,cal.custom);
+            newCustomFilter(cal.custom441, cal.custom48,tw,tw->rowCount()-1);
+            ddcContext->AddFilter(cal.id,cal.custom441, cal.custom48);
         }
         else
             ddcContext->AddFilter(cal.id,cal.type,cal.freq, cal.gain, cal.bw, 48000.0,true);
@@ -220,8 +220,8 @@ void RemoveCommand::undo()
         calibrationPoint_t cal = cal_table.at(i);
         (new tableproxy(tw))->addRow(cal);
         if(cal.type==biquad::CUSTOM){
-            newCustomFilter(cal.custom,tw,tw->rowCount()-1);
-            ddcContext->AddFilter(cal.id,cal.custom);
+            newCustomFilter(cal.custom441,cal.custom48,tw,tw->rowCount()-1);
+            ddcContext->AddFilter(cal.id,cal.custom441,cal.custom48);
         }
         else
             ddcContext->AddFilter(cal.id,cal.type,cal.freq, cal.gain, cal.bw, 48000.0,true);
@@ -249,8 +249,10 @@ void RemoveCommand::redo()
         cal.bw = tw->item(i,2)->data(Qt::DisplayRole).toDouble();
         cal.gain = tw->item(i,3)->data(Qt::DisplayRole).toDouble();
         cal.type = stringToType(tw->item(i,0)->data(Qt::DisplayRole).toString());
-        if(cal.type == biquad::CUSTOM)
-            cal.custom = ((CustomFilterItem*)tw->cellWidget(i,3))->getCoefficients();
+        if(cal.type == biquad::CUSTOM){
+            cal.custom441 = ((CustomFilterItem*)tw->cellWidget(i,3))->getCoefficients(false);
+            cal.custom48 = ((CustomFilterItem*)tw->cellWidget(i,3))->getCoefficients(true);
+        }
         cal_table.push_back(cal);
 
         removeRows.append(i);

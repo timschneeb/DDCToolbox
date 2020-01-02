@@ -16,13 +16,14 @@ inline customFilter_t defaultCustomFilter(){
     m_cfilter.b2 = 0.0;
     return m_cfilter;
 }
-inline CustomFilterItem* newCustomFilter(customFilter_t custom,QTableWidget* tw, int row){
+inline CustomFilterItem* newCustomFilter(customFilter_t c441, customFilter_t c48,QTableWidget* tw, int row){
     CustomFilterItem* cf_item = new CustomFilterItem;
-    cf_item->setCoefficients(custom);
+    cf_item->setCoefficients(c441,c48);
 
     tw->setCellWidget(row,3,cf_item);
-    QObject::connect(cf_item,&CustomFilterItem::coefficientsUpdated,[tw,cf_item](customFilter_t previous){
-        Global::old_custom = previous;
+    QObject::connect(cf_item,&CustomFilterItem::coefficientsUpdated,[tw,cf_item](customFilter_t previous441,customFilter_t previous48){
+        Global::old_custom441 = previous441;
+        Global::old_custom48 = previous48;
         CustomFilterItem* origin = cf_item;
         for(int i = 0; i < tw->rowCount(); i++){
             if(origin==tw->cellWidget(i,3)){

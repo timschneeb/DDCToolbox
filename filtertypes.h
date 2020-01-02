@@ -44,7 +44,8 @@ typedef struct calibrationPoint_s{
     double bw;
     double gain;
     ///[Applies when type == custom] vvv
-    customFilter_t custom;
+    customFilter_t custom441;
+    customFilter_t custom48;
 }calibrationPoint_t;
 
 #endif // FILTERTYPES_H

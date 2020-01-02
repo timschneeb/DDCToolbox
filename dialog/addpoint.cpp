@@ -11,7 +11,8 @@ addpoint::addpoint(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_cfilter = defaultCustomFilter();
+    m_cfilter441 = defaultCustomFilter();
+    m_cfilter48 = defaultCustomFilter();
     ui->custom_configure->setEnabled(false);
 
     connect(ui->ftype,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,[this](int index){
@@ -55,9 +56,10 @@ addpoint::addpoint(QWidget *parent) :
 
     connect(ui->custom_configure,&QPushButton::clicked,this,[this]{
         customfilterdialog* cd = new customfilterdialog;
-        cd->setCoefficients(defaultCustomFilter());
+        cd->setCoefficients(defaultCustomFilter(),defaultCustomFilter());
         if(cd->exec()){
-            m_cfilter = cd->getCoefficients();
+            m_cfilter441 = cd->getCoefficients(false);
+            m_cfilter48 = cd->getCoefficients(true);
         }
     });
 }
@@ -77,7 +79,8 @@ calibrationPoint_t addpoint::returndata(){
         ret.freq = ui->freq->value();
     ret.bw = ui->bw->value();
     ret.gain = ui->gain->value();
-    ret.custom = m_cfilter;
+    ret.custom441 = m_cfilter441;
+    ret.custom48 = m_cfilter48;
     ret.type = stringToType(ui->ftype->currentText());
     return ret;
 }
