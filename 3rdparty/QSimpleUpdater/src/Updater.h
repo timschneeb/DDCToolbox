@@ -89,7 +89,7 @@ public slots:
 
 private slots:
     void onReply (QNetworkReply* reply);
-    void setUpdateAvailable (const bool available);
+    void setUpdateAvailable (const bool available,const uint errcode);
 
 private:
     bool compare (const QString& x, const QString& y);

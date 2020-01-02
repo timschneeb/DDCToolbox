@@ -378,7 +378,7 @@ void Updater::onReply (QNetworkReply* reply)
 
     /* There was a network error */
     if (reply->error() != QNetworkReply::NoError) {
-        setUpdateAvailable (false);
+        setUpdateAvailable (false,1);
         emit checkingFinished (url());
         return;
     }
@@ -395,7 +395,7 @@ void Updater::onReply (QNetworkReply* reply)
 
     /* JSON is invalid */
     if (document.isNull()) {
-        setUpdateAvailable (false);
+        setUpdateAvailable (false,2);
         emit checkingFinished (url());
         return;
     }
@@ -413,7 +413,7 @@ void Updater::onReply (QNetworkReply* reply)
         m_mandatoryUpdate = platform.value ("mandatory-update").toBool();
 
     /* Compare latest and current version */
-    setUpdateAvailable (compare (latestVersion(), moduleVersion()));
+    setUpdateAvailable (compare (latestVersion(), moduleVersion()),0);
     emit checkingFinished (url());
 }
 
@@ -421,7 +421,7 @@ void Updater::onReply (QNetworkReply* reply)
  * Prompts the user based on the value of the \a available parameter and the
  * settings of this instance of the \c Updater class.
  */
-void Updater::setUpdateAvailable (const bool available)
+void Updater::setUpdateAvailable (const bool available, const uint errcode)
 {
     m_updateAvailable = available;
 
@@ -429,6 +429,7 @@ void Updater::setUpdateAvailable (const bool available)
     box.setTextFormat (Qt::RichText);
     box.setIcon (QMessageBox::Information);
 
+    if(errcode == 0){
     if (updateAvailable() && (notifyOnUpdate() || notifyOnFinish()))
     {
         QString text = tr("Would you like to visit the GitHub release page?\nYou can find the changelog and the update packages there.");
@@ -478,6 +479,25 @@ void Updater::setUpdateAvailable (const bool available)
                      + "</h3>");
 
         box.exec();
+    }
+    }
+    else{
+        QString text = tr("Would you like to visit the GitHub release page anyway?\nYou can check the changelog and update packages there.");
+
+        QString err;
+        if(errcode == 1)
+            err = tr("The update server appears to be unavailable");
+        else if(errcode == 2)
+            err = tr("Invalid JSON response");
+        QString title = QString("<h3>%1</h3>").arg(err);
+
+        box.setText (title);
+        box.setInformativeText (text);
+        box.setStandardButtons (QMessageBox::No | QMessageBox::Yes);
+        box.setDefaultButton   (QMessageBox::Yes);
+
+        if (box.exec() == QMessageBox::Yes)
+                QDesktopServices::openUrl (QUrl ("https://github.com/ThePBone/DDCToolbox"));
     }
 }
 
