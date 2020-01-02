@@ -49,7 +49,8 @@ void AddCommand::redo()
 
     if(cal.type==biquad::CUSTOM){
         newCustomFilter(cal.custom,tw,tw->rowCount()-1);
-        ddcContext->AddFilter(cal.id, defaultCustomFilter());
+        ddcContext->AddFilter(cal.id, cal.custom);
+        emit tw->itemChanged(tw->item(tw->rowCount()-1,3));
     }
     else{
         tw->removeCellWidget(tw->rowCount()-1,3);
