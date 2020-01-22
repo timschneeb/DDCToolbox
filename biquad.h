@@ -31,7 +31,8 @@ public:
         UNITY_GAIN,
         ONEPOLE_LOWPASS,
         ONEPOLE_HIGHPASS,
-        CUSTOM
+        CUSTOM,
+        INVALID = 0xFF
     };
     biquad();
     void RefreshFilter(uint32_t id, Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);

@@ -32,6 +32,8 @@ SOURCES += \
         dialog/customfilterdialog.cpp \
         dialog/shiftfreq.cpp \
         dialog/textpopup.cpp \
+        io/conversionengine.cpp \
+        io/projectmanager.cpp \
         item/customfilteritem.cpp \
         main.cpp \
         mainwindow.cpp \
@@ -50,6 +52,8 @@ HEADERS += \
         dialog/shiftfreq.h \
         dialog/textpopup.h \
         filtertypes.h \
+        io/conversionengine.h \
+        io/projectmanager.h \
         item/customfilterfactory.h \
         item/customfilteritem.h \
         mainwindow.h \

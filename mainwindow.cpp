@@ -4,7 +4,6 @@
 #include "dialog/addpoint.h"
 #include "dialog/textpopup.h"
 #include "dialog/calc.h"
-#include "vdcimporter.h"
 #include "undocmd.h"
 #include <QFileDialog>
 #include <QDebug>
@@ -17,6 +16,8 @@
 #include "delegate.h"
 #include "item/customfilteritem.h"
 #include "item/customfilterfactory.h"
+#include "io/projectmanager.h"
+#include "io/conversionengine.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -102,7 +103,6 @@ void MainWindow::saveDDCProject()
 }
 void MainWindow::saveAsDDCProject(bool ask,QString path,bool compatibilitymode)
 {
-    QString n("\n");
     QString fileName = path;
     QString dialogtitle = tr("Save VDC Project File");
     if(compatibilitymode) dialogtitle.append(" " + tr("(Compatibility Mode)"));
@@ -132,157 +132,48 @@ void MainWindow::saveAsDDCProject(bool ask,QString path,bool compatibilitymode)
             points.push_back(cal);
         }
         mtx.unlock();
-        writeProjectFile(points,fileName,compatibilitymode);
+        ProjectManager::writeProjectFile(points,fileName,compatibilitymode);
     }
 }
 void MainWindow::loadDDCProject()
 {
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Open VDC Project File"), "", tr("ViPER DDC Project (*.vdcprj)"));
-    if (fileName != "" && fileName != nullptr){
+    if(fileName.length() < 1) return;
+    auto project_data = ProjectManager::readProjectFile(fileName);
+    if(project_data.size() > 0){
         mtx.lock();
-        try
-        {
-            QFile file(fileName);
-            if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-                QMessageBox::warning(this,tr("Error"),tr("Cannot open file for reading"));
-                return;
-            }
-            QTextStream in(&file);
-            QString str;
-            clearPoint(false);
-            setActiveFile(fileName);
-            undoStack->clear();
 
-            while (!in.atEnd())
-                readLine_DDCProject(in.readLine().trimmed());
-            file.close();
+        clearPoint(false);
+        setActiveFile(fileName);
+        undoStack->clear();
+
+        lock_actions = true;
+        ui->listView_DDCPoints->setSortingEnabled(false);
+
+        for(size_t i = 0; i < project_data.size(); i++){
+            calibrationPoint_t cal = project_data.at(i);
+            uint32_t id = insertData(cal.type,cal.freq,cal.bw,cal.gain,false);
+            if(cal.type == biquad::CUSTOM){
+                newCustomFilter(cal.custom441,cal.custom48,ui->listView_DDCPoints,ui->listView_DDCPoints->rowCount()-1);
+                g_dcDDCContext->AddFilter(id,cal.custom441,cal.custom48);
+            } else {
+                g_dcDDCContext->AddFilter(id,cal.type,cal.freq, cal.gain, cal.bw, 48000.0,true);
+            }
         }
-        catch (const std::exception& e)
-        {
-            qWarning() << e.what();
-            lock_actions=false;
-            mtx.unlock();
-            return;
-        }
-        mtx.unlock();
+
+        ui->listView_DDCPoints->setSortingEnabled(true);
+        ui->listView_DDCPoints->sortItems(1);
         ui->listView_DDCPoints->update();
         ui->listView_DDCPoints->sortItems(1,Qt::SortOrder::AscendingOrder);
+        lock_actions = false;
+        mtx.unlock();
 
         drawGraph();
         emit loadFinished();
     }
-}
-void MainWindow::readLine_DDCProject(QString str){
-    lock_actions = true;
-    ui->listView_DDCPoints->setSortingEnabled(false);
-    if (str != nullptr || str != "")
-    {
-        if ((str.length() > 0) && !str.startsWith("#"))
-        {
-            bool isCustomLine = false;
-            QStringList strArray;
-            if(str.contains(";")){
-                strArray = str.split(";")[0].split(',');
-
-                isCustomLine = true;
-            }
-            else strArray = str.split(',');
-            if ((!strArray.empty()) && (strArray.length() == 3))
-            {
-                int result = 0;
-                double num2 = 0.0;
-                double num3 = 0.0;
-                if ((sscanf(strArray[0].toUtf8().constData(), "%d", &result) == 1 &&
-                     sscanf(strArray[1].toUtf8().constData(), "%lf", &num2) == 1) &&
-                        sscanf(strArray[2].toUtf8().constData(), "%lf", &num3) == 1)
-                {
-                    if(result<=0||num2<0)return;
-                    if(isnan(num2)||isnan(num3))return;
-                    if(isinf(num2)||isinf(num3))return;
-
-                    uint32_t id = insertData(biquad::Type::PEAKING,result,num2,num3);
-                    g_dcDDCContext->AddFilter(id,biquad::Type::PEAKING,result, num3, num2, 48000.0,true);
-
-                }
-            }
-            else if ((!strArray.empty()) && (strArray.length() == 4))
-            {
-                int result = 0;
-                double num2 = 0.0;
-                double num3 = 0.0;
-                if ((sscanf(strArray[0].toUtf8().constData(), "%d", &result) == 1 &&
-                     sscanf(strArray[1].toUtf8().constData(), "%lf", &num2) == 1) &&
-                        sscanf(strArray[2].toUtf8().constData(), "%lf", &num3) == 1)
-                {
-                    if(result<=0||num2<0)return;
-                    if(isnan(num2)||isnan(num3))return;
-                    if(isinf(num2)||isinf(num3))return;
-
-                    biquad::Type filtertype = stringToType(strArray[3].trimmed());
-
-                    if(isCustomLine){
-                        QString coeffpart = str.split(";")[1];
-                        customFilter_t c441 = defaultCustomFilter();
-                        customFilter_t c48 = defaultCustomFilter();
-                        int counter = 0;
-                        for(auto coeff:coeffpart.split(",")){
-                            switch(counter){
-                            case 0:
-                                c441.a0 = coeff.toDouble();
-                                break;
-                            case 1:
-                                c441.a1 = coeff.toDouble();
-                                break;
-                            case 2:
-                                c441.a2 = coeff.toDouble();
-                                break;
-                            case 3:
-                                c441.b0 = coeff.toDouble();
-                                break;
-                            case 4:
-                                c441.b1 = coeff.toDouble();
-                                break;
-                            case 5:
-                                c441.b2 = coeff.toDouble();
-                                break;
-                            case 6:
-                                c48.a0 = coeff.toDouble();
-                                break;
-                            case 7:
-                                c48.a1 = coeff.toDouble();
-                                break;
-                            case 8:
-                                c48.a2 = coeff.toDouble();
-                                break;
-                            case 9:
-                                c48.b0 = coeff.toDouble();
-                                break;
-                            case 10:
-                                c48.b1 = coeff.toDouble();
-                                break;
-                            case 11:
-                                c48.b2 = coeff.toDouble();
-                                break;
-                            }
-                            counter++;
-                        }
-                        uint32_t id = insertData(filtertype,result,num2,num3,false);
-                        newCustomFilter(c441,c48,ui->listView_DDCPoints,ui->listView_DDCPoints->rowCount()-1);
-                        g_dcDDCContext->AddFilter(id,c441,c48);
-                    }else{
-                        uint32_t id = insertData(filtertype,result,num2,num3,false);
-                        g_dcDDCContext->AddFilter(id,filtertype,result, num3, num2, 48000.0,true);
-                    }
-
-                }
-            }
-        }
-    }
-    ui->listView_DDCPoints->setSortingEnabled(true);
-    ui->listView_DDCPoints->sortItems(1);
-    ui->listView_DDCPoints->update();
-    lock_actions = false;
+    else
+        QMessageBox::critical(this,"Error","Invalid project file or inaccessible file");
 }
 //---Editor
 uint32_t MainWindow::insertData(biquad::Type type,int freq,double band,double gain, bool toggleSorting){
@@ -373,7 +264,7 @@ void MainWindow::clearPoint(bool trackundo){
                 cal.custom441 = ((CustomFilterItem*)ui->listView_DDCPoints->cellWidget(i,3))->getCoefficients(false);
                 cal.custom48 = ((CustomFilterItem*)ui->listView_DDCPoints->cellWidget(i,3))->getCoefficients(true);
             }
-                cal_table.push_back(cal);
+            cal_table.push_back(cal);
         }
         QUndoCommand *clearCommand = new ClearCommand(ui->listView_DDCPoints,
                                                       g_dcDDCContext,cal_table,&mtx,&lock_actions,this);
@@ -661,39 +552,31 @@ void MainWindow::importVDC(){
         clearPoint(false);
         setActiveFile("");
         undoStack->clear();
-
         mtx.lock();
 
-        QString str;
-        QFile file(fileName);
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        QString data = ConversionEngine::convertVDCtoProjectFile(fileName);
+        if (data.length() < 1){
             QMessageBox::warning(this,tr("Error"),tr("Cannot open file for reading"));
             return;
         }
-        QTextStream in(&file);
-        QByteArray ba = in.readAll().toLatin1();
-        char* textString = ba.data();
-
-        DirectForm2 **df441, **df48;
-        int sosCount = DDCParser(textString, &df441, &df48);
-        char *vdcprj = VDC2vdcprj(df48, 48000.0, sosCount);
 
         QString line;
-        QString data(vdcprj);
         QTextStream stream(&data);
         while (stream.readLineInto(&line)) {
-            readLine_DDCProject(line);
+            calibrationPoint_t cal = ProjectManager::readSingleLine(line);
+            if(cal.type == biquad::INVALID)
+                continue;
+
+            uint32_t id = insertData(cal.type,cal.freq,cal.bw,cal.gain,false);
+            if(cal.type == biquad::CUSTOM){
+                newCustomFilter(cal.custom441,cal.custom48,ui->listView_DDCPoints,ui->listView_DDCPoints->rowCount()-1);
+                g_dcDDCContext->AddFilter(id,cal.custom441,cal.custom48);
+            } else {
+                g_dcDDCContext->AddFilter(id,cal.type,cal.freq, cal.gain, cal.bw, 48000.0,true);
+            }
         }
         stream.seek(0);
 
-        free(vdcprj);
-        for (i = 0; i < sosCount; i++)
-        {
-            free(df441[i]);
-            free(df48[i]);
-        }
-        free(df441);
-        free(df48);
         mtx.unlock();
         drawGraph();
         emit loadFinished();
@@ -701,9 +584,10 @@ void MainWindow::importVDC(){
 }
 void MainWindow::exportVDC()
 {
-    QString n("\n");
+    mtx.lock();
     std::list<double> p1 = g_dcDDCContext->ExportCoeffs(44100.0);
     std::list<double> p2 = g_dcDDCContext->ExportCoeffs(48000.0);
+    mtx.unlock();
 
     if (p1.empty() || p2.empty())
     {
@@ -712,57 +596,8 @@ void MainWindow::exportVDC()
     }
     QString fileName = QFileDialog::getSaveFileName(this,
                                                     tr("Save VDC"), "", tr("VDC File (*.vdc)"));
-    if (fileName != "" && fileName != nullptr)
-    {
-        QFileInfo fi(fileName);
-        QString ext = fi.suffix();
-        if(ext!="vdc")fileName.append(".vdc");
-        mtx.lock();
-        try
-        {
-            QFile caFile(fileName);
-            caFile.open(QIODevice::WriteOnly | QIODevice::Text);
 
-            if(!caFile.isOpen()){
-                //qDebug() << "- Error, unable to open" << "outputFilename" << "for output";
-            }
-            QTextStream outStream(&caFile);
-            outStream << "SR_44100:";
-
-            std::vector<double> v1;
-            for (double const &d: p1)
-                v1.push_back(d);
-            std::vector<double> v2;
-            for (double const &d: p2)
-                v2.push_back(d);
-
-            for (size_t i = 0; i < v1.size(); i++)
-            {
-                outStream << qSetRealNumberPrecision(16) << v1.at(i);
-                if (i != (v1.size() - 1))
-                    outStream << ",";
-            }
-            outStream << n;
-            outStream << "SR_48000:";
-
-            for (size_t i = 0; i < v2.size(); i++)
-            {
-                outStream << qSetRealNumberPrecision(16) << v2.at(i);
-                if (i != (v2.size() - 1))
-                    outStream << ",";
-            }
-
-            outStream << n;
-            caFile.close();
-        }
-        catch (const std::exception& e)
-        {
-            qWarning() << e.what();
-            mtx.unlock();
-            return;
-        }
-        mtx.unlock();
-    }
+    ProjectManager::exportVDC(fileName,p1,p2);
 }
 void MainWindow::importParametricAutoEQ(){
     QString fileName = QFileDialog::getOpenFileName(this,
@@ -773,7 +608,8 @@ void MainWindow::importParametricAutoEQ(){
         setActiveFile("");
         undoStack->clear();
 
-        std::vector<calibrationPoint_t> points = parseParametricEQ(fileName);
+        std::vector<calibrationPoint_t> points =
+                ConversionEngine::readParametricEQFile(fileName);
         if(points.size() < 1){
             QMessageBox::warning(this,tr("Error"),tr("Unable to convert this file; no data found: %1").arg(fileName));
             return;
@@ -781,131 +617,16 @@ void MainWindow::importParametricAutoEQ(){
 
         for(size_t i=0;i<points.size();i++){
             calibrationPoint_t cal = points.at(i);
-            bool flag = false;
-            for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
-            {
-                if ((int)getValue(datatype::freq,i) == cal.freq)
-                {
-                    flag = true;
-                    break;
-                }
-            }
-            if (!flag)
-            {
-                lock_actions = true;
-                uint32_t id = insertData(biquad::Type::PEAKING,cal.freq,(double)cal.bw,(double)cal.gain);
-                lock_actions = false;
-                g_dcDDCContext->AddFilter(id,biquad::Type::PEAKING,cal.freq, (double)cal.gain, (double)cal.bw, 48000.0,true);
-            }
+            lock_actions = true;
+            uint32_t id = insertData(biquad::Type::PEAKING,cal.freq,(double)cal.bw,(double)cal.gain);
+            lock_actions = false;
+            g_dcDDCContext->AddFilter(id,biquad::Type::PEAKING,cal.freq, (double)cal.gain, (double)cal.bw, 48000.0,true);
+
         }
         ui->listView_DDCPoints->sortItems(1,Qt::SortOrder::AscendingOrder);
         drawGraph();
         emit loadFinished();
     }
-}
-//---Parser/Writer
-bool MainWindow::writeProjectFile(std::vector<calibrationPoint_t> points,QString fileName,bool compatibilitymode){
-    QString n("\n");
-    QFile caFile(fileName);
-    caFile.open(QIODevice::WriteOnly | QIODevice::Text);
-
-    if(!caFile.isOpen()){
-        //qDebug() << "Error, unable to open" << "outputFilename" << "for output";
-        return false;
-    }
-
-    if(!compatibilitymode){
-        //Check if compatibility with vipers toolbox v2.0 is possible
-        bool compatible = true;
-        for(calibrationPoint_t point:points)
-            if(point.type!=biquad::PEAKING)
-                compatible = false;
-        compatibilitymode = compatible;
-    }
-
-    QTextStream outStream(&caFile);
-    if(compatibilitymode){
-        outStream << "# DDCToolbox Project File, v1.0.0.0 (@ThePBone)" + n;
-        outStream << n;
-        for (size_t i = 0; i < points.size(); i++)
-        {
-            calibrationPoint_t cal = points.at(i);
-            outStream << "# Calibration Point " + QString::number(i + 1) + n;
-            outStream << QString::number(cal.freq) + "," + QString::number(cal.bw) + "," + QString::number(cal.gain) + n;
-        }
-    }else{
-        outStream << "# DDCToolbox Project File, v4.0.0.0 (@ThePBone)" + n;
-        outStream << n;
-        for (size_t i = 0; i < points.size(); i++)
-        {
-            calibrationPoint_t cal = points.at(i);
-            outStream << "# Calibration Point " + QString::number(i + 1) + n;
-            if(cal.type==biquad::CUSTOM){
-                outStream << QString::number(cal.freq) + ",0,0," + typeToString(cal.type) + ";";
-                outStream << QString::number(cal.custom441.a0,'f',16) + "," + QString::number(cal.custom441.a1,'f',16) + "," + QString::number(cal.custom441.a2,'f',16) + ",";
-                outStream << QString::number(cal.custom441.b0,'f',16) + "," + QString::number(cal.custom441.b1,'f',16) + "," + QString::number(cal.custom441.b2,'f',16) + ",";
-                outStream << QString::number(cal.custom48.a0,'f',16) + "," + QString::number(cal.custom48.a1,'f',16) + "," + QString::number(cal.custom48.a2,'f',16) + ",";
-                outStream << QString::number(cal.custom48.b0,'f',16) + "," + QString::number(cal.custom48.b1,'f',16) + "," + QString::number(cal.custom48.b2,'f',16)  + n;
-            } else
-                outStream << QString::number(cal.freq) + "," + QString::number(cal.bw) + "," + QString::number(cal.gain) + "," + typeToString(cal.type) + n;
-        }
-    }
-    outStream << n;
-    outStream << "#File End" + n;
-    caFile.close();
-    return true;
-}
-std::vector<calibrationPoint_t> MainWindow::parseParametricEQ(QString path){
-    std::vector<calibrationPoint_t> points;
-    QString str;
-    QFile file(path);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        return points;
-    QTextStream in(&file);
-    while (!in.atEnd())
-    {
-        str = in.readLine().trimmed();
-        if (str != nullptr || str != "")
-        {
-            if ((str.length() > 0) && !str.startsWith("#"))
-            {
-                QString strPart2 = str.split(':')[1].trimmed();
-                QStringList lineParts = strPart2.split(" ");
-                /**
-                  [0] "ON"
-                  [1] "PK"
-                  [2] "Fc"
-                  [3] <Freq,INT>
-                  [4] "Hz"
-                  [5] "Gain"
-                  [6] <Gain,FLOAT>
-                  [7] "dB"
-                  [8] "Q"
-                  [9] <Q-Value,FLOAT>
-                                      **/
-                if ((!lineParts.empty()) && (lineParts.length() == 10))
-                {
-                    int freq = lineParts[3].toInt();
-                    double gain = lineParts[6].toDouble();
-                    double q = lineParts[9].toDouble();
-                    if(freq < 0)continue;
-
-                    //Convert Q to BW
-                    double QQ1st = ((2*q*q)+1)/(2*q*q);
-                    double QQ2nd = pow(2*QQ1st,2)/4;
-                    double bw = round(1000000*log(QQ1st+sqrt(QQ2nd-1))/log(2))/1000000;
-
-                    calibrationPoint_t cal;
-                    cal.freq = freq;
-                    cal.bw = bw;
-                    cal.gain = gain;
-                    cal.type = biquad::Type::PEAKING; //TODO: add filtertype to eapo/autoeq parser
-                    points.push_back(cal);
-                }
-            }
-        }
-    }
-    file.close();
 }
 //---Batch conversion
 void MainWindow::batch_vdc2vdcprj(){
@@ -921,39 +642,19 @@ void MainWindow::batch_vdc2vdcprj(){
 
         if(dir=="")return;
         for (int l=0;l<(int)filenames.count();l++){
-            int i = 0;
-
-            QString str;
-            QFile file(filenames.at(l));
-            if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+            QString vdcprj = ConversionEngine::convertVDCtoProjectFile(filenames.at(l));
+            if (vdcprj.length() < 1){
                 QMessageBox::warning(this,tr("Error"),tr("Cannot open file %1 for reading").arg(filenames.at(l)));
                 continue;
             }
-            QTextStream in(&file);
-            QByteArray ba = in.readAll().toLatin1();
-            char* textString = ba.data();
-
-            DirectForm2 **df441, **df48;
-            int sosCount = DDCParser(textString, &df441, &df48);
-            char *vdcprj = VDC2vdcprj(df48, 48000.0, sosCount);
-
 
             QFileInfo fi(filenames.at(l));
             QString out = fi.completeBaseName();
             QFile qFile(QDir(dir).filePath(fi.completeBaseName()+".vdcprj"));
             if (qFile.open(QIODevice::WriteOnly)) {
-                QTextStream out(&qFile); out << QString(vdcprj);
+                QTextStream out(&qFile); out << vdcprj;
                 qFile.close();
             }
-
-            free(vdcprj);
-            for (i = 0; i < sosCount; i++)
-            {
-                free(df441[i]);
-                free(df48[i]);
-            }
-            free(df441);
-            free(df48);
         }
         QMessageBox::information(this,tr("Note"),tr("Conversion finished!\nYou can find the files here:\n%1").arg(dir));
     }
@@ -971,13 +672,14 @@ void MainWindow::batch_parametric2vdcprj(){
         if(dir=="")return;
         for (int l=0;l<(int)filenames.count();l++){
             int i = 0;
-            std::vector<calibrationPoint_t> points = parseParametricEQ(filenames.at(l));
+            std::vector<calibrationPoint_t> points =
+                    ConversionEngine::readParametricEQFile(filenames.at(l));
             if(points.size() < 1){
                 QMessageBox::warning(this,tr("Error"),tr("Unable to convert this file: %1").arg(filenames.at(l)));
                 return;
             }
             QFileInfo fi(filenames.at(l));
-            if(!writeProjectFile(points,QDir(dir).filePath(fi.completeBaseName()+".vdcprj"),false))
+            if(!ProjectManager::writeProjectFile(points,QDir(dir).filePath(fi.completeBaseName()+".vdcprj"),false))
                 QMessageBox::warning(this,tr("Error"),tr("Cannot write file at: %1").arg(QDir(dir).filePath(fi.completeBaseName()+".vdcprj")));
         }
         QMessageBox::information(this,tr("Note"),tr("Conversion finished!\nYou can find the files here:\n%1").arg(dir));
@@ -1089,7 +791,6 @@ void MainWindow::slotLanguageChanged(QAction* action)
     }
     loadLanguage(action->data().toString());
 }
-
 void MainWindow::loadLanguage(const QString& rLanguage)
 {
     if(m_currLang == rLanguage) {
@@ -1107,7 +808,6 @@ void MainWindow::loadLanguage(const QString& rLanguage)
     switchTranslator(m_translator, resourceFileName);
 
 }
-
 void MainWindow::changeEvent(QEvent* event)
 {
     if(0 != event) {

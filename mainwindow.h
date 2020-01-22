@@ -72,7 +72,6 @@ private slots:
     void importParametricAutoEQ();
     void showCalc();
     void importVDC();
-    void readLine_DDCProject(QString);
     void batch_vdc2vdcprj();
     void batch_parametric2vdcprj();
     void toggleGraph(bool);
@@ -112,8 +111,6 @@ private:
     uint32_t getId(int row);
     double getValue(datatype dat,int row);
     uint32_t insertData(biquad::Type type,int freq,double band,double gain,bool toggleSorting = true);
-    std::vector<calibrationPoint_t> parseParametricEQ(QString);
-    bool writeProjectFile(std::vector<calibrationPoint_t> points,QString fileName,bool compatibilitymode);
     void createLanguageMenu();
     void loadLanguage(const QString& rLanguage);
 };
