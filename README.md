@@ -23,6 +23,7 @@ Create and edit ViPER DDC files on Linux, Windows and macOS
 ## Installation
 Primarily developed for Linux. You can also find Windows and macOS installation instructions below.
   * [Windows](#windows)
+  * [Arch (AUR)](#arch-aur)
   * [Ubuntu](#ubuntu-ppa)
   * [Debian](#debian)
   * [Manually (Linux)](#manuallyportable-linux)
@@ -39,6 +40,12 @@ Install from PPA
 sudo apt install ddc-toolbox
 ```
 [View PPA on GitHub](https://github.com/ThePBone/PPA-Repository)
+
+### Arch (AUR)
+A git package is available in the [AUR](https://aur.archlinux.org/packages/ddctoolbox-git/).
+```bash
+yay -S ddctoolbox-git
+```
 
 ### Windows
 
