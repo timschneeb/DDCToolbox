@@ -26,6 +26,7 @@ Primarily developed for Linux. You can also find Windows and macOS installation 
   * [Arch (AUR)](#arch-aur)
   * [Ubuntu](#ubuntu-ppa)
   * [Debian](#debian)
+  * [Android](#android)
   * [Manually (Linux)](#manuallyportable-linux)
   * [Manually (macOS)](#manually-macos)
 ### Ubuntu (PPA)
@@ -62,6 +63,9 @@ If the server is down, you can also get one from the [AppVeyor cloud](https://ci
 
 ### Debian
 Users of debian-based distros can use the DEB-packages that are attached on the [release page](https://github.com/ThePBone/DDCToolbox/releases).
+
+### Android
+There is an Android version of DDCToolbox with limited functionality available here: [ThePBone/DDCToolbox-Android](https://github.com/ThePBone/DDCToolbox-Android)
 
 ### Manually/Portable (Linux)
 #### Build from sources
