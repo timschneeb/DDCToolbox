@@ -25,50 +25,65 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        utils/autoeqclient.cpp \
         biquad.cpp \
         ddccontext.cpp \
         dialog/addpoint.cpp \
+        dialog/autoeqselector.cpp \
         dialog/calc.cpp \
         dialog/customfilterdialog.cpp \
+        dialog/overlaymsgproxy.cpp \
+        dialog/qmessageoverlay.cpp \
         dialog/shiftfreq.cpp \
         dialog/textpopup.cpp \
         io/conversionengine.cpp \
         io/projectmanager.cpp \
         item/customfilteritem.cpp \
+        item/detaillistitem.cpp \
+        utils/loghelper.cpp \
         main.cpp \
         mainwindow.cpp \
         plot/frequencyplot.cpp \
         plot/qcustomplot.cpp \
-        tableproxy.cpp \
-        undocmd.cpp
+        utils/tableproxy.cpp \
+        utils/undocmd.cpp
 
 HEADERS += \
+        utils/autoeqclient.h \
         biquad.h \
         ddccontext.h \
-        delegate.h \
+        utils/delegate.h \
         dialog/addpoint.h \
+        dialog/autoeqselector.h \
         dialog/calc.h \
         dialog/customfilterdialog.h \
+        dialog/overlaymsgproxy.h \
+        dialog/qmessageoverlay.h \
         dialog/shiftfreq.h \
         dialog/textpopup.h \
-        filtertypes.h \
+        utils/filtertypes.h \
         io/conversionengine.h \
         io/projectmanager.h \
         item/customfilterfactory.h \
         item/customfilteritem.h \
+        item/detaillistitem.h \
+        item/detaillistitem_delegate.h \
+        utils/loghelper.h \
         mainwindow.h \
         plot/frequencyplot.h \
         plot/qcustomplot.h \
-        tableproxy.h \
-        undocmd.h \
-        vdcimporter.h
+        utils/tableproxy.h \
+        utils/undocmd.h \
+        utils/vdcimporter.h
 
 FORMS += \
         dialog/addpoint.ui \
+        dialog/autoeqselector.ui \
         dialog/calc.ui \
         dialog/customfilterdialog.ui \
         dialog/shiftfreq.ui \
         dialog/textpopup.ui \
+        item/configitem.ui \
         item/customfilteritem.ui \
         mainwindow.ui
 
@@ -77,6 +92,7 @@ TRANSLATIONS += \
         translations/ddctoolbox_en.ts
 
 include ($$PWD/3rdparty/QSimpleUpdater/QSimpleUpdater.pri)
+include ($$PWD/3rdparty/WebLoader/WebLoader.pri)
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

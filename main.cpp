@@ -9,5 +9,6 @@ int main(int argc, char *argv[])
     QLocale::setDefault(QLocale::c());
     QApplication::setStyle("fusion");
     w.show();
+
     return QApplication::exec();
 }

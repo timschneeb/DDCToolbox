@@ -6,7 +6,7 @@
 #include <QTextStream>
 #include <QFileInfo>
 #include <QDir>
-#include "filtertypes.h"
+#include "utils/filtertypes.h"
 
 class ConversionEngine : public QObject
 {
@@ -15,6 +15,7 @@ public:
     ConversionEngine();
     static QString convertVDCtoProjectFile(QString inputVdc);
     static std::vector<calibrationPoint_t> readParametricEQFile(QString path);
+    static std::vector<calibrationPoint_t> readParametricEQString(QString string);
 };
 
 #endif // CONVERSIONENGINE_H

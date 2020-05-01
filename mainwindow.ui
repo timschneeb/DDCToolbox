@@ -142,7 +142,7 @@
      <x>0</x>
      <y>0</y>
      <width>976</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -169,6 +169,7 @@
     <addaction name="actionSaveAs"/>
     <addaction name="actionClose_Project"/>
     <addaction name="separator"/>
+    <addaction name="actionDownload_from_AutoEQ"/>
     <addaction name="menuImport"/>
     <addaction name="menuExport"/>
     <addaction name="separator"/>
@@ -575,6 +576,16 @@ border: 1px solid rgb(208, 204, 201) </string>
     <string>Reset plot layout</string>
    </property>
   </action>
+  <action name="actionVDC_file_As_custom_filters">
+   <property name="text">
+    <string>VDC file (As custom filters)</string>
+   </property>
+  </action>
+  <action name="actionDownload_from_AutoEQ">
+   <property name="text">
+    <string>Download from AutoEQ...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -737,7 +748,7 @@ border: 1px solid rgb(208, 204, 201) </string>
    <sender>actionimportVDC_file</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>importVDC()</slot>
+   <slot>importClassicVDC()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -754,22 +765,6 @@ border: 1px solid rgb(208, 204, 201) </string>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>batch_vdc2vdcprj()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>374</x>
-     <y>190</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionHide_Graph</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>toggleGraph(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -1037,6 +1032,22 @@ border: 1px solid rgb(208, 204, 201) </string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionDownload_from_AutoEQ</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>downloadFromAutoEQ()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>487</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>clearPoint()</slot>
@@ -1051,7 +1062,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <slot>showKeycombos()</slot>
   <slot>importParametricAutoEQ()</slot>
   <slot>showCalc()</slot>
-  <slot>importVDC()</slot>
+  <slot>importClassicVDC()</slot>
   <slot>batch_vdc2vdcprj()</slot>
   <slot>toggleGraph(bool)</slot>
   <slot>ScreenshotGraph()</slot>
@@ -1066,5 +1077,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <slot>checkForUpdates()</slot>
   <slot>hidePoints(bool)</slot>
   <slot>CheckStability()</slot>
+  <slot>importVDCAsCustomFilters()</slot>
+  <slot>downloadFromAutoEQ()</slot>
  </slots>
 </ui>

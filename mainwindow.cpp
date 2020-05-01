@@ -4,7 +4,7 @@
 #include "dialog/addpoint.h"
 #include "dialog/textpopup.h"
 #include "dialog/calc.h"
-#include "undocmd.h"
+#include "utils/undocmd.h"
 #include <QFileDialog>
 #include <QDebug>
 #include <QAction>
@@ -13,11 +13,11 @@
 #include <vector>
 #include <map>
 #include "dialog/shiftfreq.h"
-#include "delegate.h"
+#include "utils/delegate.h"
 #include "item/customfilteritem.h"
 #include "item/customfilterfactory.h"
 #include "io/projectmanager.h"
-#include "io/conversionengine.h"
+#include <dialog/autoeqselector.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -65,7 +65,7 @@ MainWindow::MainWindow(QWidget *parent) :
             static_cast<void (QItemSelectionModel::*)(const QItemSelection &, const QItemSelection &)>(&QItemSelectionModel::selectionChanged),
             this,[=](){
         if(lock_actions)return;
-        drawGraph(graphtype::all,true);
+        drawGraph(GraphType::all,true);
     });
     connect(ui->actionReset_plot_layout,&QAction::triggered,this,[subMainWindow,this]{
         ui->magnitude_dock->setFloating(false);
@@ -120,9 +120,9 @@ void MainWindow::saveAsDDCProject(bool ask,QString path,bool compatibilitymode)
         for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
         {
             calibrationPoint_t cal;
-            cal.freq = (int)getValue(datatype::freq,i);
-            cal.bw = getValue(datatype::bw,i);
-            cal.gain = getValue(datatype::gain,i);
+            cal.freq = (int)getValue(DataType::freq,i);
+            cal.bw = getValue(DataType::bw,i);
+            cal.gain = getValue(DataType::gain,i);
             cal.type = getType(i);
             cal.id = getId(i);
             if(cal.type == biquad::CUSTOM){
@@ -175,79 +175,65 @@ void MainWindow::loadDDCProject()
     else
         QMessageBox::critical(this,"Error","Invalid project file or inaccessible file");
 }
-//---Editor
-uint32_t MainWindow::insertData(biquad::Type type,int freq,double band,double gain, bool toggleSorting){
-    if(toggleSorting)ui->listView_DDCPoints->setSortingEnabled(false);
-    calibrationPoint_t c;
-    c.id = g_dcDDCContext->GenerateId();
-    c.freq = freq;
-    c.bw = band;
-    c.gain = gain;
-    c.type = type;
-    (new tableproxy(ui->listView_DDCPoints))->addRow(c);
-    if(toggleSorting)ui->listView_DDCPoints->setSortingEnabled(true);
-    return c.id;
+void MainWindow::closeProject(){
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "DDC Toolbox", tr("Are you sure? All unsaved changes will be lost."),
+                                  QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+        setActiveFile("");
+        clearPoint(false);
+        drawGraph();
+        undoStack->clear();
+    }
 }
-void MainWindow::invertSelection(){
-    if (ui->listView_DDCPoints->currentRow() >= 0 && ui->listView_DDCPoints->selectedItems().count() >= 1)
+void MainWindow::setActiveFile(QString path,bool unsaved){
+    QFileInfo fi(path);
+    currentFile = path;
+    if(path=="")
+        setWindowTitle("DDC Toolbox");
+    else{
+        if(unsaved) setWindowTitle("DDC Toolbox - " + fi.fileName() + "*");
+        else setWindowTitle("DDC Toolbox - " + fi.fileName());
+    }
+}
+
+//---Editor-Actions
+void MainWindow::addPoint(){
+    addpoint *dlg = new addpoint;
+    if(dlg->exec()){
+        setActiveFile(currentFile,true);
+        calibrationPoint_t cal = dlg->returndata();
+        cal.id = g_dcDDCContext->GenerateId();
+        QUndoCommand *addCommand = new AddCommand(ui->listView_DDCPoints,
+                                                  g_dcDDCContext,cal,&mtx,&lock_actions,this);
+        undoStack->push(addCommand);
+        drawGraph();
+    }
+}
+void MainWindow::removePoint(){
+    lock_actions=true;
+    if (ui->listView_DDCPoints->currentRow() >= 0)
     {
         setActiveFile(currentFile,true);
-        std::vector<calibrationPoint_t> cal_table;
+        ui->listView_DDCPoints->setSortingEnabled(false);
+        std::vector<int> removeRows;
         QItemSelectionModel *selected = ui->listView_DDCPoints->selectionModel();
         QModelIndexList list = selected->selectedRows();
         for (int i = 0; i < list.count(); i++)
         {
             QModelIndex index = list.at(i);
             int row = index.row();
-            calibrationPoint_t cal;
-            cal.freq = (int)getValue(datatype::freq,row);
-            cal.bw = getValue(datatype::bw,row);
-            cal.gain = getValue(datatype::gain,row);
-            cal.type = getType(row);
-            cal.id = getId(row);
-            if(cal.type != biquad::CUSTOM)
-                cal_table.push_back(cal);
+            removeRows.push_back(row);
         }
-        QUndoCommand *invertCommand = new InvertCommand(ui->listView_DDCPoints,
-                                                        g_dcDDCContext,cal_table,&mtx,&lock_actions,this);
-        undoStack->push(invertCommand);
-    }
-    else
-        QMessageBox::information(this,tr("Invert selection"),tr("No rows selected"));
-}
-void MainWindow::shiftSelection(){
-    if (ui->listView_DDCPoints->currentRow() >= 0 && ui->listView_DDCPoints->selectedItems().count() >= 1)
-    {
-        setActiveFile(currentFile,true);
-        std::vector<calibrationPoint_t> cal_table;
-        QItemSelectionModel *selected = ui->listView_DDCPoints->selectionModel();
-        QModelIndexList list = selected->selectedRows();
-        for (int i = 0; i < list.count(); i++)
-        {
-            QModelIndex index = list.at(i);
-            int row = index.row();
+        QUndoCommand *removeCommand = new RemoveCommand(ui->listView_DDCPoints,
+                                                        g_dcDDCContext,removeRows,list,&mtx,&lock_actions,this);
+        undoStack->push(removeCommand);
 
-            calibrationPoint_t cal;
-            cal.freq = (int)getValue(datatype::freq,row);
-            cal.bw = getValue(datatype::bw,row);
-            cal.gain = getValue(datatype::gain,row);
-            cal.type = getType(row);
-            cal.id = getId(row);
-            if(cal.type != biquad::CUSTOM && cal.type != biquad::UNITY_GAIN)
-                cal_table.push_back(cal);
-        }
-
-        shiftfreq* sf = new shiftfreq;
-        sf->setRange(cal_table);
-        if(sf->exec()){
-            int shift = sf->getResult();
-            QUndoCommand *shiftCommand = new ShiftCommand(ui->listView_DDCPoints,
-                                                          g_dcDDCContext,shift,cal_table,&mtx,&lock_actions,this);
-            undoStack->push(shiftCommand);
-        }
+        ui->listView_DDCPoints->setSortingEnabled(true);
+        ui->listView_DDCPoints->sortItems(1);
+        drawGraph();
     }
-    else
-        QMessageBox::information(this,tr("Shift selection"),tr("No rows selected"));
+    lock_actions=false;
 }
 void MainWindow::clearPoint(bool trackundo){
     if(trackundo){
@@ -255,9 +241,9 @@ void MainWindow::clearPoint(bool trackundo){
         for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++)
         {
             calibrationPoint_t cal;
-            cal.freq = (int)getValue(datatype::freq,i);
-            cal.bw = getValue(datatype::bw,i);
-            cal.gain = getValue(datatype::gain,i);
+            cal.freq = (int)getValue(DataType::freq,i);
+            cal.bw = getValue(DataType::bw,i);
+            cal.gain = getValue(DataType::gain,i);
             cal.type = getType(i);
             cal.id = getId(i);
             if(cal.type == biquad::CUSTOM){
@@ -286,6 +272,95 @@ void MainWindow::clearPoint(bool trackundo){
         lock_actions = false;
     }
 }
+void MainWindow::invertSelection(){
+    if (ui->listView_DDCPoints->currentRow() >= 0 && ui->listView_DDCPoints->selectedItems().count() >= 1)
+    {
+        setActiveFile(currentFile,true);
+        std::vector<calibrationPoint_t> cal_table;
+        QItemSelectionModel *selected = ui->listView_DDCPoints->selectionModel();
+        QModelIndexList list = selected->selectedRows();
+        for (int i = 0; i < list.count(); i++)
+        {
+            QModelIndex index = list.at(i);
+            int row = index.row();
+            calibrationPoint_t cal;
+            cal.freq = (int)getValue(DataType::freq,row);
+            cal.bw = getValue(DataType::bw,row);
+            cal.gain = getValue(DataType::gain,row);
+            cal.type = getType(row);
+            cal.id = getId(row);
+            if(cal.type != biquad::CUSTOM)
+                cal_table.push_back(cal);
+        }
+        QUndoCommand *invertCommand = new InvertCommand(ui->listView_DDCPoints,
+                                                        g_dcDDCContext,cal_table,&mtx,&lock_actions,this);
+        undoStack->push(invertCommand);
+    }
+    else
+        QMessageBox::information(this,tr("Invert selection"),tr("No rows selected"));
+}
+void MainWindow::shiftSelection(){
+    if (ui->listView_DDCPoints->currentRow() >= 0 && ui->listView_DDCPoints->selectedItems().count() >= 1)
+    {
+        setActiveFile(currentFile,true);
+        std::vector<calibrationPoint_t> cal_table;
+        QItemSelectionModel *selected = ui->listView_DDCPoints->selectionModel();
+        QModelIndexList list = selected->selectedRows();
+        for (int i = 0; i < list.count(); i++)
+        {
+            QModelIndex index = list.at(i);
+            int row = index.row();
+
+            calibrationPoint_t cal;
+            cal.freq = (int)getValue(DataType::freq,row);
+            cal.bw = getValue(DataType::bw,row);
+            cal.gain = getValue(DataType::gain,row);
+            cal.type = getType(row);
+            cal.id = getId(row);
+            if(cal.type != biquad::CUSTOM && cal.type != biquad::UNITY_GAIN)
+                cal_table.push_back(cal);
+        }
+
+        shiftfreq* sf = new shiftfreq;
+        sf->setRange(cal_table);
+        if(sf->exec()){
+            int shift = sf->getResult();
+            QUndoCommand *shiftCommand = new ShiftCommand(ui->listView_DDCPoints,
+                                                          g_dcDDCContext,shift,cal_table,&mtx,&lock_actions,this);
+            undoStack->push(shiftCommand);
+        }
+    }
+    else
+        QMessageBox::information(this,tr("Shift selection"),tr("No rows selected"));
+}
+void MainWindow::CheckStability(){
+    if(lock_actions)return;
+    int unstableCount = 0;
+    QString stringbuilder("");
+    for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++){
+        int freq = (int)getValue(DataType::freq,i);
+        QString filtertype = typeToString(getType(i));
+        const biquad* filter = g_dcDDCContext->GetFilter(freq);
+        if(filter != nullptr){
+            int stability = filter->IsStable();
+            if(stability == 0){
+                unstableCount++;
+                stringbuilder += QString(tr("Fatal error: Pole of %1 at %2Hz (row %3) outside the unit circle\n")).arg(filtertype).arg(freq).arg(i+1);
+            }
+            else if(stability == 2){
+                unstableCount++;
+                stringbuilder += QString(tr("Warning: Pole of %1 at %2Hz (row %3) approach to unit circle\n")).arg(filtertype).arg(freq).arg(i+1);
+            }
+        }
+    }
+    if(unstableCount <= 0)
+        QMessageBox::information(this,tr("Stability check"),QString(tr("All filters appear to be stable.")));
+    else{
+        QMessageBox::warning(this,tr("Stability check"),QString(tr("One or more filters are potentially unstable:\n\n%1\nPlease review these filter and run this check again.")).arg(stringbuilder));
+    }
+}
+
+//---Editor-Internal
 void MainWindow::editCell(QTableWidgetItem* item){
     if(lock_actions)return;
     setActiveFile(currentFile,true);
@@ -300,7 +375,7 @@ void MainWindow::editCell(QTableWidgetItem* item){
     }
     if(getType(row)==biquad::CUSTOM){
         if(sender()==ui->listView_DDCPoints){
-            Global::old_freq = (int)getValue(datatype::freq,row);
+            Global::old_freq = (int)getValue(DataType::freq,row);
             //dirty check if custom element is new created by addpoint.
             //If true, make sure we set the initial old value to the current frequency value for compatibility
         }
@@ -308,10 +383,10 @@ void MainWindow::editCell(QTableWidgetItem* item){
 
         calibrationPoint_t cal;
         cal.id = getId(row);
-        cal.freq = (int)getValue(datatype::freq,row);
+        cal.freq = (int)getValue(DataType::freq,row);
         cal.type = getType(row);
-        cal.bw = getValue(datatype::bw,row);
-        cal.gain = getValue(datatype::bw,row);
+        cal.bw = getValue(DataType::bw,row);
+        cal.gain = getValue(DataType::bw,row);
         if(ui->listView_DDCPoints->cellWidget(row,3)==nullptr ){
             cal.custom441 = defaultCustomFilter();
             cal.custom48 = defaultCustomFilter();
@@ -338,9 +413,9 @@ void MainWindow::editCell(QTableWidgetItem* item){
     else{
         //ui->listView_DDCPoints->setSpan(row,2,1,1);
         ui->listView_DDCPoints->removeCellWidget(row,3);
-        if ((sscanf(QString::number((int)getValue(datatype::freq,row)).toUtf8().constData(), "%d", &result) == 1 &&
-             sscanf(QString::number(getValue(datatype::bw,row)).toUtf8().constData(), "%lf", &calibrationPointBandwidth) == 1) &&
-                sscanf(QString::number(getValue(datatype::gain,row)).toUtf8().constData(), "%lf", &calibrationPointGain) == 1){
+        if ((sscanf(QString::number((int)getValue(DataType::freq,row)).toUtf8().constData(), "%d", &result) == 1 &&
+             sscanf(QString::number(getValue(DataType::bw,row)).toUtf8().constData(), "%lf", &calibrationPointBandwidth) == 1) &&
+                sscanf(QString::number(getValue(DataType::gain,row)).toUtf8().constData(), "%lf", &calibrationPointGain) == 1){
 
             ui->listView_DDCPoints->setSortingEnabled(false);
 
@@ -402,67 +477,20 @@ void MainWindow::editCell(QTableWidgetItem* item){
     }
     //else qDebug() << "Invalid input data";
 }
-void MainWindow::addPoint(){
-    addpoint *dlg = new addpoint;
-    if(dlg->exec()){
-        setActiveFile(currentFile,true);
-        calibrationPoint_t cal = dlg->returndata();
-        cal.id = g_dcDDCContext->GenerateId();
-        QUndoCommand *addCommand = new AddCommand(ui->listView_DDCPoints,
-                                                  g_dcDDCContext,cal,&mtx,&lock_actions,this);
-        undoStack->push(addCommand);
-        drawGraph();
-    }
+uint32_t MainWindow::insertData(biquad::Type type,int freq,double band,double gain, bool toggleSorting){
+    if(toggleSorting)ui->listView_DDCPoints->setSortingEnabled(false);
+    calibrationPoint_t c;
+    c.id = g_dcDDCContext->GenerateId();
+    c.freq = freq;
+    c.bw = band;
+    c.gain = gain;
+    c.type = type;
+    (new tableproxy(ui->listView_DDCPoints))->addRow(c);
+    if(toggleSorting)ui->listView_DDCPoints->setSortingEnabled(true);
+    return c.id;
 }
-void MainWindow::removePoint(){
-    lock_actions=true;
-    if (ui->listView_DDCPoints->currentRow() >= 0)
-    {
-        setActiveFile(currentFile,true);
-        ui->listView_DDCPoints->setSortingEnabled(false);
-        std::vector<int> removeRows;
-        QItemSelectionModel *selected = ui->listView_DDCPoints->selectionModel();
-        QModelIndexList list = selected->selectedRows();
-        for (int i = 0; i < list.count(); i++)
-        {
-            QModelIndex index = list.at(i);
-            int row = index.row();
-            removeRows.push_back(row);
-        }
-        QUndoCommand *removeCommand = new RemoveCommand(ui->listView_DDCPoints,
-                                                        g_dcDDCContext,removeRows,list,&mtx,&lock_actions,this);
-        undoStack->push(removeCommand);
 
-        ui->listView_DDCPoints->setSortingEnabled(true);
-        ui->listView_DDCPoints->sortItems(1);
-        drawGraph();
-    }
-    lock_actions=false;
-}
-void MainWindow::drawGraph(graphtype t, bool onlyUpdatePoints){
-    if((t == graphtype::magnitude || t == graphtype::all) && !onlyUpdatePoints)
-        ui->graph->clear();
-    if((t == graphtype::groupdelay || t == graphtype::all) && !onlyUpdatePoints)
-        ui->gdelay_graph->clear();
-    if((t == graphtype::phase || t == graphtype::all) && !onlyUpdatePoints)
-        ui->phase_graph->clear();
-
-    if (ui->listView_DDCPoints->rowCount() <= 0)
-        return;
-    const int bandCount = 8192 * 2;
-    std::vector<float> responseTable = g_dcDDCContext->GetMagnitudeResponseTable(bandCount, 48000.0);
-    std::vector<float> phaseTable = g_dcDDCContext->GetPhaseResponseTable(bandCount, 48000.0);
-    std::vector<float> gdelayTable = g_dcDDCContext->GetGroupDelayTable(bandCount, 48000.0);
-    if((t == graphtype::magnitude || t == graphtype::all) && !onlyUpdatePoints) ui->graph->updatePlot(responseTable,bandCount);
-    if((t == graphtype::phase || t == graphtype::all) && !onlyUpdatePoints) ui->phase_graph->updatePlot(phaseTable,bandCount);
-    if((t == graphtype::groupdelay || t == graphtype::all) && !onlyUpdatePoints) ui->gdelay_graph->updatePlot(gdelayTable,bandCount);
-    ui->graph->updatePoints(ui->listView_DDCPoints,markerPointsVisible);
-    ui->phase_graph->updatePoints(ui->listView_DDCPoints,markerPointsVisible);
-    ui->gdelay_graph->updatePoints(ui->listView_DDCPoints,markerPointsVisible);
-}
-void MainWindow::toggleGraph(bool state){
-    //ui->graphBox->setVisible(!state);
-}
+//---View
 void MainWindow::hidePoints(bool state){
     //True: shown, False: hidden
     markerPointsVisible = state;
@@ -476,32 +504,28 @@ void MainWindow::ScreenshotGraph(){
     else if(obj == ui->actionScr_Phase_response) ui->phase_graph->saveScreenshot();
     else if(obj == ui->actionScr_Group_delay) ui->gdelay_graph->saveScreenshot();
 }
-void MainWindow::CheckStability(){
-    if(lock_actions)return;
-    int unstableCount = 0;
-    QString stringbuilder("");
-    for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++){
-        int freq = (int)getValue(datatype::freq,i);
-        QString filtertype = typeToString(getType(i));
-        const biquad* filter = g_dcDDCContext->GetFilter(freq);
-        if(filter != nullptr){
-            int stability = filter->IsStable();
-            if(stability == 0){
-                unstableCount++;
-                stringbuilder += QString(tr("Fatal error: Pole of %1 at %2Hz (row %3) outside the unit circle\n")).arg(filtertype).arg(freq).arg(i+1);
-            }
-            else if(stability == 2){
-                unstableCount++;
-                stringbuilder += QString(tr("Warning: Pole of %1 at %2Hz (row %3) approach to unit circle\n")).arg(filtertype).arg(freq).arg(i+1);
-            }
-        }
-    }
-    if(unstableCount <= 0)
-        QMessageBox::information(this,tr("Stability check"),QString(tr("All filters appear to be stable.")));
-    else{
-        QMessageBox::warning(this,tr("Stability check"),QString(tr("One or more filters are potentially unstable:\n\n%1\nPlease review these filter and run this check again.")).arg(stringbuilder));
-    }
+void MainWindow::drawGraph(GraphType t, bool onlyUpdatePoints){
+    if((t == GraphType::magnitude || t == GraphType::all) && !onlyUpdatePoints)
+        ui->graph->clear();
+    if((t == GraphType::groupdelay || t == GraphType::all) && !onlyUpdatePoints)
+        ui->gdelay_graph->clear();
+    if((t == GraphType::phase || t == GraphType::all) && !onlyUpdatePoints)
+        ui->phase_graph->clear();
+
+    if (ui->listView_DDCPoints->rowCount() <= 0)
+        return;
+    const int bandCount = 8192 * 2;
+    std::vector<float> responseTable = g_dcDDCContext->GetMagnitudeResponseTable(bandCount, 48000.0);
+    std::vector<float> phaseTable = g_dcDDCContext->GetPhaseResponseTable(bandCount, 48000.0);
+    std::vector<float> gdelayTable = g_dcDDCContext->GetGroupDelayTable(bandCount, 48000.0);
+    if((t == GraphType::magnitude || t == GraphType::all) && !onlyUpdatePoints) ui->graph->updatePlot(responseTable,bandCount);
+    if((t == GraphType::phase || t == GraphType::all) && !onlyUpdatePoints) ui->phase_graph->updatePlot(phaseTable,bandCount);
+    if((t == GraphType::groupdelay || t == GraphType::all) && !onlyUpdatePoints) ui->gdelay_graph->updatePlot(gdelayTable,bandCount);
+    ui->graph->updatePoints(ui->listView_DDCPoints,markerPointsVisible);
+    ui->phase_graph->updatePoints(ui->listView_DDCPoints,markerPointsVisible);
+    ui->gdelay_graph->updatePoints(ui->listView_DDCPoints,markerPointsVisible);
 }
+
 //---Dialogs
 void MainWindow::showIntroduction(){
     QString data = tr("Unable to open HTML file");
@@ -540,14 +564,11 @@ void MainWindow::showUndoView(){
     undoView->show();
     undoView->setAttribute(Qt::WA_QuitOnClose, false);
 }
+
 //---Import/Export
-void MainWindow::exportCompatVDCProj(){
-    saveAsDDCProject(true,"",true);
-}
-void MainWindow::importVDC(){
-    int i;
+void MainWindow::importClassicVDC(){
     QString fileName = QFileDialog::getOpenFileName(this,
-                                                    tr("Open classic VDC"), "", tr("Viper VDC file (*.vdc)"));
+                                                    tr("Open VDC file"), "", tr("Viper VDC file (*.vdc)"));
     if (fileName != "" && fileName != nullptr){
         clearPoint(false);
         setActiveFile("");
@@ -582,23 +603,6 @@ void MainWindow::importVDC(){
         emit loadFinished();
     }
 }
-void MainWindow::exportVDC()
-{
-    mtx.lock();
-    std::list<double> p1 = g_dcDDCContext->ExportCoeffs(44100.0);
-    std::list<double> p2 = g_dcDDCContext->ExportCoeffs(48000.0);
-    mtx.unlock();
-
-    if (p1.empty() || p2.empty())
-    {
-        QMessageBox::warning(this,tr("Error"),tr("Failed to export to VDC"));
-        return;
-    }
-    QString fileName = QFileDialog::getSaveFileName(this,
-                                                    tr("Save VDC"), "", tr("VDC File (*.vdc)"));
-
-    ProjectManager::exportVDC(fileName,p1,p2);
-}
 void MainWindow::importParametricAutoEQ(){
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Import AutoEQ config 'ParametricEQ.txt'"), "",tr( "AutoEQ ParametricEQ.txt (*ParametricEQ.txt);;All files (*.*)"));
@@ -628,6 +632,60 @@ void MainWindow::importParametricAutoEQ(){
         emit loadFinished();
     }
 }
+void MainWindow::exportVDC()
+{
+    mtx.lock();
+    std::list<double> p1 = g_dcDDCContext->ExportCoeffs(44100.0);
+    std::list<double> p2 = g_dcDDCContext->ExportCoeffs(48000.0);
+    mtx.unlock();
+
+    if (p1.empty() || p2.empty())
+    {
+        QMessageBox::warning(this,tr("Error"),tr("Failed to export to VDC"));
+        return;
+    }
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                                    tr("Save VDC"), "", tr("VDC File (*.vdc)"));
+
+    ProjectManager::exportVDC(fileName,p1,p2);
+}
+void MainWindow::exportCompatVDCProj(){
+    saveAsDDCProject(true,"",true);
+}
+void MainWindow::downloadFromAutoEQ(){
+    AutoEQSelector* sel = new AutoEQSelector();
+    sel->setModal(true);
+    if(sel->exec() == QDialog::Accepted){
+        HeadphoneMeasurement hp = sel->getSelection();
+
+        setActiveFile("");
+        clearPoint(false);
+        drawGraph();
+        undoStack->clear();
+
+        std::vector<calibrationPoint_t> points =
+                ConversionEngine::readParametricEQString(hp.getParametricEQ());
+        if(points.size() < 1){
+            QMessageBox::warning(this,tr("Error"),tr("Invalid response.\nNo data found: %1"));
+            return;
+        }
+
+        for(size_t i=0;i<points.size();i++){
+            calibrationPoint_t cal = points.at(i);
+            lock_actions = true;
+            uint32_t id = insertData(biquad::Type::PEAKING,cal.freq,(double)cal.bw,(double)cal.gain);
+            lock_actions = false;
+            g_dcDDCContext->AddFilter(id,biquad::Type::PEAKING,cal.freq, (double)cal.gain, (double)cal.bw, 48000.0,true);
+
+        }
+        ui->listView_DDCPoints->sortItems(1,Qt::SortOrder::AscendingOrder);
+        drawGraph();
+        emit loadFinished();
+
+    }
+    sel->deleteLater();
+}
+
 //---Batch conversion
 void MainWindow::batch_vdc2vdcprj(){
     QStringList filenames = QFileDialog::getOpenFileNames(this,tr("Select all VDC files to convert"),QDir::currentPath(),tr("VDC files (*.vdc)") );
@@ -685,8 +743,9 @@ void MainWindow::batch_parametric2vdcprj(){
         QMessageBox::information(this,tr("Note"),tr("Conversion finished!\nYou can find the files here:\n%1").arg(dir));
     }
 }
-//---Misc
-double MainWindow::getValue(datatype dat,int row){
+
+//---Getter
+double MainWindow::getValue(DataType dat,int row){
     switch(dat){
     case type:
         return ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toInt();
@@ -705,28 +764,7 @@ biquad::Type MainWindow::getType(int row){
 uint32_t MainWindow::getId(int row){
     return ui->listView_DDCPoints->item(row,0)->data(Qt::UserRole).toUInt();
 }
-//---Session
-void MainWindow::setActiveFile(QString path,bool unsaved){
-    QFileInfo fi(path);
-    currentFile = path;
-    if(path=="")
-        setWindowTitle("DDC Toolbox");
-    else{
-        if(unsaved) setWindowTitle("DDC Toolbox - " + fi.fileName() + "*");
-        else setWindowTitle("DDC Toolbox - " + fi.fileName());
-    }
-}
-void MainWindow::closeProject(){
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "DDC Toolbox", tr("Are you sure? All unsaved changes will be lost."),
-                                  QMessageBox::Yes|QMessageBox::No);
-    if (reply == QMessageBox::Yes) {
-        setActiveFile("");
-        clearPoint(false);
-        drawGraph();
-        undoStack->clear();
-    }
-}
+
 //---Updater
 void MainWindow::checkForUpdates()
 {
@@ -742,6 +780,7 @@ void MainWindow::checkForUpdates()
     /* Check for updates */
     m_updater->checkForUpdates (DEFS_URL);
 }
+
 //---Localization
 void MainWindow::createLanguageMenu(void)
 {

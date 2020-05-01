@@ -1,6 +1,6 @@
 #ifndef PROJECTMANAGER_H
 #define PROJECTMANAGER_H
-#include "filtertypes.h"
+#include "utils/filtertypes.h"
 #include "item/customfilterfactory.h"
 
 #include <QObject>

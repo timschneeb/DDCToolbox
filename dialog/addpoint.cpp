@@ -1,7 +1,7 @@
 #include "addpoint.h"
 #include "ui_addpoint.h"
 #include "biquad.h"
-#include "filtertypes.h"
+#include "utils/filtertypes.h"
 #include <list>
 #include <QDebug>
 

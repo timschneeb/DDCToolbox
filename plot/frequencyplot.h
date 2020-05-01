@@ -5,7 +5,7 @@
 #include <cmath>
 #include <QTableWidget>
 #include "ddccontext.h"
-#include "filtertypes.h"
+#include "utils/filtertypes.h"
 #include "qcustomplot.h"
 
 

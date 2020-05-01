@@ -1,5 +1,5 @@
 #include "conversionengine.h"
-#include "vdcimporter.h"
+#include "utils/vdcimporter.h"
 
 ConversionEngine::ConversionEngine()
 {
@@ -32,11 +32,20 @@ QString ConversionEngine::convertVDCtoProjectFile(QString inputVdc){
 
 std::vector<calibrationPoint_t> ConversionEngine::readParametricEQFile(QString path){
     std::vector<calibrationPoint_t> points;
-    QString str;
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return points;
-    QTextStream in(&file);
+
+    points = readParametricEQString(file.readAll());
+
+    file.close();
+    return points;
+}
+
+std::vector<calibrationPoint_t> ConversionEngine::readParametricEQString(QString string){
+    std::vector<calibrationPoint_t> points;
+    QString str;
+    QTextStream in(&string);
     while (!in.atEnd())
     {
         str = in.readLine().trimmed();
@@ -80,6 +89,5 @@ std::vector<calibrationPoint_t> ConversionEngine::readParametricEQFile(QString p
             }
         }
     }
-    file.close();
     return points;
 }
