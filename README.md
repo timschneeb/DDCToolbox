@@ -56,7 +56,7 @@ You can find stable windows packages attached on the [release page](https://gith
 #### Nightly
 These windows builds are automatically built and deployed once a new commit has been pushed.
 
-You can download one of these builds [from my server](https://nightly.thebone.cf/ddctoolbox-win/?C=M;O=D).
+You can download one of these builds [from my server](https://nightly.timschneeberger.me/ddctoolbox-win/?C=M;O=D).
 
 If the server is down, you can also get one from the [AppVeyor cloud](https://ci.appveyor.com/project/ThePBone/ddctoolbox) (select one of the two jobs (32/64-bit) and go to the tab 'Artifacts')
 
