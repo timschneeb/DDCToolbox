@@ -46,7 +46,7 @@ artifacts:
 
 deploy:	
 - provider: FTP	
-  host: local.thebone.cf	
+  host: local.timschneeberger.me	
   protocol: sftp	
   username: pi	
   password:	
