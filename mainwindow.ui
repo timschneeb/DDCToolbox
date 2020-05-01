@@ -156,13 +156,6 @@
      <addaction name="actionAutoEQ_ParametricEQ_txt"/>
      <addaction name="actionimportVDC_file"/>
     </widget>
-    <widget class="QMenu" name="menuExport">
-     <property name="title">
-      <string>Export</string>
-     </property>
-     <addaction name="actionVDC_file"/>
-     <addaction name="actionProject_File_Compatiblity_mode"/>
-    </widget>
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
@@ -171,7 +164,7 @@
     <addaction name="separator"/>
     <addaction name="actionDownload_from_AutoEQ"/>
     <addaction name="menuImport"/>
-    <addaction name="menuExport"/>
+    <addaction name="actionExport_as_VDC"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -586,6 +579,11 @@ border: 1px solid rgb(208, 204, 201) </string>
     <string>Download from AutoEQ...</string>
    </property>
   </action>
+  <action name="actionExport_as_VDC">
+   <property name="text">
+    <string>Export as VDC</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -889,7 +887,7 @@ border: 1px solid rgb(208, 204, 201) </string>
    </hints>
   </connection>
   <connection>
-   <sender>actionVDC_file</sender>
+   <sender>actionExport_as_VDC</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>exportVDC()</slot>
