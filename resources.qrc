@@ -2,11 +2,12 @@
     <qresource prefix="/">
         <file>html/keycombos.html</file>
         <file>html/introduction.html</file>
-        <file>img/arrows.png</file>
         <file>img/icon.png</file>
         <file>html/help.html</file>
         <file>translations/ddctoolbox_en.qm</file>
         <file>translations/ddctoolbox_de.qm</file>
         <file>html/customfilter.html</file>
+        <file>img/ddctoolbox.svg</file>
+        <file>img/icon.ico</file>
     </qresource>
 </RCC>
