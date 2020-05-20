@@ -1,6 +1,9 @@
 #include "conversionengine.h"
 #include "utils/vdcimporter.h"
 
+#include <QDebug>
+#include <QRegularExpression>
+
 ConversionEngine::ConversionEngine()
 {
 }
@@ -53,26 +56,23 @@ std::vector<calibrationPoint_t> ConversionEngine::readParametricEQString(QString
         {
             if ((str.length() > 0) && !str.startsWith("#"))
             {
-                QString strPart2 = str.split(':')[1].trimmed();
-                QStringList lineParts = strPart2.split(" ");
-                /**
-                  [0] "ON"
-                  [1] "PK"
-                  [2] "Fc"
-                  [3] <Freq,INT>
-                  [4] "Hz"
-                  [5] "Gain"
-                  [6] <Gain,FLOAT>
-                  [7] "dB"
-                  [8] "Q"
-                  [9] <Q-Value,FLOAT>
-                                      **/
-                if ((!lineParts.empty()) && (lineParts.length() == 10))
-                {
-                    int freq = lineParts[3].toInt();
-                    double gain = lineParts[6].toDouble();
-                    double q = lineParts[9].toDouble();
-                    if(freq < 0)continue;
+
+                QRegularExpression re
+                        (R"(Filter\s\d+[\s\S][^PK]*PK\s+Fc\s+(?<hz>\d+)\s*Hz\s*Gain\s*(?<gain>-?\d*.?\d+)\s*dB\s*Q\s*(?<q>-?\d*.?\d+))");
+                QRegularExpressionMatch match = re.match(str);
+                if(!match.hasMatch())
+                    continue;
+
+                bool freq_ok = false;
+                int freq = match.captured("hz").toInt(&freq_ok);
+                bool gain_ok = false;
+                double gain = match.captured("gain").toDouble(&gain_ok);
+                bool q_ok = false;
+                double q = match.captured("q").toDouble(&q_ok);
+
+                if(freq_ok && gain_ok && q_ok){
+                    if(freq < 0)
+                        continue;
 
                     //Convert Q to BW
                     double QQ1st = ((2*q*q)+1)/(2*q*q);
@@ -85,6 +85,10 @@ std::vector<calibrationPoint_t> ConversionEngine::readParametricEQString(QString
                     cal.gain = gain;
                     cal.type = biquad::Type::PEAKING; //TODO: add filtertype to eapo/autoeq parser
                     points.push_back(cal);
+                }
+                else {
+                    qWarning().noquote().nospace() << "Parsing error: invalid line -> " << str;
+                    continue;
                 }
             }
         }
