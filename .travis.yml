@@ -14,7 +14,6 @@ before_install:
 - sudo apt-get install lftp
 - sudo apt-get install qtbase5-dev qt5-default qttools5-dev-tools
 script:
-- qmake -project
 - qmake DDCToolbox.pro
 - make
 - touch DDCToolbox
