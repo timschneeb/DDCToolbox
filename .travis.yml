@@ -1,0 +1,29 @@
+language: cpp
+dist: bionic
+os: linux
+compiler: g++
+group: travis_latest
+addons:
+  ssh_known_hosts: local.timschneeberger.me
+env:
+  global:
+  - base_version: 1.3
+  - secure: IjqVxEthnmKB41ZuWOLNoQIk5/3Zqna9nmNnQc7Fj1kTZ93P+sVwLo57A/nv6q+U9u28hT5pGMEgar6JEUjkZAr9IiI0zTabUSmhBexAB3nhglEEAaeaTFjPot5i1NEqJNRo62rzpHXc/xYzt34+tNGRvy00IgkqzZ/0kTOkMa+cPdtbtPkvSzyq02CKD2NYQEaRjPFwhyMPeAE5IIL8SULjs+u28kRxysNd2EzgvX4T6UMvxmtkZW0mCoMCWDWfdLmsUoIzie3I2zPrzECqIyEw99ygM3F8WQMFhOGUiebjIFu7oHXiJ9S4DQCLZZfr23f1pwRzeHPYNSf8G3vjNmntfyciH3spI4/UGf62ZLjQlDRBTrst2Ku6JfnsLgq9e3ik4lCLxdQ5XrZrfh/LMFbJoCxUhoufnAbjC1pJ6egUfDR3BYgw4swT+vGOe7pISERPLM5Zx4PMD1Rk++FoUGdePTwNBWSY+FQm7KLo+Np8nh5O0J/QZwy/yokqbYC3LuwBIf4wT2azVUtT5ae2FAuR2mtPf21czHKXRXHJwqi9y2VIOWtPHTy4VJrjXhRp0T5f1a64BP5YzWIE4MNFyJxz8Nrp/Oa1x43dIgCpHud9Ll7FrJc7JChxQ7b2L5hl8Z1pLz4uOma0m9IcPep7wXo7vhoA+z9Qlueznij/X8Y=
+
+before_install: 
+ - sudo apt-get update -qq
+ - sudo apt-get install lftp
+ - sudo apt-get install qtbase5-dev qt5-default qttools5-dev-tools
+ 
+script:
+ - qmake -project
+ - qmake DDCToolbox.pro
+ - make
+ - touch DDCToolbox
+ - chmod +x build_deb_package.sh
+ - ./build_deb_package.sh
+
+after_success:
+ - for file in ./*.deb; do if [ -f "$file" ]; then export artifact=$file; break 1; fi; done;
+ - echo $artifact
+ - lftp -u pi,${SFTP_PWD} -e "set sftp:auto-confirm true;set ssl:check-hostname false;set ssl:verify-certificate false;put $artifact;quit" sftp://local.timschneeberger.me/disks/sandisk/www/nightly/ddctoolbox-debian/
