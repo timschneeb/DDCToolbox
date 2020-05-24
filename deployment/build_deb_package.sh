@@ -34,7 +34,7 @@ Version: $base_version-$TRAVIS_BUILD_NUMBER
 Section: sound
 Priority: optional
 Architecture: amd64
-Depends: qtbase5-dev (>= 5.14), libqt5core5a (>= 5.14), libqt5widgets5 (>= 5.14), libqt5gui5 (>= 5.14), libqt5core5a (>= 5.14), libgl1-mesa-dev
+Depends: qtbase5-dev (>= 5.11), libqt5core5a (>= 5.11), libqt5widgets5 (>= 5.11), libqt5gui5 (>= 5.11), libqt5core5a (>= 5.11), libgl1-mesa-dev
 Maintainer: ThePBone <tim.schneeberger@gmail.com>
 Description: Create and edit DDCs on Linux
 Homepage: https://github.com/ThePBone/DDCToolbox
