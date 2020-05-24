@@ -17,8 +17,8 @@ script:
 - qmake DDCToolbox.pro
 - make
 - touch DDCToolbox
-- chmod +x build_deb_package.sh
-- "./build_deb_package.sh"
+- chmod +x ./deployment/build_deb_package.sh
+- "./deployment/build_deb_package.sh"
 after_success:
 - for file in ./*.deb; do if [ -f "$file" ]; then export artifact=$file; break 1;
   fi; done;

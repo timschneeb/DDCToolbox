@@ -35,8 +35,8 @@ build_script:
 
 after_build:
   - windeployqt release/DDCToolbox.exe
-  - cp libcrypto-1_1-x64.dll release/
-  - cp libssl-1_1-x64.dll release/
+  - cp deployment/libcrypto-1_1-x64.dll release/
+  - cp deployment/libssl-1_1-x64.dll release/
   - rm -f release/*.o
   - rm -f release/*.cpp
   - rm -f release/*.obj
