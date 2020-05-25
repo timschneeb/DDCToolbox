@@ -1,6 +1,7 @@
 # DDCToolbox
-[![Build status](https://ci.appveyor.com/api/projects/status/7akte2nk20j6u9w1?svg=true)](https://ci.appveyor.com/project/ThePBone/ddctoolbox)
-![GitHub](https://img.shields.io/github/license/ThePBone/DDCToolbox) ![GitHub release](https://img.shields.io/github/release/ThePBone/DDCToolbox)
+[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/7akte2nk20j6u9w1?svg=true)](https://ci.appveyor.com/project/ThePBone/ddctoolbox)
+![License](https://img.shields.io/github/license/ThePBone/DDCToolbox)
+![GitHub release](https://img.shields.io/github/release/ThePBone/DDCToolbox)
 
 Create and edit ViPER DDC files on Linux, Windows and macOS
 
@@ -20,7 +21,7 @@ Create and edit ViPER DDC files on Linux, Windows and macOS
 
 ![Screenshot](https://github.com/ThePBone/DDCToolbox/blob/master/img/screenshot.png?raw=true)
 
-## Installation
+# Installation
 Developed with Linux in mind. You can also find Windows and macOS installation instructions below.
   * [Windows](#windows)
   * [Arch (AUR)](#arch-aur)
@@ -29,7 +30,27 @@ Developed with Linux in mind. You can also find Windows and macOS installation i
   * [Android](#android)
   * [Manually (Linux)](#manuallyportable-linux)
   * [Manually (macOS)](#manually-macos)
-### Ubuntu (PPA)
+  
+## Windows
+
+### Stable releases
+You can find stable windows packages attached on the [release page](https://github.com/ThePBone/DDCToolbox/releases).
+
+### Nightly builds
+These windows builds are automatically built and deployed once a new commit has been pushed.
+
+You can download one of these builds [from my server](https://nightly.timschneeberger.me/ddctoolbox-win).
+
+If the server is down, you can also get one from the [AppVeyor cloud](https://ci.appveyor.com/project/ThePBone/ddctoolbox) (select one of the two jobs (32/64-bit) and go to the tab 'Artifacts')
+
+## Arch (AUR)
+A git package is available in the [AUR](https://aur.archlinux.org/packages/ddctoolbox-git/).
+```bash
+yay -S ddctoolbox-git
+```
+![AUR version](https://img.shields.io/aur/version/ddctoolbox-git?label=aur-git)
+
+## Ubuntu (PPA)
 Add PPA Repo
 ```bash
 curl -s --compressed "https://thepbone.github.io/PPA-Repository/KEY.gpg" | sudo apt-key add -
@@ -42,43 +63,27 @@ sudo apt install ddc-toolbox
 ```
 [View PPA on GitHub](https://github.com/ThePBone/PPA-Repository)
 
-### Arch (AUR)
-A git package is available in the [AUR](https://aur.archlinux.org/packages/ddctoolbox-git/).
-```bash
-yay -S ddctoolbox-git
-```
-
-### Windows
-
-#### Stable
-You can find stable windows packages attached on the [release page](https://github.com/ThePBone/DDCToolbox/releases).
-
-#### Nightly
-These windows builds are automatically built and deployed once a new commit has been pushed.
-
-You can download one of these builds [from my server](https://nightly.timschneeberger.me/ddctoolbox-win/?C=M;O=D).
-
-If the server is down, you can also get one from the [AppVeyor cloud](https://ci.appveyor.com/project/ThePBone/ddctoolbox) (select one of the two jobs (32/64-bit) and go to the tab 'Artifacts')
-
-**NOTE:** The current release triggers a SmartScreen warning, you can ignore it though [(Virustotal scan here)](https://www.virustotal.com/gui/file/f54e6a9502a4f09cf9aa8b136d8f2c9ae9f643f9940af7af40027cbadc3ec004/detection)
-
-#### Note when compiling from sources
-
-If you want to use the new AutoEQ integration, you'll need OpenSSL DLLs along your exe-File (Windows-only obviously). I'll provide those libraries with every (stable) release on Windows. However, if you need/want to compile this app by yourself, you'll have to add them manually. If you're version target is Qt 5.13 and higher (which is recommended) you can just copy libssl\*.dll and libcrypto\*.dll from the root of this repo into the working directory of DDCToolbox.
-
-### Debian
+## Debian
+### Stable releases
 Users of debian-based distros can use the DEB-packages that are attached on the [release page](https://github.com/ThePBone/DDCToolbox/releases).
 
-### Android
+### Nightly builds
+You can download one of these DEB-builds [from my server](https://nightly.timschneeberger.me/ddctoolbox-debian).
+They are automatically compiled and may contain bugs.
+
+## Android
 There is an Android version of DDCToolbox with limited functionality available here: [ThePBone/DDCToolbox-Android](https://github.com/ThePBone/DDCToolbox-Android)
 
-### Manually/Portable (Linux)
-#### Build from sources
-_(You can find precompiled binaries [here](https://github.com/ThePBone/DDCToolbox/releases))_
+## Manually/Portable (Linux)
+### Build from sources
 
- Install dependencies
+Install dependencies (Debian)
 
     sudo apt install qt5-qmake qtbase5-dev libgl1-mesa-dev
+
+Install dependencies (Arch)
+
+    sudo pacman -S qt5-base 
 
 Clone this repository
 
@@ -94,8 +99,7 @@ You should now be able to execute it:
 
     ./DDCToolbox
 
-
-#### Optional: Manual Install
+### Optional: Manual installation
 Copy to /usr/local/bin
 ```bash
 sudo cp DDCToolbox /usr/local/bin/ddc-toolbox
@@ -121,7 +125,7 @@ Download Icon
 ```bash
 sudo wget -O /usr/share/pixmaps/ddc-toolbox.png https://raw.githubusercontent.com/ThePBone/DDCToolbox/master/img/icon.png -q --show-progress
 ```
-### Manually (macOS)
+## Manually (macOS)
 Note: these installation steps are untested but should still work.
 
 Install Homebrew
