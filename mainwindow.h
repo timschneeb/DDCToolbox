@@ -31,10 +31,10 @@ static customFilter_t old_custom48;
 }
 
 enum DataType{
-    type,
-    freq,
-    bw,
-    gain
+    type = 0,
+    freq = 1,
+    bw = 2,
+    gain = 3
 };
 
 static const QString DEFS_URL = "https://timschneeberger.me/updater/ddctoolbox.json";

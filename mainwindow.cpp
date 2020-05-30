@@ -573,11 +573,13 @@ void MainWindow::importClassicVDC(){
         clearPoint(false);
         setActiveFile("");
         undoStack->clear();
+        lock_actions = true;
         mtx.lock();
 
         QString data = ConversionEngine::convertVDCtoProjectFile(fileName);
         if (data.length() < 1){
             QMessageBox::warning(this,tr("Error"),tr("Cannot open file for reading"));
+            lock_actions = false;
             return;
         }
 
@@ -599,6 +601,8 @@ void MainWindow::importClassicVDC(){
         stream.seek(0);
 
         mtx.unlock();
+        lock_actions = false;
+
         drawGraph();
         emit loadFinished();
     }
@@ -746,15 +750,25 @@ void MainWindow::batch_parametric2vdcprj(){
 
 //---Getter
 double MainWindow::getValue(DataType dat,int row){
+    int i = ui->listView_DDCPoints->columnCount();
+    if(i <= row)
+        return 0;
+
+    auto item = ui->listView_DDCPoints->item(row, dat);
+    if(item == nullptr){
+        qWarning() << "MainWindow::getValue accessed NULL table cell";
+        return 0;
+    }
+
     switch(dat){
     case type:
-        return ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toInt();
+        return item->data(Qt::DisplayRole).toInt();
     case freq:
-        return ui->listView_DDCPoints->item(row,1)->data(Qt::DisplayRole).toInt();
+        return item->data(Qt::DisplayRole).toInt();
     case bw:
-        return ui->listView_DDCPoints->item(row,2)->data(Qt::DisplayRole).toDouble();
+        return item->data(Qt::DisplayRole).toDouble();
     case gain:
-        return ui->listView_DDCPoints->item(row,3)->data(Qt::DisplayRole).toDouble();
+        return item->data(Qt::DisplayRole).toDouble();
     }
 }
 biquad::Type MainWindow::getType(int row){

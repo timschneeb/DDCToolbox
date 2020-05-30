@@ -21,6 +21,8 @@ QString ConversionEngine::convertVDCtoProjectFile(QString inputVdc){
     int sosCount = DDCParser(textString, &df441, &df48);
     char *vdcprj = VDC2vdcprj(df48, 48000.0, sosCount);
 
+    QString prj = QString::fromStdString(vdcprj);
+
     free(vdcprj);
     for (int i = 0; i < sosCount; i++)
     {
@@ -30,7 +32,7 @@ QString ConversionEngine::convertVDCtoProjectFile(QString inputVdc){
     free(df441);
     free(df48);
 
-    return QString::fromStdString(vdcprj);
+    return prj;
 }
 
 std::vector<calibrationPoint_t> ConversionEngine::readParametricEQFile(QString path){
