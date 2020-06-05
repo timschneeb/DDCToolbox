@@ -750,7 +750,7 @@ void MainWindow::batch_parametric2vdcprj(){
 
 //---Getter
 double MainWindow::getValue(DataType dat,int row){
-    int i = ui->listView_DDCPoints->columnCount();
+    int i = ui->listView_DDCPoints->rowCount();
     if(i <= row)
         return 0;
 
