@@ -2,6 +2,7 @@
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/7akte2nk20j6u9w1?svg=true)](https://ci.appveyor.com/project/ThePBone/ddctoolbox)
 ![License](https://img.shields.io/github/license/ThePBone/DDCToolbox)
 ![GitHub release](https://img.shields.io/github/release/ThePBone/DDCToolbox)
+![GitHub All Releases](https://img.shields.io/github/downloads/ThePBone/DDCToolbox/total?label=downloads%20%28windows%29)
 
 Create and edit ViPER DDC files on Linux, Windows and macOS
 
