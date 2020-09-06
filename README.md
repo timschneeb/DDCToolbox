@@ -25,10 +25,10 @@ Create and edit ViPER DDC files on Linux, Windows and macOS
 # Installation
 Developed with Linux in mind. You can also find Windows and macOS installation instructions below.
   * [Windows](#windows)
+  * [Android](#android)
   * [Arch (AUR)](#arch-aur)
   * [Ubuntu](#ubuntu-ppa)
   * [Debian](#debian)
-  * [Android](#android)
   * [Manually (Linux)](#manuallyportable-linux)
   * [Manually (macOS)](#manually-macos)
   
@@ -43,6 +43,9 @@ These windows builds are automatically built and deployed once a new commit has 
 You can download one of these builds [from my server](https://nightly.timschneeberger.me/ddctoolbox-win).
 
 If the server is down, you can also get one from the [AppVeyor cloud](https://ci.appveyor.com/project/ThePBone/ddctoolbox) (select one of the two jobs (32/64-bit) and go to the tab 'Artifacts')
+
+## Android
+There is an Android version of DDCToolbox with limited functionality available here: [ThePBone/DDCToolbox-Android](https://github.com/ThePBone/DDCToolbox-Android)
 
 ## Arch (AUR)
 A git package is available in the [AUR](https://aur.archlinux.org/packages/ddctoolbox-git/).
@@ -71,9 +74,6 @@ Users of debian-based distros can use the DEB-packages that are attached on the 
 ### Nightly builds
 You can download one of these DEB-builds [from my server](https://nightly.timschneeberger.me/ddctoolbox-debian).
 They are automatically compiled and may contain bugs.
-
-## Android
-There is an Android version of DDCToolbox with limited functionality available here: [ThePBone/DDCToolbox-Android](https://github.com/ThePBone/DDCToolbox-Android)
 
 ## Manually/Portable (Linux)
 ### Build from sources
