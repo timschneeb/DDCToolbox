@@ -1,7 +1,5 @@
 #include "autoeqclient.h"
 
-#include <NetworkRequest.h>
-
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -10,6 +8,7 @@
 
 QVector<QueryResult> AutoEQClient::query(QueryRequest request){
     QVector<QueryResult> results;
+#ifndef IS_WASM
     NetworkRequest net_request;
     net_request.setRequestMethod(NetworkRequest::Get);
 
@@ -49,12 +48,14 @@ QVector<QueryResult> AutoEQClient::query(QueryRequest request){
                                       apipath));
 
     }
+#endif
     return results;
 }
 
 HeadphoneMeasurement AutoEQClient::fetchDetails(QueryResult item){
     HeadphoneMeasurement hp(item.getModel(),
                             item.getGroup());
+#ifndef IS_WASM
     NetworkRequest net_request;
     net_request.setRequestMethod(NetworkRequest::Get);
 
@@ -86,5 +87,6 @@ HeadphoneMeasurement AutoEQClient::fetchDetails(QueryResult item){
         else if(name.endsWith(".png"))
             hp.setGraphUrl(url);
     }
+#endif
     return hp;
 }

@@ -91,8 +91,10 @@ TRANSLATIONS += \
         translations/ddctoolbox_de.ts \
         translations/ddctoolbox_en.ts
 
-include ($$PWD/3rdparty/QSimpleUpdater/QSimpleUpdater.pri)
-include ($$PWD/3rdparty/WebLoader/WebLoader.pri)
+!contains(CONFIG, wasm) {
+    include ($$PWD/3rdparty/QSimpleUpdater/QSimpleUpdater.pri)
+    include ($$PWD/3rdparty/WebLoader/WebLoader.pri)
+}
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -101,6 +103,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 win32 {
     RC_ICONS = img/icon.ico
+}
+
+contains(CONFIG, wasm) {
+   DEFINES += IS_WASM
 }
 
 RESOURCES += \

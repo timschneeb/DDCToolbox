@@ -46,7 +46,9 @@ MainWindow::MainWindow(QWidget *parent) :
     lay->addWidget(subMainWindow);
     ui->plotcontainer->setLayout(lay);
 
+#ifndef IS_WASM
     m_updater = QSimpleUpdater::getInstance();
+#endif
 
     QAction* actionUndo = undoStack->createUndoAction(this, tr("Undo"));
     actionUndo->setShortcuts(QKeySequence::Undo);
@@ -782,6 +784,7 @@ uint32_t MainWindow::getId(int row){
 //---Updater
 void MainWindow::checkForUpdates()
 {
+#ifndef IS_WASM
     /* Apply the settings */
     m_updater->setModuleVersion (DEFS_URL, VERSION);
     m_updater->setNotifyOnFinish (DEFS_URL, true);
@@ -793,6 +796,7 @@ void MainWindow::checkForUpdates()
 
     /* Check for updates */
     m_updater->checkForUpdates (DEFS_URL);
+#endif
 }
 
 //---Localization

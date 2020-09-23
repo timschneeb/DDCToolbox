@@ -9,13 +9,16 @@
 #include <QDoubleSpinBox>
 #include <mutex>
 #include <regex>
-#include <QSimpleUpdater.h>
 #include "io/conversionengine.h"
 #include "ddccontext.h"
 #include "utils/filtertypes.h"
 #include "plot/qcustomplot.h"
 #include "item/customfilteritem.h"
 #include "utils/tableproxy.h"
+
+#ifndef IS_WASM
+#include <QSimpleUpdater.h>
+#endif
 
 namespace Ui {
 class MainWindow;
@@ -116,7 +119,6 @@ private:
     QUndoStack *undoStack;
     QUndoView *undoView;
 
-    QSimpleUpdater* m_updater;
     bool markerPointsVisible = false;
 
     biquad::Type getType(int row);
@@ -126,6 +128,10 @@ private:
 
     void createLanguageMenu();
     void loadLanguage(const QString& rLanguage);
+
+#ifndef IS_WASM
+    QSimpleUpdater* m_updater;
+#endif
 };
 
 #endif // MAINWINDOW_H

@@ -7,7 +7,9 @@
 #include <QObject>
 #include <QPixmap>
 
+#ifndef IS_WASM
 #include <NetworkRequest.h>
+#endif
 
 #define ROOT_RAW_URL "https://github.com/jaakkopasanen/AutoEq/raw/master"
 #define RESULTS_RAW_URL ROOT_RAW_URL"/results"
@@ -113,6 +115,7 @@ public:
     }
 
     QPixmap getGraphImage(){
+#ifndef IS_WASM
         NetworkRequest net_request;
         net_request.setRequestMethod(NetworkRequest::Get);
 
@@ -124,6 +127,9 @@ public:
         QPixmap pixmap;
         pixmap.loadFromData(image,"PNG");
         return pixmap;
+#else
+        return QPixmap();
+#endif
     }
 
     QString mModel;

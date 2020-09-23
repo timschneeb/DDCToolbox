@@ -9,7 +9,9 @@
 
 #include <QListWidget>
 #include <QMessageBox>
+#ifndef IS_WASM
 #include <QSslSocket>
+#endif
 
 AutoEQSelector::AutoEQSelector(QWidget *parent) :
     QDialog(parent),
@@ -40,6 +42,7 @@ AutoEQSelector::~AutoEQSelector()
 }
 
 void AutoEQSelector::showEvent(QShowEvent *event){
+#ifndef IS_WASM
     if(!QSslSocket::supportsSsl()){
         QString actual = QSslSocket::sslLibraryVersionString();
         QMessageBox::warning(this, "OpenSSL Error", "Failed to initialize SSL module.\n"
@@ -48,6 +51,7 @@ void AutoEQSelector::showEvent(QShowEvent *event){
                                                     "Required OpenSSL version: " + QSslSocket::sslLibraryBuildVersionString() + "\n"
                                                     "Loaded OpenSSL version: " + (actual.isEmpty() ? "None" : actual));
     }
+#endif
     QWidget::showEvent(event);
 }
 
