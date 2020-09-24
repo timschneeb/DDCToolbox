@@ -12,6 +12,7 @@
 #include <QtGlobal>
 #include <vector>
 #include <map>
+#include <QMessageBox>
 #include "dialog/shiftfreq.h"
 #include "utils/delegate.h"
 #include "item/customfilteritem.h"
@@ -48,6 +49,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 #ifndef IS_WASM
     m_updater = QSimpleUpdater::getInstance();
+#else
+    ui->actionCheck_for_updates->setVisible(false);
+    ui->actionDownload_from_AutoEQ->setVisible(false);
+    ui->menuBatch_Conversion_2->menuAction()->setVisible(false);
 #endif
 
     QAction* actionUndo = undoStack->createUndoAction(this, tr("Undo"));
@@ -105,16 +110,17 @@ void MainWindow::saveDDCProject()
 }
 void MainWindow::saveAsDDCProject(bool ask,QString path,bool compatibilitymode)
 {
-    QString fileName = path;
-    QString dialogtitle = tr("Save VDC Project File");
-    if(compatibilitymode) dialogtitle.append(" " + tr("(Compatibility Mode)"));
-    if(ask)fileName = QFileDialog::getSaveFileName(this,dialogtitle, "", "ViPER DDC Project (*.vdcprj)");
-    if (fileName != "" && fileName != nullptr)
-    {
-        QFileInfo fi(fileName);
+    auto _saveProject = [this,compatibilitymode](QString path, bool updateActiveFile){
+        if (path.isEmpty())
+            return;
+
+        QFileInfo fi(path);
         QString ext = fi.suffix();
-        if(ext!="vdcprj")fileName.append(".vdcprj");
-        setActiveFile(fileName);
+        if(ext!="vdcprj") path.append(".vdcprj");
+
+        if(updateActiveFile)
+            setActiveFile(path);
+
         undoStack->clear();
 
         mtx.lock();
@@ -134,48 +140,92 @@ void MainWindow::saveAsDDCProject(bool ask,QString path,bool compatibilitymode)
             points.push_back(cal);
         }
         mtx.unlock();
-        ProjectManager::writeProjectFile(points,fileName,compatibilitymode);
+        ProjectManager::writeProjectFile(points, path, compatibilitymode);
+    };
+
+#ifdef IS_WASM
+    Q_UNUSED(ask);
+    _saveProject(".tmp_proj.vdcprj", false);
+    QFile file(".tmp_proj.vdcprj");
+    if (!file.open(QIODevice::ReadOnly)) {
+        return;
     }
+    QByteArray blob = file.readAll();
+    file.close();
+
+    QFileDialog::saveFileContent(blob, currentFile.isEmpty() ? "project.vdcprj" : QFileInfo(currentFile).fileName());
+#else
+    QString dialogtitle = tr("Save VDC Project File");
+    if(compatibilitymode) dialogtitle.append(" " + tr("(Compatibility Mode)"));
+    if(ask){
+        path = QFileDialog::getSaveFileName(this,dialogtitle, "", "ViPER DDC Project (*.vdcprj)");
+        _saveProject(path, true);
+    }
+    else _saveProject(path, true);
+#endif
 }
+
 void MainWindow::loadDDCProject()
 {
+    auto _loadProject = [this](const QString& file){
+        if(file.length() < 1) return;
+        auto project_data = ProjectManager::readProjectFile(file);
+        if(project_data.size() > 0){
+            mtx.lock();
+
+            clearPoint(false);
+            setActiveFile(file);
+            undoStack->clear();
+
+            lock_actions = true;
+            ui->listView_DDCPoints->setSortingEnabled(false);
+
+            for(size_t i = 0; i < project_data.size(); i++){
+                calibrationPoint_t cal = project_data.at(i);
+                uint32_t id = insertData(cal.type,cal.freq,cal.bw,cal.gain,false);
+                if(cal.type == biquad::CUSTOM){
+                    newCustomFilter(cal.custom441,cal.custom48,ui->listView_DDCPoints,ui->listView_DDCPoints->rowCount()-1);
+                    g_dcDDCContext->AddFilter(id,cal.custom441,cal.custom48);
+                } else {
+                    g_dcDDCContext->AddFilter(id,cal.type,cal.freq, cal.gain, cal.bw, 48000.0,true);
+                }
+            }
+
+            ui->listView_DDCPoints->setSortingEnabled(true);
+            ui->listView_DDCPoints->sortItems(1);
+            ui->listView_DDCPoints->update();
+            ui->listView_DDCPoints->sortItems(1,Qt::SortOrder::AscendingOrder);
+            lock_actions = false;
+            mtx.unlock();
+
+            drawGraph();
+            emit loadFinished();
+        }
+        else
+            QMessageBox::critical(this,"Error","Invalid project file or inaccessible file");
+
+    };
+
+#ifdef IS_WASM
+    auto fileContentReady = [this,_loadProject](const QString &fileName, const QByteArray &fileContent) {
+ui->groupBox->setTitle(fileContent);
+        QString name = (fileName.isEmpty() ? "project.vdcprj" : fileName);
+        QFile file(name);
+        if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            QTextStream stream(&file);
+            stream << fileContent;
+            file.close();
+
+            _loadProject(name);
+        }
+    };
+    QFileDialog::getOpenFileContent("ViPER DDC Project (*.vdcprj)",  fileContentReady);
+#else
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Open VDC Project File"), "", tr("ViPER DDC Project (*.vdcprj)"));
-    if(fileName.length() < 1) return;
-    auto project_data = ProjectManager::readProjectFile(fileName);
-    if(project_data.size() > 0){
-        mtx.lock();
-
-        clearPoint(false);
-        setActiveFile(fileName);
-        undoStack->clear();
-
-        lock_actions = true;
-        ui->listView_DDCPoints->setSortingEnabled(false);
-
-        for(size_t i = 0; i < project_data.size(); i++){
-            calibrationPoint_t cal = project_data.at(i);
-            uint32_t id = insertData(cal.type,cal.freq,cal.bw,cal.gain,false);
-            if(cal.type == biquad::CUSTOM){
-                newCustomFilter(cal.custom441,cal.custom48,ui->listView_DDCPoints,ui->listView_DDCPoints->rowCount()-1);
-                g_dcDDCContext->AddFilter(id,cal.custom441,cal.custom48);
-            } else {
-                g_dcDDCContext->AddFilter(id,cal.type,cal.freq, cal.gain, cal.bw, 48000.0,true);
-            }
-        }
-
-        ui->listView_DDCPoints->setSortingEnabled(true);
-        ui->listView_DDCPoints->sortItems(1);
-        ui->listView_DDCPoints->update();
-        ui->listView_DDCPoints->sortItems(1,Qt::SortOrder::AscendingOrder);
-        lock_actions = false;
-        mtx.unlock();
-
-        drawGraph();
-        emit loadFinished();
-    }
-    else
-        QMessageBox::critical(this,"Error","Invalid project file or inaccessible file");
+    _loadProject(fileName);
+#endif
 }
 void MainWindow::closeProject(){
     QMessageBox::StandardButton reply;
@@ -650,10 +700,22 @@ void MainWindow::exportVDC()
         QMessageBox::warning(this,tr("Error"),tr("Failed to export to VDC"));
         return;
     }
+
+#ifdef IS_WASM
+    ProjectManager::exportVDC(".tmp_proj.vdc", p1, p2);
+    QFile file(".tmp_proj.vdc");
+    if (!file.open(QIODevice::ReadOnly)) {
+        return;
+    }
+    QByteArray blob = file.readAll();
+    file.close();
+
+    QFileDialog::saveFileContent(blob, currentFile.isEmpty() ? "export.vdc" : QFileInfo(currentFile).baseName() + ".vdc");
+#else
     QString fileName = QFileDialog::getSaveFileName(this,
                                                     tr("Save VDC"), "", tr("VDC File (*.vdc)"));
-
     ProjectManager::exportVDC(fileName,p1,p2);
+#endif
 }
 void MainWindow::exportCompatVDCProj(){
     saveAsDDCProject(true,"",true);
@@ -694,6 +756,7 @@ void MainWindow::downloadFromAutoEQ(){
 
 //---Batch conversion
 void MainWindow::batch_vdc2vdcprj(){
+#ifndef IS_WASM
     QStringList filenames = QFileDialog::getOpenFileNames(this,tr("Select all VDC files to convert"),QDir::currentPath(),tr("VDC files (*.vdc)") );
     if( !filenames.isEmpty() )
     {
@@ -722,8 +785,10 @@ void MainWindow::batch_vdc2vdcprj(){
         }
         QMessageBox::information(this,tr("Note"),tr("Conversion finished!\nYou can find the files here:\n%1").arg(dir));
     }
+#endif
 }
 void MainWindow::batch_parametric2vdcprj(){
+#ifndef IS_WASM
     QStringList filenames = QFileDialog::getOpenFileNames(this,tr("Select all AutoEQ ParametricEQ.txt files to convert"),QDir::currentPath(),tr("AutoEQ ParametricEQ.txt (*ParametricEQ.txt);;All files (*.*)") );
     if( !filenames.isEmpty() )
     {
@@ -748,6 +813,7 @@ void MainWindow::batch_parametric2vdcprj(){
         }
         QMessageBox::information(this,tr("Note"),tr("Conversion finished!\nYou can find the files here:\n%1").arg(dir));
     }
+#endif
 }
 
 //---Getter

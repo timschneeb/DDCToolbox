@@ -213,13 +213,32 @@ void FrequencyPlot::clear(){
     clearGraphs();
 }
 void FrequencyPlot::saveScreenshot(){
+
+    auto _saveFile = [this](QString name){
+        if (!name.isEmpty()){
+            QFileInfo fi(name);
+            QString ext = fi.suffix();
+            if(ext!="png")
+                name.append(".png");
+            savePng(name);
+        }
+    };
+
+#ifdef IS_WASM
+    _saveFile(".tmp_screenshot.png");
+
+    QFile file(".tmp_screenshot.png");
+    if (!file.open(QIODevice::ReadOnly)) {
+        return;
+    }
+    QByteArray blob = file.readAll();
+    file.close();
+
+    QFileDialog::saveFileContent(blob, "screenshot.png");
+#else
     QString fileName = QFileDialog::getSaveFileName(this,
                                                     tr("Save Screenshot"), "", tr("PNG screenshot (*.png)"));
-    if (fileName != "" && fileName != nullptr){
-        QFileInfo fi(fileName);
-        QString ext = fi.suffix();
-        if(ext!="png")fileName.append(".png");
-        savePng(fileName);
-    }
+    _saveFile(fileName);
+#endif
 }
 

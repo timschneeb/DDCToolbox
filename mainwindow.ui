@@ -86,7 +86,7 @@
            <bool>false</bool>
           </attribute>
           <attribute name="verticalHeaderVisible">
-           <bool>true</bool>
+           <bool>false</bool>
           </attribute>
           <column>
            <property name="text">
@@ -142,7 +142,7 @@
      <x>0</x>
      <y>0</y>
      <width>976</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -173,11 +173,10 @@
     </property>
     <addaction name="separator"/>
     <addaction name="actionIntroduction"/>
+    <addaction name="actionKey_shortcuts"/>
     <addaction name="actionIntroduction_2"/>
     <addaction name="separator"/>
     <addaction name="actionCheck_for_updates"/>
-    <addaction name="separator"/>
-    <addaction name="actionKey_shortcuts"/>
    </widget>
    <widget class="QMenu" name="menuToold">
     <property name="title">
