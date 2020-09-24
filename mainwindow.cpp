@@ -47,10 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     lay->addWidget(subMainWindow);
     ui->plotcontainer->setLayout(lay);
 
-#ifndef IS_WASM
-    m_updater = QSimpleUpdater::getInstance();
-#else
-    ui->actionCheck_for_updates->setVisible(false);
+#ifdef IS_WASM
     ui->actionDownload_from_AutoEQ->setVisible(false);
     ui->menuBatch_Conversion_2->menuAction()->setVisible(false);
 #endif
@@ -63,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menuEdit->insertAction(first,actionUndo);
     ui->menuEdit->insertAction(first,actionRedo);
 
-    g_dcDDCContext = new class DDCContext;
+    g_dcDDCContext = new DDCContext();
 
     ui->listView_DDCPoints->setItemDelegate(new SaveItemDelegate());
     ui->listView_DDCPoints->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -90,7 +87,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->graph->setMode(FrequencyPlot::PlotType::magnitude,this);
     ui->gdelay_graph->setMode(FrequencyPlot::PlotType::group_delay,this);
     ui->phase_graph->setMode(FrequencyPlot::PlotType::phase_response,this);
-    createLanguageMenu();
 
     QApplication::setPalette(this->style()->standardPalette());
 }
@@ -845,127 +841,4 @@ biquad::Type MainWindow::getType(int row){
 }
 uint32_t MainWindow::getId(int row){
     return ui->listView_DDCPoints->item(row,0)->data(Qt::UserRole).toUInt();
-}
-
-//---Updater
-void MainWindow::checkForUpdates()
-{
-#ifndef IS_WASM
-    /* Apply the settings */
-    m_updater->setModuleVersion (DEFS_URL, VERSION);
-    m_updater->setNotifyOnFinish (DEFS_URL, true);
-    m_updater->setNotifyOnUpdate (DEFS_URL, true);
-    m_updater->setUseCustomAppcast (DEFS_URL, false);
-    m_updater->setDownloaderEnabled (DEFS_URL, true);
-    m_updater->setMandatoryUpdate (DEFS_URL, false);
-    m_updater->setUseCustomInstallProcedures(DEFS_URL,true);
-
-    /* Check for updates */
-    m_updater->checkForUpdates (DEFS_URL);
-#endif
-}
-
-//---Localization
-void MainWindow::createLanguageMenu(void)
-{
-    // format systems language
-    QString defaultLocale = QLocale::system().name(); // e.g. "de_DE"
-    defaultLocale.truncate(defaultLocale.lastIndexOf('_')); // e.g. "de"
-    QString m_langPath = ":/translations";
-    QDir dir(m_langPath);
-
-    // Create Language Menu to match qm translation files found
-    QActionGroup* langGroup = new QActionGroup(ui->actionLanguage);
-    langGroup->setExclusive(true);
-    connect(langGroup, SIGNAL (triggered(QAction *)), this, SLOT (slotLanguageChanged(QAction *)));
-
-    QMenu* submenu = ui->menuToold->addMenu(tr("Language"));
-
-    QStringList fileNames = dir.entryList(QStringList("ddctoolbox_*.qm"));
-    for (int i = 0; i < fileNames.size(); ++i) {
-        // get locale extracted by filename
-        QString locale;
-        locale = fileNames[i]; // "TranslationExample_de.qm"
-
-        locale.truncate(locale.lastIndexOf('.')); // "TranslationExample_de"
-        locale.remove(0, locale.indexOf('_') + 1); // "de"
-
-        QString lang = QLocale::languageToString(QLocale(locale).language());
-
-        QAction *action = new QAction(lang, this);
-        action->setCheckable(true);
-        // action->setData(resourceFileName);
-        action->setData(locale);
-
-        submenu->addAction(action);
-        langGroup->addAction(action);
-
-        // set default translators and language checked
-        if (defaultLocale == locale)
-        {
-            action->setChecked(true);
-        }
-    }
-}
-void MainWindow::slotLanguageChanged(QAction* action)
-{
-    if(0 == action) {
-        return;
-    }
-    loadLanguage(action->data().toString());
-}
-void MainWindow::loadLanguage(const QString& rLanguage)
-{
-    if(m_currLang == rLanguage) {
-        return;
-    }
-    m_currLang = rLanguage;
-
-    QLocale locale = QLocale(m_currLang);
-    QLocale::setDefault(QLocale::c());
-
-    QString languageName = QLocale::languageToString(locale.language());
-
-    // m_translator contains the app's translations
-    QString resourceFileName = QString("%1/ddctoolbox_%2.qm").arg(":/translations").arg(rLanguage);
-    switchTranslator(m_translator, resourceFileName);
-
-}
-void MainWindow::changeEvent(QEvent* event)
-{
-    if(0 != event) {
-        switch(event->type()) {
-        // this event is send if a translator is loaded
-        case QEvent::LanguageChange:
-            // UI will not update unless you call retranslateUi
-            ui->retranslateUi(this);
-            break;
-
-            // this event is send, if the system, language changes
-        case QEvent::LocaleChange:
-        {
-            QString locale = QLocale::system().name();
-            locale.truncate(locale.lastIndexOf('_'));
-            loadLanguage(locale);
-        }
-            break;
-        default:
-            break;
-        }
-    }
-    QMainWindow::changeEvent(event);
-}
-void MainWindow::switchTranslator(QTranslator& translator, const QString& filename)
-{
-    // remove the old translator
-    qApp->removeTranslator(&translator);
-
-    // load the new translator
-    bool result = translator.load(filename);
-
-    if(!result) {
-        qWarning("*** Failed translator.load(\"%s\")", filename.toLatin1().data());
-        return;
-    }
-    qApp->installTranslator(&translator);
 }

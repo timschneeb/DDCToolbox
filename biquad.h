@@ -39,7 +39,7 @@ public:
     void RefreshFilter(uint32_t id, Type type, customFilter_t c441, customFilter_t c48);
     std::list<double> ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
     std::list<double> ExportCoeffs(double dSamplingRate);
-    std::list<double> ExportCoeffs(Type type, customFilter_t coeffs);
+    std::list<double> ExportCoeffs(customFilter_t coeffs);
     void iirroots(double b, double c, double *roots);
     int complexResponse(double centreFreq, double fs, double *HofZReal, double *HofZImag);
     double GainAt(double centreFreq, double fs);

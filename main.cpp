@@ -4,8 +4,11 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
+
+    setlocale(LC_ALL, "C");
     QLocale::setDefault(QLocale::c());
+
+    MainWindow w;    
     QApplication::setStyle("fusion");
     a.setPalette(qApp->style()->standardPalette());
     w.show();

@@ -40,9 +40,6 @@ enum DataType{
     gain = 3
 };
 
-static const QString DEFS_URL = "https://timschneeberger.me/updater/ddctoolbox.json";
-static const QString VERSION = "1.4.0";
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -60,9 +57,8 @@ public:
     ~MainWindow();
 
 public slots:
-    void checkForUpdates();
     void drawGraph(GraphType = GraphType::all, bool onlyUpdatePoints = false);
-    ;
+
 private slots:
     void saveDDCProject();
     void saveAsDDCProject(bool=true,QString="",bool compatibilitymode=false);
@@ -95,22 +91,13 @@ private slots:
     void hidePoints(bool state);
     void CheckStability();
 
-    void switchTranslator(QTranslator& translator, const QString& filename);
     void downloadFromAutoEQ();
-protected:
-    void changeEvent(QEvent*);
-
-protected slots:
-    void slotLanguageChanged(QAction* action);
 
 signals:
     void loadFinished();
 
 private:
     Ui::MainWindow *ui;
-
-    QTranslator m_translator;
-    QString m_currLang;
 
     std::mutex mtx;
     DDCContext *g_dcDDCContext;
@@ -126,12 +113,6 @@ private:
     double getValue(DataType dat,int row);
     uint32_t insertData(biquad::Type type,int freq,double band,double gain,bool toggleSorting = true);
 
-    void createLanguageMenu();
-    void loadLanguage(const QString& rLanguage);
-
-#ifndef IS_WASM
-    QSimpleUpdater* m_updater;
-#endif
 };
 
 #endif // MAINWINDOW_H

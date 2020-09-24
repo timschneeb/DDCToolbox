@@ -174,9 +174,6 @@
     <addaction name="separator"/>
     <addaction name="actionIntroduction"/>
     <addaction name="actionKey_shortcuts"/>
-    <addaction name="actionIntroduction_2"/>
-    <addaction name="separator"/>
-    <addaction name="actionCheck_for_updates"/>
    </widget>
    <widget class="QMenu" name="menuToold">
     <property name="title">
@@ -398,7 +395,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   </action>
   <action name="actionOpen">
    <property name="text">
-    <string>Load</string>
+    <string>Load project</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -414,7 +411,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   </action>
   <action name="actionIntroduction">
    <property name="text">
-    <string>About</string>
+    <string>Credits</string>
    </property>
   </action>
   <action name="actionKey_shortcuts">
@@ -422,7 +419,7 @@ border: 1px solid rgb(208, 204, 201) </string>
     <string>Shortcuts</string>
    </property>
    <property name="shortcut">
-    <string>Shift+F1</string>
+    <string>F1</string>
    </property>
   </action>
   <action name="actionAutoEQ_ParametricEQ_txt">
@@ -455,7 +452,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   </action>
   <action name="actionClose_Project">
    <property name="text">
-    <string>Close Project</string>
+    <string>Close project</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+X</string>
@@ -493,19 +490,6 @@ border: 1px solid rgb(208, 204, 201) </string>
     <string>Ctrl+Shift+F</string>
    </property>
   </action>
-  <action name="actionIntroduction_2">
-   <property name="text">
-    <string>Dev Notes</string>
-   </property>
-   <property name="shortcut">
-    <string>F1</string>
-   </property>
-  </action>
-  <action name="actionCheck_for_updates">
-   <property name="text">
-    <string>Check for updates...</string>
-   </property>
-  </action>
   <action name="actionToggle_marker_points">
    <property name="checkable">
     <bool>true</bool>
@@ -515,11 +499,6 @@ border: 1px solid rgb(208, 204, 201) </string>
    </property>
    <property name="shortcut">
     <string>F3</string>
-   </property>
-  </action>
-  <action name="actionLanguage">
-   <property name="text">
-    <string>Language</string>
    </property>
   </action>
   <action name="actionCheck_for_unstable_filters">
@@ -853,22 +832,6 @@ border: 1px solid rgb(208, 204, 201) </string>
    </hints>
   </connection>
   <connection>
-   <sender>actionIntroduction_2</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>showHelp()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>374</x>
-     <y>190</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionExport_as_VDC</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -881,22 +844,6 @@ border: 1px solid rgb(208, 204, 201) </string>
     <hint type="destinationlabel">
      <x>374</x>
      <y>190</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionCheck_for_updates</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>checkForUpdates()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>432</x>
-     <y>206</y>
     </hint>
    </hints>
   </connection>
