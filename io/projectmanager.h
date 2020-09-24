@@ -13,10 +13,10 @@ class ProjectManager : public QObject
     Q_OBJECT
 public:
     static bool writeProjectFile(std::vector<calibrationPoint_t> points,
-                          QString fileName,bool compatibilitymode);
-    static bool exportVDC(QString fileName, std::list<double> p1, std::list<double> p2);
-    static std::vector<calibrationPoint_t> readProjectFile(QString fileName);
-    static calibrationPoint_t readSingleLine(QString str);
+                          const QString& fileName,bool compatibilitymode);
+    static bool exportVDC(QString fileName, const std::list<double>& p1, const std::list<double>& p2);
+    static std::vector<calibrationPoint_t> readProjectFile(const QString& fileName);
+    static calibrationPoint_t readSingleLine(const QString& str);
 };
 
 #endif // PROJECTMANAGER_H

@@ -1,7 +1,7 @@
 #include "biquad.h"
-#include <list>
-#include <cstdio>
 #include <QDebug>
+#include <cstdio>
+#include <list>
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -30,8 +30,8 @@ void biquad::RefreshFilter(uint32_t id, Type type, double dbGain, double centreF
     m_id = id;
 
     auto coeffs = ExportCoeffs(type, dbGain, centreFreq, fs, dBandwidthOrQOrS, isBandwidthOrS);
-    for(int i = 0; i < 5; i++){
-        internalBiquadCoeffs[i] = coeffs.front();
+    for(double & internalBiquadCoeff : internalBiquadCoeffs){
+        internalBiquadCoeff = coeffs.front();
         coeffs.pop_front();
     }
 
@@ -234,7 +234,7 @@ std::list<double> biquad::ExportCoeffs(double dSamplingRate)
     if(m_isCustom){
         if(trunc(dSamplingRate)==44100.0)
             return ExportCoeffs(m_custom441);
-        else if(trunc(dSamplingRate)==48000.0)
+        else
             return ExportCoeffs(m_custom48);
     }
     else

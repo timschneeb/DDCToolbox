@@ -24,7 +24,7 @@ class OverlayMsgProxy : public QObject
     Q_OBJECT
 public:
     OverlayMsgProxy(QWidget* obj);
-    void openBase( QString title, QString desc);
+    void openBase( const QString& title, const QString& desc);
     void hide();
 signals:
     void buttonPressed();

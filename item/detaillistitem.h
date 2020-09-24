@@ -14,7 +14,7 @@ class DetailListItem : public QWidget
 public:
     explicit DetailListItem(QWidget *parent = nullptr);
     ~DetailListItem();
-    void setData(QString title, QString desc);
+    void setData(const QString& title, const QString& desc);
 
 private:
     Ui::configitem *ui;

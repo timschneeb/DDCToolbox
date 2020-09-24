@@ -13,7 +13,7 @@ DetailListItem::~DetailListItem()
     delete ui;
 }
 
-void DetailListItem::setData(QString title, QString desc){
+void DetailListItem::setData(const QString& title, const QString& desc){
     ui->title->setText(title);
     ui->desc->setText(desc);
 }

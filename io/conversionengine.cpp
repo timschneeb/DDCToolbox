@@ -5,10 +5,9 @@
 #include <QRegularExpression>
 
 ConversionEngine::ConversionEngine()
-{
-}
+= default;
 
-QString ConversionEngine::convertVDCtoProjectFile(QString inputVdc){
+QString ConversionEngine::convertVDCtoProjectFile(const QString& inputVdc){
     QFile file(inputVdc);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return "";
@@ -35,7 +34,7 @@ QString ConversionEngine::convertVDCtoProjectFile(QString inputVdc){
     return prj;
 }
 
-std::vector<calibrationPoint_t> ConversionEngine::readParametricEQFile(QString path){
+std::vector<calibrationPoint_t> ConversionEngine::readParametricEQFile(const QString& path){
     std::vector<calibrationPoint_t> points;
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))

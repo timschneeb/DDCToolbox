@@ -107,6 +107,9 @@ win32 {
 contains(CONFIG, wasm) {
    DEFINES += IS_WASM
 }
+unix {
+   QMAKE_CXXFLAGS += -Wno-unused-variable
+}
 
 RESOURCES += \
     resources.qrc

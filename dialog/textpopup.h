@@ -13,7 +13,7 @@ class TextPopup : public QDialog
     Q_OBJECT
 
 public:
-    explicit TextPopup(QString,QWidget *parent = nullptr);
+    explicit TextPopup(const QString&,QWidget *parent = nullptr);
     ~TextPopup();
 
 private:

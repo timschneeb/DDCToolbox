@@ -1,10 +1,10 @@
 #include "qmessageoverlay.h"
 
-#include <QPixmap>
+#include <QChildEvent>
 #include <QEvent>
 #include <QPaintEvent>
-#include <QChildEvent>
 #include <QPainter>
+#include <QPixmap>
 
 QMessageOverlay::QMessageOverlay(QWidget* _parent, bool _folowToHeadWidget) :
 	QWidget(_parent),

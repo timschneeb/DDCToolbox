@@ -1,6 +1,6 @@
 #include "customfilteritem.h"
-#include "ui_customfilteritem.h"
 #include "../dialog/customfilterdialog.h"
+#include "ui_customfilteritem.h"
 
 CustomFilterItem::CustomFilterItem(QWidget *parent) :
     QWidget(parent),

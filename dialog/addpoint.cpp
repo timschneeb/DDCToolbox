@@ -1,9 +1,9 @@
 #include "addpoint.h"
-#include "ui_addpoint.h"
 #include "biquad.h"
+#include "ui_addpoint.h"
 #include "utils/filtertypes.h"
-#include <list>
 #include <QDebug>
+#include <list>
 
 addpoint::addpoint(QWidget *parent) :
     QDialog(parent),

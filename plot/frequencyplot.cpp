@@ -1,6 +1,6 @@
 #include "frequencyplot.h"
-
-FrequencyPlot::FrequencyPlot(QFrame* frame)
+ #include <utility> 
+FrequencyPlot::FrequencyPlot(QFrame*  /*frame*/)
 {
     qsrand(QDateTime::currentMSecsSinceEpoch() / 1000);
 }
@@ -116,7 +116,7 @@ void FrequencyPlot::updatePoints(QCPGraph* plot,QTableWidget* tb,bool allMarkerP
         }
     }
     //Draw selected points
-    for (auto item : tb->selectedItems()){
+    for (const auto& item : tb->selectedItems()){
         if(stringToType(tb->item(item->row(),0)->text()) == biquad::UNITY_GAIN ||
                 stringToType(tb->item(item->row(),0)->text()) == biquad::CUSTOM)
             continue;
@@ -129,8 +129,8 @@ void FrequencyPlot::updatePoints(QCPGraph* plot,QTableWidget* tb,bool allMarkerP
     replot();
 }
 void FrequencyPlot::updatePlot(std::vector<float> table,int bandCount){
-    m_table = table;
-    if (m_table.size()<=0)
+    m_table = std::move(table);
+    if (m_table.empty())
         return;
 
     QCPGraph *plot;
@@ -180,11 +180,11 @@ void FrequencyPlot::updatePlot(std::vector<float> table,int bandCount){
         max = 5.0f;
         min = -5.0f;
 
-        for (size_t i = 0; i < (size_t)m_table.size(); i++){
-            if (m_table.at(i) > max)
-                max = m_table.at(i);
-            if (m_table.at(i) < min)
-                min = m_table.at(i);
+        for (float i : m_table){
+            if (i > max)
+                max = i;
+            if (i < min)
+                min = i;
         }
         if(std::isinf(min))min=-5.0;
         if(std::isinf(max))max=5.0;

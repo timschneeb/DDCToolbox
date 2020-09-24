@@ -1,8 +1,8 @@
 #include "autoeqselector.h"
 #include "ui_autoeqselector.h"
 
-#include "utils/autoeqclient.h"
 #include "overlaymsgproxy.h"
+#include "utils/autoeqclient.h"
 
 #include "item/detaillistitem.h"
 #include "item/detaillistitem_delegate.h"
@@ -52,7 +52,7 @@ void AutoEQSelector::showEvent(QShowEvent *event){
                                                     "Loaded OpenSSL version: " + (actual.isEmpty() ? "None" : actual));
     }
 #endif
-    QWidget::showEvent(event);
+    QDialog::showEvent(event);
 }
 
 void AutoEQSelector::appendToList(QueryResult result){
@@ -108,7 +108,7 @@ void AutoEQSelector::doQuery(){
     QueryRequest req(ui->searchInput->text());
     QVector<QueryResult> ress = AutoEQClient::query(req);
     ui->listWidget->clear();
-    for(auto res : ress)
+    for(const auto& res : qAsConst(ress))
         appendToList(res);
 
     ui->listWidget->setEnabled(true);

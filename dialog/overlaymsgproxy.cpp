@@ -1,13 +1,13 @@
 #include "overlaymsgproxy.h"
 #include "dialog/qmessageoverlay.h"
 
-#include <QGraphicsOpacityEffect>
-#include <QPropertyAnimation>
-#include <QLabel>
 #include <QFile>
-#include <QTextStream>
+#include <QGraphicsOpacityEffect>
 #include <QGridLayout>
+#include <QLabel>
+#include <QPropertyAnimation>
 #include <QPushButton>
+#include <QTextStream>
 
 OverlayMsgProxy::OverlayMsgProxy(QWidget* _obj)
 {
@@ -15,7 +15,7 @@ OverlayMsgProxy::OverlayMsgProxy(QWidget* _obj)
     obj = _obj;
 }
 
-void OverlayMsgProxy::openBase(QString title, QString desc){
+void OverlayMsgProxy::openBase(const QString& title, const QString& desc){
     QLabel* lbTitle = new QLabel(title);
     lbTitle->setStyleSheet("font-size: 24px; font-weight: bold; color: white");
 
@@ -56,7 +56,7 @@ void OverlayMsgProxy::hide(){
     a->setEndValue(0);
     a->setEasingCurve(QEasingCurve::OutBack);
     a->start(QPropertyAnimation::DeleteWhenStopped);
-    connect(a,&QAbstractAnimation::finished, [this](){
+    connect(a, &QAbstractAnimation::finished, this, [this](){
         if(lightBox != nullptr)
             lightBox->hide();
     });

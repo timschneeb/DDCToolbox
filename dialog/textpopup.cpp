@@ -1,7 +1,7 @@
 #include "textpopup.h"
 #include "ui_textpopup.h"
 
-TextPopup::TextPopup(QString txtbrw,QWidget *parent) :
+TextPopup::TextPopup(const QString& txtbrw,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::TextPopup)
 {

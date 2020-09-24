@@ -1,6 +1,6 @@
 #include "customfilterdialog.h"
-#include "ui_customfilterdialog.h"
 #include "dialog/textpopup.h"
+#include "ui_customfilterdialog.h"
 
 customfilterdialog::customfilterdialog(QWidget *parent) :
     QDialog(parent),

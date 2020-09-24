@@ -48,12 +48,12 @@ public:
         all
     };
     explicit MainWindow(QWidget *parent = nullptr);
-    void setActiveFile(QString,bool=false);
+    void setActiveFile(const QString&,bool=false);
     QString currentFile = "";
     ~MainWindow();
 
 public slots:
-    void drawGraph(GraphType = GraphType::all, bool onlyUpdatePoints = false);
+    void drawGraph(MainWindow::GraphType = GraphType::all, bool onlyUpdatePoints = false);
 
 private slots:
     void saveDDCProject();

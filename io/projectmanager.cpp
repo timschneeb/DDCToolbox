@@ -3,7 +3,7 @@ using namespace std;
 #define n QString("\n")
 
 bool ProjectManager::writeProjectFile(std::vector<calibrationPoint_t> points,
-                                      QString fileName,bool compatibilitymode){
+                                      const QString& fileName,bool compatibilitymode){
     QFile caFile(fileName);
     caFile.open(QIODevice::WriteOnly | QIODevice::Text);
 
@@ -53,7 +53,7 @@ bool ProjectManager::writeProjectFile(std::vector<calibrationPoint_t> points,
     return true;
 }
 
-bool ProjectManager::exportVDC(QString fileName, std::list<double> p1, std::list<double> p2){
+bool ProjectManager::exportVDC(QString fileName, const std::list<double>& p1, const std::list<double>& p2){
     if (fileName != "" && fileName != nullptr)
     {
         QFileInfo fi(fileName);
@@ -99,7 +99,7 @@ bool ProjectManager::exportVDC(QString fileName, std::list<double> p1, std::list
     return false;
 }
 
-std::vector<calibrationPoint_t> ProjectManager::readProjectFile(QString fileName)
+std::vector<calibrationPoint_t> ProjectManager::readProjectFile(const QString& fileName)
 {
     std::vector<calibrationPoint_t> buffer;
     if (fileName != "" && fileName != nullptr){
@@ -118,7 +118,7 @@ std::vector<calibrationPoint_t> ProjectManager::readProjectFile(QString fileName
     return buffer;
 }
 
-calibrationPoint_t ProjectManager::readSingleLine(QString str){
+calibrationPoint_t ProjectManager::readSingleLine(const QString& str){
     calibrationPoint_t cal;
     cal.freq = 0;
     cal.bw = 0;
@@ -163,7 +163,7 @@ calibrationPoint_t ProjectManager::readSingleLine(QString str){
                     customFilter_t c441 = defaultCustomFilter();
                     customFilter_t c48 = defaultCustomFilter();
                     int counter = 0;
-                    for(auto coeff:coeffpart.split(",")){
+                    for(const auto& coeff : coeffpart.split(",")){
                         switch(counter){
                         case 0:
                             c441.a0 = coeff.toDouble();

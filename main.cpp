@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 
     MainWindow w;    
     QApplication::setStyle("fusion");
-    a.setPalette(qApp->style()->standardPalette());
+    QApplication::setPalette(qApp->style()->standardPalette());
     w.show();
 
     return QApplication::exec();

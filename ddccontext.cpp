@@ -1,11 +1,11 @@
 #include "ddccontext.h"
-#include <mutex>
-#include <map>
-#include <vector>
-#include <utility>
-#include <list>
 #include <cstring>
 #include <limits>
+#include <list>
+#include <map>
+#include <mutex>
+#include <utility>
+#include <vector>
 
 DDCContext::DDCContext()
 {
@@ -138,7 +138,7 @@ std::list<double> DDCContext::ExportCoeffs(double dSamplingRate)
     for ( it = m_lstFilterBank.begin(); it != m_lstFilterBank.end(); it++ )
         list.push_back(it->second);
 
-    if (list.size() <= 0)
+    if (list.empty())
     {
         UnlockFilter();
         std::list<double> nulllist;
@@ -184,8 +184,8 @@ std::vector<float> DDCContext::GetMagnitudeResponseTable(int nBandCount, double 
     {
         double num3 = (dSRate / 2.0) / ((double) nBandCount);
         float val = 0.0f;
-        for (size_t k = 0;k < list.size(); k++)
-            val += (float) list[k]->GainAt(num3 * (j + 1.0), dSRate);
+        for (auto & k : list)
+            val += (float) k->GainAt(num3 * (j + 1.0), dSRate);
         vector.push_back(val);
     }
     return vector;
@@ -211,8 +211,8 @@ std::vector<float> DDCContext::GetPhaseResponseTable(int nBandCount, double dSRa
     {
         double num3 = (dSRate / 2.0) / ((double) nBandCount);
         float val = 0.0f;
-        for (size_t k = 0;k < list.size(); k++)
-            val += (float) list[k]->PhaseResponseAt(num3 * (j + 1.0), dSRate);
+        for (auto & k : list)
+            val += (float) k->PhaseResponseAt(num3 * (j + 1.0), dSRate);
         vector.push_back(val);
     }
     return vector;
@@ -239,8 +239,8 @@ std::vector<float> DDCContext::GetGroupDelayTable(int nBandCount, double dSRate)
     {
         double num3 = (dSRate / 2.0) / ((double) nBandCount);
         float val = 0.0f;
-        for (size_t k = 0;k < list.size(); k++)
-            val += (float) list[k]->GroupDelayAt(num3 * (j + 1.0), dSRate);
+        for (auto & k : list)
+            val += (float) k->GroupDelayAt(num3 * (j + 1.0), dSRate);
         vector.push_back(val);
     }
     return vector;

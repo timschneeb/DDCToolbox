@@ -1,6 +1,9 @@
 #include "undocmd.h"
+
 #include "ddccontext.h"
 #include "item/customfilterfactory.h"
+
+#include <utility>
 
 AddCommand::AddCommand(QTableWidget* _tw,DDCContext* _ddcContext,
                        calibrationPoint_t _cal,std::mutex* _mtx,bool* _lockActions,MainWindow* _host, QUndoCommand *parent)
@@ -143,7 +146,7 @@ ClearCommand::ClearCommand(QTableWidget* _tw,DDCContext* _ddcContext,
     : QUndoCommand(parent)
 {
     static int itemCount = 0;
-    cal_table = _cal_table;
+    cal_table = std::move(_cal_table);
     tw = _tw;
     mtx = _mtx;
     host = _host;
@@ -158,9 +161,8 @@ void ClearCommand::undo()
     *lockActions = true;
     tw->setSortingEnabled(false);
 
-    for(size_t i=0;i < cal_table.size();i++)
+    for(auto cal : cal_table)
     {
-        calibrationPoint_t cal = cal_table.at(i);
         (new tableproxy(tw))->addRow(cal);
         if(cal.type==biquad::CUSTOM){
             newCustomFilter(cal.custom441, cal.custom48,tw,tw->rowCount()-1);
@@ -202,8 +204,8 @@ RemoveCommand::RemoveCommand(QTableWidget* _tw,DDCContext* _ddcContext,std::vect
     tw = _tw;
     mtx = _mtx;
     host = _host;
-    rows = _rows;
-    model_list = _model_list;
+    rows = std::move(_rows);
+    model_list = std::move(_model_list);
     ddcContext = _ddcContext;
     lockActions = _lockActions;
     ++itemCount;
@@ -215,9 +217,8 @@ void RemoveCommand::undo()
     *lockActions = true;
     tw->setSortingEnabled(false);
 
-    for(size_t i=0;i < cal_table.size();i++)
+    for(auto cal : cal_table)
     {
-        calibrationPoint_t cal = cal_table.at(i);
         (new tableproxy(tw))->addRow(cal);
         if(cal.type==biquad::CUSTOM){
             newCustomFilter(cal.custom441,cal.custom48,tw,tw->rowCount()-1);
@@ -281,7 +282,7 @@ InvertCommand::InvertCommand(QTableWidget* _tw,DDCContext* _ddcContext,
     : QUndoCommand(parent)
 {
     static int itemCount = 0;
-    cal_table = _cal_table;
+    cal_table = std::move(_cal_table);
     tw = _tw;
     mtx = _mtx;
     host = _host;
@@ -296,9 +297,8 @@ void InvertCommand::undo()
     *lockActions = true;
     tw->setSortingEnabled(false);
 
-    for (size_t i = 0; i < cal_table.size(); i++)
+    for (auto cal : cal_table)
     {
-        calibrationPoint_t cal = cal_table.at(i);
         for (int j = 0; j < tw->rowCount(); j++)
         {
             if (tw->item(j,1)->data(Qt::DisplayRole).toInt() == cal.freq)
@@ -323,9 +323,8 @@ void InvertCommand::redo()
     *lockActions = true;
     tw->setSortingEnabled(false);
 
-    for (size_t i = 0; i < cal_table.size(); i++)
+    for (auto cal : cal_table)
     {
-        calibrationPoint_t cal = cal_table.at(i);
         for (int j = 0; j < tw->rowCount(); j++)
         {
             if (tw->item(j,1)->data(Qt::DisplayRole).toInt() == cal.freq)
@@ -353,7 +352,7 @@ ShiftCommand::ShiftCommand(QTableWidget* _tw,DDCContext* _ddcContext,int _shift,
     : QUndoCommand(parent)
 {
     static int itemCount = 0;
-    cal_table = _cal_table;
+    cal_table = std::move(_cal_table);
     tw = _tw;
     mtx = _mtx;
     host = _host;
@@ -369,9 +368,8 @@ void ShiftCommand::undo()
     *lockActions = true;
     tw->setSortingEnabled(false);
 
-    for (size_t i = 0; i < cal_table.size(); i++)
+    for (auto cal : cal_table)
     {
-        calibrationPoint_t cal = cal_table.at(i);
         for (int j = 0; j < tw->rowCount(); j++)
         {
             if (tw->item(j,1)->data(Qt::DisplayRole).toInt() == cal.freq + shift)
@@ -395,9 +393,8 @@ void ShiftCommand::redo()
     mtx->lock();
     *lockActions = true;
     tw->setSortingEnabled(false);
-    for (size_t i = 0; i < cal_table.size(); i++)
+    for (auto cal : cal_table)
     {
-        calibrationPoint_t cal = cal_table.at(i);
         for (int j = 0; j < tw->rowCount(); j++)
         {
             if (tw->item(j,1)->data(Qt::DisplayRole).toInt() == cal.freq)

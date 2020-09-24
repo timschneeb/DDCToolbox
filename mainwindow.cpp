@@ -1,24 +1,24 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
 #include "ddccontext.h"
 #include "dialog/addpoint.h"
-#include "dialog/textpopup.h"
 #include "dialog/calc.h"
+#include "dialog/shiftfreq.h"
+#include "dialog/textpopup.h"
+#include "io/projectmanager.h"
+#include "item/customfilterfactory.h"
+#include "item/customfilteritem.h"
+#include "ui_mainwindow.h"
+#include "utils/delegate.h"
 #include "utils/undocmd.h"
-#include <QFileDialog>
-#include <QDebug>
 #include <QAction>
+#include <QDebug>
+#include <QFileDialog>
+#include <QMessageBox>
 #include <QMessageBox>
 #include <QtGlobal>
-#include <vector>
-#include <map>
-#include <QMessageBox>
-#include "dialog/shiftfreq.h"
-#include "utils/delegate.h"
-#include "item/customfilteritem.h"
-#include "item/customfilterfactory.h"
-#include "io/projectmanager.h"
 #include <dialog/autoeqselector.h>
+#include <map>
+#include <vector>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -166,7 +166,7 @@ void MainWindow::loadDDCProject()
     auto _loadProject = [this](const QString& file){
         if(file.length() < 1) return;
         auto project_data = ProjectManager::readProjectFile(file);
-        if(project_data.size() > 0){
+        if(!project_data.empty()){
             mtx.lock();
 
             clearPoint(false);
@@ -176,8 +176,7 @@ void MainWindow::loadDDCProject()
             lock_actions = true;
             ui->listView_DDCPoints->setSortingEnabled(false);
 
-            for(size_t i = 0; i < project_data.size(); i++){
-                calibrationPoint_t cal = project_data.at(i);
+            for(auto cal : project_data){
                 uint32_t id = insertData(cal.type,cal.freq,cal.bw,cal.gain,false);
                 if(cal.type == biquad::CUSTOM){
                     newCustomFilter(cal.custom441,cal.custom48,ui->listView_DDCPoints,ui->listView_DDCPoints->rowCount()-1);
@@ -234,7 +233,7 @@ void MainWindow::closeProject(){
         undoStack->clear();
     }
 }
-void MainWindow::setActiveFile(QString path,bool unsaved){
+void MainWindow::setActiveFile(const QString& path,bool unsaved){
     QFileInfo fi(path);
     currentFile = path;
     if(path=="")
@@ -533,7 +532,7 @@ uint32_t MainWindow::insertData(biquad::Type type,int freq,double band,double ga
     c.bw = band;
     c.gain = gain;
     c.type = type;
-    (new tableproxy(ui->listView_DDCPoints))->addRow(c);
+    tableproxy(ui->listView_DDCPoints).addRow(c);
     if(toggleSorting)ui->listView_DDCPoints->setSortingEnabled(true);
     return c.id;
 }
@@ -666,13 +665,12 @@ void MainWindow::importParametricAutoEQ(){
 
         std::vector<calibrationPoint_t> points =
                 ConversionEngine::readParametricEQFile(fileName);
-        if(points.size() < 1){
+        if(points.empty()){
             QMessageBox::warning(this,tr("Error"),tr("Unable to convert this file; no data found: %1").arg(fileName));
             return;
         }
 
-        for(size_t i=0;i<points.size();i++){
-            calibrationPoint_t cal = points.at(i);
+        for(auto cal : points){
             lock_actions = true;
             uint32_t id = insertData(biquad::Type::PEAKING,cal.freq,(double)cal.bw,(double)cal.gain);
             lock_actions = false;
@@ -729,13 +727,12 @@ void MainWindow::downloadFromAutoEQ(){
 
         std::vector<calibrationPoint_t> points =
                 ConversionEngine::readParametricEQString(hp.getParametricEQ());
-        if(points.size() < 1){
+        if(points.empty()){
             QMessageBox::warning(this,tr("Error"),tr("Invalid response.\nNo data found: %1"));
             return;
         }
 
-        for(size_t i=0;i<points.size();i++){
-            calibrationPoint_t cal = points.at(i);
+        for(auto cal : points){
             lock_actions = true;
             uint32_t id = insertData(biquad::Type::PEAKING,cal.freq,(double)cal.bw,(double)cal.gain);
             lock_actions = false;
@@ -763,7 +760,7 @@ void MainWindow::batch_vdc2vdcprj(){
                                                         QFileDialog::ShowDirsOnly
                                                         | QFileDialog::DontResolveSymlinks);
 
-        if(dir=="")return;
+        if(dir.isEmpty())return;
         for (int l=0;l<(int)filenames.count();l++){
             QString vdcprj = ConversionEngine::convertVDCtoProjectFile(filenames.at(l));
             if (vdcprj.length() < 1){
@@ -772,7 +769,6 @@ void MainWindow::batch_vdc2vdcprj(){
             }
 
             QFileInfo fi(filenames.at(l));
-            QString out = fi.completeBaseName();
             QFile qFile(QDir(dir).filePath(fi.completeBaseName()+".vdcprj"));
             if (qFile.open(QIODevice::WriteOnly)) {
                 QTextStream out(&qFile); out << vdcprj;
@@ -799,7 +795,7 @@ void MainWindow::batch_parametric2vdcprj(){
             int i = 0;
             std::vector<calibrationPoint_t> points =
                     ConversionEngine::readParametricEQFile(filenames.at(l));
-            if(points.size() < 1){
+            if(points.empty()){
                 QMessageBox::warning(this,tr("Error"),tr("Unable to convert this file: %1").arg(filenames.at(l)));
                 return;
             }
