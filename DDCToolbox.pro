@@ -92,7 +92,6 @@ TRANSLATIONS += \
         translations/ddctoolbox_en.ts
 
 !contains(CONFIG, wasm) {
-    include ($$PWD/3rdparty/QSimpleUpdater/QSimpleUpdater.pri)
     include ($$PWD/3rdparty/WebLoader/WebLoader.pri)
 }
 

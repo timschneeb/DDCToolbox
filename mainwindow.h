@@ -16,10 +16,6 @@
 #include "item/customfilteritem.h"
 #include "utils/tableproxy.h"
 
-#ifndef IS_WASM
-#include <QSimpleUpdater.h>
-#endif
-
 namespace Ui {
 class MainWindow;
 }
