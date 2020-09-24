@@ -87,10 +87,6 @@ FORMS += \
         item/customfilteritem.ui \
         mainwindow.ui
 
-TRANSLATIONS += \
-        translations/ddctoolbox_de.ts \
-        translations/ddctoolbox_en.ts
-
 !contains(CONFIG, wasm) {
     include ($$PWD/3rdparty/WebLoader/WebLoader.pri)
 }
@@ -113,7 +109,3 @@ unix {
 
 RESOURCES += \
     resources.qrc
-
-DISTFILES += \
-    translations/ddctoolbox_de.ts \
-    translations/ddctoolbox_en.ts
