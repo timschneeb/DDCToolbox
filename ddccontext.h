@@ -24,6 +24,10 @@ public:
     std::vector<float> GetGroupDelayTable(int nBandCount, double dSRate);
     std::list<double> ExportCoeffs(double dSamplingRate);
 
+    std::map<int, biquad*> GetFilterBank() const{
+        return m_lstFilterBank;
+    };
+
 private:
     std::mutex mtx;
     std::map<int,biquad*> m_lstFilterBank;

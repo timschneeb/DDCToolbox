@@ -15,10 +15,6 @@ biquad::biquad()
     internalBiquadCoeffs[4] = 0.0;
 }
 
-uint32_t biquad::getId(){
-    return m_id;
-}
-
 void biquad::RefreshFilter(uint32_t id, Type type, double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
 {
     m_isCustom = false;
@@ -40,13 +36,13 @@ void biquad::RefreshFilter(uint32_t id, Type type, double dbGain, double centreF
     iirroots(-internalBiquadCoeffs[3], -internalBiquadCoeffs[4], roots);
     double pole1Magnitude = sqrt(roots[0] * roots[0] + roots[1] * roots[1]);
     double pole2Magnitude = sqrt(roots[2] * roots[2] + roots[3] * roots[3]);
-    m_isStable = 0; // Assume all pole is unstable
+    m_isStable = UNSTABLE; // Assume all pole is unstable
     if (pole1Magnitude < 1.0 && pole2Magnitude < 1.0)
     {
         if (1.0 - pole1Magnitude < 8e-14 || 1.0 - pole2Magnitude < 8e-14)
-            m_isStable = 2; // Not so stable, due to our tool text formatting OR V4A string inaccuracy
+            m_isStable = PARTIALLY_STABLE; // Not so stable, due to our tool text formatting OR V4A string inaccuracy
         else
-            m_isStable = 1; // Perfectly stable
+            m_isStable = STABLE; // Perfectly stable
     }
 }
 void biquad::RefreshFilter(uint32_t id, Type type, customFilter_t c441, customFilter_t c48)
@@ -68,13 +64,13 @@ void biquad::RefreshFilter(uint32_t id, Type type, customFilter_t c441, customFi
     iirroots(-internalBiquadCoeffs[3], -internalBiquadCoeffs[4], roots);
     double pole1Magnitude = sqrt(roots[0] * roots[0] + roots[1] * roots[1]);
     double pole2Magnitude = sqrt(roots[2] * roots[2] + roots[3] * roots[3]);
-    m_isStable = 0; // Assume all pole is unstable
+    m_isStable = UNSTABLE; // Assume all pole is unstable
     if (pole1Magnitude < 1.0 && pole2Magnitude < 1.0)
     {
         if (1.0 - pole1Magnitude < 8e-14 || 1.0 - pole2Magnitude < 8e-14)
-            m_isStable = 2; // Not so stable, due to our tool text formatting OR V4A string inaccuracy
+            m_isStable = PARTIALLY_STABLE; // Not so stable, due to our tool text formatting OR V4A string inaccuracy
         else
-            m_isStable = 1; // Perfectly stable
+            m_isStable = STABLE; // Perfectly stable
     }
 }
 
@@ -240,7 +236,7 @@ std::list<double> biquad::ExportCoeffs(double dSamplingRate)
     else
         return ExportCoeffs(m_dFilterType,m_dFilterGain,m_dFilterFreq,dSamplingRate,m_dFilterBQ,m_isBandwidthOrS);
 }
-int biquad::IsStable() const{
+biquad::Stability biquad::IsStable() const {
     // Check if filter is stable/usable/barely numerically stable
     return m_isStable;
 }

@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        dialog/StabilityReport.cpp \
         utils/autoeqclient.cpp \
         biquad.cpp \
         ddccontext.cpp \
@@ -49,6 +50,7 @@ SOURCES += \
         utils/undocmd.cpp
 
 HEADERS += \
+        dialog/StabilityReport.h \
         utils/autoeqclient.h \
         biquad.h \
         ddccontext.h \
@@ -77,6 +79,7 @@ HEADERS += \
         utils/vdcimporter.h
 
 FORMS += \
+        dialog/StabilityReport.ui \
         dialog/addpoint.ui \
         dialog/autoeqselector.ui \
         dialog/calc.ui \

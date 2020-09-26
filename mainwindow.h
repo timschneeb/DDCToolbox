@@ -49,6 +49,8 @@ public:
     };
     explicit MainWindow(QWidget *parent = nullptr);
     void setActiveFile(const QString&,bool=false);
+    int getRowById(uint32_t id);
+
     QString currentFile = "";
     ~MainWindow();
 

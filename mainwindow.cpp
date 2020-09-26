@@ -16,6 +16,7 @@
 #include <QMessageBox>
 #include <QMessageBox>
 #include <QtGlobal>
+#include <dialog/StabilityReport.h>
 #include <dialog/autoeqselector.h>
 #include <map>
 #include <vector>
@@ -203,7 +204,7 @@ void MainWindow::loadDDCProject()
 
 #ifdef IS_WASM
     auto fileContentReady = [this,_loadProject](const QString &fileName, const QByteArray &fileContent) {
-ui->groupBox->setTitle(fileContent);
+        ui->groupBox->setTitle(fileContent);
         QString name = (fileName.isEmpty() ? "project.vdcprj" : fileName);
         QFile file(name);
         if(file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -380,31 +381,17 @@ void MainWindow::shiftSelection(){
     else
         QMessageBox::information(this,tr("Shift selection"),tr("No rows selected"));
 }
+
 void MainWindow::CheckStability(){
-    if(lock_actions)return;
-    int unstableCount = 0;
-    QString stringbuilder("");
-    for (int i = 0; i < ui->listView_DDCPoints->rowCount(); i++){
-        int freq = (int)getValue(DataType::freq,i);
-        QString filtertype = typeToString(getType(i));
-        const biquad* filter = g_dcDDCContext->GetFilter(freq);
-        if(filter != nullptr){
-            int stability = filter->IsStable();
-            if(stability == 0){
-                unstableCount++;
-                stringbuilder += QString(tr("Fatal error: Pole of %1 at %2Hz (row %3) outside the unit circle\n")).arg(filtertype).arg(freq).arg(i+1);
-            }
-            else if(stability == 2){
-                unstableCount++;
-                stringbuilder += QString(tr("Warning: Pole of %1 at %2Hz (row %3) approach to unit circle\n")).arg(filtertype).arg(freq).arg(i+1);
-            }
-        }
-    }
-    if(unstableCount <= 0)
-        QMessageBox::information(this,tr("Stability check"),QString(tr("All filters appear to be stable.")));
-    else{
-        QMessageBox::warning(this,tr("Stability check"),QString(tr("One or more filters are potentially unstable:\n\n%1\nPlease review these filter and run this check again.")).arg(stringbuilder));
-    }
+    if(lock_actions)
+        return;
+
+    auto s = new StabilityReport(*g_dcDDCContext, this);
+    if(s->isReportPositive())
+        QMessageBox::information(this, "Stability check", "All filters appear to be stable");
+    else
+        s->exec();
+    delete s;
 }
 
 //---Editor-Internal
@@ -691,9 +678,17 @@ void MainWindow::exportVDC()
 
     if (p1.empty() || p2.empty())
     {
-        QMessageBox::warning(this,tr("Error"),tr("Failed to export to VDC"));
+        QMessageBox::warning(this,tr("Error"),tr("Failed to export to VDC. No valid data found"));
         return;
     }
+
+    auto s = new StabilityReport(*g_dcDDCContext, this);
+    if(!s->isReportPositive()){
+        s->exec();
+        delete s;
+        return;
+    }
+    delete s;
 
 #ifdef IS_WASM
     ProjectManager::exportVDC(".tmp_proj.vdc", p1, p2);
@@ -837,4 +832,13 @@ biquad::Type MainWindow::getType(int row){
 }
 uint32_t MainWindow::getId(int row){
     return ui->listView_DDCPoints->item(row,0)->data(Qt::UserRole).toUInt();
+}
+
+int MainWindow::getRowById(uint32_t id)
+{
+    for(int i = 0; i < ui->listView_DDCPoints->rowCount(); i++){
+        if(id == getId(i))
+            return i;
+    }
+    return -1;
 }

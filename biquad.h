@@ -34,6 +34,14 @@ public:
         CUSTOM,
         INVALID = 0xFF
     };
+
+    enum Stability
+    {
+        UNSTABLE = 0,
+        STABLE = 1,
+        PARTIALLY_STABLE = 2
+    };
+
     biquad();
     void RefreshFilter(uint32_t id, Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
     void RefreshFilter(uint32_t id, Type type, customFilter_t c441, customFilter_t c48);
@@ -46,8 +54,19 @@ public:
     double PhaseResponseAt(double centreFreq, double fs);
     double toMs(double sample, double fs);
     double GroupDelayAt(double centreFreq, double fs);
-    int IsStable() const;
-    uint32_t getId();
+    Stability IsStable() const;
+
+    uint32_t GetId() const{
+        return m_id;
+    }
+
+    Type GetFilterType() const{
+        return m_dFilterType;
+    };
+
+    double GetFrequency() const{
+        return m_dFilterFreq;
+    };
 
 private:
     double internalBiquadCoeffs[5];
@@ -56,7 +75,7 @@ private:
     double m_dFilterGain;
     Type m_dFilterType;
     bool m_isBandwidthOrS;
-    int m_isStable;
+    Stability m_isStable;
     bool m_isCustom;
     uint32_t m_id;
     customFilter_t m_custom441;
