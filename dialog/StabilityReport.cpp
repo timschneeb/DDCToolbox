@@ -4,6 +4,8 @@
 #include "utils/filtertypes.h"
 #include "mainwindow.h"
 
+#include <cassert>
+
 StabilityReport::StabilityReport(const DDCContext& ctx, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::StabilityReport)
