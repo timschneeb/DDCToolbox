@@ -21,7 +21,7 @@ class MainWindow;
 }
 
 namespace Global {
-static Biquad::Type old_type = Biquad::Type::PEAKING;
+static FilterType old_type = FilterType::PEAKING;
 static int old_freq = 0;
 static double old_bw = 0;
 static double old_gain = 0;
@@ -106,10 +106,10 @@ private:
 
     bool markerPointsVisible = false;
 
-    Biquad::Type getType(int row);
+    FilterType getType(int row);
     uint32_t getId(int row);
     double getValue(DataType dat,int row);
-    uint32_t insertData(Biquad::Type type,int freq,double band,double gain,bool toggleSorting = true);
+    uint32_t insertData(FilterType type,int freq,double band,double gain,bool toggleSorting = true);
 
 };
 

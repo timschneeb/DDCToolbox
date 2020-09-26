@@ -18,7 +18,7 @@ StabilityReport::StabilityReport(const DDCContext& ctx, QWidget *parent) :
     for (auto point : ctx.GetFilterBank()){
         int id               = point.first;
         Biquad* filter       = point.second;
-        QString filtertype   = typeToString(filter->GetFilterType());
+        QString filtertype   = FilterType(filter->GetFilterType());
 
         if(filter != nullptr){
             QString issue;

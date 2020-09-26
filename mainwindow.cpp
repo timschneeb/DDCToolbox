@@ -130,7 +130,7 @@ void MainWindow::saveAsDDCProject(bool ask,QString path,bool compatibilitymode)
             cal.gain = getValue(DataType::gain,i);
             cal.type = getType(i);
             cal.id = getId(i);
-            if(cal.type == Biquad::CUSTOM){
+            if(cal.type == FilterType::CUSTOM){
                 cal.custom441 = ((CustomFilterItem*)ui->listView_DDCPoints->cellWidget(i,3))->getCoefficients(false);
                 cal.custom48 = ((CustomFilterItem*)ui->listView_DDCPoints->cellWidget(i,3))->getCoefficients(true);
             }
@@ -179,7 +179,7 @@ void MainWindow::loadDDCProject()
 
             for(auto cal : project_data){
                 uint32_t id = insertData(cal.type,cal.freq,cal.bw,cal.gain,false);
-                if(cal.type == Biquad::CUSTOM){
+                if(cal.type == FilterType::CUSTOM){
                     newCustomFilter(cal.custom441,cal.custom48,ui->listView_DDCPoints,ui->listView_DDCPoints->rowCount()-1);
                     g_dcDDCContext->AddFilter(id,cal.custom441,cal.custom48);
                 } else {
@@ -294,7 +294,7 @@ void MainWindow::clearPoint(bool trackundo){
             cal.gain = getValue(DataType::gain,i);
             cal.type = getType(i);
             cal.id = getId(i);
-            if(cal.type == Biquad::CUSTOM){
+            if(cal.type == FilterType::CUSTOM){
                 cal.custom441 = ((CustomFilterItem*)ui->listView_DDCPoints->cellWidget(i,3))->getCoefficients(false);
                 cal.custom48 = ((CustomFilterItem*)ui->listView_DDCPoints->cellWidget(i,3))->getCoefficients(true);
             }
@@ -312,7 +312,7 @@ void MainWindow::clearPoint(bool trackundo){
         Global::old_freq = 0;
         Global::old_bw = 0;
         Global::old_gain = 0;
-        Global::old_type = (Biquad::Type)0;
+        Global::old_type = FilterType::PEAKING;
         Global::old_custom441 = defaultCustomFilter();
         Global::old_custom48 = defaultCustomFilter();
 
@@ -337,7 +337,7 @@ void MainWindow::invertSelection(){
             cal.gain = getValue(DataType::gain,row);
             cal.type = getType(row);
             cal.id = getId(row);
-            if(cal.type != Biquad::CUSTOM)
+            if(cal.type != FilterType::CUSTOM)
                 cal_table.push_back(cal);
         }
         QUndoCommand *invertCommand = new InvertCommand(ui->listView_DDCPoints,
@@ -365,7 +365,7 @@ void MainWindow::shiftSelection(){
             cal.gain = getValue(DataType::gain,row);
             cal.type = getType(row);
             cal.id = getId(row);
-            if(cal.type != Biquad::CUSTOM && cal.type != Biquad::UNITY_GAIN)
+            if(cal.type != FilterType::CUSTOM && cal.type != FilterType::UNITY_GAIN)
                 cal_table.push_back(cal);
         }
 
@@ -407,7 +407,7 @@ void MainWindow::editCell(QTableWidgetItem* item){
     if(ui->listView_DDCPoints->rowCount() <= 0){
         return;
     }
-    if(getType(row)==Biquad::CUSTOM){
+    if(getType(row)==FilterType::CUSTOM){
         if(sender()==ui->listView_DDCPoints){
             Global::old_freq = (int)getValue(DataType::freq,row);
             //dirty check if custom element is new created by addpoint.
@@ -511,7 +511,7 @@ void MainWindow::editCell(QTableWidgetItem* item){
     }
     //else qDebug() << "Invalid input data";
 }
-uint32_t MainWindow::insertData(Biquad::Type type,int freq,double band,double gain, bool toggleSorting){
+uint32_t MainWindow::insertData(FilterType type,int freq,double band,double gain, bool toggleSorting){
     if(toggleSorting)ui->listView_DDCPoints->setSortingEnabled(false);
     calibrationPoint_t c;
     c.id = g_dcDDCContext->GenerateId();
@@ -621,11 +621,11 @@ void MainWindow::importClassicVDC(){
         QTextStream stream(&data);
         while (stream.readLineInto(&line)) {
             calibrationPoint_t cal = ProjectManager::readSingleLine(line);
-            if(cal.type == Biquad::INVALID)
+            if(cal.type == FilterType::INVALID)
                 continue;
 
             uint32_t id = insertData(cal.type,cal.freq,cal.bw,cal.gain,false);
-            if(cal.type == Biquad::CUSTOM){
+            if(cal.type == FilterType::CUSTOM){
                 newCustomFilter(cal.custom441,cal.custom48,ui->listView_DDCPoints,ui->listView_DDCPoints->rowCount()-1);
                 g_dcDDCContext->AddFilter(id,cal.custom441,cal.custom48);
             } else {
@@ -659,9 +659,9 @@ void MainWindow::importParametricAutoEQ(){
 
         for(auto cal : points){
             lock_actions = true;
-            uint32_t id = insertData(Biquad::Type::PEAKING,cal.freq,(double)cal.bw,(double)cal.gain);
+            uint32_t id = insertData(FilterType::PEAKING,cal.freq,(double)cal.bw,(double)cal.gain);
             lock_actions = false;
-            g_dcDDCContext->AddFilter(id,Biquad::Type::PEAKING,cal.freq, (double)cal.gain, (double)cal.bw, 48000.0,true);
+            g_dcDDCContext->AddFilter(id,FilterType::PEAKING,cal.freq, (double)cal.gain, (double)cal.bw, 48000.0,true);
 
         }
         ui->listView_DDCPoints->sortItems(1,Qt::SortOrder::AscendingOrder);
@@ -729,9 +729,9 @@ void MainWindow::downloadFromAutoEQ(){
 
         for(auto cal : points){
             lock_actions = true;
-            uint32_t id = insertData(Biquad::Type::PEAKING,cal.freq,(double)cal.bw,(double)cal.gain);
+            uint32_t id = insertData(FilterType::PEAKING,cal.freq,(double)cal.bw,(double)cal.gain);
             lock_actions = false;
-            g_dcDDCContext->AddFilter(id,Biquad::Type::PEAKING,cal.freq, (double)cal.gain, (double)cal.bw, 48000.0,true);
+            g_dcDDCContext->AddFilter(id,FilterType::PEAKING,cal.freq, (double)cal.gain, (double)cal.bw, 48000.0,true);
 
         }
         ui->listView_DDCPoints->sortItems(1,Qt::SortOrder::AscendingOrder);
@@ -826,9 +826,8 @@ double MainWindow::getValue(DataType dat,int row){
         return item->data(Qt::DisplayRole).toDouble();
     }
 }
-Biquad::Type MainWindow::getType(int row){
-    QString type = ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toString();
-    return stringToType(type);
+FilterType MainWindow::getType(int row){
+    return FilterType(ui->listView_DDCPoints->item(row,0)->data(Qt::DisplayRole).toString());
 }
 uint32_t MainWindow::getId(int row){
     return ui->listView_DDCPoints->item(row,0)->data(Qt::UserRole).toUInt();

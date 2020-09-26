@@ -15,7 +15,7 @@ bool ProjectManager::writeProjectFile(std::vector<calibrationPoint_t> points,
     if(!compatibilitymode){
         bool compatible = true;
         for(calibrationPoint_t point:points)
-            if(point.type!=Biquad::PEAKING)
+            if(point.type!=FilterType::PEAKING)
                 compatible = false;
         compatibilitymode = compatible;
     }
@@ -37,14 +37,14 @@ bool ProjectManager::writeProjectFile(std::vector<calibrationPoint_t> points,
         {
             calibrationPoint_t cal = points.at(i);
             outStream << "# Calibration Point " + QString::number(i + 1) + n;
-            if(cal.type==Biquad::CUSTOM){
-                outStream << QString::number(cal.freq) + ",0,0," + typeToString(cal.type) + ";";
+            if(cal.type==FilterType::CUSTOM){
+                outStream << QString::number(cal.freq) + ",0,0," + (QString)cal.type + ";";
                 outStream << QString::number(cal.custom441.a0,'f',16) + "," + QString::number(cal.custom441.a1,'f',16) + "," + QString::number(cal.custom441.a2,'f',16) + ",";
                 outStream << QString::number(cal.custom441.b0,'f',16) + "," + QString::number(cal.custom441.b1,'f',16) + "," + QString::number(cal.custom441.b2,'f',16) + ",";
                 outStream << QString::number(cal.custom48.a0,'f',16) + "," + QString::number(cal.custom48.a1,'f',16) + "," + QString::number(cal.custom48.a2,'f',16) + ",";
                 outStream << QString::number(cal.custom48.b0,'f',16) + "," + QString::number(cal.custom48.b1,'f',16) + "," + QString::number(cal.custom48.b2,'f',16)  + n;
             } else
-                outStream << QString::number(cal.freq) + "," + QString::number(cal.bw) + "," + QString::number(cal.gain) + "," + typeToString(cal.type) + n;
+                outStream << QString::number(cal.freq) + "," + QString::number(cal.bw) + "," + QString::number(cal.gain) + "," + (QString)cal.type + n;
         }
     }
     outStream << n;
@@ -110,7 +110,7 @@ std::vector<calibrationPoint_t> ProjectManager::readProjectFile(const QString& f
         QTextStream in(&file);
         while (!in.atEnd()){
             auto point = readSingleLine(in.readLine().trimmed());
-            if(point.type != Biquad::INVALID)
+            if(point.type != FilterType::INVALID)
                 buffer.push_back(point);
         }
         file.close();
@@ -123,7 +123,7 @@ calibrationPoint_t ProjectManager::readSingleLine(const QString& str){
     cal.freq = 0;
     cal.bw = 0;
     cal.gain = 0;
-    cal.type = Biquad::INVALID;
+    cal.type = FilterType::INVALID;
     if (str != nullptr || str != "")
     {
         if ((str.length() > 0) && !str.startsWith("#"))
@@ -149,7 +149,7 @@ calibrationPoint_t ProjectManager::readSingleLine(const QString& str){
                     if(isnan(num2)||isnan(num3))return cal;
                     if(isinf(num2)||isinf(num3))return cal;
 
-                    cal.type = Biquad::PEAKING;
+                    cal.type = FilterType::PEAKING;
                     cal.freq = result;
                     cal.bw = num2;
                     cal.gain = num3;
@@ -205,7 +205,7 @@ calibrationPoint_t ProjectManager::readSingleLine(const QString& str){
                         counter++;
                     }
 
-                    cal.type = Biquad::CUSTOM;
+                    cal.type = FilterType::CUSTOM;
                     cal.custom441 = c441;
                     cal.custom48 = c48;
                 }
@@ -221,7 +221,7 @@ calibrationPoint_t ProjectManager::readSingleLine(const QString& str){
                         if(isnan(num2)||isnan(num3))return cal;
                         if(isinf(num2)||isinf(num3))return cal;
 
-                        Biquad::Type filtertype = stringToType(strArray[3].trimmed());
+                        FilterType filtertype(strArray[3].trimmed());
                         cal.type = filtertype;
                         cal.freq = result;
                         cal.bw = num2;

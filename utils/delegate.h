@@ -17,7 +17,7 @@ public:
       if (role != Qt::DisplayRole && role != Qt::EditRole) return {};
       const auto & filter = m_data[index.row()];
       switch (index.column()) {
-      case 0: return filter->;
+      case 0: return filter->GetFilterType();
       case 1: return filter.model();
       case 2: return filter.registrationNumber();
       default: return {};
@@ -33,7 +33,7 @@ public:
       default: return {};
       }
    }
-   void append(const Vehicle & vehicle) {
+   void append(const Biquad& vehicle) {
       beginInsertRows({}, m_data.count(), m_data.count());
       m_data.append(vehicle);
       endInsertRows();
@@ -42,25 +42,9 @@ public:
 */
 class SaveItemDelegate : public QStyledItemDelegate {
 public:
-    Biquad::Type getType(const QString &_type) const{
-        if(_type=="Peaking")return Biquad::Type::PEAKING;
-        else if(_type=="Low Pass")return Biquad::Type::LOW_PASS;
-        else if(_type=="High Pass")return Biquad::Type::HIGH_PASS;
-        else if(_type=="Band Pass")return Biquad::Type::BAND_PASS2;
-        else if(_type=="Band Pass (peak gain = bw)")return Biquad::Type::BAND_PASS1;
-        else if(_type=="All Pass")return Biquad::Type::ALL_PASS;
-        else if(_type=="Notch")return Biquad::Type::NOTCH;
-        else if(_type=="Low Shelf")return Biquad::Type::LOW_SHELF;
-        else if(_type=="High Shelf")return Biquad::Type::HIGH_SHELF;
-        else if(_type=="Unity Gain")return Biquad::Type::UNITY_GAIN;
-        else if(_type=="One-Pole Low Pass")return Biquad::Type::ONEPOLE_LOWPASS;
-        else if(_type=="One-Pole High Pass")return Biquad::Type::ONEPOLE_HIGHPASS;
-        else if(_type=="Custom")return Biquad::Type::CUSTOM;
-        return Biquad::Type::PEAKING;
-    }
-    Biquad::Type getType(const QModelIndex &index) const{
+    FilterType getType(const QModelIndex &index) const{
         QString _type = index.sibling(index.row(),0).data(Qt::DisplayRole).toString();
-        return getType(_type);
+        return FilterType(_type.toLocal8Bit().constData());
     }
 
     QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option,
@@ -69,20 +53,20 @@ public:
         const QString currentType = index.sibling(index.row(),0).data(Qt::DisplayRole).toString();
 
         if (index.column()==1) {
-            switch (getType(currentType)) {
-            case Biquad::UNITY_GAIN:
-            case Biquad::CUSTOM:
+            switch (FilterType(currentType.toLocal8Bit().constData())) {
+            case FilterType::UNITY_GAIN:
+            case FilterType::CUSTOM:
                 return nullptr;
             default:
                 break;
             }
         }
         else if (index.column()==2) {
-            switch (getType(currentType)) {
-            case Biquad::UNITY_GAIN:
-            case Biquad::ONEPOLE_LOWPASS:
-            case Biquad::ONEPOLE_HIGHPASS:
-            case Biquad::CUSTOM:
+            switch (FilterType(currentType.toLocal8Bit().constData())) {
+            case FilterType::UNITY_GAIN:
+            case FilterType::ONEPOLE_LOWPASS:
+            case FilterType::ONEPOLE_HIGHPASS:
+            case FilterType::CUSTOM:
                 return nullptr;
                 break;
             default:
@@ -90,11 +74,11 @@ public:
             }
         }
         else if (index.column()==3) {
-            switch (getType(currentType)) {
-            case Biquad::PEAKING:
-            case Biquad::LOW_SHELF:
-            case Biquad::UNITY_GAIN:
-            case Biquad::HIGH_SHELF:
+            switch (FilterType(currentType.toLocal8Bit().constData())) {
+            case FilterType::PEAKING:
+            case FilterType::LOW_SHELF:
+            case FilterType::UNITY_GAIN:
+            case FilterType::HIGH_SHELF:
                 break;
             default:
                 return nullptr;
@@ -118,32 +102,25 @@ public:
 
         if(index.column()==0){
             QComboBox *cb = new QComboBox(parent);
-            const int row = index.row();
-            cb->addItem(QString("Peaking"));
-            cb->addItem(QString("Low Pass"));
-            cb->addItem(QString("High Pass"));
-            cb->addItem(QString("Band Pass"));
-            cb->addItem(QString("Band Pass (peak gain = bw)"));
-            cb->addItem(QString("Notch"));
-            cb->addItem(QString("All Pass"));
-            cb->addItem(QString("Low Shelf"));
-            cb->addItem(QString("High Shelf"));
-            cb->addItem(QString("Unity Gain"));
-            cb->addItem(QString("One-Pole Low Pass"));
-            cb->addItem(QString("One-Pole High Pass"));
-            cb->addItem(QString("Custom"));
+
+            for(ulong i = 0; i < FilterType::string_map_size; i++){
+                if(FilterType::string_map[i].first == FilterType::INVALID)
+                    continue;
+                cb->addItem(FilterType::string_map[i].second);
+            }
+
             return cb;
         }
         else if (index.column()==2&&sp) {
-            switch (getType(currentType)) {
-            case Biquad::LOW_SHELF:
-            case Biquad::HIGH_SHELF:
+            switch (FilterType(currentType.toLocal8Bit().constData())) {
+            case FilterType::LOW_SHELF:
+            case FilterType::HIGH_SHELF:
                 sp->setPrefix("S: ");
                 break;
-            case Biquad::UNITY_GAIN:
-            case Biquad::ONEPOLE_LOWPASS:
-            case Biquad::ONEPOLE_HIGHPASS:
-            case Biquad::CUSTOM:
+            case FilterType::UNITY_GAIN:
+            case FilterType::ONEPOLE_LOWPASS:
+            case FilterType::ONEPOLE_HIGHPASS:
+            case FilterType::CUSTOM:
                 sp->setPrefix("");
                 break;
             default:
@@ -157,11 +134,11 @@ public:
     {
         const QString currentType = index.sibling(index.row(),0).data(Qt::DisplayRole).toString();
         if (index.column()==3) {
-            switch (getType(currentType)) {
-            case Biquad::PEAKING:
-            case Biquad::LOW_SHELF:
-            case Biquad::UNITY_GAIN:
-            case Biquad::HIGH_SHELF:
+            switch (FilterType(currentType.toLocal8Bit().constData())) {
+            case FilterType::PEAKING:
+            case FilterType::LOW_SHELF:
+            case FilterType::UNITY_GAIN:
+            case FilterType::HIGH_SHELF:
                 QStyledItemDelegate::paint(painter,option,index);
                 return;
             default:
@@ -170,11 +147,11 @@ public:
             }
         }
         else if (index.column()==2) {
-            switch (getType(currentType)) {
-            case Biquad::UNITY_GAIN:
-            case Biquad::ONEPOLE_LOWPASS:
-            case Biquad::ONEPOLE_HIGHPASS:
-            case Biquad::CUSTOM:
+            switch (FilterType(currentType.toLocal8Bit().constData())) {
+            case FilterType::UNITY_GAIN:
+            case FilterType::ONEPOLE_LOWPASS:
+            case FilterType::ONEPOLE_HIGHPASS:
+            case FilterType::CUSTOM:
                 //Leave item empty
                 return;
             default:
@@ -183,9 +160,9 @@ public:
             }
         }
         else if (index.column()==1) {
-            switch (getType(currentType)) {
-            case Biquad::UNITY_GAIN:
-            case Biquad::CUSTOM:
+            switch (FilterType(currentType.toLocal8Bit().constData())) {
+            case FilterType::UNITY_GAIN:
+            case FilterType::CUSTOM:
                 //Leave item empty
                 return;
             default:

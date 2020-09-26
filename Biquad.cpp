@@ -15,7 +15,7 @@ Biquad::Biquad()
     internalBiquadCoeffs[4] = 0.0;
 }
 
-void Biquad::RefreshFilter(uint32_t id, Type type, double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
+void Biquad::RefreshFilter(uint32_t id, FilterType type, double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
 {
     m_isCustom = false;
     m_dFilterType = type;
@@ -46,7 +46,7 @@ void Biquad::RefreshFilter(uint32_t id, Type type, double dbGain, double centreF
     }
 }
 
-void Biquad::RefreshFilter(uint32_t id, Type type, customFilter_t c441, customFilter_t c48)
+void Biquad::RefreshFilter(uint32_t id, FilterType type, customFilter_t c441, customFilter_t c48)
 {
     m_isCustom = true;
     m_custom441 = c441;
@@ -75,7 +75,7 @@ void Biquad::RefreshFilter(uint32_t id, Type type, customFilter_t c441, customFi
     }
 }
 
-std::list<double> Biquad::ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
+std::list<double> Biquad::ExportCoeffs(FilterType type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
 {
     if (centreFreq <= 2.2204460492503131e-016 || fs <= 2.2204460492503131e-016){
         std::list<double> nulllist;
@@ -83,7 +83,7 @@ std::list<double> Biquad::ExportCoeffs(Type type,double dbGain, double centreFre
     }
 
     double d;
-    if (type == PEAKING || type == LOW_SHELF || type == HIGH_SHELF)
+    if (type == FilterType::PEAKING || type == FilterType::LOW_SHELF || type == FilterType::HIGH_SHELF)
         d = pow(10.0, dbGain / 40.0);
     else
         d = pow(10.0, dbGain / 20.0);
@@ -94,7 +94,7 @@ std::list<double> Biquad::ExportCoeffs(Type type,double dbGain, double centreFre
     double alpha;
     if (!isBandwidthOrS) // Q
         alpha = num3 / (2 * dBandwidthOrQOrS);
-    else if (type == LOW_SHELF || type == HIGH_SHELF) // S
+    else if (type == FilterType::LOW_SHELF || type == FilterType::HIGH_SHELF) // S
         alpha = num3 / 2 * sqrt((d + 1 / d) * (1 / dBandwidthOrQOrS - 1) + 2);
     else // BW
         alpha = num3 * sinh(0.693147180559945309417 / 2 * dBandwidthOrQOrS * a / num3);
@@ -104,7 +104,7 @@ std::list<double> Biquad::ExportCoeffs(Type type,double dbGain, double centreFre
 
     switch (type)
     {
-    case LOW_PASS:
+    case FilterType::LOW_PASS:
         B0 = (1.0 - cs) / 2.0;
         B1 = 1.0 - cs;
         B2 = (1.0 - cs) / 2.0;
@@ -112,7 +112,7 @@ std::list<double> Biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A1 = -2.0 * cs;
         A2 = 1.0 - alpha;
         break;
-    case HIGH_PASS:
+    case FilterType::HIGH_PASS:
         B0 = (1.0 + cs) / 2.0;
         B1 = -(1.0 + cs);
         B2 = (1.0 + cs) / 2.0;
@@ -120,7 +120,7 @@ std::list<double> Biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A1 = -2.0 * cs;
         A2 = 1.0 - alpha;
         break;
-    case BAND_PASS1:
+    case FilterType::BAND_PASS1:
         //BPF, constant skirt gain (peak gain = BW)
         B0 = dBandwidthOrQOrS * alpha;// sn / 2;
         B1 = 0;
@@ -129,7 +129,7 @@ std::list<double> Biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A1 = -2 * cs;
         A2 = 1 - alpha;
         break;
-    case BAND_PASS2:
+    case FilterType::BAND_PASS2:
         //BPF, constant 0dB peak gain
         B0 = alpha;
         B1 = 0.0;
@@ -138,7 +138,7 @@ std::list<double> Biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A1 = -2.0 * cs;
         A2 = 1.0 - alpha;
         break;
-    case NOTCH:
+    case FilterType::NOTCH:
         B0 = 1.0;
         B1 = -2.0 * cs;
         B2 = 1.0;
@@ -146,7 +146,7 @@ std::list<double> Biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A1 = -2.0 * cs;
         A2 = 1.0 - alpha;
         break;
-    case ALL_PASS:
+    case FilterType::ALL_PASS:
         B0 = 1.0 - alpha;
         B1 = -2.0 * cs;
         B2 = 1.0 + alpha;
@@ -154,7 +154,7 @@ std::list<double> Biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A1 = -2.0 * cs;
         A2 = 1.0 - alpha;
         break;
-    case PEAKING:
+    case FilterType::PEAKING:
         B0 = 1.0 + (alpha * d);
         B1 = -2.0 * cs;
         B2 = 1.0 - (alpha * d);
@@ -162,7 +162,7 @@ std::list<double> Biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A1 = -2.0 * cs;
         A2 = 1.0 - (alpha / d);
         break;
-    case LOW_SHELF:
+    case FilterType::LOW_SHELF:
         B0 = d * ((d + 1.0) - (d - 1.0) * cs + beta);
         B1 = 2.0 * d * ((d - 1.0) - (d + 1.0) * cs);
         B2 = d * ((d + 1.0) - (d - 1.0) * cs - beta);
@@ -170,7 +170,7 @@ std::list<double> Biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A1 = -2.0 * ((d - 1.0) + (d + 1.0) * cs);
         A2 = (d + 1.0) + (d - 1.0) * cs - beta;
         break;
-    case HIGH_SHELF:
+    case FilterType::HIGH_SHELF:
         B0 = d * ((d + 1.0) + (d - 1.0) * cs + beta);
         B1 = -2.0 * d * ((d - 1.0) + (d + 1.0) * cs);
         B2 = d * ((d + 1.0) + (d - 1.0) * cs - beta);
@@ -178,7 +178,7 @@ std::list<double> Biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A1 = 2.0 * ((d - 1.0) - (d + 1.0) * cs);
         A2 = (d + 1.0) - (d - 1.0) * cs - beta;
         break;
-    case UNITY_GAIN:
+    case FilterType::UNITY_GAIN:
         B0 = d;
         B1 = 0.0;
         B2 = 0.0;
@@ -186,7 +186,7 @@ std::list<double> Biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A1 = 0.0;
         A2 = 0.0;
         break;
-    case ONEPOLE_LOWPASS:
+    case FilterType::ONEPOLE_LOWPASS:
         B0 = tan(M_PI * centreFreq / fs * 0.5);
         A1 = -(1.0 - B0) / (1.0 + B0);
         B1 = B0 = B0 / (1.0 + B0);
@@ -194,7 +194,7 @@ std::list<double> Biquad::ExportCoeffs(Type type,double dbGain, double centreFre
         A0 = 1.0;
         A2 = 0.0;
         break;
-    case ONEPOLE_HIGHPASS:
+    case FilterType::ONEPOLE_HIGHPASS:
         B0 = tan(M_PI * centreFreq / fs * 0.5);
         A1 = -(1.0 - B0) / (1.0 + B0);
         B0 = 1.0 - (B0 / (1.0 + B0));

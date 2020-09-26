@@ -10,9 +10,9 @@ class DDCContext
 {
 public:
     DDCContext();
-    bool AddFilter(uint32_t id, Biquad::Type type,int nFreq, double dGain, double dBandwidth, double dSRate, bool isBWorS);
+    bool AddFilter(uint32_t id, FilterType type,int nFreq, double dGain, double dBandwidth, double dSRate, bool isBWorS);
     bool AddFilter(uint32_t id, customFilter_t c441, customFilter_t c48);
-    bool ModifyFilter(uint32_t id, Biquad::Type type,int nFreq, double dGain, double dBandwidth, double dSRate, bool isBWorS);
+    bool ModifyFilter(uint32_t id, FilterType type,int nFreq, double dGain, double dBandwidth, double dSRate, bool isBWorS);
     bool ModifyFilter(uint32_t id, customFilter_t c441, customFilter_t c48);
     void ClearFilters();
     bool RemoveFilter(uint32_t id);

@@ -10,7 +10,7 @@ void tableproxy::addRow(calibrationPoint_t cal){
     QTableWidgetItem *c1 = new QTableWidgetItem();
     QTableWidgetItem *c2 = new QTableWidgetItem();
     QTableWidgetItem *c3 = new QTableWidgetItem();
-    c0->setData(Qt::DisplayRole, typeToString(cal.type));
+    c0->setData(Qt::DisplayRole, (QString)cal.type);
     c1->setData(Qt::DisplayRole, cal.freq);
     c2->setData(Qt::DisplayRole, (double)cal.bw);
     c3->setData(Qt::DisplayRole, (double)cal.gain);
@@ -24,7 +24,7 @@ void tableproxy::addRow(calibrationPoint_t cal){
 
 void tableproxy::editRow(calibrationPoint_t cal, int row){
     if(row < tw->rowCount()){
-        tw->item(row,0)->setData(Qt::DisplayRole,typeToString(cal.type));
+        tw->item(row,0)->setData(Qt::DisplayRole,(QString)cal.type);
         tw->item(row,1)->setData(Qt::DisplayRole,cal.freq);
         tw->item(row,2)->setData(Qt::DisplayRole,(double)cal.bw);
         tw->item(row,3)->setData(Qt::DisplayRole,(double)cal.gain);

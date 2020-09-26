@@ -50,7 +50,7 @@ void AddCommand::redo()
 
     (new tableproxy(tw))->addRow(cal);
 
-    if(cal.type==Biquad::CUSTOM){
+    if(cal.type==FilterType::CUSTOM){
         newCustomFilter(cal.custom441,cal.custom48,tw,tw->rowCount()-1);
         ddcContext->AddFilter(cal.id, cal.custom441, cal.custom48);
         emit tw->itemChanged(tw->item(tw->rowCount()-1,3));
@@ -97,7 +97,7 @@ void EditCommand::undo()
     tw->setSortingEnabled(false);
     (new tableproxy(tw))->editRow(oldcal,row);
 
-    if(oldcal.type==Biquad::CUSTOM){
+    if(oldcal.type==FilterType::CUSTOM){
         newCustomFilter(oldcal.custom441,oldcal.custom48,tw,row);
         ddcContext->ModifyFilter(oldcal.id, oldcal.custom441, oldcal.custom48);
     }
@@ -120,7 +120,7 @@ void EditCommand::redo()
 
     (new tableproxy(tw))->editRow(cal,row);
 
-    if(cal.type==Biquad::CUSTOM){
+    if(cal.type==FilterType::CUSTOM){
         newCustomFilter(cal.custom441,cal.custom48,tw,row);
         ddcContext->ModifyFilter(cal.id, cal.custom441, cal.custom48);
     }
@@ -164,7 +164,7 @@ void ClearCommand::undo()
     for(auto cal : cal_table)
     {
         (new tableproxy(tw))->addRow(cal);
-        if(cal.type==Biquad::CUSTOM){
+        if(cal.type==FilterType::CUSTOM){
             newCustomFilter(cal.custom441, cal.custom48,tw,tw->rowCount()-1);
             ddcContext->AddFilter(cal.id,cal.custom441, cal.custom48);
         }
@@ -220,7 +220,7 @@ void RemoveCommand::undo()
     for(auto cal : cal_table)
     {
         (new tableproxy(tw))->addRow(cal);
-        if(cal.type==Biquad::CUSTOM){
+        if(cal.type==FilterType::CUSTOM){
             newCustomFilter(cal.custom441,cal.custom48,tw,tw->rowCount()-1);
             ddcContext->AddFilter(cal.id,cal.custom441,cal.custom48);
         }
@@ -249,8 +249,8 @@ void RemoveCommand::redo()
         cal.freq = tw->item(i,1)->data(Qt::DisplayRole).toInt();
         cal.bw = tw->item(i,2)->data(Qt::DisplayRole).toDouble();
         cal.gain = tw->item(i,3)->data(Qt::DisplayRole).toDouble();
-        cal.type = stringToType(tw->item(i,0)->data(Qt::DisplayRole).toString());
-        if(cal.type == Biquad::CUSTOM){
+        cal.type = FilterType(tw->item(i,0)->data(Qt::DisplayRole).toString());
+        if(cal.type == FilterType::CUSTOM){
             cal.custom441 = ((CustomFilterItem*)tw->cellWidget(i,3))->getCoefficients(false);
             cal.custom48 = ((CustomFilterItem*)tw->cellWidget(i,3))->getCoefficients(true);
         }

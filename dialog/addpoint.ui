@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>279</width>
+    <width>283</width>
     <height>281</height>
    </rect>
   </property>
@@ -94,73 +94,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QComboBox" name="ftype">
-       <item>
-        <property name="text">
-         <string>Peaking</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Low Pass</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>High Pass</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Band Pass</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Band Pass (peak gain = bw)</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Notch</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>All Pass</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Low Shelf</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>High Shelf</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Unity Gain</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>One-Pole Low Pass</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>One-Pole High Pass</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Custom</string>
-        </property>
-       </item>
-      </widget>
+      <widget class="QComboBox" name="ftype"/>
      </item>
      <item>
       <widget class="QPushButton" name="custom_configure">

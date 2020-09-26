@@ -24,7 +24,7 @@ void DDCContext::UnlockFilter()
 {
     mtx.unlock();
 }
-bool DDCContext::AddFilter(uint32_t id, Biquad::Type type,int nFreq, double dGain, double dBandwidth, double dSRate, bool isBWorS)
+bool DDCContext::AddFilter(uint32_t id, FilterType type,int nFreq, double dGain, double dBandwidth, double dSRate, bool isBWorS)
 {
     if(Exists(id))return false;
     LockFilter();
@@ -44,7 +44,7 @@ bool DDCContext::AddFilter(uint32_t id, customFilter_t c441, customFilter_t c48)
     if (m_lstFilterBank.count(id) <= 0)
     {
         Biquad *biquad = new Biquad();
-        biquad->RefreshFilter(id, Biquad::CUSTOM, c441, c48);
+        biquad->RefreshFilter(id, FilterType::CUSTOM, c441, c48);
         m_lstFilterBank[id] = biquad;
     }
     UnlockFilter();
@@ -58,7 +58,7 @@ void DDCContext::ClearFilters()
     UnlockFilter();
 }
 
-bool DDCContext::ModifyFilter(uint32_t id, Biquad::Type type, int nFreq, double dGain, double dBandwidth, double dSRate,bool isBWorS)
+bool DDCContext::ModifyFilter(uint32_t id, FilterType type, int nFreq, double dGain, double dBandwidth, double dSRate,bool isBWorS)
 {
     if(!Exists(id))return false;
     LockFilter();
@@ -76,7 +76,7 @@ bool DDCContext::ModifyFilter(uint32_t id, customFilter_t c441, customFilter_t c
     LockFilter();
     if (m_lstFilterBank.count(id)>0)
     {
-        m_lstFilterBank[id]->RefreshFilter(id, Biquad::CUSTOM, c441, c48);
+        m_lstFilterBank[id]->RefreshFilter(id, FilterType::CUSTOM, c441, c48);
     }
     UnlockFilter();
     return true;

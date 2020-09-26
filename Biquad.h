@@ -5,6 +5,8 @@
 #include <cfloat>
 #include <cstdint>
 
+#include "FilterType.h"
+
 typedef struct customFilter_s{
     double a0;
     double a1;
@@ -17,24 +19,6 @@ typedef struct customFilter_s{
 class Biquad
 {
 public:
-    enum Type
-    {
-        PEAKING = 0x00,
-        LOW_PASS,
-        HIGH_PASS,
-        BAND_PASS1,
-        BAND_PASS2,
-        NOTCH,
-        ALL_PASS,
-        LOW_SHELF,
-        HIGH_SHELF,
-        UNITY_GAIN,
-        ONEPOLE_LOWPASS,
-        ONEPOLE_HIGHPASS,
-        CUSTOM,
-        INVALID = 0xFF
-    };
-
     enum Stability
     {
         UNSTABLE = 0,
@@ -43,9 +27,9 @@ public:
     };
 
     Biquad();
-    void RefreshFilter(uint32_t id, Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
-    void RefreshFilter(uint32_t id, Type type, customFilter_t c441, customFilter_t c48);
-    std::list<double> ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
+    void RefreshFilter(uint32_t id, FilterType type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
+    void RefreshFilter(uint32_t id, FilterType type, customFilter_t c441, customFilter_t c48);
+    std::list<double> ExportCoeffs(FilterType type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
     std::list<double> ExportCoeffs(double dSamplingRate);
     std::list<double> ExportCoeffs(customFilter_t coeffs);
 
@@ -65,7 +49,7 @@ public:
         return m_id;
     }
 
-    Type GetFilterType() const{
+    FilterType GetFilterType() const{
         return m_dFilterType;
     };
 
@@ -82,7 +66,7 @@ public:
     };
 
     bool IsCustomFilter() const{
-        return m_dFilterType == CUSTOM;
+        return m_dFilterType == FilterType::CUSTOM;
     };
 
     customFilter_t GetCustomFilter(int samplerate) const{
@@ -94,7 +78,7 @@ private:
     double m_dFilterBQ;
     double m_dFilterFreq;
     double m_dFilterGain;
-    Type m_dFilterType;
+    FilterType m_dFilterType;
     bool m_isBandwidthOrS;
     Stability m_isStable;
     bool m_isCustom;
