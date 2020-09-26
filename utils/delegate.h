@@ -6,25 +6,59 @@
 #include <QWidget>
 #include "mainwindow.h"
 
+/*class FilterModel : public QAbstractTableModel {
+   QList<Biquad*> m_data;
+public:
+   FilterModel(QObject * parent = {}) : QAbstractTableModel{parent} {}
+   int rowCount(const QModelIndex &) const override { return m_data.count(); }
+   int columnCount(const QModelIndex &) const override { return 4; }
+
+   QVariant data(const QModelIndex &index, int role) const override {
+      if (role != Qt::DisplayRole && role != Qt::EditRole) return {};
+      const auto & filter = m_data[index.row()];
+      switch (index.column()) {
+      case 0: return filter->;
+      case 1: return filter.model();
+      case 2: return filter.registrationNumber();
+      default: return {};
+      };
+   }
+   QVariant headerData(int section, Qt::Orientation orientation, int role) const override {
+      if (orientation != Qt::Horizontal || role != Qt::DisplayRole) return {};
+      switch (section) {
+      case 0: return "Type";
+      case 1: return "Frequency";
+      case 2: return "Bandwidth/Slope";
+      case 3: return "Gain";
+      default: return {};
+      }
+   }
+   void append(const Vehicle & vehicle) {
+      beginInsertRows({}, m_data.count(), m_data.count());
+      m_data.append(vehicle);
+      endInsertRows();
+   }
+};
+*/
 class SaveItemDelegate : public QStyledItemDelegate {
 public:
-    biquad::Type getType(const QString &_type) const{
-        if(_type=="Peaking")return biquad::Type::PEAKING;
-        else if(_type=="Low Pass")return biquad::Type::LOW_PASS;
-        else if(_type=="High Pass")return biquad::Type::HIGH_PASS;
-        else if(_type=="Band Pass")return biquad::Type::BAND_PASS2;
-        else if(_type=="Band Pass (peak gain = bw)")return biquad::Type::BAND_PASS1;
-        else if(_type=="All Pass")return biquad::Type::ALL_PASS;
-        else if(_type=="Notch")return biquad::Type::NOTCH;
-        else if(_type=="Low Shelf")return biquad::Type::LOW_SHELF;
-        else if(_type=="High Shelf")return biquad::Type::HIGH_SHELF;
-        else if(_type=="Unity Gain")return biquad::Type::UNITY_GAIN;
-        else if(_type=="One-Pole Low Pass")return biquad::Type::ONEPOLE_LOWPASS;
-        else if(_type=="One-Pole High Pass")return biquad::Type::ONEPOLE_HIGHPASS;
-        else if(_type=="Custom")return biquad::Type::CUSTOM;
-        return biquad::Type::PEAKING;
+    Biquad::Type getType(const QString &_type) const{
+        if(_type=="Peaking")return Biquad::Type::PEAKING;
+        else if(_type=="Low Pass")return Biquad::Type::LOW_PASS;
+        else if(_type=="High Pass")return Biquad::Type::HIGH_PASS;
+        else if(_type=="Band Pass")return Biquad::Type::BAND_PASS2;
+        else if(_type=="Band Pass (peak gain = bw)")return Biquad::Type::BAND_PASS1;
+        else if(_type=="All Pass")return Biquad::Type::ALL_PASS;
+        else if(_type=="Notch")return Biquad::Type::NOTCH;
+        else if(_type=="Low Shelf")return Biquad::Type::LOW_SHELF;
+        else if(_type=="High Shelf")return Biquad::Type::HIGH_SHELF;
+        else if(_type=="Unity Gain")return Biquad::Type::UNITY_GAIN;
+        else if(_type=="One-Pole Low Pass")return Biquad::Type::ONEPOLE_LOWPASS;
+        else if(_type=="One-Pole High Pass")return Biquad::Type::ONEPOLE_HIGHPASS;
+        else if(_type=="Custom")return Biquad::Type::CUSTOM;
+        return Biquad::Type::PEAKING;
     }
-    biquad::Type getType(const QModelIndex &index) const{
+    Biquad::Type getType(const QModelIndex &index) const{
         QString _type = index.sibling(index.row(),0).data(Qt::DisplayRole).toString();
         return getType(_type);
     }
@@ -36,8 +70,8 @@ public:
 
         if (index.column()==1) {
             switch (getType(currentType)) {
-            case biquad::UNITY_GAIN:
-            case biquad::CUSTOM:
+            case Biquad::UNITY_GAIN:
+            case Biquad::CUSTOM:
                 return nullptr;
             default:
                 break;
@@ -45,10 +79,10 @@ public:
         }
         else if (index.column()==2) {
             switch (getType(currentType)) {
-            case biquad::UNITY_GAIN:
-            case biquad::ONEPOLE_LOWPASS:
-            case biquad::ONEPOLE_HIGHPASS:
-            case biquad::CUSTOM:
+            case Biquad::UNITY_GAIN:
+            case Biquad::ONEPOLE_LOWPASS:
+            case Biquad::ONEPOLE_HIGHPASS:
+            case Biquad::CUSTOM:
                 return nullptr;
                 break;
             default:
@@ -57,10 +91,10 @@ public:
         }
         else if (index.column()==3) {
             switch (getType(currentType)) {
-            case biquad::PEAKING:
-            case biquad::LOW_SHELF:
-            case biquad::UNITY_GAIN:
-            case biquad::HIGH_SHELF:
+            case Biquad::PEAKING:
+            case Biquad::LOW_SHELF:
+            case Biquad::UNITY_GAIN:
+            case Biquad::HIGH_SHELF:
                 break;
             default:
                 return nullptr;
@@ -102,14 +136,14 @@ public:
         }
         else if (index.column()==2&&sp) {
             switch (getType(currentType)) {
-            case biquad::LOW_SHELF:
-            case biquad::HIGH_SHELF:
+            case Biquad::LOW_SHELF:
+            case Biquad::HIGH_SHELF:
                 sp->setPrefix("S: ");
                 break;
-            case biquad::UNITY_GAIN:
-            case biquad::ONEPOLE_LOWPASS:
-            case biquad::ONEPOLE_HIGHPASS:
-            case biquad::CUSTOM:
+            case Biquad::UNITY_GAIN:
+            case Biquad::ONEPOLE_LOWPASS:
+            case Biquad::ONEPOLE_HIGHPASS:
+            case Biquad::CUSTOM:
                 sp->setPrefix("");
                 break;
             default:
@@ -124,10 +158,10 @@ public:
         const QString currentType = index.sibling(index.row(),0).data(Qt::DisplayRole).toString();
         if (index.column()==3) {
             switch (getType(currentType)) {
-            case biquad::PEAKING:
-            case biquad::LOW_SHELF:
-            case biquad::UNITY_GAIN:
-            case biquad::HIGH_SHELF:
+            case Biquad::PEAKING:
+            case Biquad::LOW_SHELF:
+            case Biquad::UNITY_GAIN:
+            case Biquad::HIGH_SHELF:
                 QStyledItemDelegate::paint(painter,option,index);
                 return;
             default:
@@ -137,10 +171,10 @@ public:
         }
         else if (index.column()==2) {
             switch (getType(currentType)) {
-            case biquad::UNITY_GAIN:
-            case biquad::ONEPOLE_LOWPASS:
-            case biquad::ONEPOLE_HIGHPASS:
-            case biquad::CUSTOM:
+            case Biquad::UNITY_GAIN:
+            case Biquad::ONEPOLE_LOWPASS:
+            case Biquad::ONEPOLE_HIGHPASS:
+            case Biquad::CUSTOM:
                 //Leave item empty
                 return;
             default:
@@ -150,8 +184,8 @@ public:
         }
         else if (index.column()==1) {
             switch (getType(currentType)) {
-            case biquad::UNITY_GAIN:
-            case biquad::CUSTOM:
+            case Biquad::UNITY_GAIN:
+            case Biquad::CUSTOM:
                 //Leave item empty
                 return;
             default:

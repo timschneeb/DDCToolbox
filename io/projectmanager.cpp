@@ -15,7 +15,7 @@ bool ProjectManager::writeProjectFile(std::vector<calibrationPoint_t> points,
     if(!compatibilitymode){
         bool compatible = true;
         for(calibrationPoint_t point:points)
-            if(point.type!=biquad::PEAKING)
+            if(point.type!=Biquad::PEAKING)
                 compatible = false;
         compatibilitymode = compatible;
     }
@@ -37,7 +37,7 @@ bool ProjectManager::writeProjectFile(std::vector<calibrationPoint_t> points,
         {
             calibrationPoint_t cal = points.at(i);
             outStream << "# Calibration Point " + QString::number(i + 1) + n;
-            if(cal.type==biquad::CUSTOM){
+            if(cal.type==Biquad::CUSTOM){
                 outStream << QString::number(cal.freq) + ",0,0," + typeToString(cal.type) + ";";
                 outStream << QString::number(cal.custom441.a0,'f',16) + "," + QString::number(cal.custom441.a1,'f',16) + "," + QString::number(cal.custom441.a2,'f',16) + ",";
                 outStream << QString::number(cal.custom441.b0,'f',16) + "," + QString::number(cal.custom441.b1,'f',16) + "," + QString::number(cal.custom441.b2,'f',16) + ",";
@@ -110,7 +110,7 @@ std::vector<calibrationPoint_t> ProjectManager::readProjectFile(const QString& f
         QTextStream in(&file);
         while (!in.atEnd()){
             auto point = readSingleLine(in.readLine().trimmed());
-            if(point.type != biquad::INVALID)
+            if(point.type != Biquad::INVALID)
                 buffer.push_back(point);
         }
         file.close();
@@ -123,7 +123,7 @@ calibrationPoint_t ProjectManager::readSingleLine(const QString& str){
     cal.freq = 0;
     cal.bw = 0;
     cal.gain = 0;
-    cal.type = biquad::INVALID;
+    cal.type = Biquad::INVALID;
     if (str != nullptr || str != "")
     {
         if ((str.length() > 0) && !str.startsWith("#"))
@@ -149,7 +149,7 @@ calibrationPoint_t ProjectManager::readSingleLine(const QString& str){
                     if(isnan(num2)||isnan(num3))return cal;
                     if(isinf(num2)||isinf(num3))return cal;
 
-                    cal.type = biquad::PEAKING;
+                    cal.type = Biquad::PEAKING;
                     cal.freq = result;
                     cal.bw = num2;
                     cal.gain = num3;
@@ -205,7 +205,7 @@ calibrationPoint_t ProjectManager::readSingleLine(const QString& str){
                         counter++;
                     }
 
-                    cal.type = biquad::CUSTOM;
+                    cal.type = Biquad::CUSTOM;
                     cal.custom441 = c441;
                     cal.custom48 = c48;
                 }
@@ -221,7 +221,7 @@ calibrationPoint_t ProjectManager::readSingleLine(const QString& str){
                         if(isnan(num2)||isnan(num3))return cal;
                         if(isinf(num2)||isinf(num3))return cal;
 
-                        biquad::Type filtertype = stringToType(strArray[3].trimmed());
+                        Biquad::Type filtertype = stringToType(strArray[3].trimmed());
                         cal.type = filtertype;
                         cal.freq = result;
                         cal.bw = num2;

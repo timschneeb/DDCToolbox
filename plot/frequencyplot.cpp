@@ -103,8 +103,8 @@ void FrequencyPlot::updatePoints(QCPGraph* plot,QTableWidget* tb,bool allMarkerP
     //Draw all non-selected points (if enabled)
     if(allMarkerPointsVisible){
         for (int i = 0; i < tb->rowCount(); i++) {
-            if(stringToType(tb->item(i,0)->text()) == biquad::UNITY_GAIN ||
-                    stringToType(tb->item(i,0)->text()) == biquad::CUSTOM)
+            if(stringToType(tb->item(i,0)->text()) == Biquad::UNITY_GAIN ||
+                    stringToType(tb->item(i,0)->text()) == Biquad::CUSTOM)
                 continue;
             if(tb->selectedItems().contains(tb->item(i,0)))
                 continue;
@@ -117,8 +117,8 @@ void FrequencyPlot::updatePoints(QCPGraph* plot,QTableWidget* tb,bool allMarkerP
     }
     //Draw selected points
     for (const auto& item : tb->selectedItems()){
-        if(stringToType(tb->item(item->row(),0)->text()) == biquad::UNITY_GAIN ||
-                stringToType(tb->item(item->row(),0)->text()) == biquad::CUSTOM)
+        if(stringToType(tb->item(item->row(),0)->text()) == Biquad::UNITY_GAIN ||
+                stringToType(tb->item(item->row(),0)->text()) == Biquad::CUSTOM)
             continue;
 
         int freq = tb->item(item->row(),1)->data(Qt::DisplayRole).toInt();

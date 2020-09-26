@@ -25,9 +25,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        Biquad.cpp \
         dialog/StabilityReport.cpp \
         utils/autoeqclient.cpp \
-        biquad.cpp \
         ddccontext.cpp \
         dialog/addpoint.cpp \
         dialog/autoeqselector.cpp \
@@ -50,9 +50,9 @@ SOURCES += \
         utils/undocmd.cpp
 
 HEADERS += \
+        Biquad.h \
         dialog/StabilityReport.h \
         utils/autoeqclient.h \
-        biquad.h \
         ddccontext.h \
         utils/delegate.h \
         dialog/addpoint.h \

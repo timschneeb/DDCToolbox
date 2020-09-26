@@ -84,7 +84,7 @@ std::vector<calibrationPoint_t> ConversionEngine::readParametricEQString(QString
                     cal.freq = freq;
                     cal.bw = bw;
                     cal.gain = gain;
-                    cal.type = biquad::Type::PEAKING; //TODO: add filtertype to eapo/autoeq parser
+                    cal.type = Biquad::Type::PEAKING; //TODO: add filtertype to eapo/autoeq parser
                     points.push_back(cal);
                 }
                 else {

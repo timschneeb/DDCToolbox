@@ -17,16 +17,16 @@ StabilityReport::StabilityReport(const DDCContext& ctx, QWidget *parent) :
 
     for (auto point : ctx.GetFilterBank()){
         int id               = point.first;
-        biquad* filter       = point.second;
+        Biquad* filter       = point.second;
         QString filtertype   = typeToString(filter->GetFilterType());
 
         if(filter != nullptr){
             QString issue;
 
-            biquad::Stability stability = filter->IsStable();
-            if(stability == biquad::UNSTABLE)
+            Biquad::Stability stability = filter->IsStable();
+            if(stability == Biquad::UNSTABLE)
                 issue = QString("Pole outside the unit circle");
-            else if(stability == biquad::PARTIALLY_STABLE)
+            else if(stability == Biquad::PARTIALLY_STABLE)
                 issue = QString("Pole approaches the unit circle");
             else
                 continue;
@@ -59,7 +59,7 @@ bool StabilityReport::isReportPositive(){
 
 void StabilityReport::addIssue(int stable, QString location, QString description){
 
-    if(stable == biquad::STABLE)
+    if(stable == Biquad::STABLE)
         return;
 
     auto tw = ui->issueTable;
@@ -77,7 +77,7 @@ void StabilityReport::addIssue(int stable, QString location, QString description
     tw->setItem(tw->rowCount()-1, index, c##index); \
     tw->setCellWidget(tw->rowCount()-1, index, lbl);
 
-    ADD_ICON(0, stable == biquad::UNSTABLE ? ":/img/critical.svg" : ":/img/warning.svg");
+    ADD_ICON(0, stable == Biquad::UNSTABLE ? ":/img/critical.svg" : ":/img/warning.svg");
     ADD_ITEM(1, location);
     ADD_ITEM(2, description);
 

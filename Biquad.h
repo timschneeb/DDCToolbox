@@ -14,7 +14,7 @@ typedef struct customFilter_s{
     double b2;
 }customFilter_t;
 
-class biquad
+class Biquad
 {
 public:
     enum Type
@@ -42,19 +42,24 @@ public:
         PARTIALLY_STABLE = 2
     };
 
-    biquad();
+    Biquad();
     void RefreshFilter(uint32_t id, Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
     void RefreshFilter(uint32_t id, Type type, customFilter_t c441, customFilter_t c48);
     std::list<double> ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS);
     std::list<double> ExportCoeffs(double dSamplingRate);
     std::list<double> ExportCoeffs(customFilter_t coeffs);
-    void iirroots(double b, double c, double *roots);
-    int complexResponse(double centreFreq, double fs, double *HofZReal, double *HofZImag);
+
     double GainAt(double centreFreq, double fs);
     double PhaseResponseAt(double centreFreq, double fs);
-    double toMs(double sample, double fs);
     double GroupDelayAt(double centreFreq, double fs);
-    Stability IsStable() const;
+
+    void iirroots(double b, double c, double *roots);
+    int complexResponse(double centreFreq, double fs, double *HofZReal, double *HofZImag);
+    double toMs(double sample, double fs);
+
+    Stability IsStable() const {
+        return m_isStable;
+    };
 
     uint32_t GetId() const{
         return m_id;
@@ -66,6 +71,22 @@ public:
 
     double GetFrequency() const{
         return m_dFilterFreq;
+    };
+
+    double GetBandwithOrSlope() const{
+        return m_dFilterFreq;
+    };
+
+    double GetGain() const{
+        return m_dFilterFreq;
+    };
+
+    bool IsCustomFilter() const{
+        return m_dFilterType == CUSTOM;
+    };
+
+    customFilter_t GetCustomFilter(int samplerate) const{
+        return samplerate == 44100 ? m_custom441 : m_custom48;
     };
 
 private:
@@ -80,6 +101,7 @@ private:
     uint32_t m_id;
     customFilter_t m_custom441;
     customFilter_t m_custom48;
+
     inline void complexMultiplicationRI(double *zReal, double *zImag, double xReal, double xImag, double yReal, double yImag)
     {
         *zReal = xReal * yReal - xImag * yImag;

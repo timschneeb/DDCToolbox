@@ -1,5 +1,5 @@
 #include "addpoint.h"
-#include "biquad.h"
+#include "Biquad.h"
 #include "ui_addpoint.h"
 #include "utils/filtertypes.h"
 #include <QDebug>
@@ -16,37 +16,37 @@ addpoint::addpoint(QWidget *parent) :
     ui->custom_configure->setEnabled(false);
 
     connect(ui->ftype,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,[this](int index){
-        biquad::Type type = (biquad::Type)(index);
+        Biquad::Type type = (Biquad::Type)(index);
         switch (type) {
-        case biquad::UNITY_GAIN:
-        case biquad::CUSTOM:
+        case Biquad::UNITY_GAIN:
+        case Biquad::CUSTOM:
             ui->freq->setEnabled(false);
             break;
         default:
             ui->freq->setEnabled(true);
         }
         switch (type) {
-        case biquad::UNITY_GAIN:
-        case biquad::ONEPOLE_LOWPASS:
-        case biquad::ONEPOLE_HIGHPASS:
-        case biquad::CUSTOM:
+        case Biquad::UNITY_GAIN:
+        case Biquad::ONEPOLE_LOWPASS:
+        case Biquad::ONEPOLE_HIGHPASS:
+        case Biquad::CUSTOM:
             ui->bw->setEnabled(false);
             break;
         default:
             ui->bw->setEnabled(true);
         }
         switch (type) {
-        case biquad::PEAKING:
-        case biquad::LOW_SHELF:
-        case biquad::UNITY_GAIN:
-        case biquad::HIGH_SHELF:
+        case Biquad::PEAKING:
+        case Biquad::LOW_SHELF:
+        case Biquad::UNITY_GAIN:
+        case Biquad::HIGH_SHELF:
             ui->gain->setEnabled(true);
             break;
         default:
             ui->gain->setEnabled(false);
         }
         switch (type) {
-        case biquad::CUSTOM:
+        case Biquad::CUSTOM:
             ui->custom_configure->setEnabled(true);
             break;
         default:
@@ -72,8 +72,8 @@ addpoint::~addpoint()
 calibrationPoint_t addpoint::returndata(){
     std::vector<double> data;
     calibrationPoint_t ret;
-    if(stringToType(ui->ftype->currentText())==biquad::CUSTOM ||
-            ui->ftype->currentText()==biquad::UNITY_GAIN)
+    if(stringToType(ui->ftype->currentText())==Biquad::CUSTOM ||
+            ui->ftype->currentText()==Biquad::UNITY_GAIN)
         ret.freq = 1;
     else
         ret.freq = ui->freq->value();

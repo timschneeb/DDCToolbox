@@ -24,13 +24,13 @@ void DDCContext::UnlockFilter()
 {
     mtx.unlock();
 }
-bool DDCContext::AddFilter(uint32_t id, biquad::Type type,int nFreq, double dGain, double dBandwidth, double dSRate, bool isBWorS)
+bool DDCContext::AddFilter(uint32_t id, Biquad::Type type,int nFreq, double dGain, double dBandwidth, double dSRate, bool isBWorS)
 {
     if(Exists(id))return false;
     LockFilter();
     if (m_lstFilterBank.count(nFreq) <= 0)
     {
-        biquad *biquad = new class biquad();
+        Biquad *biquad = new Biquad();
         biquad->RefreshFilter(id, type, dGain, (double) nFreq, dSRate, dBandwidth, isBWorS);
         m_lstFilterBank[id] = biquad;
     }
@@ -43,8 +43,8 @@ bool DDCContext::AddFilter(uint32_t id, customFilter_t c441, customFilter_t c48)
     LockFilter();
     if (m_lstFilterBank.count(id) <= 0)
     {
-        biquad *biquad = new class biquad();
-        biquad->RefreshFilter(id, biquad::CUSTOM, c441, c48);
+        Biquad *biquad = new Biquad();
+        biquad->RefreshFilter(id, Biquad::CUSTOM, c441, c48);
         m_lstFilterBank[id] = biquad;
     }
     UnlockFilter();
@@ -58,7 +58,7 @@ void DDCContext::ClearFilters()
     UnlockFilter();
 }
 
-bool DDCContext::ModifyFilter(uint32_t id, biquad::Type type, int nFreq, double dGain, double dBandwidth, double dSRate,bool isBWorS)
+bool DDCContext::ModifyFilter(uint32_t id, Biquad::Type type, int nFreq, double dGain, double dBandwidth, double dSRate,bool isBWorS)
 {
     if(!Exists(id))return false;
     LockFilter();
@@ -76,7 +76,7 @@ bool DDCContext::ModifyFilter(uint32_t id, customFilter_t c441, customFilter_t c
     LockFilter();
     if (m_lstFilterBank.count(id)>0)
     {
-        m_lstFilterBank[id]->RefreshFilter(id, biquad::CUSTOM, c441, c48);
+        m_lstFilterBank[id]->RefreshFilter(id, Biquad::CUSTOM, c441, c48);
     }
     UnlockFilter();
     return true;
@@ -101,24 +101,24 @@ bool DDCContext::Exists(uint32_t id){
     UnlockFilter();
     return false;
 }
-const biquad* DDCContext::GetFilter(uint32_t id)
+const Biquad* DDCContext::GetFilter(uint32_t id)
 {
     LockFilter();
-    biquad* result = nullptr;
+    Biquad* result = nullptr;
     if (m_lstFilterBank.count(id) > 0)
     {
-        std::map<int,biquad*>::iterator iter = m_lstFilterBank.find(id) ;
+        std::map<int,Biquad*>::iterator iter = m_lstFilterBank.find(id) ;
         if( iter != m_lstFilterBank.end() )
             result = m_lstFilterBank[id];
     }
     UnlockFilter();
-    return (biquad const*)result;
+    return (Biquad const*)result;
 }
 bool DDCContext::RemoveFilter(uint32_t id){
     LockFilter();
     if (m_lstFilterBank.count(id) > 0)
     {
-        std::map<int,biquad*>::iterator iter = m_lstFilterBank.find(id) ;
+        std::map<int,Biquad*>::iterator iter = m_lstFilterBank.find(id) ;
         if( iter != m_lstFilterBank.end() ){
             m_lstFilterBank.erase(iter);
             UnlockFilter();
@@ -132,8 +132,8 @@ std::list<double> DDCContext::ExportCoeffs(double dSamplingRate)
 {
     LockFilter();
 
-    std::vector<biquad*> list;
-    std::map<int,biquad*>::iterator it;
+    std::vector<Biquad*> list;
+    std::map<int,Biquad*>::iterator it;
 
     for ( it = m_lstFilterBank.begin(); it != m_lstFilterBank.end(); it++ )
         list.push_back(it->second);
@@ -170,10 +170,10 @@ std::vector<float> DDCContext::GetMagnitudeResponseTable(int nBandCount, double 
     {
         return vector;
     }
-    std::vector<biquad*> list;
+    std::vector<Biquad*> list;
     LockFilter();
 
-    std::map<int,biquad*>::iterator it;
+    std::map<int,Biquad*>::iterator it;
 
     for ( it = m_lstFilterBank.begin(); it != m_lstFilterBank.end(); it++ )
         list.push_back(it->second);
@@ -197,10 +197,10 @@ std::vector<float> DDCContext::GetPhaseResponseTable(int nBandCount, double dSRa
     {
         return vector;
     }
-    std::vector<biquad*> list;
+    std::vector<Biquad*> list;
     LockFilter();
 
-    std::map<int,biquad*>::iterator it;
+    std::map<int,Biquad*>::iterator it;
 
     for ( it = m_lstFilterBank.begin(); it != m_lstFilterBank.end(); it++ )
         list.push_back(it->second);
@@ -225,10 +225,10 @@ std::vector<float> DDCContext::GetGroupDelayTable(int nBandCount, double dSRate)
     {
         return vector;
     }
-    std::vector<biquad*> list;
+    std::vector<Biquad*> list;
     LockFilter();
 
-    std::map<int,biquad*>::iterator it;
+    std::map<int,Biquad*>::iterator it;
 
     for ( it = m_lstFilterBank.begin(); it != m_lstFilterBank.end(); it++ )
         list.push_back(it->second);

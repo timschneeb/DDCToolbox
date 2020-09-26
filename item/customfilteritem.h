@@ -2,7 +2,7 @@
 #define CUSTOMFILTERITEM_H
 
 #include <QWidget>
-#include "biquad.h"
+#include "Biquad.h"
 
 namespace Ui {
 class CustomFilterItem;

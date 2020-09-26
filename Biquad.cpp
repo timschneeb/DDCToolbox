@@ -1,4 +1,4 @@
-#include "biquad.h"
+#include "Biquad.h"
 #include <QDebug>
 #include <cstdio>
 #include <list>
@@ -6,7 +6,7 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-biquad::biquad()
+Biquad::Biquad()
 {
     internalBiquadCoeffs[0] = 0.0;
     internalBiquadCoeffs[1] = 0.0;
@@ -15,7 +15,7 @@ biquad::biquad()
     internalBiquadCoeffs[4] = 0.0;
 }
 
-void biquad::RefreshFilter(uint32_t id, Type type, double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
+void Biquad::RefreshFilter(uint32_t id, Type type, double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
 {
     m_isCustom = false;
     m_dFilterType = type;
@@ -45,7 +45,8 @@ void biquad::RefreshFilter(uint32_t id, Type type, double dbGain, double centreF
             m_isStable = STABLE; // Perfectly stable
     }
 }
-void biquad::RefreshFilter(uint32_t id, Type type, customFilter_t c441, customFilter_t c48)
+
+void Biquad::RefreshFilter(uint32_t id, Type type, customFilter_t c441, customFilter_t c48)
 {
     m_isCustom = true;
     m_custom441 = c441;
@@ -74,7 +75,7 @@ void biquad::RefreshFilter(uint32_t id, Type type, customFilter_t c441, customFi
     }
 }
 
-std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
+std::list<double> Biquad::ExportCoeffs(Type type,double dbGain, double centreFreq, double fs, double dBandwidthOrQOrS, bool isBandwidthOrS)
 {
     if (centreFreq <= 2.2204460492503131e-016 || fs <= 2.2204460492503131e-016){
         std::list<double> nulllist;
@@ -214,7 +215,8 @@ std::list<double> biquad::ExportCoeffs(Type type,double dbGain, double centreFre
     result.push_back(-A2 / A0);
     return result;
 }
-std::list<double> biquad::ExportCoeffs(customFilter_t coeffs)
+
+std::list<double> Biquad::ExportCoeffs(customFilter_t coeffs)
 {
     std::list<double> result;
     double A0 = coeffs.a0;
@@ -225,7 +227,8 @@ std::list<double> biquad::ExportCoeffs(customFilter_t coeffs)
     result.push_back(-coeffs.a2 / A0);
     return result;
 }
-std::list<double> biquad::ExportCoeffs(double dSamplingRate)
+
+std::list<double> Biquad::ExportCoeffs(double dSamplingRate)
 {
     if(m_isCustom){
         if(trunc(dSamplingRate)==44100.0)
@@ -236,13 +239,9 @@ std::list<double> biquad::ExportCoeffs(double dSamplingRate)
     else
         return ExportCoeffs(m_dFilterType,m_dFilterGain,m_dFilterFreq,dSamplingRate,m_dFilterBQ,m_isBandwidthOrS);
 }
-biquad::Stability biquad::IsStable() const {
-    // Check if filter is stable/usable/barely numerically stable
-    return m_isStable;
-}
 
 // Provided by: James34602
-void biquad::iirroots(double b, double c, double *roots)
+void Biquad::iirroots(double b, double c, double *roots)
 {
     double delta = b * b - 4.0 * c;
     if (delta >= 0.0)
@@ -259,7 +258,8 @@ void biquad::iirroots(double b, double c, double *roots)
         roots[3] = -sqrt(-delta) / 2.0;
     }
 }
-int biquad::complexResponse(double centreFreq, double fs, double *HofZReal, double *HofZImag)
+
+int Biquad::complexResponse(double centreFreq, double fs, double *HofZReal, double *HofZImag)
 {
     double Arg;
     double z1Real, z1Imag, z2Real, z2Imag, DenomReal, DenomImag, tmpReal, tmpImag;
@@ -282,7 +282,8 @@ int biquad::complexResponse(double centreFreq, double fs, double *HofZReal, doub
         return 1;
     }
 }
-double biquad::GainAt(double centreFreq, double fs)
+
+double Biquad::GainAt(double centreFreq, double fs)
 {
     double HofZReal, HofZImag;
     int divZero = complexResponse(centreFreq, fs, &HofZReal, &HofZImag);
@@ -291,7 +292,8 @@ double biquad::GainAt(double centreFreq, double fs)
     else
         return 20.0 * log10(sqrt(HofZReal * HofZReal + HofZImag * HofZImag + DBL_EPSILON));
 }
-double biquad::PhaseResponseAt(double centreFreq, double fs)
+
+double Biquad::PhaseResponseAt(double centreFreq, double fs)
 {
     double HofZReal, HofZImag;
     int divZero = complexResponse(centreFreq, fs, &HofZReal, &HofZImag);
@@ -300,6 +302,7 @@ double biquad::PhaseResponseAt(double centreFreq, double fs)
     else
         return atan2(HofZImag, HofZReal) * 180.0 / M_PI;
 }
+
 // Simplified Shpak group delay algorithm
 // The algorithm only valid when first order / second order IIR filters is provided
 // You must break down high order transfer function into N-SOS in order apply the Shpak algorithm
@@ -308,11 +311,12 @@ double biquad::PhaseResponseAt(double centreFreq, double fs)
 // Which will bloat 1000+ lines of code, and perhaps not the main purpose here.
 // We just need to calculate group delay of a bunch of second order IIR filters, so the following code already do the job
 // Provided by: James34602
-double biquad::toMs(double sample, double fs)
+double Biquad::toMs(double sample, double fs)
 {
     return sample / (fs / 1000.0);
 }
-double biquad::GroupDelayAt(double centreFreq, double fs)
+
+double Biquad::GroupDelayAt(double centreFreq, double fs)
 {
     double Arg = M_PI * centreFreq / (fs * 0.5);
     double cw = cos(Arg);

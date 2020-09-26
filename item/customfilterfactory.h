@@ -2,7 +2,7 @@
 #define CUSTOMFILTERFACTORY_H
 #include "item/customfilteritem.h"
 #include "mainwindow.h"
-#include "biquad.h"
+#include "Biquad.h"
 #include <QTableWidget>
 #include <QDebug>
 
