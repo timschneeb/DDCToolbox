@@ -51,38 +51,22 @@ public:
                           const QModelIndex &index) const Q_DECL_OVERRIDE
     {
         const QString currentType = index.sibling(index.row(),0).data(Qt::DisplayRole).toString();
+        auto specs = FilterType(currentType).getSpecs();
 
-        if (index.column()==1) {
-            switch (FilterType(currentType.toLocal8Bit().constData())) {
-            case FilterType::UNITY_GAIN:
-            case FilterType::CUSTOM:
+
+        switch(index.column()){
+        case 1:
+            if(!specs.test(FilterType::SPEC_REQUIRE_FREQ))
                 return nullptr;
-            default:
-                break;
-            }
-        }
-        else if (index.column()==2) {
-            switch (FilterType(currentType.toLocal8Bit().constData())) {
-            case FilterType::UNITY_GAIN:
-            case FilterType::ONEPOLE_LOWPASS:
-            case FilterType::ONEPOLE_HIGHPASS:
-            case FilterType::CUSTOM:
+            break;
+        case 2:
+            if(!specs.test(FilterType::SPEC_REQUIRE_BW) && !specs.test(FilterType::SPEC_REQUIRE_SLOPE))
                 return nullptr;
-                break;
-            default:
-                break;
-            }
-        }
-        else if (index.column()==3) {
-            switch (FilterType(currentType.toLocal8Bit().constData())) {
-            case FilterType::PEAKING:
-            case FilterType::LOW_SHELF:
-            case FilterType::UNITY_GAIN:
-            case FilterType::HIGH_SHELF:
-                break;
-            default:
+            break;
+        case 3:
+            if(!specs.test(FilterType::SPEC_REQUIRE_GAIN))
                 return nullptr;
-            }
+            break;
         }
 
         auto w = QStyledItemDelegate::createEditor(
@@ -112,20 +96,12 @@ public:
             return cb;
         }
         else if (index.column()==2&&sp) {
-            switch (FilterType(currentType.toLocal8Bit().constData())) {
-            case FilterType::LOW_SHELF:
-            case FilterType::HIGH_SHELF:
+            if(specs.test(FilterType::SPEC_REQUIRE_SLOPE))
                 sp->setPrefix("S: ");
-                break;
-            case FilterType::UNITY_GAIN:
-            case FilterType::ONEPOLE_LOWPASS:
-            case FilterType::ONEPOLE_HIGHPASS:
-            case FilterType::CUSTOM:
-                sp->setPrefix("");
-                break;
-            default:
+            else if(specs.test(FilterType::SPEC_REQUIRE_BW))
                 sp->setPrefix("BW: ");
-            }
+            else
+                sp->setPrefix("");
         }
         return w;
     }
@@ -133,45 +109,25 @@ public:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE
     {
         const QString currentType = index.sibling(index.row(),0).data(Qt::DisplayRole).toString();
-        if (index.column()==3) {
-            switch (FilterType(currentType.toLocal8Bit().constData())) {
-            case FilterType::PEAKING:
-            case FilterType::LOW_SHELF:
-            case FilterType::UNITY_GAIN:
-            case FilterType::HIGH_SHELF:
-                QStyledItemDelegate::paint(painter,option,index);
+        auto type = FilterType(currentType);
+        auto specs = type.getSpecs();
+
+        switch(index.column()){
+        case 1:
+            if(!specs.test(FilterType::SPEC_REQUIRE_FREQ))
                 return;
-            default:
-                //Leave item empty
+            break;
+        case 2:
+            if(!specs.test(FilterType::SPEC_REQUIRE_BW) && !specs.test(FilterType::SPEC_REQUIRE_SLOPE))
                 return;
-            }
+            break;
+        case 3:
+            if(!specs.test(FilterType::SPEC_REQUIRE_GAIN) && type != FilterType::CUSTOM)
+                return;
+            break;
         }
-        else if (index.column()==2) {
-            switch (FilterType(currentType.toLocal8Bit().constData())) {
-            case FilterType::UNITY_GAIN:
-            case FilterType::ONEPOLE_LOWPASS:
-            case FilterType::ONEPOLE_HIGHPASS:
-            case FilterType::CUSTOM:
-                //Leave item empty
-                return;
-            default:
-                QStyledItemDelegate::paint(painter,option,index);
-                return;
-            }
-        }
-        else if (index.column()==1) {
-            switch (FilterType(currentType.toLocal8Bit().constData())) {
-            case FilterType::UNITY_GAIN:
-            case FilterType::CUSTOM:
-                //Leave item empty
-                return;
-            default:
-                QStyledItemDelegate::paint(painter,option,index);
-                return;
-            }
-        }
-        else
-            QStyledItemDelegate::paint(painter,option,index);
+
+        QStyledItemDelegate::paint(painter,option,index);
     }
 
     void setEditorData(QWidget *editor, const QModelIndex &index) const Q_DECL_OVERRIDE

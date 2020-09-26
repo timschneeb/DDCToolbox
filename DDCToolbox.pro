@@ -53,7 +53,7 @@ HEADERS += \
         Biquad.h \
         FilterType.h \
         dialog/StabilityReport.h \
-        utils/EnumClass.h \
+        utils/BitFlags.h \
         utils/autoeqclient.h \
         ddccontext.h \
         utils/delegate.h \
