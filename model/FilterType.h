@@ -58,9 +58,6 @@ public:
         return value;
     }
 
-    operator const char*() const {
-        return findValue(value);
-    }
     operator QString() const {
         return QString::fromStdString(findValue(value));
     }
