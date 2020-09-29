@@ -7,14 +7,13 @@
 Create and edit ViPER DDC files on Linux, Windows and macOS
 
 ## Features
- * Save/load *.vdcprj files
- * Export as *.vdc
- * Import VDCs (to *.vdcprj)
+ * Save/load VDC project files
+ * Import/export VDCs
  * Direct AutoEQ integration
- * Proper undo/redo framework 
+ * Undo/redo framework 
  * Edit values directly in the table
  * Interactive magnitude response, phase response and group delay plot
- * Various IIR filter types (peaking, low/high pass/shelf, notch, all/band pass and unity gain)
+ * Various IIR filters (peaking, low/high pass/shelf, notch, all/band pass and unity gain)
  * Embed custom IIR filters
  * Stability check for filters
 
@@ -167,5 +166,6 @@ Run it
   * VDC Importer
   * Group delay plot
   * Unity gain filter 
+  * and more...
 _____________
 Based on ViPERs Toolbox 2.0 for Windows
