@@ -24,77 +24,71 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++17
 
-SOURCES += \
-        Biquad.cpp \
-        dialog/StabilityReport.cpp \
-        utils/autoeqclient.cpp \
-        ddccontext.cpp \
-        dialog/addpoint.cpp \
-        dialog/autoeqselector.cpp \
-        dialog/calc.cpp \
-        dialog/customfilterdialog.cpp \
-        dialog/overlaymsgproxy.cpp \
-        dialog/qmessageoverlay.cpp \
-        dialog/shiftfreq.cpp \
-        dialog/textpopup.cpp \
-        io/conversionengine.cpp \
-        io/projectmanager.cpp \
-        item/customfilteritem.cpp \
-        item/detaillistitem.cpp \
-        utils/loghelper.cpp \
-        main.cpp \
-        mainwindow.cpp \
-        plot/frequencyplot.cpp \
-        plot/qcustomplot.cpp \
-        utils/tableproxy.cpp \
-        utils/undocmd.cpp
-
 HEADERS += \
-        Biquad.h \
-        FilterType.h \
-        dialog/StabilityReport.h \
-        utils/BitFlags.h \
-        utils/autoeqclient.h \
-        ddccontext.h \
-        utils/delegate.h \
-        dialog/addpoint.h \
-        dialog/autoeqselector.h \
-        dialog/calc.h \
-        dialog/customfilterdialog.h \
-        dialog/overlaymsgproxy.h \
-        dialog/qmessageoverlay.h \
-        dialog/shiftfreq.h \
-        dialog/textpopup.h \
-        utils/filtertypes.h \
-        io/conversionengine.h \
-        io/projectmanager.h \
-        item/customfilterfactory.h \
-        item/customfilteritem.h \
-        item/detaillistitem.h \
-        item/detaillistitem_delegate.h \
-        utils/loghelper.h \
-        mainwindow.h \
-        plot/frequencyplot.h \
-        plot/qcustomplot.h \
-        utils/tableproxy.h \
-        utils/undocmd.h \
-        utils/vdcimporter.h
+    VdcEditorWindow.h \
+    item/CustomFilterListItem.h \
+    item/DetailListItem.h \
+    model/Biquad.h \
+    model/DeflatedBiquad.h \
+    model/FilterModel.h \
+    model/FilterType.h \
+    model/FilterViewDelegate.h \
+    model/command/AddCommand.h \
+    model/command/EditCommand.h \
+    model/command/InvertCommand.h \
+    model/command/RemoveCommand.h \
+    model/command/ShiftCommand.h \
+    plot/FrequencyPlot.h \
+    plot/QCustomPlot.h \
+    utils/AutoEqClient.h \
+    utils/BitFlags.h \
+    utils/ProjectManager.h \
+    utils/VdcImporter.h \
+    widget/AddPointDialog.h \
+    widget/AutoEqSelector.h \
+    widget/BwCalculator.h \
+    widget/CustomFilterDialog.h \
+    widget/HtmlPopup.h \
+    widget/OverlayMsgProxy.h \
+    widget/QMessageOverlay.h \
+    widget/ShiftFrequencyDialog.h \
+    widget/StabilityReport.h
+
+SOURCES += \
+    VdcEditorWindow.cpp \
+    item/CustomFilterListItem.cpp \
+    item/DetailListItem.cpp \
+    main.cpp \
+    model/Biquad.cpp \
+    model/FilterModel.cpp \
+    plot/FrequencyPlot.cpp \
+    plot/QCustomPlot.cpp \
+    utils/AutoEqClient.cpp \
+    utils/ProjectManager.cpp \
+    widget/AddPointDialog.cpp \
+    widget/AutoEqSelector.cpp \
+    widget/BwCalculator.cpp \
+    widget/CustomFilterDialog.cpp \
+    widget/HtmlPopup.cpp \
+    widget/OverlayMsgProxy.cpp \
+    widget/QMessageOverlay.cpp \
+    widget/ShiftFrequencyDialog.cpp \
+    widget/StabilityReport.cpp
 
 FORMS += \
-        dialog/StabilityReport.ui \
-        dialog/addpoint.ui \
-        dialog/autoeqselector.ui \
-        dialog/calc.ui \
-        dialog/customfilterdialog.ui \
-        dialog/shiftfreq.ui \
-        dialog/textpopup.ui \
-        item/configitem.ui \
-        item/customfilteritem.ui \
-        mainwindow.ui
+        VdcEditorWindow.ui \
+        item/CustomFilterListItem.ui \
+        item/DetailListItem.ui \
+        widget/AddPointDialog.ui \
+        widget/AutoEqSelector.ui \
+        widget/BwCalculator.ui \
+        widget/CustomFilterDialog.ui \
+        widget/ShiftFrequencyDialog.ui \
+        widget/StabilityReport.ui \
+        widget/TextPopup.ui
 
-!contains(CONFIG, wasm) {
-    include ($$PWD/3rdparty/WebLoader/WebLoader.pri)
-}
+include ($$PWD/3rdparty/WebLoader/WebLoader.pri)
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -105,12 +99,9 @@ win32 {
     RC_ICONS = img/icon.ico
 }
 
-contains(CONFIG, wasm) {
-   DEFINES += IS_WASM
-}
 unix {
    QMAKE_CXXFLAGS += -Wno-unused-variable
 }
 
 RESOURCES += \
-    resources.qrc
+    ddceditor_resources.qrc

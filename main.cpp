@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "VdcEditorWindow.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     setlocale(LC_ALL, "C");
     QLocale::setDefault(QLocale::c());
 
-    MainWindow w;    
+    VdcEditorWindow w;
     QApplication::setStyle("fusion");
     QApplication::setPalette(qApp->style()->standardPalette());
     w.show();

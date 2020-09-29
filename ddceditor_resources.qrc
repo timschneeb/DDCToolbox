@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>html/keycombos.html</file>
+        <file>html/introduction.html</file>
+        <file>img/icon.png</file>
+        <file>html/customfilter.html</file>
+        <file>img/ddctoolbox.svg</file>
+        <file>img/icon.ico</file>
+        <file>img/warning.svg</file>
+        <file>img/critical.svg</file>
+    </qresource>
+</RCC>
