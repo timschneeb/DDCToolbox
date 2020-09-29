@@ -50,6 +50,7 @@ HEADERS += \
     widget/CustomFilterDialog.h \
     widget/HtmlPopup.h \
     widget/OverlayMsgProxy.h \
+    widget/ProxyStyle.h \
     widget/QMessageOverlay.h \
     widget/ShiftFrequencyDialog.h \
     widget/StabilityReport.h

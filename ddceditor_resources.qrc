@@ -31,5 +31,9 @@
         <file>img/download.svg</file>
         <file>img/export_table.svg</file>
         <file>img/export.svg</file>
+        <file>img/database_test.svg</file>
+        <file>img/help.svg</file>
+        <file>img/test.svg</file>
+        <file>img/calculator.svg</file>
     </qresource>
 </RCC>

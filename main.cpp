@@ -1,4 +1,7 @@
 #include "VdcEditorWindow.h"
+
+#include "widget/ProxyStyle.h"
+
 #include <QApplication>
 
 int main(int argc, char *argv[])
@@ -9,7 +12,7 @@ int main(int argc, char *argv[])
     QLocale::setDefault(QLocale::c());
 
     VdcEditorWindow w;
-    QApplication::setStyle("fusion");
+    QApplication::setStyle(new ProxyStyle("fusion"));
     QApplication::setPalette(qApp->style()->standardPalette());
     w.show();
 

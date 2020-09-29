@@ -423,6 +423,10 @@ border: 1px solid rgb(208, 204, 201) </string>
    </property>
   </action>
   <action name="actionKey_shortcuts">
+   <property name="icon">
+    <iconset resource="ddceditor_resources.qrc">
+     <normaloff>:/img/help.svg</normaloff>:/img/help.svg</iconset>
+   </property>
    <property name="text">
     <string>Shortcuts</string>
    </property>
@@ -436,8 +440,12 @@ border: 1px solid rgb(208, 204, 201) </string>
    </property>
   </action>
   <action name="actionQ_BW_Calculator">
+   <property name="icon">
+    <iconset resource="ddceditor_resources.qrc">
+     <normaloff>:/img/calculator.svg</normaloff>:/img/calculator.svg</iconset>
+   </property>
    <property name="text">
-    <string>Q/BW Calculator</string>
+    <string>Q/Bandwidth Calculator</string>
    </property>
   </action>
   <action name="actionimportVDC_file">
@@ -518,6 +526,10 @@ border: 1px solid rgb(208, 204, 201) </string>
    </property>
   </action>
   <action name="actionCheck_for_unstable_filters">
+   <property name="icon">
+    <iconset resource="ddceditor_resources.qrc">
+     <normaloff>:/img/database_test.svg</normaloff>:/img/database_test.svg</iconset>
+   </property>
    <property name="text">
     <string>Check for unstable filters</string>
    </property>
