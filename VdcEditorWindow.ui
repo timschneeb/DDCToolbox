@@ -91,7 +91,7 @@
   </widget>
   <widget class="QToolBar" name="toolBar_file">
    <property name="windowTitle">
-    <string>General Toolbar</string>
+    <string>Project Toolbar</string>
    </property>
    <property name="iconSize">
     <size>
@@ -351,7 +351,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   </widget>
   <widget class="QToolBar" name="toolBar_point">
    <property name="windowTitle">
-    <string>toolBar_2</string>
+    <string>Filter Toolbar</string>
    </property>
    <property name="iconSize">
     <size>
