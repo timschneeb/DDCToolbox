@@ -14,7 +14,7 @@
    <string>Add Point</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../resources.qrc">
+   <iconset resource="../ddceditor_resources.qrc">
     <normaloff>:/img/icon.png</normaloff>:/img/icon.png</iconset>
   </property>
   <property name="modal">
@@ -31,7 +31,7 @@
    <item>
     <widget class="QSpinBox" name="freq">
      <property name="minimum">
-      <number>1</number>
+      <number>100</number>
      </property>
      <property name="maximum">
       <number>24000</number>
@@ -131,7 +131,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../resources.qrc"/>
+  <include location="../ddceditor_resources.qrc"/>
  </resources>
  <connections>
   <connection>
