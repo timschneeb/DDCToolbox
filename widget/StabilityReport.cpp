@@ -27,11 +27,11 @@ StabilityReport::StabilityReport(FilterModel* model, QWidget *parent) :
 
             if(type.getSpecs().test(FilterType::SPEC_REQUIRE_FREQ))
                 addIssue(stability,
-                         QString("%1 at %2Hz (row %3)").arg((QString)type).arg(round(filter->GetFrequency())).arg(i),
+                         QString("%1 at %2Hz (row %3)").arg((QString)type).arg(round(filter->GetFrequency())).arg(i+1),
                          issue);
             else
                 addIssue(stability,
-                         QString("%1 (row %2)").arg((QString)type).arg(i),
+                         QString("%1 (row %2)").arg((QString)type).arg(i+1),
                          issue);
 
             unstableCount++;
