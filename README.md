@@ -55,6 +55,8 @@ yay -S ddctoolbox-git
 ![AUR version](https://img.shields.io/aur/version/ddctoolbox-git?label=aur-git)
 
 ## Ubuntu (PPA)
+**Qt 5.11 or later required.** Ubuntu 20.04 (or later releases) provide this version of Qt in their official repositories.
+
 Add PPA Repo
 ```bash
 curl -s --compressed "https://thepbone.github.io/PPA-Repository/KEY.gpg" | sudo apt-key add -
@@ -68,6 +70,8 @@ sudo apt install ddc-toolbox
 [View PPA on GitHub](https://github.com/ThePBone/PPA-Repository)
 
 ## Debian
+**Qt 5.11 or later required.** Debian 10 (or later releases) provide this version of Qt in their official repositories.
+
 ### Stable releases
 Users of debian-based distros can use the DEB-packages that are attached on the [release page](https://github.com/ThePBone/DDCToolbox/releases).
 
@@ -77,6 +81,9 @@ They are automatically compiled and may contain bugs.
 
 ## Manually/Portable (Linux)
 ### Build from sources
+
+**Requirements:**
+ * Qt 5.11 or later
 
 Install dependencies (Debian)
 
