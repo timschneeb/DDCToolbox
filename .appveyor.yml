@@ -2,22 +2,22 @@ environment:
 
   matrix:
   - arch: x64
-    qt: 5.13.2
-    cc: VS2017
+    qt: 5.15.0
+    cc: VS2019
     mode: release
     bits: 64
-    QTDIR: C:\Qt\5.13.2\msvc2017_64
+    QTDIR: C:\Qt\5.15.0\msvc2019_64
     QMAKESPEC: win32-msvc
-    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
 
   - arch: x86
-    cc: VS2017
-    qt: 5.13.2
+    cc: VS2019
+    qt: 5.15.0
     mode: release
     bits: 32
     QMAKESPEC: win32-msvc
-    QTDIR: C:\Qt\5.13.2\msvc2017
-    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    QTDIR: C:\Qt\5.15.0\msvc2019
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
 
 matrix:
   fast_finish: false
@@ -27,7 +27,7 @@ init:
   - if "%arch%" == "x64" set vcarch=amd64
   - set PATH=%PATH%;%QTDIR%\bin;C:\Qt\Tools\QtCreator\bin;%PATH%
   - set QMakeSpec=%QMAKESPEC%
-  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %vcarch%
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" %vcarch%
   
 build_script:
   - qmake DDCToolbox.pro
