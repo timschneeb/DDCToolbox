@@ -33,9 +33,11 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
 
 #define DECL_UNDO_ACTION(type)\
     QAction* action##type = undoStack->create##type##Action(this, tr(#type));\
+    action##type->setIcon(QPixmap(":/img/" + QString(#type).toLower() + ".svg"));\
     action##type->setShortcuts(QKeySequence::type);\
     QAction* first##type = ui->menuEdit->actions().at(0);\
-    ui->menuEdit->insertAction(first##type, action##type);
+    ui->menuEdit->insertAction(first##type, action##type);\
+    ui->toolBar_file->addAction(action##type);
 
     DECL_UNDO_ACTION(Undo);
     DECL_UNDO_ACTION(Redo);
@@ -79,6 +81,7 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     });
 
     preparePlots();
+    drawPlots();
 }
 
 VdcEditorWindow::~VdcEditorWindow()

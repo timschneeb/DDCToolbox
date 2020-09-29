@@ -8,5 +8,28 @@
         <file>img/icon.ico</file>
         <file>img/warning.svg</file>
         <file>img/critical.svg</file>
+        <file>img/add.svg</file>
+        <file>img/add_block.svg</file>
+        <file>img/add_calc.svg</file>
+        <file>img/add_gray.svg</file>
+        <file>img/close.svg</file>
+        <file>img/delete_block.svg</file>
+        <file>img/open.svg</file>
+        <file>img/redo.svg</file>
+        <file>img/remove.svg</file>
+        <file>img/save.svg</file>
+        <file>img/saveas.svg</file>
+        <file>img/screenshot.png</file>
+        <file>img/undo.svg</file>
+        <file>img/undo_list.svg</file>
+        <file>img/add_table_alt.svg</file>
+        <file>img/add_table.svg</file>
+        <file>img/delete_row.svg</file>
+        <file>img/remove_gray.svg</file>
+        <file>img/open_folder.svg</file>
+        <file>img/cloud.svg</file>
+        <file>img/download.svg</file>
+        <file>img/export_table.svg</file>
+        <file>img/export.svg</file>
     </qresource>
 </RCC>
