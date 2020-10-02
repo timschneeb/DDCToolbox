@@ -14,7 +14,7 @@
 #include "widget/HtmlPopup.h"
 #include "widget/StabilityReport.h"
 #include "widget/AutoEqSelector.h"
-#include "utils/ProjectManager.h"
+#include "utils/VdcProjectManager.h"
 #include "item/CustomFilterListItem.h"
 #include "plot/FrequencyPlot.h"
 
@@ -44,7 +44,7 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
 #undef DECL_UNDO_ACTION
 
     filterModel = new FilterModel();
-    connect(filterModel, &FilterModel::dataChanged, &ProjectManager::instance(), &ProjectManager::projectModified);
+    connect(filterModel, &FilterModel::dataChanged, &VdcProjectManager::instance(), &VdcProjectManager::projectModified);
     connect(filterModel, &FilterModel::dataChanged, this, &VdcEditorWindow::drawPlots);
     connect(filterModel, &FilterModel::filterEdited, [this](DeflatedBiquad previous, DeflatedBiquad current, QModelIndex index){
         EditCommand* editCmd = new EditCommand(filterModel, previous, current, index);
@@ -58,24 +58,24 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
         undoStack->push(cmd);
     });
 
-    ProjectManager::instance().initialize(filterModel);
+    VdcProjectManager::instance().initialize(filterModel);
     ui->tableView_DDCPoints->setModel(filterModel);
     ui->tableView_DDCPoints->sortByColumn(1, Qt::AscendingOrder);
 
     ui->tableView_DDCPoints->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     connect(ui->tableView_DDCPoints->selectionModel(), &QItemSelectionModel::selectionChanged, [=]{updatePlots(true);});
 
-    connect(&ProjectManager::instance(), &ProjectManager::projectClosed, [this]{ undoStack->clear(); });
-    connect(&ProjectManager::instance(), &ProjectManager::projectMetaChanged, [this]{
+    connect(&VdcProjectManager::instance(), &VdcProjectManager::projectClosed, [this]{ undoStack->clear(); });
+    connect(&VdcProjectManager::instance(), &VdcProjectManager::projectMetaChanged, [this]{
         QString title = "DDCToolbox";
-        if(ProjectManager::instance().currentProject().isEmpty()){
+        if(VdcProjectManager::instance().currentProject().isEmpty()){
             this->setWindowTitle(title);
             return;
         }
 
-        title += " - " + QFileInfo(ProjectManager::instance().currentProject()).fileName();
+        title += " - " + QFileInfo(VdcProjectManager::instance().currentProject()).fileName();
 
-        if(ProjectManager::instance().hasUnsavedChanges())
+        if(VdcProjectManager::instance().hasUnsavedChanges())
             title += "*";
         this->setWindowTitle(title);
     });
@@ -91,7 +91,7 @@ VdcEditorWindow::~VdcEditorWindow()
 
 void VdcEditorWindow::saveProject()
 {
-    QString path = ProjectManager::instance().currentProject();
+    QString path = VdcProjectManager::instance().currentProject();
     if(path.isEmpty() || sender() == ui->actionSaveAs){
         path = QFileDialog::getSaveFileName(this, "Save VDC Project File",
                                             "", "ViPER DDC Project (*.vdcprj)");
@@ -100,7 +100,7 @@ void VdcEditorWindow::saveProject()
     if (path.isEmpty())
         return;
 
-    ProjectManager::instance().saveProject(path);
+    VdcProjectManager::instance().saveProject(path);
 }
 
 void VdcEditorWindow::loadProject()
@@ -110,8 +110,8 @@ void VdcEditorWindow::loadProject()
     if(file.isEmpty())
         return;
 
-    ProjectManager::instance().closeProject();
-    bool success = ProjectManager::instance().loadProject(file);
+    VdcProjectManager::instance().closeProject();
+    bool success = VdcProjectManager::instance().loadProject(file);
 
     if(!success)
         QMessageBox::critical(this, "Error", "No valid data found");
@@ -123,7 +123,7 @@ void VdcEditorWindow::closeProject(){
                                   QMessageBox::Yes|QMessageBox::No);
 
     if (reply == QMessageBox::Yes)
-        ProjectManager::instance().closeProject();
+        VdcProjectManager::instance().closeProject();
 }
 
 void VdcEditorWindow::exportProject()
@@ -147,7 +147,7 @@ void VdcEditorWindow::exportProject()
 
     QString fileName = QFileDialog::getSaveFileName(this,
                                                     tr("Save VDC"), "", tr("VDC File (*.vdc)"));
-    ProjectManager::instance().exportProject(fileName, p1, p2);
+    VdcProjectManager::instance().exportProject(fileName, p1, p2);
 }
 
 /* ---- Editor interactions ----*/
@@ -296,8 +296,8 @@ void VdcEditorWindow::importClassicVdc(){
     if(file.isEmpty())
         return;
 
-    ProjectManager::instance().closeProject();
-    bool success = ProjectManager::instance().loadVdc(file);
+    VdcProjectManager::instance().closeProject();
+    bool success = VdcProjectManager::instance().loadVdc(file);
 
     if(!success)
         QMessageBox::critical(this, "Error", "No valid data found\nKeep in mind that only classic VDC files with 'Peaking filters' are supported.");
@@ -309,8 +309,8 @@ void VdcEditorWindow::importParametricAutoEQ(){
     if(file.isEmpty())
         return;
 
-    ProjectManager::instance().closeProject();
-    bool success = ProjectManager::instance().loadParametricEq(file);
+    VdcProjectManager::instance().closeProject();
+    bool success = VdcProjectManager::instance().loadParametricEq(file);
 
     if(!success)
         QMessageBox::critical(this, "Error", "No valid data found\nConversion failed");
@@ -322,8 +322,8 @@ void VdcEditorWindow::downloadFromAutoEQ(){
     if(sel->exec() == QDialog::Accepted){
         HeadphoneMeasurement hp = sel->getSelection();
         
-        ProjectManager::instance().closeProject();
-        bool success = ProjectManager::instance().loadParametricEqString(hp.getParametricEQ());
+        VdcProjectManager::instance().closeProject();
+        bool success = VdcProjectManager::instance().loadParametricEqString(hp.getParametricEQ());
         if(!success)
             QMessageBox::critical(this, "Error", "No valid data found\nConversion failed");
     }
@@ -351,11 +351,11 @@ void VdcEditorWindow::batchConvert(){
             QVector<DeflatedBiquad> biquads;
 
             if(isVdcConversion)
-                biquads = ProjectManager::readVdc(file);
+                biquads = VdcProjectManager::readVdc(file);
             else
-                biquads = ProjectManager::readParametricEq(file);
+                biquads = VdcProjectManager::readParametricEq(file);
 
-            ProjectManager::writeProject(QDir(dir).filePath(QFileInfo(file).completeBaseName() + ".vdcprj"),
+            VdcProjectManager::writeProject(QDir(dir).filePath(QFileInfo(file).completeBaseName() + ".vdcprj"),
                                          biquads);
         }
         QMessageBox::information(this,tr("Note"),tr("Conversion finished!\nYou can find the files here:\n%1").arg(dir));

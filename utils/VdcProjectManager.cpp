@@ -1,6 +1,7 @@
-#include "ProjectManager.h"
+#include "VdcProjectManager.h"
 
 #include "utils/VdcImporter.h"
+#include "model/FilterModel.h"
 
 #include <QFileInfo>
 #include <cassert>
@@ -9,17 +10,17 @@
 
 #define n QString("\n")
 
-ProjectManager::ProjectManager()
+VdcProjectManager::VdcProjectManager()
 {
 }
 
-void ProjectManager::projectModified()
+void VdcProjectManager::projectModified()
 {
     m_projectUnsaved = true;
     emit projectMetaChanged();
 }
 
-bool ProjectManager::saveProject(const QString& fileName){
+bool VdcProjectManager::saveProject(const QString& fileName){
     assert(m_model);
 
     if(!writeProject(fileName, m_model->getFilterBank())){
@@ -32,7 +33,7 @@ bool ProjectManager::saveProject(const QString& fileName){
     return true;
 }
 
-bool ProjectManager::exportProject(QString fileName, const std::list<double>& p1, const std::list<double>& p2){
+bool VdcProjectManager::exportProject(QString fileName, const std::list<double>& p1, const std::list<double>& p2){
     if (fileName.isEmpty())
         return false;
 
@@ -65,7 +66,7 @@ bool ProjectManager::exportProject(QString fileName, const std::list<double>& p1
     return true;
 }
 
-bool ProjectManager::loadProject(const QString &fileName)
+bool VdcProjectManager::loadProject(const QString &fileName)
 {
     closeProject();
 
@@ -82,7 +83,7 @@ bool ProjectManager::loadProject(const QString &fileName)
     return !biquads.empty();
 }
 
-void ProjectManager::closeProject()
+void VdcProjectManager::closeProject()
 {
     m_model->clear();
     m_currentProject.clear();
@@ -92,7 +93,7 @@ void ProjectManager::closeProject()
     emit projectMetaChanged();
 }
 
-bool ProjectManager::writeProject(const QString& fileName, QVector<Biquad *> bank)
+bool VdcProjectManager::writeProject(const QString& fileName, QVector<Biquad *> bank)
 {
     QVector<DeflatedBiquad> biquads;
     for(const auto& b : bank)
@@ -100,7 +101,7 @@ bool ProjectManager::writeProject(const QString& fileName, QVector<Biquad *> ban
     return writeProject(fileName, biquads);
 }
 
-bool ProjectManager::writeProject(const QString& fileName, QVector<DeflatedBiquad> bank)
+bool VdcProjectManager::writeProject(const QString& fileName, QVector<DeflatedBiquad> bank)
 {
     QString name = fileName;
     if(QFileInfo(fileName).suffix() != "vdcprj")
@@ -162,7 +163,7 @@ bool ProjectManager::writeProject(const QString& fileName, QVector<DeflatedBiqua
     return true;
 }
 
-QVector<DeflatedBiquad> ProjectManager::readProject(const QString& fileName)
+QVector<DeflatedBiquad> VdcProjectManager::readProject(const QString& fileName)
 {
     QVector<DeflatedBiquad> buffer;
     if (!fileName.isEmpty()){
@@ -181,7 +182,7 @@ QVector<DeflatedBiquad> ProjectManager::readProject(const QString& fileName)
     return buffer;
 }
 
-DeflatedBiquad ProjectManager::parseProjectLine(QString str){
+DeflatedBiquad VdcProjectManager::parseProjectLine(QString str){
 
     str = str.trimmed();
     if (str.isEmpty() || str.startsWith("#"))
@@ -288,7 +289,7 @@ DeflatedBiquad ProjectManager::parseProjectLine(QString str){
     }
 }
 
-bool ProjectManager::loadVdc(const QString &fileName)
+bool VdcProjectManager::loadVdc(const QString &fileName)
 {
     closeProject();
 
@@ -302,7 +303,7 @@ bool ProjectManager::loadVdc(const QString &fileName)
     return !biquads.empty();
 }
 
-QVector<DeflatedBiquad> ProjectManager::readVdc(const QString& inputVdc){
+QVector<DeflatedBiquad> VdcProjectManager::readVdc(const QString& inputVdc){
     QVector<DeflatedBiquad> biquads;
 
     QFile file(inputVdc);
@@ -338,7 +339,7 @@ QVector<DeflatedBiquad> ProjectManager::readVdc(const QString& inputVdc){
     return biquads;
 }
 
-bool ProjectManager::loadParametricEq(const QString &fileName)
+bool VdcProjectManager::loadParametricEq(const QString &fileName)
 {
     closeProject();
 
@@ -352,7 +353,7 @@ bool ProjectManager::loadParametricEq(const QString &fileName)
     return !biquads.empty();
 }
 
-bool ProjectManager::loadParametricEqString(QString string)
+bool VdcProjectManager::loadParametricEqString(QString string)
 {
     closeProject();
     m_model->clear();
@@ -370,7 +371,7 @@ bool ProjectManager::loadParametricEqString(QString string)
     return m_model->rowCount() > 0;
 }
 
-QVector<DeflatedBiquad> ProjectManager::readParametricEq(const QString& path){
+QVector<DeflatedBiquad> VdcProjectManager::readParametricEq(const QString& path){
     QVector<DeflatedBiquad> biquads;
 
     QFile file(path);
@@ -389,7 +390,7 @@ QVector<DeflatedBiquad> ProjectManager::readParametricEq(const QString& path){
     return biquads;
 }
 
-DeflatedBiquad ProjectManager::parseParametricEqLine(QString str){
+DeflatedBiquad VdcProjectManager::parseParametricEqLine(QString str){
     if (str.isEmpty() || str.startsWith("#"))
         return DeflatedBiquad();
 

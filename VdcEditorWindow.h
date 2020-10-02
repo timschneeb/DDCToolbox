@@ -12,6 +12,8 @@
 #include <mutex>
 #include <regex>
 
+#include "utils/VdcProjectManager.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -19,13 +21,25 @@ class MainWindow;
 class FilterModel;
 class BwCalculator;
 
-class VdcEditorWindow : public QMainWindow
+#if defined MAKE_DDCTOOLBOX_LIB
+ #define LIB_EXPORT Q_DECL_EXPORT
+#else
+ #define LIB_EXPORT Q_DECL_IMPORT
+#endif
+
+class LIB_EXPORT VdcEditorWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
     explicit VdcEditorWindow(QWidget *parent = nullptr);
     ~VdcEditorWindow();
+
+public:
+    VdcProjectManager* projectManager() const
+    {
+        return &VdcProjectManager::instance();
+    }
 
 private slots:
     void saveProject();

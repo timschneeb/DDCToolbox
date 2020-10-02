@@ -14,7 +14,7 @@
    <string>AutoEQ Database</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../resources.qrc">
+   <iconset resource="../ddceditor_resources.qrc">
     <normaloff>:/img/icon.png</normaloff>:/img/icon.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -73,7 +73,7 @@
          <widget class="QLabel" name="group">
           <property name="text">
            <string>Please select your headphone on the right and press 'Ok' to accept.
-This will override your current GraphicEQ configuration.</string>
+This will override your current configuration.</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
@@ -117,7 +117,7 @@ This will override your current GraphicEQ configuration.</string>
   </layout>
  </widget>
  <resources>
-  <include location="../resources.qrc"/>
+  <include location="../ddceditor_resources.qrc"/>
  </resources>
  <connections>
   <connection>

@@ -1,25 +1,34 @@
 #ifndef PROJECTMANAGER_H
 #define PROJECTMANAGER_H
 
-#include "model/FilterModel.h"
-
 #include <QObject>
 #include <QFile>
 #include <QTextStream>
 #include <cmath>
 
-class ProjectManager : public QObject
+#include "model/DeflatedBiquad.h"
+
+class FilterModel;
+class Biquad;
+
+#if defined MAKE_DDCTOOLBOX_LIB
+ #define LIB_EXPORT Q_DECL_EXPORT
+#else
+ #define LIB_EXPORT Q_DECL_IMPORT
+#endif
+
+class LIB_EXPORT VdcProjectManager : public QObject
 {
     Q_OBJECT
 public:
-    static ProjectManager& instance()
+    static VdcProjectManager& instance()
     {
-        static ProjectManager instance;
+        static VdcProjectManager instance;
         return instance;
     }
 
-    ProjectManager(ProjectManager const&) = delete;
-    void operator=(ProjectManager const&) = delete;
+    VdcProjectManager(VdcProjectManager const&) = delete;
+    void operator=(VdcProjectManager const&) = delete;
 
     void initialize(FilterModel* model){
         m_model = model;
@@ -60,7 +69,7 @@ signals:
     void projectMetaChanged();
 
 private:
-    ProjectManager();
+    VdcProjectManager();
     FilterModel* m_model;
     QString m_currentProject;
     bool m_projectUnsaved;
