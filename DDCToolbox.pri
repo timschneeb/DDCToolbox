@@ -66,6 +66,8 @@ FORMS += \
     $$PWD/widget/StabilityReport.ui \
     $$PWD/widget/TextPopup.ui
 
+INCLUDEPATH += $$PWD
+
 include ($$PWD/3rdparty/WebLoader/WebLoader.pri)
 
 RESOURCES += \
