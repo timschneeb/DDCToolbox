@@ -21,13 +21,7 @@ class MainWindow;
 class FilterModel;
 class BwCalculator;
 
-#if defined MAKE_DDCTOOLBOX_LIB
- #define LIB_EXPORT Q_DECL_EXPORT
-#else
- #define LIB_EXPORT Q_DECL_IMPORT
-#endif
-
-class LIB_EXPORT VdcEditorWindow : public QMainWindow
+class VdcEditorWindow : public QMainWindow
 {
     Q_OBJECT
 

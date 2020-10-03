@@ -11,13 +11,7 @@
 class FilterModel;
 class Biquad;
 
-#if defined MAKE_DDCTOOLBOX_LIB
- #define LIB_EXPORT Q_DECL_EXPORT
-#else
- #define LIB_EXPORT Q_DECL_IMPORT
-#endif
-
-class LIB_EXPORT VdcProjectManager : public QObject
+class VdcProjectManager : public QObject
 {
     Q_OBJECT
 public:
