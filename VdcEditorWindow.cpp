@@ -25,11 +25,14 @@
 
 VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow), undoStack(new QUndoStack(this)),
+    ui(new Ui::VdcEditorWindowHost), undoStack(new QUndoStack(this)),
     undoView(new QUndoView(undoStack)), bwCalc(new BwCalculator(this))
 {
+    Q_INIT_RESOURCE(ddceditor_resources);
+
     ui->setupUi(this);
     undoStack->setUndoLimit(100);
+    undoView->setVisible(false);
 
 #define DECL_UNDO_ACTION(type)\
     QAction* action##type = undoStack->create##type##Action(this, tr(#type));\

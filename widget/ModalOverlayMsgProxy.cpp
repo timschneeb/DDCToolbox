@@ -1,4 +1,4 @@
-#include "OverlayMsgProxy.h"
+#include "ModalOverlayMsgProxy.h"
 #include "widget/QMessageOverlay.h"
 
 #include <QFile>
@@ -9,13 +9,13 @@
 #include <QPushButton>
 #include <QTextStream>
 
-OverlayMsgProxy::OverlayMsgProxy(QWidget* _obj)
+ModalOverlayMsgProxy::ModalOverlayMsgProxy(QWidget* _obj)
 {
     lightBox = new QMessageOverlay(_obj,false);
     obj = _obj;
 }
 
-void OverlayMsgProxy::openBase(const QString& title, const QString& desc){
+void ModalOverlayMsgProxy::openBase(const QString& title, const QString& desc){
     QLabel* lbTitle = new QLabel(title);
     lbTitle->setStyleSheet("font-size: 24px; font-weight: bold; color: white");
 
@@ -47,7 +47,7 @@ void OverlayMsgProxy::openBase(const QString& title, const QString& desc){
     lightBox->setLayout(lbLayout);
 }
 
-void OverlayMsgProxy::hide(){
+void ModalOverlayMsgProxy::hide(){
     QGraphicsOpacityEffect *eff2 = new QGraphicsOpacityEffect();
     lightBox->setGraphicsEffect(eff2);
     QPropertyAnimation *a = new QPropertyAnimation(eff2,"opacity");

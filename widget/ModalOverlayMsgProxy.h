@@ -19,11 +19,11 @@
 #include <QPushButton>
 #include "widget/QMessageOverlay.h"
 
-class OverlayMsgProxy : public QObject
+class ModalOverlayMsgProxy : public QObject
 {
     Q_OBJECT
 public:
-    OverlayMsgProxy(QWidget* obj);
+    ModalOverlayMsgProxy(QWidget* obj);
     void openBase( const QString& title, const QString& desc);
     void hide();
 signals:

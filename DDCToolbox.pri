@@ -27,7 +27,7 @@ HEADERS += \
     $$PWD/widget/BwCalculator.h \
     $$PWD/widget/CustomFilterDialog.h \
     $$PWD/widget/HtmlPopup.h \
-    $$PWD/widget/OverlayMsgProxy.h \
+    $$PWD/widget/ModalOverlayMsgProxy.h \
     $$PWD/widget/ProxyStyle.h \
     $$PWD/widget/QMessageOverlay.h \
     $$PWD/widget/ShiftFrequencyDialog.h \
@@ -49,7 +49,7 @@ SOURCES += \
     $$PWD/widget/BwCalculator.cpp \
     $$PWD/widget/CustomFilterDialog.cpp \
     $$PWD/widget/HtmlPopup.cpp \
-    $$PWD/widget/OverlayMsgProxy.cpp \
+    $$PWD/widget/ModalOverlayMsgProxy.cpp \
     $$PWD/widget/QMessageOverlay.cpp \
     $$PWD/widget/ShiftFrequencyDialog.cpp \
     $$PWD/widget/StabilityReport.cpp

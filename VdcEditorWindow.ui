@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>VdcEditorWindowHost</class>
+ <widget class="QMainWindow" name="VdcEditorWindowHost">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -51,16 +51,16 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="leftMargin">
-         <number>9</number>
+         <number>0</number>
         </property>
         <property name="topMargin">
-         <number>9</number>
+         <number>0</number>
         </property>
         <property name="rightMargin">
-         <number>9</number>
+         <number>0</number>
         </property>
         <property name="bottomMargin">
-         <number>9</number>
+         <number>0</number>
         </property>
         <item>
          <widget class="QTableView" name="tableView_DDCPoints">
@@ -603,7 +603,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionAdd_Point</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>addPoint()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -619,7 +619,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionRemove_Point</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>removePoint()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -635,7 +635,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionOpen</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>loadProject()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -651,7 +651,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionSaveAs</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>saveProject()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -667,7 +667,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionKey_shortcuts</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>showHelp()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -683,7 +683,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionIntroduction</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>showHelp()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -699,7 +699,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionAutoEQ_ParametricEQ_txt</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>importParametricAutoEQ()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -715,7 +715,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionQ_BW_Calculator</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>showCalc()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -731,7 +731,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionimportVDC_file</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>importClassicVdc()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -747,7 +747,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionClose_Project</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>closeProject()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -763,7 +763,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionSave</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>saveProject()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -779,7 +779,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionView_undo_history</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>showUndoView()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -795,7 +795,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionInvert_gain_2</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>invertSelection()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -811,7 +811,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionShift_frequency</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>shiftSelection()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -827,7 +827,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionExport_as_VDC</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>exportProject()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -843,7 +843,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionToggle_marker_points</sender>
    <signal>triggered(bool)</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>showPointsAlways(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -859,7 +859,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionCheck_for_unstable_filters</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>checkStability()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -875,7 +875,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionScr_Magnitude_response</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>savePlotScreenshot()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -891,7 +891,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionScr_Phase_response</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>savePlotScreenshot()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -907,7 +907,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionScr_Group_delay</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>savePlotScreenshot()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -923,7 +923,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionDownload_from_AutoEQ</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>downloadFromAutoEQ()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -939,7 +939,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionClear_all</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>clearAll()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -955,7 +955,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionBatchAutoEq</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>batchConvert()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -971,7 +971,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   <connection>
    <sender>actionBatchVdc</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>VdcEditorWindowHost</receiver>
    <slot>batchConvert()</slot>
    <hints>
     <hint type="sourcelabel">

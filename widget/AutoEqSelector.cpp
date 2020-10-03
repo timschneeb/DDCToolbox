@@ -1,7 +1,7 @@
 #include "AutoEqSelector.h"
 #include "ui_AutoEqSelector.h"
 
-#include "OverlayMsgProxy.h"
+#include "ModalOverlayMsgProxy.h"
 #include "utils/AutoEqClient.h"
 
 #include "item/DetailListItem.h"
@@ -18,7 +18,7 @@ AutoEQSelector::AutoEQSelector(QWidget *parent) :
     setFixedSize(geometry().width(),geometry().height());
     ui->listWidget->setItemDelegate(new ItemSizeDelegate);
 
-    waitScreen = new OverlayMsgProxy(this);
+    waitScreen = new ModalOverlayMsgProxy(this);
 
     imgSizeCache = ui->picture->size() * 11.5;
 
@@ -73,7 +73,7 @@ void AutoEQSelector::updateDetails(){
     ui->title->setText(result.getModel());
     ui->group->setText(result.getGroup());
 
-    waitScreen = new OverlayMsgProxy(this);
+    waitScreen = new ModalOverlayMsgProxy(this);
     waitScreen->openBase("Please wait...","Fetching headphone details from GitHub");
 
     HeadphoneMeasurement hp = AutoEQClient::fetchDetails(result);

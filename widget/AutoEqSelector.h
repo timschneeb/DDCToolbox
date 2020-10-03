@@ -5,7 +5,7 @@
 #include <QThread>
 
 #include "utils/AutoEqClient.h"
-#include "OverlayMsgProxy.h"
+#include "ModalOverlayMsgProxy.h"
 
 namespace Ui {
 class AutoEQSelector;
@@ -29,7 +29,7 @@ private:
     Ui::AutoEQSelector *ui;
     QSize imgSizeCache;
     HeadphoneMeasurement hpCache;
-    OverlayMsgProxy* waitScreen;
+    ModalOverlayMsgProxy* waitScreen;
 };
 
 #endif // AUTOEQSELECTOR_H

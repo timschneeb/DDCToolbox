@@ -15,7 +15,7 @@
 #include "utils/VdcProjectManager.h"
 
 namespace Ui {
-class MainWindow;
+class VdcEditorWindowHost;
 }
 
 class FilterModel;
@@ -63,7 +63,7 @@ private slots:
     void drawPlots(){ updatePlots(false); }; /* <- required for signal system */
 
 private:
-    Ui::MainWindow *ui;
+    Ui::VdcEditorWindowHost *ui;
 
     FilterModel    *filterModel;
     QUndoStack     *undoStack;
