@@ -1,4 +1,5 @@
 # DDCToolbox
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c3a6ad77b64543eb826248f58ebfbb5b)](https://app.codacy.com/gh/ThePBone/DDCToolbox?utm_source=github.com&utm_medium=referral&utm_content=ThePBone/DDCToolbox&utm_campaign=Badge_Grade_Settings)
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/7akte2nk20j6u9w1?svg=true)](https://ci.appveyor.com/project/ThePBone/ddctoolbox)
 ![License](https://img.shields.io/github/license/ThePBone/DDCToolbox)
 ![GitHub release](https://img.shields.io/github/release/ThePBone/DDCToolbox)
