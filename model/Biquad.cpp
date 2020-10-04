@@ -39,7 +39,7 @@ void Biquad::RefreshFilter(FilterType type, double dbGain, double centreFreq, do
     CalculateStability();
 }
 
-void Biquad::RefreshFilter(FilterType type, CustomFilter c441, CustomFilter c48)
+void Biquad::RefreshFilter(FilterType type, const CustomFilter& c441, const CustomFilter& c48)
 {
     m_isCustom = true;
     m_custom441 = c441;

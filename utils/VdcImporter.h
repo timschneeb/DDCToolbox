@@ -360,14 +360,17 @@ int str_append(char **bufchar, const char *format, ...)
     vasprintf(&str, format, arg_ptr);
     asprintf(&old_bufchar, "%s", (*bufchar == NULL ? "" : *bufchar));
     new_bufchar = (char *)calloc(strlen(old_bufchar) + strlen(str) + 1, sizeof(char));
-    if (!new_bufchar)
+    if (!new_bufchar){
+        va_end(arg_ptr);
         return 0;
+    }
     strcat(new_bufchar, old_bufchar);
     strcat(new_bufchar, str);
     if (*bufchar) free(*bufchar);
     *bufchar = new_bufchar;
     free(old_bufchar);
     free(str);
+    va_end(arg_ptr);
     return 1;
 }
 char* VDC2vdcprj(DirectForm2 **inputIIR, double inFs, int sosCount)

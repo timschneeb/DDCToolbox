@@ -42,13 +42,14 @@ public:
     {
         UNSTABLE = 0,
         STABLE = 1,
-        PARTIALLY_STABLE = 2
+        PARTIALLY_STABLE = 2,
+        UNKNOWN = 0xFF
     };
 
     Biquad();
     ~Biquad(){};
     void RefreshFilter(FilterType type, double dbGain, double centreFreq, double dBandwidthOrS);
-    void RefreshFilter(FilterType type, CustomFilter c441, CustomFilter c48);
+    void RefreshFilter(FilterType type, const CustomFilter& c441, const CustomFilter& c48);
     std::list<double> ExportCoeffs(double dSamplingRate);
 
     double GainAt(double centreFreq, double fs);
@@ -139,7 +140,7 @@ private:
     double m_dFilterFreq = 10;
     double m_dFilterGain = 0;
     FilterType m_dFilterType;
-    Stability m_isStable;
+    Stability m_isStable = UNKNOWN;
     bool m_isCustom;
     CustomFilter m_custom441;
     CustomFilter m_custom48;
