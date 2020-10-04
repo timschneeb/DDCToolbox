@@ -81,6 +81,7 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
         if(VdcProjectManager::instance().hasUnsavedChanges())
             title += "*";
         this->setWindowTitle(title);
+        emit windowTitleChanged(title);
     });
 
     preparePlots();
@@ -90,6 +91,10 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
 VdcEditorWindow::~VdcEditorWindow()
 {
     delete ui;
+}
+
+void VdcEditorWindow::setOrientation(Qt::Orientation orientation){
+    ui->splitter->setOrientation(orientation);
 }
 
 void VdcEditorWindow::saveProject()
