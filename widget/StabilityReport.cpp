@@ -1,6 +1,8 @@
 #include "StabilityReport.h"
 #include "ui_StabilityReport.h"
 
+#include <model/FilterModel.h>
+
 StabilityReport::StabilityReport(FilterModel* model, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::StabilityReport)

@@ -2,7 +2,8 @@
 #define ADDPOINT_H
 
 #include <QDialog>
-#include "widget/CustomFilterDialog.h"
+
+#include "model/Biquad.h"
 
 namespace Ui {
 class addpoint;

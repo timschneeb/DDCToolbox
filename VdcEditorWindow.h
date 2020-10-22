@@ -2,15 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QTranslator>
-#include <QTableWidgetItem>
-#include <QItemDelegate>
-#include <QStyledItemDelegate>
-#include <QDoubleSpinBox>
-#include <QUndoCommand>
-#include <QUndoView>
-#include <mutex>
-#include <regex>
 
 #include "utils/VdcProjectManager.h"
 
@@ -20,6 +11,8 @@ class VdcEditorWindowHost;
 
 class FilterModel;
 class BwCalculator;
+class QUndoStack;
+class QUndoView;
 
 class VdcEditorWindow : public QMainWindow
 {

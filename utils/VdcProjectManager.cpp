@@ -3,10 +3,12 @@
 #include "utils/VdcImporter.h"
 #include "model/FilterModel.h"
 
+#include <QTextStream>
 #include <QFileInfo>
+#include <QRegularExpression>
+
 #include <cassert>
 #include <cmath>
-#include <QRegularExpression>
 
 #define n QString("\n")
 

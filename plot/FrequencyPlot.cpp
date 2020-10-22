@@ -2,6 +2,7 @@
 #include <utility>
 #include <cassert>
 #include <model/FilterModel.h>
+
 FrequencyPlot::FrequencyPlot(QFrame* frame) : QCustomPlot(frame)
 {
     qsrand(QDateTime::currentMSecsSinceEpoch() / 1000);

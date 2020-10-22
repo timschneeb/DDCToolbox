@@ -1,6 +1,7 @@
 #include "BwCalculator.h"
 #include "ui_BwCalculator.h"
 #include <cmath>
+
 BwCalculator::BwCalculator(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::calc)

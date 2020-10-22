@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-#include <model/FilterModel.h>
+class FilterModel;
 
 namespace Ui {
 class shiftfreq;

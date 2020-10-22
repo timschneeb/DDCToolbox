@@ -1,6 +1,7 @@
 #include "ShiftFrequencyDialog.h"
 #include "ui_ShiftFrequencyDialog.h"
 
+#include <model/FilterModel.h>
 #include <utility>
 
 ShiftFrequencyDialog::ShiftFrequencyDialog(FilterModel* model, QWidget *parent) :

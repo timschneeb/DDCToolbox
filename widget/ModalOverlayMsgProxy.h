@@ -16,8 +16,8 @@
 #define OVERLAYMSGPROXY_H
 
 #include <QObject>
-#include <QPushButton>
-#include "widget/QMessageOverlay.h"
+
+class QMessageOverlay;
 
 class ModalOverlayMsgProxy : public QObject
 {

@@ -5,7 +5,8 @@
 #include <QThread>
 
 #include "utils/AutoEqClient.h"
-#include "ModalOverlayMsgProxy.h"
+
+class ModalOverlayMsgProxy;
 
 namespace Ui {
 class AutoEQSelector;

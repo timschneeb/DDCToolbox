@@ -1,6 +1,8 @@
 #include "AddPointDialog.h"
 #include "ui_AddPointDialog.h"
 
+#include "widget/CustomFilterDialog.h"
+
 AddPointDialog::AddPointDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::addpoint)

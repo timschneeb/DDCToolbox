@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QFile>
-#include <QTextStream>
 #include <cmath>
 
 #include "model/DeflatedBiquad.h"

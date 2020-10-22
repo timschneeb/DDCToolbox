@@ -10,9 +10,7 @@
 #include <cmath>
 #include <QTableWidget>
 
-#include "QCustomPlot.h"
-#include <model/FilterModel.h>
-
+class FilterModel;
 
 class FrequencyPlot : public QCustomPlot
 {

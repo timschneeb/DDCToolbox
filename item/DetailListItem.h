@@ -2,8 +2,8 @@
 #define CONFIGITEM_H
 
 #include <QWidget>
-
 #include <QStyledItemDelegate>
+
 class ItemSizeDelegate : public QStyledItemDelegate  {
 public:
     ItemSizeDelegate(QObject *parent=0) : QStyledItemDelegate (parent){}
