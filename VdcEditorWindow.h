@@ -35,6 +35,8 @@ public:
         return &VdcProjectManager::instance();
     }
 
+    void setOrientation(Qt::Orientation orientation);
+
 private slots:
     void saveProject();
     void loadProject();

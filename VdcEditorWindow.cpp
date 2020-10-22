@@ -68,7 +68,7 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     ui->tableView_DDCPoints->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     connect(ui->tableView_DDCPoints->selectionModel(), &QItemSelectionModel::selectionChanged, [=]{updatePlots(true);});
 
-    connect(&VdcProjectManager::instance(), &VdcProjectManager::projectClosed, [this]{ undoStack->clear(); });
+    connect(&VdcProjectManager::instance(), &VdcProjectManager::projectClosed, [this]{ if(!undoStack->isClean()) undoStack->clear(); });
     connect(&VdcProjectManager::instance(), &VdcProjectManager::projectMetaChanged, [this]{
         QString title = "DDCToolbox";
         if(VdcProjectManager::instance().currentProject().isEmpty()){
@@ -90,6 +90,11 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
 VdcEditorWindow::~VdcEditorWindow()
 {
     delete ui;
+}
+
+void VdcEditorWindow::setOrientation(Qt::Orientation orientation)
+{
+    ui->splitter->setOrientation(orientation);
 }
 
 void VdcEditorWindow::saveProject()
