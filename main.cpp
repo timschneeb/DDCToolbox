@@ -2,6 +2,7 @@
 
 #include "widget/ProxyStyle.h"
 
+#include <clocale>
 #include <QApplication>
 
 int main(int argc, char *argv[])
