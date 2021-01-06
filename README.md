@@ -24,8 +24,9 @@
   <a href="#license">License</a> 
 </p>
 
-
-![Screenshot](https://github.com/ThePBone/DDCToolbox/blob/master/img/screenshot.png?raw=true)
+<p align="center">
+    <img alt="Screenshot" src="https://github.com/ThePBone/DDCToolbox/blob/master/img/screenshot.png?raw=true">
+</p>
 
 ## Features
  * Save/load VDC project files
