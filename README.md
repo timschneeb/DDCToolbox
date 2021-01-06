@@ -72,6 +72,7 @@ Once `snap` is properly installed, you can install ddctoolbox:
 ```bash
 sudo snap install ddctoolbox
 ```
+You can launch ddctoolbox by executing `ddctoolbox` in a terminal, or by selecting the application shortcut in your drop-down menu bar.
 
 > Note: If you installed snap for the first time, it may be necessary to relogin in order to make the application shortcut in your menu bar visible.
 
