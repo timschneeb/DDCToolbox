@@ -40,11 +40,15 @@
 
 # Installation
 Developed with Linux in mind. You can also find Windows and macOS installation instructions below.
+
+Recommended:
   * [Windows](#windows)
   * [Android](#android)
-  * [Arch (AUR)](#arch-aur)
-  * [Ubuntu](#ubuntu-ppa)
-  * [Debian](#debian-unmanaged-packages)
+  * [Linux (Any distro)](#linux)
+  * [Arch Linux (AUR)](#arch-aur)
+
+Other installation methods (not recommended):
+  * [Debian (Unmanaged/Nightly)](#debian-nightly)
   * [Manually (Linux)](#manuallyportable-linux)
   * [Manually (macOS)](#manually-macos)
 
@@ -60,6 +64,22 @@ You can download one of these builds [from my server](https://nightly.timschneeb
 
 If the server is down, you can also get one from the [AppVeyor cloud](https://ci.appveyor.com/project/ThePBone/ddctoolbox) (select one of the two jobs (32/64-bit) and go to the tab 'Artifacts')
 
+## Linux
+Linux users can download a stable release of this app from the Snap Store. If `snap` is not yet installed on your system, you need to install it before you can continue: <https://snapcraft.io/docs/installing-snapd>. (All Ubuntu flavors, KDE Neon, Manjaro and Zorin OS have this utility already pre-installed)
+
+Once `snap` is properly installed, you can install ddctoolbox:
+```bash
+sudo snap install ddctoolbox
+```
+
+> Note: If you installed snap for the first time, it may be necessary to relogin in order to make the application shortcut in your menu bar visible.
+
+<p align="center">
+  <a href="https://snapcraft.io/ddctoolbox">
+    <img alt="Snapcraft Badge" src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg">
+  </a>
+</p>
+
 ## Android
 There is an Android version of DDCToolbox with limited functionality available here: [ThePBone/DDCToolbox-Android](https://github.com/ThePBone/DDCToolbox-Android)
 
@@ -70,34 +90,11 @@ yay -S ddctoolbox-git
 ```
 ![AUR version](https://img.shields.io/aur/version/ddctoolbox-git?label=aur-git)
 
-## ~Ubuntu (PPA)~
-**The Ubuntu PPA is DISCONTINUED. It will not receive new updates and is stuck on version 1.4! If you are interested in helping to package this app, please open an issue.**
-
-**Qt 5.11 or later required.** Ubuntu 20.04 (or later releases) provide this version of Qt in their official repositories.
-
-Add PPA Repo
-```bash
-curl -s --compressed "https://thepbone.github.io/PPA-Repository/KEY.gpg" | sudo apt-key add -
-sudo curl -s --compressed -o /etc/apt/sources.list.d/thepbone_ppa.list "https://thepbone.github.io/PPA-Repository/thepbone_ppa.list"
-sudo apt update
-```
-Install from PPA **(Not recommended)**
-```bash
-sudo apt install ddc-toolbox
-```
-[View PPA on GitHub](https://github.com/ThePBone/PPA-Repository)
-
-I'll look into packaging this app as a snapcraft or flatpak instead. As soon as a proper alternative is available, I'll shutdown the PPA repository.
-
-## Debian (unmanaged packages)
+## Debian (Nightly)
 **Qt 5.11 or later required.** Debian 10 (or later releases) provide this version of Qt in their official repositories.
 
-Since these packages are not downloaded by your package manager, you will not be notified about any updates.
+Since these nightly (beta) packages are not downloaded by your package manager, you will not be notified about any updates. **If possible, please install this app from the [Snap Store](#linux) instead!**
 
-### Stable releases
-Users of debian-based distros can use the DEB-packages that are attached on the [release page](https://github.com/ThePBone/DDCToolbox/releases).
-
-### Nightly builds
 You can download one of these DEB-builds [from my server](https://nightly.timschneeberger.me/ddctoolbox-debian).
 They are automatically compiled and may contain bugs.
 

@@ -1,0 +1,106 @@
+name: ddctoolbox 
+base: core20
+version: '1.4.1'
+icon: snap/gui/ddctoolbox.svg
+summary: Create and edit ViPER DDC files on Linux, Windows and macOS
+description: |
+  Create and edit ViPER DDC files. You can also import headphone compensation data from the AutoEQ database from  within the application or reimport exported VDC files.
+grade: stable 
+confinement: strict 
+
+apps:
+  ddctoolbox:
+    environment:
+      # Use GTK3 cursor theme, icon theme and open/save file dialogs.
+      QT_QPA_PLATFORMTHEME: gtk3
+    common-id: me.timschneeberger.ddctoolbox
+    command: bin/desktop-launch $SNAP/ddctoolbox
+    plugs:
+      - home
+      - opengl
+      - network
+      - network-bind
+      - network-manager
+      - x11
+      - wayland
+      - unity7
+      - desktop
+      - desktop-legacy
+
+parts:
+  # This part installs the qt5 dependencies and the `desktop-launch` script
+  # which initialises desktop features such as fonts, themes and the XDG
+  # environment.
+  # 
+  # It is copied straight from the snapcraft desktop helpers project. Please
+  # periodically check the source for updates and copy the changes.
+  #    https://github.com/ubuntu/snapcraft-desktop-helpers/blob/master/snapcraft.yaml
+  # 
+  desktop-qt5:
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-subdir: qt
+    plugin: make
+    make-parameters: ["FLAVOR=qt5"]
+    build-packages:
+      - build-essential
+      - qtbase5-dev
+      - dpkg-dev
+    stage-packages:
+      - libxkbcommon0
+      - ttf-ubuntu-font-family
+      - dmz-cursor-theme
+      - light-themes
+      - adwaita-icon-theme
+      - gnome-themes-standard
+      - shared-mime-info
+      - libqt5gui5
+      - libgdk-pixbuf2.0-0
+      - libqt5svg5 # for loading icon themes which are svg
+      - try: [appmenu-qt5] # not available on core18
+      - locales-all
+      - xdg-user-dirs
+      - fcitx-frontend-qt5
+
+  qt5-gtk-platform:
+    plugin: nil
+    stage-packages:
+      - qt5-gtk-platformtheme
+
+  ddctoolbox:
+    plugin: make
+    override-build: |
+      set -eux
+      qmake -set prefix $SNAPCRAFT_PART_INSTALL
+      qmake DDCToolbox.pro
+      snapcraftctl build
+      mv DDCToolbox $SNAPCRAFT_PART_INSTALL/ddctoolbox
+    source: .
+    stage:
+      - ddctoolbox
+    build-packages:
+      - build-essential
+      - qtbase5-dev
+      - libqt5core5a
+      - libqt5network5
+      - libqt5gui5
+      - libqt5widgets5
+    stage-packages:
+      - libqt5gui5
+    after: [desktop-qt5]
+
+plugs:
+  # Support for common GTK themes
+  # https://forum.snapcraft.io/t/how-to-use-the-system-gtk-theme-via-the-gtk-common-themes-snap/6235
+  gsettings:
+  gtk-3-themes:
+    interface: content
+    target: $SNAP/data-dir/themes
+    default-provider: gtk-common-themes
+  icon-themes:
+    interface: content
+    target: $SNAP/data-dir/icons
+    default-provider: gtk-common-themes
+  sound-themes:
+    interface: content
+    target: $SNAP/data-dir/sounds
+    default-provider: gtk-common-themes
