@@ -1,11 +1,31 @@
-# DDCToolbox
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/f98a0f89981544319b0250c81656cb07)](https://www.codacy.com/gh/ThePBone/DDCToolbox/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ThePBone/DDCToolbox&amp;utm_campaign=Badge_Grade)
-[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/7akte2nk20j6u9w1?svg=true)](https://ci.appveyor.com/project/ThePBone/ddctoolbox)
-![License](https://img.shields.io/github/license/ThePBone/DDCToolbox)
-![GitHub release](https://img.shields.io/github/release/ThePBone/DDCToolbox)
-![GitHub All Releases](https://img.shields.io/github/downloads/ThePBone/DDCToolbox/total?label=downloads%20%28windows%29)
+<h1 align="center">
+  DDCToolbox
+  <br>
+</h1>
+<h4 align="center">Create and edit ViPER DDC files on Linux, Windows, macOS and Android</h4>
+<p align="center">
+  <a href="https://github.com/ThePBone/DDCToolbox/releases">
+    <img alt="GitHub downloads count" src="https://img.shields.io/github/downloads/ThePBone/DDCToolbox/total?label=downloads%20%28windows%29">
+  </a>
+  <a href="https://github.com/ThePBone/DDCToolbox/releases">
+  	<img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/thepbone/DDCToolbox">
+  </a>
+  <a href="https://github.com/ThePBone/DDCToolbox/blob/master/LICENSE">
+      <img alt="License" src="https://img.shields.io/github/license/thepbone/DDCToolbox">
+  </a>
+  <a href="https://ci.appveyor.com/project/ThePBone/ddctoolbox">
+    <img alt="AppVeyor" src="https://ci.appveyor.com/api/projects/status/7akte2nk20j6u9w1?svg=true">
+  </a>
+</p>
+<p align="center">
+  <a href="#features">Features</a> •
+  <a href="#installation">Installation</a> •
+  <a href="#contributors">Contributors</a> •
+  <a href="#license">License</a> 
+</p>
 
-Create and edit ViPER DDC files on Linux, Windows and macOS
+
+![Screenshot](https://github.com/ThePBone/DDCToolbox/blob/master/img/screenshot.png?raw=true)
 
 ## Features
  * Save/load VDC project files
@@ -18,10 +38,6 @@ Create and edit ViPER DDC files on Linux, Windows and macOS
  * Embed custom IIR filters
  * Stability check for filters
 
-## Screenshot
-
-![Screenshot](https://github.com/ThePBone/DDCToolbox/blob/master/img/screenshot.png?raw=true)
-
 # Installation
 Developed with Linux in mind. You can also find Windows and macOS installation instructions below.
   * [Windows](#windows)
@@ -31,7 +47,7 @@ Developed with Linux in mind. You can also find Windows and macOS installation i
   * [Debian](#debian-unmanaged-packages)
   * [Manually (Linux)](#manuallyportable-linux)
   * [Manually (macOS)](#manually-macos)
-  
+
 ## Windows
 
 ### Stable releases
@@ -71,7 +87,7 @@ sudo apt install ddc-toolbox
 ```
 [View PPA on GitHub](https://github.com/ThePBone/PPA-Repository)
 
-I'll look into packaging this app as a snapcraft or flatpak instead.
+I'll look into packaging this app as a snapcraft or flatpak instead. As soon as a proper alternative is available, I'll shutdown the PPA repository.
 
 ## Debian (unmanaged packages)
 **Qt 5.11 or later required.** Debian 10 (or later releases) provide this version of Qt in their official repositories.
@@ -113,7 +129,7 @@ You should now be able to execute it:
 
     ./DDCToolbox
 
-### Optional: Manual installation
+#### Optional: Installation and shortcut
 Copy to /usr/local/bin
 ```bash
 sudo cp DDCToolbox /usr/local/bin/ddc-toolbox
@@ -165,7 +181,6 @@ Compile it
     make
 
 Run it
-    
     open ./DDCToolbox.app
 
 ## Contributors
@@ -173,6 +188,18 @@ Run it
   * VDC Importer
   * Group delay plot
   * Unity gain filter 
-  * and more...
-_____________
-Based on ViPERs Toolbox 2.0 for Windows
+  * and more
+
+
+## License
+
+This project is licensed under [GPLv3](LICENSE).
+
+```
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR 
+THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
+
