@@ -28,7 +28,7 @@ Developed with Linux in mind. You can also find Windows and macOS installation i
   * [Android](#android)
   * [Arch (AUR)](#arch-aur)
   * [Ubuntu](#ubuntu-ppa)
-  * [Debian](#debian)
+  * [Debian](#debian-unmanaged-packages)
   * [Manually (Linux)](#manuallyportable-linux)
   * [Manually (macOS)](#manually-macos)
   
