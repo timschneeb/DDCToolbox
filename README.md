@@ -102,8 +102,8 @@ yay -S ddctoolbox-git
 
 Since these nightly (beta) packages are not downloaded by your package manager, you will not be notified about any updates. **If possible, please install this app from the [Snap Store](#linux) instead!**
 
-You can download one of these DEB-builds [from my server](https://nightly.timschneeberger.me/ddctoolbox-debian).
-They are automatically compiled and may contain bugs.
+You can download one of these nightly debian packages or precompiled binaries [from my server](https://nightly.timschneeberger.me/ddctoolbox-linux).
+They are automatically compiled and may contain bugs. Dependencies are not included with precompiled standalone executables.
 
 ## Manually/Portable (Linux)
 ### Build from sources
