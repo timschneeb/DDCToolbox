@@ -165,6 +165,14 @@ jobs:
       with:
         name: DDCToolbox_Setup_win64_${{steps.version.outputs.version}}.exe
       
+    - name: Download portable artifact (x64)
+      uses: actions/download-artifact@v2
+      with:
+        name: DDCToolbox_Portable_win64
+      
+    - name: Rename portable artifact (x64)
+      run: ren DDCToolbox.exe DDCToolbox_Portable_win64_${{steps.version.outputs.version}}.exe
+      
     - uses: AButler/upload-release-assets@v2.0
       with:
         files: '*.exe'
