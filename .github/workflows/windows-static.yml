@@ -44,13 +44,13 @@ jobs:
       run: 7z x ./qt.7z
     
     - name: Install Qt
-      run: echo "D:\a\CITests\CITests\qt-5.15.2-static-msvc2019-x86_64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append 
+      run: echo "D:\a\DDCToolbox\DDCToolbox\qt-5.15.2-static-msvc2019-x86_64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append 
            
     - name: Build (x64)
       shell: cmd
       run: | 
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        cd D:\a\CITests\CITests
+        cd D:\a\DDCToolbox\DDCToolbox
         qmake DDCToolbox.pro "CONFIG += CI" "CONFIG += static" 
         nmake release
       
@@ -91,7 +91,7 @@ jobs:
       uses: joncloud/makensis-action@v3.3
       with:
         script-file: "install.nsi"
-        arguments: "-DBASE_DIR=\"D:\\a\\CITests\\CITests\" -DPRODUCT_VERSION=\"${{steps.version.outputs.version}}\" -DPRODUCT_ARCH=\"64bit\""
+        arguments: "-DBASE_DIR=\"D:\\a\\DDCToolbox\\DDCToolbox\" -DPRODUCT_VERSION=\"${{steps.version.outputs.version}}\" -DPRODUCT_ARCH=\"64bit\""
 
     - name: Rename artifact (x64)
       run: ren DDCToolbox_Setup_64bit_${{steps.version.outputs.version}}.exe DDCToolbox_Setup_win64_${{steps.version.outputs.version}}.exe
