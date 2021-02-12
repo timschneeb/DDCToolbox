@@ -133,7 +133,7 @@ jobs:
         name: DDCToolbox_Portable_win64
       
     - name: Rename portable artifact (x64)
-      run: ren DDCToolbox.exe DDCToolbox_Portable_win64_${{steps.version.outputs.version}}.exe
+      run: mv DDCToolbox.exe DDCToolbox_Portable_win64_${{steps.version.outputs.version}}.exe
       
     - name: Upload setup artifact to nightly server (x64)
       uses: wlixcc/SFTP-Deploy-Action@v1.0
