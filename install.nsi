@@ -53,6 +53,22 @@
 
 ; MUI end ------
 
+; !defines for use with SHChangeNotify
+!ifdef SHCNE_ASSOCCHANGED
+!undef SHCNE_ASSOCCHANGED
+!endif
+!define SHCNE_ASSOCCHANGED 0x08000000
+!ifdef SHCNF_FLUSH
+!undef SHCNF_FLUSH
+!endif
+!define SHCNF_FLUSH        0x1000
+ 
+!macro UPDATEFILEASSOC
+; Using the system.dll plugin to call the SHChangeNotify Win32 API function so we
+; can update the shell.
+  System::Call "shell32::SHChangeNotify(i,i,i,i) (${SHCNE_ASSOCCHANGED}, ${SHCNF_FLUSH}, 0, 0)"
+!macroend
+
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "DDCToolbox_Setup_${PRODUCT_ARCH}_${PRODUCT_VERSION}.exe"
 InstallDir "$PROGRAMFILES\DDCToolbox"
@@ -69,6 +85,15 @@ Section "Hauptgruppe" SEC01
   CreateDirectory "$SMPROGRAMS\DDCToolbox"
   CreateShortCut "$SMPROGRAMS\DDCToolbox\DDCToolbox.lnk" "$INSTDIR\DDCToolbox.exe"
   CreateShortCut "$DESKTOP\DDCToolbox.lnk" "$INSTDIR\DDCToolbox.exe"
+  
+  WriteRegStr HKCR ".vdcprj" "" "DDCToolbox.Project"
+  WriteRegStr HKCR "DDCToolbox.Project" "" \
+      "Viper DDC Project"
+  WriteRegStr HKCR "DDCToolbox.Project\DefaultIcon" "" \
+      "$INSTDIR\DDCToolbox.exe,0"
+  WriteRegStr HKCR "DDCToolbox.Project\shell\open\command" "" \
+      '"$INSTDIR\DDCToolbox.exe" "%1"'
+  !insertmacro UPDATEFILEASSOC
 SectionEnd
 
 Section -AdditionalIcons
@@ -112,5 +137,8 @@ Section Uninstall
 
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
+  DeleteRegKey HKCR ".vdcprj" 
+  
+  !insertmacro UPDATEFILEASSOC
   SetAutoClose true
 SectionEnd

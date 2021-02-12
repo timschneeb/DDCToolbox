@@ -33,8 +33,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 win32 {
     RC_ICONS = img/icon.ico
-    LIBS += $$[QT_INSTALL_LIBS]/../plugins/imageformats/qsvg.lib
-    CONFIG(static): DEFINES += WIN_STATIC
+    CONFIG(static) {
+       DEFINES += WIN_STATIC
+       LIBS += $$[QT_INSTALL_LIBS]/../plugins/imageformats/qsvg.lib
+    }
 }
 
 unix {

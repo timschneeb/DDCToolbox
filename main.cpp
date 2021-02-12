@@ -22,5 +22,9 @@ int main(int argc, char *argv[])
     QApplication::setPalette(qApp->style()->standardPalette());
     w.show();
 
+    if(argc == 2){
+        VdcProjectManager::instance().loadProject(QString::fromLocal8Bit(argv[1]));
+    }
+
     return QApplication::exec();
 }
