@@ -22,6 +22,8 @@ CONFIG += c++17
 
 SOURCES += main.cpp
 
+QTPLUGIN += qsvg
+
 include($$PWD/DDCToolbox.pri)
 
 # Default rules for deployment.
@@ -31,6 +33,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 win32 {
     RC_ICONS = img/icon.ico
+    LIBS += $$[QT_INSTALL_LIBS]/../plugins/imageformats/qsvg.lib
+    CONFIG(static): DEFINES += WIN_STATIC
 }
 
 unix {

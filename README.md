@@ -43,7 +43,8 @@
 Developed with Linux in mind. You can also find Windows and macOS installation instructions below.
 
 Recommended:
-  * [Windows](#windows)
+  * [Windows (Stable)](#windows-stable)
+  * [Windows (Nightly)](#windows-nightly)
   * [Android](#android)
   * [Linux (Any distro)](#linux)
   * [Arch Linux (AUR)](#arch-aur)
@@ -53,17 +54,21 @@ Other installation methods (not recommended):
   * [Manually (Linux)](#manuallyportable-linux)
   * [Manually (macOS)](#manually-macos)
 
-## Windows
-
-### Stable releases
+## Windows (Stable)
 You can find stable windows packages attached on the [release page](https://github.com/ThePBone/DDCToolbox/releases).
 
-### Nightly builds
-These windows builds are automatically built and deployed once a new commit has been pushed.
+## Windows (Nightly)
+These windows builds are automatically built and deployed once a new commit has been pushed. They may contain bugs but are always cutting-edge.
 
 You can download one of these builds [from my server](https://nightly.timschneeberger.me/ddctoolbox-win).
 
-If the server is down, you can also get one from the [AppVeyor cloud](https://ci.appveyor.com/project/ThePBone/ddctoolbox) (select one of the two jobs (32/64-bit) and go to the tab 'Artifacts')
+If the server is down, you can also get one from the GitHub artifact storage:
+1. Visit the [actions section](https://github.com/ThePBone/DDCToolbox/actions?query=workflow%3A%22Windows+static+build%22)
+2. Select the latest job at the top that finished successfully
+3. On the next page, scroll all the way down to the artifacts section
+4. Select your architecture and choose whether you want an installer or standalone executable.
+
+**NOTE: You need a GitHub account to download these build artifacts, otherwise you'll get redirected to a 404 page.**
 
 ## Linux
 Linux users can download a stable release of this app from the Snap Store. If `snap` is not yet installed on your system, you need to install it before you can continue: <https://snapcraft.io/docs/installing-snapd>. (All Ubuntu flavors, KDE Neon, Manjaro and Zorin OS have this utility already pre-installed)
