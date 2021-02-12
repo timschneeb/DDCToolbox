@@ -1,0 +1,159 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  release:
+    types: 
+     - published
+     - prereleased
+
+jobs:
+  build-amd64:
+    runs-on: ubuntu-20.04
+        
+    steps:
+    - uses: actions/checkout@v2
+  
+    - name: Install dependencies
+      run: |
+        sudo apt update -qq
+        sudo apt install lftp qtbase5-dev qt5-default qttools5-dev-tools
+        
+    - name: Initialize project
+      run: qmake DDCToolbox.pro "CONFIG += CI"
+    
+    - name: Build
+      run: make
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: DDCToolbox_Portable_linux64
+        path: DDCToolbox
+    
+  build-deb-amd64:
+    runs-on: ubuntu-20.04
+    needs: [build-amd64]
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Prepare version information (1/3)
+      uses: oprypin/find-latest-tag@v1
+      with:
+        repository: ThePBone/DDCToolbox
+        releases-only: true
+      id: last_release  
+    - name: Prepare version information (2/3)
+      uses: benjlevesque/short-sha@v1.2
+      id: short-sha
+      with:
+        length: 6
+    - name: Prepare version information (3/3)
+      run: echo '::set-output name=version::${{steps.last_release.outputs.tag}}-${{steps.short-sha.outputs.sha}}'
+      id: version
+      
+    - name: Download artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: DDCToolbox_Portable_linux64
+      
+    - name: Build DEB package
+      run: |
+        chmod +x ./deployment/build_deb_package.sh
+        ./deployment/build_deb_package.sh ${{steps.version.outputs.version}}
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ddctoolbox_${{steps.version.outputs.version}}_linux64.deb
+        path: ddctoolbox_${{steps.version.outputs.version}}_linux64.deb
+
+  publish-nightly:
+    runs-on: ubuntu-latest
+    needs: [build-amd64, build-deb-amd64]
+    steps:
+    - name: Prepare version information (1/3)
+      uses: oprypin/find-latest-tag@v1
+      with:
+        repository: ThePBone/DDCToolbox
+        releases-only: true
+      id: last_release  
+      
+    - name: Prepare version information (2/3)
+      uses: benjlevesque/short-sha@v1.2
+      id: short-sha
+      with:
+        length: 6
+    - name: Prepare version information (3/3)
+      run: echo '::set-output name=version::${{steps.last_release.outputs.tag}}-${{steps.short-sha.outputs.sha}}'
+      id: version
+      
+    - name: Download portable artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: DDCToolbox_Portable_linux64
+              
+    - name: Download package artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: ddctoolbox_${{steps.version.outputs.version}}_linux64.deb
+        
+    - name: Rename portable artifact
+      run: mv DDCToolbox ddctoolbox_${{steps.version.outputs.version}}_linux64.bin
+      
+    - name: Upload binary to nightly server
+      uses: wlixcc/SFTP-Deploy-Action@v1.0
+      with:
+        username: 'tim'
+        server: 'local.timschneeberger.me'
+        port: 222 
+        ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }} 
+        local_path: './ddctoolbox_${{steps.version.outputs.version}}_linux64.bin'
+        remote_path: '/srv/http/nightly.timschneeberger.me/ddctoolbox-linux/'
+        args: '-o ConnectTimeout=5'
+      
+    - name: Upload deb package to nightly server
+      uses: wlixcc/SFTP-Deploy-Action@v1.0
+      with:
+        username: 'tim'
+        server: 'local.timschneeberger.me'
+        port: 222 
+        ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }} 
+        local_path: './ddctoolbox_${{steps.version.outputs.version}}_linux64.deb'
+        remote_path: '/srv/http/nightly.timschneeberger.me/ddctoolbox-linux/'
+        args: '-o ConnectTimeout=5'
+
+  attach-to-release:
+    runs-on: ubuntu-latest
+    needs: [build-deb-amd64]
+    if: github.event_name == 'release'
+    
+    steps:
+    - name: Prepare version information (1/3)
+      uses: oprypin/find-latest-tag@v1
+      with:
+        repository: ThePBone/DDCToolbox
+        releases-only: true
+      id: last_release  
+      
+    - name: Prepare version information (2/3)
+      uses: benjlevesque/short-sha@v1.2
+      id: short-sha
+      with:
+        length: 6
+    - name: Prepare version information (3/3)
+      run: echo '::set-output name=version::${{steps.last_release.outputs.tag}}-${{steps.short-sha.outputs.sha}}'
+      id: version
+      
+    - name: Download package artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: ddctoolbox_${{steps.version.outputs.version}}_linux64.deb
+      
+    - uses: AButler/upload-release-assets@v2.0
+      with:
+        files: '*.deb'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}

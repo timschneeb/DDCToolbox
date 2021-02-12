@@ -1,8 +1,7 @@
 #!/bin/bash
-#DEB build script for Travis-CI
 #DDCToolbox binary needs to be in working directory
 
-debname="ddctoolbox_"$base_version"-build"$TRAVIS_BUILD_NUMBER
+debname="ddctoolbox_"$1"_linux64"
 echo $debname
 mkdir $debname
 mkdir $debname"/DEBIAN"
@@ -30,7 +29,7 @@ EOT
 
 cat <<EOT >> $debname"/DEBIAN/control"
 Package: ddc-toolbox
-Version: $base_version-$TRAVIS_BUILD_NUMBER
+Version: $1
 Section: sound
 Priority: optional
 Architecture: amd64
