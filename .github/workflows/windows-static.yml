@@ -140,7 +140,7 @@ jobs:
       with:
         username: 'tim'
         server: 'local.timschneeberger.me'
-        port: 222 
+        port: 22
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }} 
         local_path: './DDCToolbox_Setup_win64_${{steps.version.outputs.version}}.exe'
         remote_path: '/srv/http/nightly.timschneeberger.me/ddctoolbox-win/'
@@ -151,7 +151,7 @@ jobs:
       with:
         username: 'tim'
         server: 'local.timschneeberger.me'
-        port: 222 
+        port: 22
         ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }} 
         local_path: './DDCToolbox_Portable_win64_${{steps.version.outputs.version}}.exe'
         remote_path: '/srv/http/nightly.timschneeberger.me/ddctoolbox-win/'
