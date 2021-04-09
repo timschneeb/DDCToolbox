@@ -13,8 +13,8 @@
   <a href="https://github.com/ThePBone/DDCToolbox/blob/master/LICENSE">
       <img alt="License" src="https://img.shields.io/github/license/thepbone/DDCToolbox">
   </a>
-  <a href="https://ci.appveyor.com/project/ThePBone/ddctoolbox">
-    <img alt="AppVeyor" src="https://ci.appveyor.com/api/projects/status/7akte2nk20j6u9w1?svg=true">
+  <a href="https://github.com/ThePBone/DDCToolbox/">
+    <img alt="Windows build" src="https://img.shields.io/github/repo-size/thepbone/ddctoolbox">
   </a>
 </p>
 <p align="center">
