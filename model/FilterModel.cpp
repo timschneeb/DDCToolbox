@@ -81,3 +81,13 @@ QVariant FilterModel::data(const QModelIndex &index, int role) const {
     default: return {};
     };
 }
+
+bool FilterModel::getDebugMode() const
+{
+    return debugMode;
+}
+
+void FilterModel::setDebugMode(bool value)
+{
+    debugMode = value;
+}

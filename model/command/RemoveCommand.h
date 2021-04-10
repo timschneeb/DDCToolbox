@@ -30,17 +30,21 @@ public:
 
     void undo()
     {
+        QVector<Biquad*> inflated;
         for(const auto& biquad : cache)
         {
-            model->append(biquad.inflate());
+            inflated.push_back(biquad.inflate());
         }
+        model->appendAll(inflated);
     }
 
     void redo()
     {
+        QVector<uint32_t> ids;
         for( int i = cache.count(); i > 0; i--){
-            model->removeById(cache.at(i-1).id);
+            ids.push_back(cache.at(i-1).id);
         }
+        model->removeAllById(ids);
     }
 
     QString createCommandString(){
@@ -50,7 +54,7 @@ public:
 private:
     FilterModel* model;
     QModelIndexList indices;
-    QList<DeflatedBiquad> cache;
+    QVector<DeflatedBiquad> cache;
 };
 
 #endif // REMOVECOMMAND_H

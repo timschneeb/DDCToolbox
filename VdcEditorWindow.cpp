@@ -86,6 +86,10 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
 
     preparePlots();
     drawPlots();
+
+#ifndef QT_DEBUG
+    ui->actionEnable_table_debug_mode->setVisible(false);
+#endif
 }
 
 VdcEditorWindow::~VdcEditorWindow()
@@ -260,6 +264,11 @@ void VdcEditorWindow::updatePlots(bool onlyUpdatePoints){
     ui->graph->updatePoints();
     ui->phase_graph->updatePoints();
     ui->gdelay_graph->updatePoints();
+}
+
+void VdcEditorWindow::setDebugMode(bool state){
+    filterModel->setDebugMode(state);
+    ui->tableView_DDCPoints->repaint();
 }
 
 /* ---- Dialogues ----*/

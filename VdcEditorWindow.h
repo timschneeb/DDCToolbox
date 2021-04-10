@@ -56,6 +56,7 @@ private slots:
     void showPointsAlways(bool state);
     void updatePlots(bool onlyUpdatePoints);
     void drawPlots(){ updatePlots(false); }; /* <- required for signal system */
+    void setDebugMode(bool state);
 
 private:
     Ui::VdcEditorWindowHost *ui;

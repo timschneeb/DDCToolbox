@@ -76,8 +76,8 @@ public:
         else if (index.column() == 3 && getType(index) == FilterType::CUSTOM){
             CustomFilterItem* cf_item = new CustomFilterItem(parent);
             connect(cf_item, &CustomFilterItem::coefficientsUpdated,
-                             [this, index](CustomFilter prev44100, CustomFilter prev48000,
-                             CustomFilter c44100, CustomFilter c48000){
+                    [this, index](CustomFilter prev44100, CustomFilter prev48000,
+                    CustomFilter c44100, CustomFilter c48000){
 
                 DeflatedBiquad previous(FilterType::CUSTOM, prev44100, prev48000);
                 DeflatedBiquad current(FilterType::CUSTOM, c44100, c48000);
@@ -93,11 +93,30 @@ public:
     {
         auto specs = getType(index).getSpecs();
 
+
         switch(index.column()){
-        case 1:
+        case 0: {
+            auto model = static_cast<FilterModel*>(m_model);
+            if(model->getDebugMode()){
+                QStyleOptionButton button;
+                QRect r = option.rect;
+                button.rect = QRect(r.left() + 2,
+                                    r.top() + 2,
+                                    r.width() - 4,
+                                    r.height() - 4);
+                button.text = "ID: " + QString::number(model->getFilter(index.row())->GetId());
+                button.state = option.state;
+                QApplication::style()->drawControl(QStyle::CE_PushButton,
+                                                   &button, painter);
+                return;
+            }
+
+        }
+        case 1: {
             if(!specs.test(FilterType::SPEC_REQUIRE_FREQ))
                 return;
             break;
+        }
         case 2:
             if(!specs.test(FilterType::SPEC_REQUIRE_BW) && !specs.test(FilterType::SPEC_REQUIRE_SLOPE))
                 return;

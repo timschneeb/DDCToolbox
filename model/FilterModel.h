@@ -105,6 +105,20 @@ public:
         this->sort(Freq, Qt::AscendingOrder);
     }
 
+    void appendAll(QVector<Biquad*> filters) {
+        beginInsertRows({}, m_data.count(), m_data.count());
+        for(const auto& filter : filters){
+            m_data.push_back(filter);
+        }
+        endInsertRows();
+
+        QModelIndex begin = index(m_data.count() - filters.count(), 0);
+        QModelIndex end = index(m_data.count(), 3);
+        emit dataChanged(begin, end);
+
+        this->sort(Freq, Qt::AscendingOrder);
+    }
+
     bool remove(Biquad* filter){
         for(int i = 0; i < m_data.length(); i++){
             if(m_data[i] == filter){
@@ -124,6 +138,36 @@ public:
         }
         return false;
     }
+
+    bool removeAllById(QVector<uint32_t> ids){
+        QVector<int> rows;
+        for(const auto& id : ids){
+            for(int i = 0; i < m_data.length(); i++){
+                if(m_data[i]->GetId() == id){
+                    rows.append(i);
+                }
+            }
+        }
+
+        if(rows.count() < 1){
+            qWarning() << "FilterModel::removeAllById(): No matching rows found to remove";
+            return false;
+        }
+
+        std::sort(rows.begin(), rows.end(), std::greater<int>());
+
+        beginRemoveRows({}, rows.last(), rows.first());
+        for(const int& row : rows){
+            m_data.remove(row, 1);
+        }
+        endRemoveRows();
+
+        QModelIndex begin = index(rows.last(), 0);
+        QModelIndex end = index(rows.first(), 3);
+        emit dataChanged(begin, end);
+        return true;
+    }
+
 
     void clear(){
         if(!m_data.empty()){
@@ -217,8 +261,14 @@ public:
         return numArray;
     }
 
+    bool getDebugMode() const;
+    void setDebugMode(bool value);
+
 signals:
     void filterEdited(DeflatedBiquad previous, DeflatedBiquad current, QModelIndex index);
+
+private:
+    bool debugMode = false;
 
 };
 
