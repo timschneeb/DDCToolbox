@@ -161,7 +161,7 @@ void FrequencyPlot::updatePlot(QVector<float> table,int bandCount){
 
     switch (m_type) {
     case PlotType::phase_response:
-        for (size_t i = 0; i < (size_t)bandCount; i++){
+        for (int i = 0; i < (int)bandCount; i++){
             if (m_table.at(i) > max)
                 max = m_table.at(i);
             if (m_table.at(i) < min)
@@ -172,7 +172,7 @@ void FrequencyPlot::updatePlot(QVector<float> table,int bandCount){
         plot = addGraph();
         plot->setAdaptiveSampling(false);
 
-        for (size_t m = 0; m < (size_t)bandCount; m++)
+        for (int m = 0; m < (int)bandCount; m++)
         {
             double num3 = (48000.0 / 2.0) / ((double) bandCount);
             plot->addData(num3 * (m + 1.0),(double)m_table.at(m));
@@ -180,7 +180,7 @@ void FrequencyPlot::updatePlot(QVector<float> table,int bandCount){
         }
         break;
     case PlotType::magnitude:
-        for (size_t i = 0; i < (size_t)bandCount; i++){
+        for (int i = 0; i < (int)bandCount; i++){
             if (m_table.at(i) > max)
                 max = m_table.at(i);
             if (m_table.at(i) < min)
@@ -191,7 +191,7 @@ void FrequencyPlot::updatePlot(QVector<float> table,int bandCount){
         plot = addGraph();
         plot->setAdaptiveSampling(false);
 
-        for (size_t m = 0; m < (size_t)bandCount; m++)
+        for (int m = 0; m < (int)bandCount; m++)
         {
             double num3 = (48000.0 / 2.0) / ((double) bandCount);
             plot->addData(num3 * (m + 1.0),(double)m_table.at(m));
@@ -215,7 +215,7 @@ void FrequencyPlot::updatePlot(QVector<float> table,int bandCount){
         plot = addGraph();
         plot->setAdaptiveSampling(false);
 
-        for (size_t m = 0; m < (size_t)bandCount; m++)
+        for (int m = 0; m < (int)bandCount; m++)
         {
             double num3 = (48000.0 / 2.0) / ((double) bandCount);
             plot->addData(num3 * (m + 1.0),(double)m_table.at(m));

@@ -1,10 +1,7 @@
 #ifndef FREQUENCYPLOT_H
 #define FREQUENCYPLOT_H
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wall"
 #include "QCustomPlot.h"
-#pragma GCC diagnostic pop
 
 #include <QObject>
 #include <cmath>

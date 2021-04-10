@@ -119,6 +119,14 @@ public:
         this->sort(Freq, Qt::AscendingOrder);
     }
 
+    void appendAllDeflated(QVector<DeflatedBiquad> filters) {
+        QVector<Biquad*> vector;
+        for(const auto& filter : filters){
+            vector.push_back(filter.inflate());
+        }
+        appendAll(vector);
+    }
+
     bool remove(Biquad* filter){
         for(int i = 0; i < m_data.length(); i++){
             if(m_data[i] == filter){

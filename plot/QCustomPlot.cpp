@@ -14513,7 +14513,6 @@ void QCustomPlot::rescaleAxes(bool onlyVisiblePlottables)
 bool QCustomPlot::savePdf(const QString &fileName, int width, int height, QCP::ExportPen exportPen, const QString &pdfCreator, const QString &pdfTitle)
 {
   bool success = false;
-#ifdef QT_NO_PRINTER
   Q_UNUSED(fileName)
   Q_UNUSED(exportPen)
   Q_UNUSED(width)
@@ -14521,14 +14520,6 @@ bool QCustomPlot::savePdf(const QString &fileName, int width, int height, QCP::E
   Q_UNUSED(pdfCreator)
   Q_UNUSED(pdfTitle)
   qDebug() << Q_FUNC_INFO << "Qt was built without printer support (QT_NO_PRINTER). PDF not created.";
-#else
-    qDebug() << "Printer support removed";
-#if QT_VERSION < QT_VERSION_CHECK(5, 3, 0)
-  printer.setFullPage(true);
-  printer.setPaperSize(viewport().size(), QPrinter::DevicePixel);
-#else
-#endif
-#endif // QT_NO_PRINTER
   return success;
 }
 
