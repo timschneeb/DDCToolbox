@@ -30,12 +30,7 @@ public:
 
     void undo()
     {
-        QVector<Biquad*> inflated;
-        for(const auto& biquad : cache)
-        {
-            inflated.push_back(biquad.inflate());
-        }
-        model->appendAll(inflated);
+        model->appendAllDeflated(cache);
     }
 
     void redo()

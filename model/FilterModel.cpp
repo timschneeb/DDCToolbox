@@ -7,6 +7,10 @@ bool FilterModel::removeRows(int row, int count, const QModelIndex &parent)
     Q_UNUSED(parent);
 
     beginRemoveRows({}, row, row + count - 1);
+    for(int i = row; i < count; i++){
+        delete m_data[i];
+        m_data[i] = nullptr;
+    }
     m_data.remove(row, count);
     endRemoveRows();
 

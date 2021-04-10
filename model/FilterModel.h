@@ -166,6 +166,8 @@ public:
 
         beginRemoveRows({}, rows.last(), rows.first());
         for(const int& row : rows){
+            delete m_data[row];
+            m_data[row] = nullptr;
             m_data.remove(row, 1);
         }
         endRemoveRows();
@@ -180,6 +182,10 @@ public:
     void clear(){
         if(!m_data.empty()){
             beginResetModel();
+            for(int i = 0; i < m_data.size(); i++){
+                delete m_data[i];
+                m_data[i] = nullptr;
+            }
             m_data.clear();
             endResetModel();
         }

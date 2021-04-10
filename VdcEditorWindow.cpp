@@ -171,6 +171,8 @@ void VdcEditorWindow::addPoint(){
         QUndoCommand *addCommand = new AddCommand(filterModel, b);
         undoStack->push(addCommand);
     }
+
+    dlg->deleteLater();
 }
 
 void VdcEditorWindow::removePoint(){
@@ -216,6 +218,8 @@ void VdcEditorWindow::shiftSelection(){
                 new ShiftCommand(filterModel, select->selectedRows(), sf->getResult());
         undoStack->push(shiftCommand);
     }
+
+    sf->deleteLater();
 }
 
 void VdcEditorWindow::checkStability(){
