@@ -43,9 +43,25 @@ void FrequencyPlot::setMode(PlotType type, QWidget* parent){
     rescaleAxes();
 
     connect(this, &QCustomPlot::mouseMove, this,[this](QMouseEvent* event){
-        int x = (int)xAxis->pixelToCoord(event->pos().x());
-        if(x < 0 || x > 24000)return;
-        setToolTip(QString("%1Hz").arg(x));
+        int x = (int) xAxis->pixelToCoord(event->pos().x());
+        float y = (float) yAxis->pixelToCoord(event->pos().y());
+        if(x < 0 || x > 24000)
+            return;
+
+        QString value_unit;
+        switch (m_type) {
+            case PlotType::magnitude:
+                value_unit = tr("dB");
+                break;
+            case PlotType::phase_response:
+                value_unit = tr("deg");
+                break;
+            case PlotType::group_delay:
+                value_unit = tr("ms");
+                break;
+        }
+
+        setToolTip(QString("x=%1Hz; y=%2%3").arg(x).arg(y).arg(value_unit));
     });
     setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
     connect(this, &QCustomPlot::customContextMenuRequested,
