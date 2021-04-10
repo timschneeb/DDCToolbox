@@ -121,7 +121,7 @@ Install dependencies (Arch)
 
 Clone this repository
 
-    git clone https://github.com/ThePBone/DDCToolbox
+    git clone --recurse-submodules https://github.com/ThePBone/DDCToolbox
 
 Compile sources
 
@@ -176,7 +176,7 @@ Symlink QT
 
 Clone the repo
     
-    git clone https://github.com/ThePBone/DDCToolbox
+    git clone --recurse-submodules https://github.com/ThePBone/DDCToolbox
 
 Compile it
 
@@ -192,7 +192,7 @@ Run it
   * VDC Importer
   * Group delay plot
   * Unity gain filter 
-  * and more
+  * [and more](https://github.com/ThePBone/DDCToolbox/commits?author=james34602)
 
 
 ## License
