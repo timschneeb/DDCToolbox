@@ -42,3 +42,7 @@ win32 {
 unix {
    QMAKE_CXXFLAGS += -Wno-unused-variable
 }
+
+FORMS +=
+
+HEADERS +=

@@ -25,6 +25,7 @@ HEADERS += \
     $$PWD/widget/AddPointDialog.h \
     $$PWD/widget/AutoEqSelector.h \
     $$PWD/widget/BwCalculator.h \
+    $$PWD/widget/CurveFittingDialog.h \
     $$PWD/widget/CustomFilterDialog.h \
     $$PWD/widget/HtmlPopup.h \
     $$PWD/widget/ModalOverlayMsgProxy.h \
@@ -47,6 +48,7 @@ SOURCES += \
     $$PWD/widget/AddPointDialog.cpp \
     $$PWD/widget/AutoEqSelector.cpp \
     $$PWD/widget/BwCalculator.cpp \
+    $$PWD/widget/CurveFittingDialog.cpp \
     $$PWD/widget/CustomFilterDialog.cpp \
     $$PWD/widget/HtmlPopup.cpp \
     $$PWD/widget/ModalOverlayMsgProxy.cpp \
@@ -61,6 +63,7 @@ FORMS += \
     $$PWD/widget/AddPointDialog.ui \
     $$PWD/widget/AutoEqSelector.ui \
     $$PWD/widget/BwCalculator.ui \
+    $$PWD/widget/CurveFittingDialog.ui \
     $$PWD/widget/CustomFilterDialog.ui \
     $$PWD/widget/ShiftFrequencyDialog.ui \
     $$PWD/widget/StabilityReport.ui \

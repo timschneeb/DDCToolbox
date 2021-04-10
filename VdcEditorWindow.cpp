@@ -23,6 +23,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+#include <widget/CurveFittingDialog.h>
+
 VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::VdcEditorWindowHost), undoStack(new QUndoStack(this)),
@@ -160,6 +162,16 @@ void VdcEditorWindow::exportProject()
     QString fileName = QFileDialog::getSaveFileName(this,
                                                     tr("Save VDC"), "", tr("VDC File (*.vdc)"));
     VdcProjectManager::instance().exportProject(fileName, p1, p2);
+}
+
+void VdcEditorWindow::curveFitting()
+{
+    auto dlg = new CurveFittingDialog();
+    if(dlg->exec()){
+        // TODO
+    }
+
+    dlg->deleteLater();
 }
 
 /* ---- Editor interactions ----*/

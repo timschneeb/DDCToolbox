@@ -35,6 +35,7 @@ private slots:
     void loadProject();
     void closeProject();
     void exportProject();
+    void curveFitting();
 
     void addPoint();
     void removePoint();

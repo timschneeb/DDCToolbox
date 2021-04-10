@@ -147,6 +147,7 @@
     <addaction name="actionClose_Project"/>
     <addaction name="separator"/>
     <addaction name="actionDownload_from_AutoEQ"/>
+    <addaction name="actionCurve_fitting"/>
     <addaction name="menuImport"/>
     <addaction name="actionExport_as_VDC"/>
     <addaction name="separator"/>
@@ -595,6 +596,15 @@ border: 1px solid rgb(208, 204, 201) </string>
     <string>Enable table debug mode</string>
    </property>
   </action>
+  <action name="actionCurve_fitting">
+   <property name="icon">
+    <iconset resource="ddceditor_resources.qrc">
+     <normaloff>:/img/curve_fitting.svg</normaloff>:/img/curve_fitting.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Curve fitting</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -1009,6 +1019,22 @@ border: 1px solid rgb(208, 204, 201) </string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionCurve_fitting</sender>
+   <signal>triggered()</signal>
+   <receiver>VdcEditorWindowHost</receiver>
+   <slot>curveFitting()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>487</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>clearAll()</slot>
@@ -1032,5 +1058,6 @@ border: 1px solid rgb(208, 204, 201) </string>
   <slot>checkStability()</slot>
   <slot>downloadFromAutoEQ()</slot>
   <slot>setDebugMode(bool)</slot>
+  <slot>curveFitting()</slot>
  </slots>
 </ui>

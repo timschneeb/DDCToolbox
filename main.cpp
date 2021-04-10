@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
     VdcEditorWindow w;
     QApplication::setStyle(new ProxyStyle("fusion"));
     QApplication::setPalette(qApp->style()->standardPalette());
+    QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
     w.show();
 
     if(argc == 2){

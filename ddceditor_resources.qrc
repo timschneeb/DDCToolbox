@@ -35,5 +35,6 @@
         <file>img/help.svg</file>
         <file>img/test.svg</file>
         <file>img/calculator.svg</file>
+        <file>img/curve_fitting.svg</file>
     </qresource>
 </RCC>
