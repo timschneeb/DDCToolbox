@@ -192,7 +192,7 @@ Run it
   * VDC Importer
   * Group delay plot
   * Unity gain filter 
-  * and more
+  * [and more](https://github.com/ThePBone/DDCToolbox/commits?author=james34602)
 
 
 ## License
