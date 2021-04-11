@@ -77,7 +77,7 @@
         <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Written by @james34602 (James Fung)</string>
+           <string>Provided by @james34602 (James Fung)</string>
           </property>
          </widget>
         </item>
@@ -175,7 +175,7 @@
         </font>
        </property>
        <property name="text">
-        <string>This action will close the currently loaded project</string>
+        <string>This action will discard the currently loaded project</string>
        </property>
        <property name="scaledContents">
         <bool>false</bool>

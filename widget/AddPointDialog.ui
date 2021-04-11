@@ -89,7 +89,7 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="5,1">
      <property name="topMargin">
       <number>0</number>
      </property>

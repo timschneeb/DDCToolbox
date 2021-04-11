@@ -72,7 +72,7 @@
         <item>
          <widget class="QLabel" name="group">
           <property name="text">
-           <string>Please select your headphone on the right and press 'Ok' to accept.
+           <string>Please select your headphone and press 'Ok' to accept.
 This will override your current configuration.</string>
           </property>
           <property name="wordWrap">

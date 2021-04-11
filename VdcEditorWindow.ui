@@ -47,7 +47,7 @@
         </sizepolicy>
        </property>
        <property name="title">
-        <string>Calibration Points</string>
+        <string>Dataset</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="leftMargin">
@@ -166,7 +166,7 @@
     </property>
     <widget class="QMenu" name="menuBatch_Conversion_2">
      <property name="title">
-      <string>Batch Conversion</string>
+      <string>Batch conversion</string>
      </property>
      <addaction name="actionBatchVdc"/>
      <addaction name="actionBatchAutoEq"/>
@@ -447,7 +447,7 @@ border: 1px solid rgb(208, 204, 201) </string>
      <normaloff>:/img/calculator.svg</normaloff>:/img/calculator.svg</iconset>
    </property>
    <property name="text">
-    <string>Q/Bandwidth Calculator</string>
+    <string>Q/Bandwidth calculator</string>
    </property>
   </action>
   <action name="actionimportVDC_file">
