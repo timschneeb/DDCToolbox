@@ -59,6 +59,9 @@ private slots:
     void drawPlots(){ updatePlots(false); }; /* <- required for signal system */
     void setDebugMode(bool state);
 
+protected:
+    void closeEvent(QCloseEvent* ev) override;
+
 private:
     Ui::VdcEditorWindowHost *ui;
 

@@ -99,6 +99,31 @@ VdcEditorWindow::~VdcEditorWindow()
     delete ui;
 }
 
+void VdcEditorWindow::closeEvent(QCloseEvent *ev)
+{
+    if(VdcProjectManager::instance().hasUnsavedChanges() && filterModel->rowCount() > 0){
+        int ret = QMessageBox::warning(
+                    this,
+                    tr("DDCToolbox"),
+                    tr("The document has been modified.\nDo you want to save your changes?"),
+                    QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+
+        switch (ret) {
+        case QMessageBox::Save:
+            saveProject();
+            break;
+        case QMessageBox::Discard:
+            break;
+        case QMessageBox::Cancel:
+        default:
+            ev->ignore();
+            return;
+        }
+    }
+    ev->accept();
+    QMainWindow::closeEvent(ev);
+}
+
 void VdcEditorWindow::setOrientation(Qt::Orientation orientation){
     ui->splitter->setOrientation(orientation);
 }
@@ -389,7 +414,7 @@ void VdcEditorWindow::batchConvert(){
                 biquads = VdcProjectManager::readParametricEq(file);
 
             VdcProjectManager::writeProject(QDir(dir).filePath(QFileInfo(file).completeBaseName() + ".vdcprj"),
-                                         biquads);
+                                            biquads);
         }
         QMessageBox::information(this,tr("Note"),tr("Conversion finished!\nYou can find the files here:\n%1").arg(dir));
     }
