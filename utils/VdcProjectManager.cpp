@@ -78,6 +78,7 @@ bool VdcProjectManager::loadProject(const QString &fileName)
     m_model->appendAllDeflated(biquads);
 
     m_currentProject = fileName;
+    m_projectUnsaved = false;
     emit projectMetaChanged();
 
     return !biquads.empty();
@@ -296,6 +297,10 @@ bool VdcProjectManager::loadVdc(const QString &fileName)
     auto biquads = readVdc(fileName);
     m_model->clear();
     m_model->appendAllDeflated(biquads);
+
+    m_projectUnsaved = false;
+    emit projectMetaChanged();
+
     return !biquads.empty();
 }
 
@@ -342,6 +347,10 @@ bool VdcProjectManager::loadParametricEq(const QString &fileName)
     auto biquads = readParametricEq(fileName);
     m_model->clear();
     m_model->appendAllDeflated(biquads);
+
+    m_projectUnsaved = false;
+    emit projectMetaChanged();
+
     return !biquads.empty();
 }
 
@@ -361,6 +370,10 @@ bool VdcProjectManager::loadParametricEqString(QString string)
     }
 
     m_model->appendAllDeflated(biquads);
+
+    m_projectUnsaved = false;
+    emit projectMetaChanged();
+
     return m_model->rowCount() > 0;
 }
 
