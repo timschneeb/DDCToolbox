@@ -28,6 +28,7 @@ HEADERS += \
     $$PWD/widget/AutoEqSelector.h \
     $$PWD/widget/BwCalculator.h \
     $$PWD/widget/CurveFittingDialog.h \
+    $$PWD/widget/CurveFittingWorkerDialog.h \
     $$PWD/widget/CustomFilterDialog.h \
     $$PWD/widget/Expander.h \
     $$PWD/widget/HtmlPopup.h \
@@ -52,6 +53,7 @@ SOURCES += \
     $$PWD/widget/AutoEqSelector.cpp \
     $$PWD/widget/BwCalculator.cpp \
     $$PWD/widget/CurveFittingDialog.cpp \
+    $$PWD/widget/CurveFittingWorkerDialog.cpp \
     $$PWD/widget/CustomFilterDialog.cpp \
     $$PWD/widget/Expander.cpp \
     $$PWD/widget/HtmlPopup.cpp \
@@ -68,6 +70,7 @@ FORMS += \
     $$PWD/widget/AutoEqSelector.ui \
     $$PWD/widget/BwCalculator.ui \
     $$PWD/widget/CurveFittingDialog.ui \
+    $$PWD/widget/CurveFittingWorkerDialog.ui \
     $$PWD/widget/CustomFilterDialog.ui \
     $$PWD/widget/ShiftFrequencyDialog.ui \
     $$PWD/widget/StabilityReport.ui \
