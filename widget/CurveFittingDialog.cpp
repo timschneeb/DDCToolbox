@@ -24,6 +24,7 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
 
     // Rearrange layout and insert expander
     auto * anyLayout = new QVBoxLayout();
+    anyLayout->setContentsMargins(6, 0, 0, 0);
     anyLayout->addWidget(ui->widget);
     Expander* spoiler = new Expander("Advanced options", 300, this);
     spoiler->setContentLayout(*anyLayout);

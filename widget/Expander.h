@@ -20,7 +20,6 @@ private:
     int animationDuration{300};
 public:
     explicit Expander(const QString & title = "", const int animationDuration = 300, QWidget *parent = 0);
-    explicit Expander(QWidget *parent = 0);
     void setContentLayout(QLayout & contentLayout);
 };
 

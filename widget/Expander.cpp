@@ -2,11 +2,6 @@
 
 #include "Expander.h"
 
-Expander::Expander(QWidget *parent){
-    Expander("", 300, parent);
-}
-
-
 Expander::Expander(const QString & title, const int animationDuration, QWidget *parent) : QWidget(parent), animationDuration(animationDuration) {
     toggleButton.setStyleSheet("QToolButton { border: none; }");
     toggleButton.setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -19,7 +14,7 @@ Expander::Expander(const QString & title, const int animationDuration, QWidget *
     headerLine.setFrameShadow(QFrame::Sunken);
     headerLine.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
 
-    contentArea.setStyleSheet("QScrollArea { border: 1px solid lightgray }");
+    contentArea.setStyleSheet("QScrollArea { border: 0px solid lightgray }");
     contentArea.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     // start out collapsed
     contentArea.setMaximumHeight(0);
@@ -30,7 +25,6 @@ Expander::Expander(const QString & title, const int animationDuration, QWidget *
     anim->setEasingCurve(QEasingCurve::InOutQuad); \
     toggleAnimation.addAnimation(anim); \
 }
-//QEasingCurve::
 
     // let the entire widget grow and shrink with its content
     ADD_ANIM(this, "minimumHeight");
@@ -39,9 +33,9 @@ Expander::Expander(const QString & title, const int animationDuration, QWidget *
 
 #undef ADD_ANIM
 
-    // don't waste space
     mainLayout.setVerticalSpacing(0);
     mainLayout.setContentsMargins(0, 0, 0, 0);
+
     int row = 0;
     mainLayout.addWidget(&toggleButton, row, 0, 1, 1, Qt::AlignLeft);
     mainLayout.addWidget(&headerLine, row++, 2, 1, 1);
@@ -52,6 +46,7 @@ Expander::Expander(const QString & title, const int animationDuration, QWidget *
         toggleAnimation.setDirection(checked ? QAbstractAnimation::Forward : QAbstractAnimation::Backward);
         toggleAnimation.start();
     });
+
 }
 
 void Expander::setContentLayout(QLayout & contentLayout) {
