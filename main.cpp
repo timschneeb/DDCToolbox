@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     QLocale::setDefault(QLocale::c());
 
     VdcEditorWindow w;
-    QApplication::setStyle(new ProxyStyle("fusion"));
+    QApplication::setStyle(new ProxyStyle("Fusion"));
     QApplication::setPalette(qApp->style()->standardPalette());
     QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
     w.show();

@@ -11,12 +11,12 @@ Expander::Expander(const QString & title, const int animationDuration, QWidget *
     toggleButton.setChecked(false);
 
     headerLine.setFrameShape(QFrame::HLine);
-    headerLine.setFrameShadow(QFrame::Sunken);
+    headerLine.setFrameShadow(QFrame::Plain);
     headerLine.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+    headerLine.setStyleSheet("color: rgb(200, 200, 200)");
 
     contentArea.setStyleSheet("QScrollArea { border: 0px solid lightgray }");
     contentArea.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    // start out collapsed
     contentArea.setMaximumHeight(0);
     contentArea.setMinimumHeight(0);
 

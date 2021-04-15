@@ -110,6 +110,7 @@ public:
                                                    &button, painter);
                 return;
             }
+            break;
 
         }
         case 1: {
