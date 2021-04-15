@@ -20,7 +20,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++17
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    widget/CurveFittingWorkerDialog.cpp
 
 QTPLUGIN += qsvg
 
@@ -43,6 +44,8 @@ unix {
    QMAKE_CXXFLAGS += -Wno-unused-variable
 }
 
-FORMS +=
+FORMS += \
+    widget/CurveFittingWorkerDialog.ui
 
-HEADERS +=
+HEADERS += \
+    widget/CurveFittingWorkerDialog.h

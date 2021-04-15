@@ -1,4 +1,5 @@
 #include "CurveFittingDialog.h"
+#include "CurveFittingWorkerDialog.h"
 #include "ui_CurveFittingDialog.h"
 
 #include "Expander.h"
@@ -17,14 +18,11 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setEnabled(false);
-    ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setText("Calculate");
-
+    // Connect signals
     connect(ui->fileSelection, &QAbstractButton::clicked, this, &CurveFittingDialog::selectFile);
     connect(ui->projectLink, &QAbstractButton::clicked, this, &CurveFittingDialog::visitProject);
 
-    ui->status_panel->setVisible(false);
-
+    // Rearrange layout and insert expander
     auto * anyLayout = new QVBoxLayout();
     anyLayout->addWidget(ui->widget);
     Expander* spoiler = new Expander("Advanced options", 300, this);
@@ -32,8 +30,14 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     this->layout()->addWidget(spoiler);
     this->layout()->addWidget(ui->buttonBox);
 
+    // Prepare seed
     ui->adv_random_seed->setValidator(new QInt64Validator(0, INT64_MAX, ui->adv_random_seed));
-    ui->adv_random_seed->setText(QString::number(time(NULL)));
+    ui->adv_random_seed->setText(QString::number((rand() << 16) | rand()));
+
+    // Setup UI
+    ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setEnabled(false);
+    ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setText("Calculate");
+    ui->status_panel->setVisible(false);
 }
 
 CurveFittingDialog::~CurveFittingDialog()
@@ -71,7 +75,7 @@ void CurveFittingDialog::parseCsv(){
         return;
     }
 
-    std::ifstream file(path.toStdWString());
+    std::ifstream file(path.toStdString());
     for(auto& row: CSVRange(file))
     {
         float freq_val, gain_val;
@@ -116,6 +120,20 @@ void CurveFittingDialog::setStatus(bool success, QString text){
 
 void CurveFittingDialog::accept()
 {
-    // TODO
+    this->hide();
+    auto worker = new CurveFittingWorkerDialog(freq, gain, this);
+
+    // Launch worker dialog and halt until finished or cancelled
+    worker->exec();
+
+    // TODO: Exchange results
+
+    worker->deleteLater();
+
+    /* These vectors must not be cleared or modified while the worker is active.
+     * The internal C array of QVector<float> is directly referenced  */
+    freq.clear();
+    gain.clear();
+
     QDialog::accept();
 }

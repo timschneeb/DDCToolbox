@@ -193,7 +193,7 @@ void VdcEditorWindow::curveFitting()
 {
     auto dlg = new CurveFittingDialog();
     if(dlg->exec()){
-        // TODO
+        // TODO: Exchange results
     }
 
     dlg->deleteLater();

@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
     Q_INIT_RESOURCE(ddceditor_resources);
     QApplication a(argc, argv);
 
+    srand(time(NULL));
     setlocale(LC_ALL, "C");
     QLocale::setDefault(QLocale::c());
 

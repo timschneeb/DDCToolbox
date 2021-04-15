@@ -191,7 +191,7 @@
         <item>
          <widget class="QLabel" name="status_label">
           <property name="text">
-           <string>1764 rows loaded</string>
+           <string>364 rows loaded</string>
           </property>
          </widget>
         </item>
