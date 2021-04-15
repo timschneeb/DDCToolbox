@@ -27,7 +27,7 @@ Expander::Expander(const QString & title, const int animationDuration, QWidget *
 
 #define ADD_ANIM(target, prop) { \
     auto anim = new QPropertyAnimation(target, prop); \
-    anim->setEasingCurve(QEasingCurve::InOutCirc); \
+    anim->setEasingCurve(QEasingCurve::InOutQuad); \
     toggleAnimation.addAnimation(anim); \
 }
 //QEasingCurve::

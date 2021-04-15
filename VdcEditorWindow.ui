@@ -602,7 +602,7 @@ border: 1px solid rgb(208, 204, 201) </string>
      <normaloff>:/img/curve_fitting.svg</normaloff>:/img/curve_fitting.svg</iconset>
    </property>
    <property name="text">
-    <string>Curve fitting</string>
+    <string>Peaking filter curve fitting</string>
    </property>
   </action>
  </widget>

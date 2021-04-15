@@ -9,6 +9,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+#include <utils/QInt64Validator.h>
+
 CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::CurveFittingDialog)
@@ -16,6 +18,7 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     ui->setupUi(this);
 
     ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setEnabled(false);
+    ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setText("Calculate");
 
     connect(ui->fileSelection, &QAbstractButton::clicked, this, &CurveFittingDialog::selectFile);
     connect(ui->projectLink, &QAbstractButton::clicked, this, &CurveFittingDialog::visitProject);
@@ -28,6 +31,9 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     spoiler->setContentLayout(*anyLayout);
     this->layout()->addWidget(spoiler);
     this->layout()->addWidget(ui->buttonBox);
+
+    ui->adv_random_seed->setValidator(new QInt64Validator(0, INT64_MAX, ui->adv_random_seed));
+    ui->adv_random_seed->setText(QString::number(time(NULL)));
 }
 
 CurveFittingDialog::~CurveFittingDialog()
@@ -35,6 +41,11 @@ CurveFittingDialog::~CurveFittingDialog()
     delete ui;
 }
 
+void CurveFittingDialog::visitProject()
+{
+    // TODO: Update project link
+    QDesktopServices::openUrl(QUrl("https://github.com/james34602/"));
+}
 
 void CurveFittingDialog::selectFile()
 {
@@ -45,12 +56,6 @@ void CurveFittingDialog::selectFile()
 
     ui->filePath->setText(file);
     parseCsv();
-}
-
-void CurveFittingDialog::visitProject()
-{
-    // TODO: Update project link
-    QDesktopServices::openUrl(QUrl("https://github.com/james34602/"));
 }
 
 void CurveFittingDialog::parseCsv(){
