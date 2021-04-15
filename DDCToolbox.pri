@@ -20,6 +20,7 @@ HEADERS += \
     $$PWD/plot/QCustomPlot.h \
     $$PWD/utils/AutoEqClient.h \
     $$PWD/utils/BitFlags.h \
+    $$PWD/utils/CSVParser.h \
     $$PWD/utils/VdcImporter.h \
     $$PWD/utils/VdcProjectManager.h \
     $$PWD/widget/AddPointDialog.h \
@@ -27,6 +28,7 @@ HEADERS += \
     $$PWD/widget/BwCalculator.h \
     $$PWD/widget/CurveFittingDialog.h \
     $$PWD/widget/CustomFilterDialog.h \
+    $$PWD/widget/Expander.h \
     $$PWD/widget/HtmlPopup.h \
     $$PWD/widget/ModalOverlayMsgProxy.h \
     $$PWD/widget/ProxyStyle.h \
@@ -50,6 +52,7 @@ SOURCES += \
     $$PWD/widget/BwCalculator.cpp \
     $$PWD/widget/CurveFittingDialog.cpp \
     $$PWD/widget/CustomFilterDialog.cpp \
+    $$PWD/widget/Expander.cpp \
     $$PWD/widget/HtmlPopup.cpp \
     $$PWD/widget/ModalOverlayMsgProxy.cpp \
     $$PWD/widget/QMessageOverlay.cpp \

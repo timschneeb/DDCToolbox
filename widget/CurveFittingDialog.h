@@ -15,11 +15,21 @@ public:
     explicit CurveFittingDialog(QWidget *parent = nullptr);
     ~CurveFittingDialog();
 
+protected slots:
+    void accept();
+
+private slots:
+    void parseCsv();
+
 private:
     void selectFile();
     void visitProject();
+    void setStatus(bool success, QString text);
 
     Ui::CurveFittingDialog *ui;
+
+    std::vector<float> freq;
+    std::vector<float> gain;
 };
 
 #endif // CURVEFITTINGDIALOG_H
