@@ -122,7 +122,13 @@ void CurveFittingDialog::setStatus(bool success, QString text){
 void CurveFittingDialog::accept()
 {
     this->hide();
-    auto worker = new CurveFittingWorkerDialog(freq, gain, this);
+
+    CurveFittingOptions options(freq.data(),
+                                gain.data(),
+                                ui->adv_random_seed->text().toLong(),
+                                ui->adv_random_density_dist->value());
+
+    auto worker = new CurveFittingWorkerDialog(options, this);
 
     // Launch worker dialog and halt until finished or cancelled
     worker->exec();

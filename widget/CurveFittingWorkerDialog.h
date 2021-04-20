@@ -3,6 +3,10 @@
 
 #include <QDialog>
 
+#include <model/CurveFittingOptions.h>
+
+class CurveFittingThread;
+
 namespace Ui {
 class CurveFittingWorkerDialog;
 }
@@ -12,14 +16,17 @@ class CurveFittingWorkerDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit CurveFittingWorkerDialog(const QVector<float>& freq, const QVector<float>& gain, QWidget *parent = nullptr);
+    explicit CurveFittingWorkerDialog(const CurveFittingOptions &_options, QWidget *parent = nullptr);
     ~CurveFittingWorkerDialog();
+
+    virtual void open();
+    virtual void reject();
 
 private:
     Ui::CurveFittingWorkerDialog *ui;
 
-    const float* freq;
-    const float* gain;
+    CurveFittingOptions options;
+    CurveFittingThread* worker;
 };
 
 #endif // CURVEFITTINGWORKERDIALOG_H

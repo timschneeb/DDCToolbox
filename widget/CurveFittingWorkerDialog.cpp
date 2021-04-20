@@ -1,17 +1,33 @@
 #include "CurveFittingWorkerDialog.h"
 #include "ui_CurveFittingWorkerDialog.h"
 
-CurveFittingWorkerDialog::CurveFittingWorkerDialog(const QVector<float>& _freq, const QVector<float>& _gain, QWidget *parent) :
+#include <utils/CurveFittingThread.h>
+
+CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _options, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::CurveFittingWorkerDialog)
+    ui(new Ui::CurveFittingWorkerDialog),
+    options(_options)
 {
     ui->setupUi(this);
-    freq = _freq.data();
-    gain = _gain.data();
+
+    worker = new CurveFittingThread(options);
 }
 
 CurveFittingWorkerDialog::~CurveFittingWorkerDialog()
 {
     delete ui;
+    worker->deleteLater();
+}
+
+void CurveFittingWorkerDialog::open()
+{
+    worker->start(QThread::Priority::HighPriority);
+    QDialog::open();
+}
+
+void CurveFittingWorkerDialog::reject()
+{
+    worker->cancel();
+    QDialog::reject();
 }
 

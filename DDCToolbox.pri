@@ -7,6 +7,7 @@ HEADERS += \
     $$PWD/item/CustomFilterListItem.h \
     $$PWD/item/DetailListItem.h \
     $$PWD/model/Biquad.h \
+    $$PWD/model/CurveFittingOptions.h \
     $$PWD/model/DeflatedBiquad.h \
     $$PWD/model/FilterModel.h \
     $$PWD/model/FilterType.h \
@@ -21,6 +22,7 @@ HEADERS += \
     $$PWD/utils/AutoEqClient.h \
     $$PWD/utils/BitFlags.h \
     $$PWD/utils/CSVParser.h \
+    $$PWD/utils/CurveFittingThread.h \
     $$PWD/utils/QInt64Validator.h \
     $$PWD/utils/VdcImporter.h \
     $$PWD/utils/VdcProjectManager.h \
@@ -48,6 +50,7 @@ SOURCES += \
     $$PWD/plot/FrequencyPlot.cpp \
     $$PWD/plot/QCustomPlot.cpp \
     $$PWD/utils/AutoEqClient.cpp \
+    $$PWD/utils/CurveFittingThread.cpp \
     $$PWD/utils/VdcProjectManager.cpp \
     $$PWD/widget/AddPointDialog.cpp \
     $$PWD/widget/AutoEqSelector.cpp \
