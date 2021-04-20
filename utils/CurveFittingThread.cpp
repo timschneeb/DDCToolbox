@@ -26,7 +26,7 @@ CurveFittingThread::~CurveFittingThread()
 bool CurveFittingThread::cancel()
 {
     this->terminate();
-    return this->wait(QDeadlineTimer(1000, Qt::TimerType::CoarseTimer));
+    return this->wait(2500);
 }
 
 void CurveFittingThread::run()
