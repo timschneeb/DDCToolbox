@@ -29,15 +29,17 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     Expander* spoiler = new Expander("Advanced options", 300, this);
     spoiler->setContentLayout(*anyLayout);
     this->layout()->addWidget(spoiler);
-    this->layout()->addWidget(ui->buttonBox);
+    this->layout()->addWidget(ui->footer);
 
     // Prepare seed
-    ui->adv_random_seed->setValidator(new QInt64Validator(0, INT64_MAX, ui->adv_random_seed));
-    ui->adv_random_seed->setText(QString::number((rand() << 16) | rand()));
+    ui->adv_random_seed->setValidator(new QInt64Validator(0, UINT64_MAX, ui->adv_random_seed));
+    ui->adv_random_seed->setText(QString::number(((uint64_t)rand() << 32ull) | rand()));
 
     // Setup UI
     ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setEnabled(false);
     ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setText("Calculate");
+    connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &CurveFittingDialog::accept);
+    connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &CurveFittingDialog::reject);
     ui->status_panel->setVisible(false);
 }
 
@@ -123,7 +125,18 @@ void CurveFittingDialog::accept()
 {
     this->hide();
 
-    CurveFittingOptions options(freq.data(),
+    CurveFittingOptions::AlgorithmType type;
+    switch(ui->algorithmType->currentIndex()){
+    case 0:
+        type = CurveFittingOptions::AT_DIFF_EVOLUTION;
+        break;
+    case 1:
+        type = CurveFittingOptions::AT_FMINSEARCHBND;
+        break;
+    }
+
+    CurveFittingOptions options(type,
+                                freq.data(),
                                 gain.data(),
                                 freq.count(),
                                 ui->adv_random_seed->text().toLong(),

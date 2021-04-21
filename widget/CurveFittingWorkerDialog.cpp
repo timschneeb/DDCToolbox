@@ -3,6 +3,8 @@
 
 #include <utils/CurveFittingThread.h>
 
+#include <QTimer>
+
 CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _options, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::CurveFittingWorkerDialog),
@@ -10,8 +12,18 @@ CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _o
 {
     ui->setupUi(this);
 
+    ui->progressBar->setRange(0,0);
+
     worker = new CurveFittingThread(options);
-    worker->start(QThread::Priority::HighPriority);
+    connect(worker, &CurveFittingThread::finished, this, [this]{
+        // TODO: Forward results here
+        this->accept();
+    });
+
+    QTimer::singleShot(400, [this]{
+        ui->progressText->setText("Calculating...");
+        worker->start(QThread::Priority::HighPriority);
+    });
 }
 
 CurveFittingWorkerDialog::~CurveFittingWorkerDialog()

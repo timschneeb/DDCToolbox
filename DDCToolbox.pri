@@ -23,6 +23,7 @@ HEADERS += \
     $$PWD/utils/BitFlags.h \
     $$PWD/utils/CSVParser.h \
     $$PWD/utils/CurveFittingThread.h \
+    $$PWD/utils/CurveFittingUtils.h \
     $$PWD/utils/QInt64Validator.h \
     $$PWD/utils/VdcImporter.h \
     $$PWD/utils/VdcProjectManager.h \

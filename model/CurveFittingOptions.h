@@ -5,8 +5,14 @@
 
 class CurveFittingOptions {
 public:
-    CurveFittingOptions(double* _frequency, double* _gain, int _count,
+    enum AlgorithmType {
+        AT_DIFF_EVOLUTION,
+        AT_FMINSEARCHBND
+    };
+
+    CurveFittingOptions(AlgorithmType _algorithm_type, double* _frequency, double* _gain, int _count,
                         uint64_t _rng_seed, float _rng_density_dist){
+        algorithm_type = _algorithm_type;
         frequency = _frequency;
         gain = _gain;
         count = _count;
@@ -15,18 +21,19 @@ public:
     }
 
     double *frequencyData() const;
-    double *gainData() const;
+    double *targetData() const;
     uint64_t seed() const;
     float probabilityDensityDist() const;
-    int dataCount() const;
+    unsigned int dataCount() const;
+    AlgorithmType algorithmType() const;
 
 private:
     double* frequency;
     double* gain;
-    int count;
+    unsigned int count;
     uint64_t rng_seed;
     float rng_density_dist;
-
+    AlgorithmType algorithm_type;
 };
 
 inline double *CurveFittingOptions::frequencyData() const
@@ -34,7 +41,7 @@ inline double *CurveFittingOptions::frequencyData() const
     return frequency;
 }
 
-inline double *CurveFittingOptions::gainData() const
+inline double *CurveFittingOptions::targetData() const
 {
     return gain;
 }
@@ -49,9 +56,14 @@ inline float CurveFittingOptions::probabilityDensityDist() const
     return rng_density_dist;
 }
 
-inline int CurveFittingOptions::dataCount() const
+inline unsigned int CurveFittingOptions::dataCount() const
 {
     return count;
+}
+
+inline CurveFittingOptions::AlgorithmType CurveFittingOptions::algorithmType() const
+{
+    return algorithm_type;
 }
 
 #endif // CURVEFITTINGOPTIONS_H
