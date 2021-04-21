@@ -4,8 +4,6 @@ extern "C" {
 #include <gradfreeOpt.h>
 }
 
-#define INT64_16(pack,n) (pack >> n * 16)
-
 double callbackFunc(double *sol, unsigned int n){
     // TODO
     Q_UNUSED(sol)
