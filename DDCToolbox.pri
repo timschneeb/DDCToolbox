@@ -82,6 +82,7 @@ FORMS += \
 INCLUDEPATH += $$PWD
 
 include ($$PWD/3rdparty/WebLoader/WebLoader.pri)
+include ($$PWD/3rdparty/libgradfreeOpt.pri)
 
 RESOURCES += \
     $$PWD/ddceditor_resources.qrc

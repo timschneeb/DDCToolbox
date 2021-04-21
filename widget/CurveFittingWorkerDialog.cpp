@@ -11,18 +11,13 @@ CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _o
     ui->setupUi(this);
 
     worker = new CurveFittingThread(options);
+    worker->start(QThread::Priority::HighPriority);
 }
 
 CurveFittingWorkerDialog::~CurveFittingWorkerDialog()
 {
     delete ui;
     worker->deleteLater();
-}
-
-void CurveFittingWorkerDialog::open()
-{
-    worker->start(QThread::Priority::HighPriority);
-    QDialog::open();
 }
 
 void CurveFittingWorkerDialog::reject()

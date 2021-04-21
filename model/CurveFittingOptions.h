@@ -1,40 +1,45 @@
 #ifndef CURVEFITTINGOPTIONS_H
 #define CURVEFITTINGOPTIONS_H
 
+#include <cinttypes>
+
 class CurveFittingOptions {
 public:
-    CurveFittingOptions(const float* _frequency, const float* _gain,
-                        long _rng_seed, float _rng_density_dist){
+    CurveFittingOptions(double* _frequency, double* _gain, int _count,
+                        uint64_t _rng_seed, float _rng_density_dist){
         frequency = _frequency;
         gain = _gain;
+        count = _count;
         rng_seed = _rng_seed;
         rng_density_dist = _rng_density_dist;
     }
 
-    const float *frequencyData() const;
-    const float *gainData() const;
-    long seed() const;
+    double *frequencyData() const;
+    double *gainData() const;
+    uint64_t seed() const;
     float probabilityDensityDist() const;
+    int dataCount() const;
 
 private:
-    const float* frequency;
-    const float* gain;
-    long rng_seed;
+    double* frequency;
+    double* gain;
+    int count;
+    uint64_t rng_seed;
     float rng_density_dist;
 
 };
 
-inline const float *CurveFittingOptions::frequencyData() const
+inline double *CurveFittingOptions::frequencyData() const
 {
     return frequency;
 }
 
-inline const float *CurveFittingOptions::gainData() const
+inline double *CurveFittingOptions::gainData() const
 {
     return gain;
 }
 
-inline long CurveFittingOptions::seed() const
+inline uint64_t CurveFittingOptions::seed() const
 {
     return rng_seed;
 }
@@ -42,6 +47,11 @@ inline long CurveFittingOptions::seed() const
 inline float CurveFittingOptions::probabilityDensityDist() const
 {
     return rng_density_dist;
+}
+
+inline int CurveFittingOptions::dataCount() const
+{
+    return count;
 }
 
 #endif // CURVEFITTINGOPTIONS_H

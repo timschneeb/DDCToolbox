@@ -28,8 +28,8 @@ private:
 
     Ui::CurveFittingDialog *ui;
 
-    QVector<float> freq;
-    QVector<float> gain;
+    QVector<double> freq;
+    QVector<double> gain;
 };
 
 #endif // CURVEFITTINGDIALOG_H

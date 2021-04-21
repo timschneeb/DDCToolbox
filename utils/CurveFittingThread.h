@@ -16,9 +16,10 @@ protected:
     virtual void run();
 
 private:
-    const float* freq = nullptr;
-    const float* gain = nullptr;
-    long rng_seed;
+    double* freq = nullptr;
+    double* target = nullptr;
+    int arraySize;
+    uint64_t rng_seed;
     float rng_density_dist;
 };
 

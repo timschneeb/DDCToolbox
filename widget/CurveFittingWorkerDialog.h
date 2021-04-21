@@ -19,7 +19,6 @@ public:
     explicit CurveFittingWorkerDialog(const CurveFittingOptions &_options, QWidget *parent = nullptr);
     ~CurveFittingWorkerDialog();
 
-    virtual void open();
     virtual void reject();
 
 private:

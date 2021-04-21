@@ -79,7 +79,7 @@ void CurveFittingDialog::parseCsv(){
     std::ifstream file(path.toStdString());
     for(auto& row: CSVRange(file))
     {
-        float freq_val, gain_val;
+        double freq_val, gain_val;
 
         if(row.size() < 1){
             // Row does not contain enough columns, skip it
@@ -125,6 +125,7 @@ void CurveFittingDialog::accept()
 
     CurveFittingOptions options(freq.data(),
                                 gain.data(),
+                                freq.count(),
                                 ui->adv_random_seed->text().toLong(),
                                 ui->adv_random_density_dist->value());
 
