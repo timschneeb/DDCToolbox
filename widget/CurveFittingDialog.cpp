@@ -49,7 +49,7 @@ CurveFittingDialog::~CurveFittingDialog()
 void CurveFittingDialog::visitProject()
 {
     // TODO: Update project link
-    QDesktopServices::openUrl(QUrl("https://github.com/james34602/"));
+    QDesktopServices::openUrl(QUrl("https://github.com/james34602/libgradfreeOpt"));
 }
 
 void CurveFittingDialog::selectFile()
