@@ -1,6 +1,9 @@
 #ifndef CURVEFITTINGDIALOG_H
 #define CURVEFITTINGDIALOG_H
 
+#include "CurveFittingWorkerDialog.h"
+#include "model/DeflatedBiquad.h"
+
 #include <QDialog>
 
 namespace Ui {
@@ -14,6 +17,8 @@ class CurveFittingDialog : public QDialog
 public:
     explicit CurveFittingDialog(QWidget *parent = nullptr);
     ~CurveFittingDialog();
+
+    QVector<DeflatedBiquad> getResults() const;
 
 protected slots:
     void accept();
@@ -30,6 +35,8 @@ private:
 
     QVector<double> freq;
     QVector<double> gain;
+
+    QVector<DeflatedBiquad> results;
 };
 
 #endif // CURVEFITTINGDIALOG_H

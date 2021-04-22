@@ -15,10 +15,7 @@ CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _o
     ui->progressBar->setRange(0,0);
 
     worker = new CurveFittingThread(options);
-    connect(worker, &CurveFittingThread::finished, this, [this]{
-        // TODO: Forward results here
-        this->accept();
-    });
+    connect(worker, &CurveFittingThread::finished, this, &QDialog::accept);
 
     QTimer::singleShot(400, [this]{
         ui->progressText->setText("Calculating...");
@@ -36,5 +33,10 @@ void CurveFittingWorkerDialog::reject()
 {
     worker->cancel();
     QDialog::reject();
+}
+
+QVector<DeflatedBiquad> CurveFittingWorkerDialog::getResults() const
+{
+    return worker->getResults();
 }
 

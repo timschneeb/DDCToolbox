@@ -3,6 +3,7 @@
 
 #include <QThread>
 #include <model/CurveFittingOptions.h>
+#include <model/DeflatedBiquad.h>
 
 class CurveFittingThread : public QThread
 {
@@ -11,6 +12,8 @@ public:
     ~CurveFittingThread();
 
     bool cancel();
+
+    QVector<DeflatedBiquad> getResults() const;
 
 protected:
     virtual void run();
@@ -38,6 +41,9 @@ private:
     double *low = nullptr;
     double *up = nullptr;
     double *tmpDat = nullptr;
+
+    /* Results */
+    QVector<DeflatedBiquad> results;
 
 };
 

@@ -4,6 +4,7 @@
 #include <math.h>
 #include <float.h>
 #include <string.h>
+#include <qDebug>
 
 #include <PeakingFit/peakfinder.h>
 
@@ -67,7 +68,7 @@ double peakingCostFunctionMap(double *x, void *usd)
     {
         validatePeaking(gain[i], fc[i], Q[i], userdata->fs, &b0, &b1, &b2, &a1, &a2);
         validateMagCal(b0, b1, b2, a1, a2, userdata->phi, userdata->gridSize, userdata->fs, userdata->tmp);
-        //printf("Band: %d, %1.14lf, %1.14lf, %1.14lf\n", i + 1, fc[i], Q[i], gain[i]);
+        // printf("Band: %d, %1.14lf, %1.14lf, %1.14lf\n", i + 1, fc[i], Q[i], gain[i]);
     }
     double meanAcc = 0.0;
     for (unsigned int i = 0; i < userdata->gridSize; i++)

@@ -1,11 +1,12 @@
 #include "CurveFittingThread.h"
 
 extern "C" {
-#include "utils/CurveFittingUtils.h"
 #include <gradfreeOpt.h>
 #include <PeakingFit/linear_interpolation.h>
 #include <PeakingFit/peakfinder.h>
 }
+
+#include "utils/CurveFittingUtils.h"
 
 double callbackFunc(double *sol, unsigned int n){
     // TODO
@@ -186,9 +187,16 @@ void CurveFittingThread::run()
         double *gbestDE = (double*)malloc(dim * sizeof(double));
         double gmin = differentialEvolution(peakingCostFunctionMap, userdataPtr, initialAns, K, N, dim, low, up, 10, gbestDE, &PRNG);
 
-        qDebug("%1.14lf\n", gmin);
+        /*qDebug("%1.14lf\n", gmin);
         for (i = 0; i < dim; i++)
-            qDebug("%1.14lf,", gbestDE[i]);
+            qDebug("%1.14lf,", gbestDE[i]);*/
+
+        double *fc = gbestDE;
+        double *q = gbestDE + numBands;
+        double *gain = gbestDE + numBands * 2;
+        for(uint i = 0; i < numBands; i++){
+            results.append(DeflatedBiquad(FilterType::PEAKING, fc[i], q[i], gain[i]));
+        }
 
         free(gbestDE);
         break;
@@ -197,9 +205,16 @@ void CurveFittingThread::run()
         double *gbestfminsearch = (double*)malloc(dim * sizeof(double));
         double fval = fminsearchbnd(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, 1e-8, 1e-8, 10, gbestfminsearch);
 
-        qDebug("%1.14lf\n", fval);
+        /*qDebug("%1.14lf\n", fval);
         for (i = 0; i < dim; i++)
-            qDebug("%1.14lf,", gbestfminsearch[i]);
+            qDebug("%1.14lf,", gbestfminsearch[i]);*/
+
+        double *fc = gbestfminsearch;
+        double *q = gbestfminsearch + numBands;
+        double *gain = gbestfminsearch + numBands * 2;
+        for(uint i = 0; i < numBands; i++){
+            results.append(DeflatedBiquad(FilterType::PEAKING, fc[i], q[i], gain[i]));
+        }
 
         free(gbestfminsearch);
         break;
@@ -208,4 +223,9 @@ void CurveFittingThread::run()
 
     // Report success
     this->exit(0);
+}
+
+QVector<DeflatedBiquad> CurveFittingThread::getResults() const
+{
+    return results;
 }

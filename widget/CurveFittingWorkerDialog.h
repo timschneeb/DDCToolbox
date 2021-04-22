@@ -4,6 +4,7 @@
 #include <QDialog>
 
 #include <model/CurveFittingOptions.h>
+#include <model/DeflatedBiquad.h>
 
 class CurveFittingThread;
 
@@ -20,6 +21,8 @@ public:
     ~CurveFittingWorkerDialog();
 
     virtual void reject();
+
+    QVector<DeflatedBiquad> getResults() const;
 
 private:
     Ui::CurveFittingWorkerDialog *ui;

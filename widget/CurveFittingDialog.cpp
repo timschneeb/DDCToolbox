@@ -50,7 +50,6 @@ CurveFittingDialog::~CurveFittingDialog()
 
 void CurveFittingDialog::visitProject()
 {
-    // TODO: Update project link
     QDesktopServices::openUrl(QUrl("https://github.com/james34602/libgradfreeOpt"));
 }
 
@@ -121,6 +120,11 @@ void CurveFittingDialog::setStatus(bool success, QString text){
     ui->status_label->setText(text);
 }
 
+QVector<DeflatedBiquad> CurveFittingDialog::getResults() const
+{
+    return results;
+}
+
 void CurveFittingDialog::accept()
 {
     this->hide();
@@ -146,9 +150,7 @@ void CurveFittingDialog::accept()
 
     // Launch worker dialog and halt until finished or cancelled
     worker->exec();
-
-    // TODO: Exchange results
-
+    results = worker->getResults();
     worker->deleteLater();
 
     /* These vectors must not be cleared or modified while the worker is active.
