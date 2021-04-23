@@ -129,27 +129,20 @@ void CurveFittingDialog::accept()
 {
     this->hide();
 
-    CurveFittingOptions::AlgorithmType type;
-    switch(ui->algorithmType->currentIndex()){
-    case 0:
-        type = CurveFittingOptions::AT_DIFF_EVOLUTION;
-        break;
-    case 1:
-        type = CurveFittingOptions::AT_FMINSEARCHBND;
-        break;
-    }
-
-    CurveFittingOptions options(type,
+    CurveFittingOptions options((CurveFittingOptions::AlgorithmType) ui->algorithmType->currentIndex(),
                                 freq.data(),
                                 gain.data(),
                                 freq.count(),
                                 ui->adv_random_seed->text().toLong(),
-                                ui->adv_random_density_dist->value());
+                                (CurveFittingOptions::ProbDensityFunc) ui->adv_prob_density_func->currentIndex());
 
     auto worker = new CurveFittingWorkerDialog(options, this);
 
     // Launch worker dialog and halt until finished or cancelled
-    worker->exec();
+    if(!worker->exec()){
+        reject();
+        return;
+    }
     results = worker->getResults();
     worker->deleteLater();
 

@@ -22,8 +22,8 @@ HEADERS += \
     $$PWD/utils/AutoEqClient.h \
     $$PWD/utils/BitFlags.h \
     $$PWD/utils/CSVParser.h \
-    $$PWD/utils/CurveFittingThread.h \
     $$PWD/utils/CurveFittingUtils.h \
+    $$PWD/utils/CurveFittingWorker.h \
     $$PWD/utils/QInt64Validator.h \
     $$PWD/utils/VdcImporter.h \
     $$PWD/utils/VdcProjectManager.h \
@@ -38,6 +38,7 @@ HEADERS += \
     $$PWD/widget/ModalOverlayMsgProxy.h \
     $$PWD/widget/ProxyStyle.h \
     $$PWD/widget/QMessageOverlay.h \
+    $$PWD/widget/QTintableProgressBar.h \
     $$PWD/widget/ShiftFrequencyDialog.h \
     $$PWD/widget/StabilityReport.h
 
@@ -51,7 +52,7 @@ SOURCES += \
     $$PWD/plot/FrequencyPlot.cpp \
     $$PWD/plot/QCustomPlot.cpp \
     $$PWD/utils/AutoEqClient.cpp \
-    $$PWD/utils/CurveFittingThread.cpp \
+    $$PWD/utils/CurveFittingWorker.cpp \
     $$PWD/utils/VdcProjectManager.cpp \
     $$PWD/widget/AddPointDialog.cpp \
     $$PWD/widget/AutoEqSelector.cpp \

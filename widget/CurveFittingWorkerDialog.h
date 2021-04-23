@@ -2,11 +2,12 @@
 #define CURVEFITTINGWORKERDIALOG_H
 
 #include <QDialog>
+#include <QThread>
 
 #include <model/CurveFittingOptions.h>
 #include <model/DeflatedBiquad.h>
 
-class CurveFittingThread;
+class CurveFittingWorker;
 
 namespace Ui {
 class CurveFittingWorkerDialog;
@@ -24,11 +25,22 @@ public:
 
     QVector<DeflatedBiquad> getResults() const;
 
+signals:
+    void beginWork();
+
+private slots:
+    void workerFinished();
+    void historyDataReceived(float fVar, QVector<float> currentResult);
+
 private:
     Ui::CurveFittingWorkerDialog *ui;
 
     CurveFittingOptions options;
-    CurveFittingThread* worker;
+    CurveFittingWorker* worker;
+    QThread thread;
+
+    QThread plot_thread;
+    int iteration = 0;
 };
 
 #endif // CURVEFITTINGWORKERDIALOG_H

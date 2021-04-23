@@ -1,4 +1,4 @@
-#include "CurveFittingThread.h"
+#include "CurveFittingWorker.h"
 
 extern "C" {
 #include <gradfreeOpt.h>
@@ -8,27 +8,17 @@ extern "C" {
 
 #include "utils/CurveFittingUtils.h"
 
-double callbackFunc(double *sol, unsigned int n){
-    // TODO
-    Q_UNUSED(sol)
-    Q_UNUSED(n)
-    return 0;
-}
-
-CurveFittingThread::CurveFittingThread(const CurveFittingOptions& _options)
+CurveFittingWorker::CurveFittingWorker(const CurveFittingOptions& _options, QObject* parent) : QObject(parent)
 {
     freq =_options.frequencyData();
     target =_options.targetData();
     rng_seed = _options.seed();
-    rng_density_dist = _options.probabilityDensityDist();
+    rng_density_func = _options.probabilityDensityFunc();
     array_size = _options.dataCount();
     algorithm_type = _options.algorithmType();
-
-    // Note: do not schedule object for deletion automatically for now
-    // connect(this, &CurveFittingThread::finished, this, &QObject::deleteLater);
 }
 
-CurveFittingThread::~CurveFittingThread()
+CurveFittingWorker::~CurveFittingWorker()
 {
     free(maximaIndex);
     free(minimaIndex);
@@ -45,13 +35,20 @@ CurveFittingThread::~CurveFittingThread()
     free(tmpDat);
 }
 
-bool CurveFittingThread::cancel()
+void CurveFittingWorker::optimizationHistoryCallback(void *hostData, unsigned int n, double *currentResult, double *currentFval)
 {
-    this->terminate();
-    return this->wait(2500);
+    CurveFittingWorker *worker = (CurveFittingWorker*)hostData;
+
+    // Package array pointer as vector to avoid leaks due to unhandled signals
+    QVector<float> temp;
+    for(uint i = 0; i < n; i++){
+        temp << currentResult[i];
+    }
+    emit worker->historyDataReceived(*currentFval, temp);
 }
 
-void CurveFittingThread::run()
+
+void CurveFittingWorker::run()
 {
     pcg32x2_random_t PRNG;
     pcg32x2_srandom_r(&PRNG, rng_seed, rng_seed >> 2,
@@ -182,50 +179,58 @@ void CurveFittingThread::run()
     userdat.gridSize = array_size;
     void *userdataPtr = (void*)&userdat;
 
+    // Select probability distribution function
+    double(*pdf1)(pcg32x2_random_t*) = randn_pcg32x2;
+    switch(rng_density_func){
+    case CurveFittingOptions::PDF_RANDN_PCG32X2:
+        pdf1 = randn_pcg32x2;
+        break;
+    case CurveFittingOptions::PDF_RAND_TRI_PCG32X2:
+        pdf1 = rand_tri_pcg32x2;
+        break;
+    case CurveFittingOptions::PDF_RAND_HANN:
+        pdf1 = rand_hann;
+        break;
+    }
+
+    // Create optimization history callback
+    void *hist_userdata = (void*)this;
+    void(*optStatus)(void*, unsigned int, double*, double*) = optimizationHistoryCallback;
+
+    // Calculate
+    double *output = (double*)malloc(dim * sizeof(double));
     switch(algorithm_type){
     case CurveFittingOptions::AT_DIFF_EVOLUTION: {
-        double *gbestDE = (double*)malloc(dim * sizeof(double));
-        double gmin = differentialEvolution(peakingCostFunctionMap, userdataPtr, initialAns, K, N, dim, low, up, 10, gbestDE, &PRNG);
-
-        /*qDebug("%1.14lf\n", gmin);
-        for (i = 0; i < dim; i++)
-            qDebug("%1.14lf,", gbestDE[i]);*/
-
-        double *fc = gbestDE;
-        double *q = gbestDE + numBands;
-        double *gain = gbestDE + numBands * 2;
-        for(uint i = 0; i < numBands; i++){
-            results.append(DeflatedBiquad(FilterType::PEAKING, fc[i], q[i], gain[i]));
-        }
-
-        free(gbestDE);
+        double gmin = differentialEvolution(peakingCostFunctionMap, userdataPtr, initialAns, K, N, dim, low, up, 10000, output, &PRNG, pdf1, optStatus, hist_userdata);
+        qDebug("CurveFittingThread: gmin=%lf", gmin);
         break;
     }
     case CurveFittingOptions::AT_FMINSEARCHBND: {
-        double *gbestfminsearch = (double*)malloc(dim * sizeof(double));
-        double fval = fminsearchbnd(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, 1e-8, 1e-8, 10, gbestfminsearch);
-
-        /*qDebug("%1.14lf\n", fval);
-        for (i = 0; i < dim; i++)
-            qDebug("%1.14lf,", gbestfminsearch[i]);*/
-
-        double *fc = gbestfminsearch;
-        double *q = gbestfminsearch + numBands;
-        double *gain = gbestfminsearch + numBands * 2;
-        for(uint i = 0; i < numBands; i++){
-            results.append(DeflatedBiquad(FilterType::PEAKING, fc[i], q[i], gain[i]));
-        }
-
-        free(gbestfminsearch);
+        double fval = fminsearchbnd(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, 1e-8, 1e-8, 10000, output, optStatus, hist_userdata);
+        qDebug("CurveFittingThread: lval=%lf", fval);
+        break;
+    }
+    case CurveFittingOptions::AT_FLOWERPOLLINATION: {
+        double gmin2 = flowerPollination(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, K * N, 0.1, 0.05, 2000, output, &PRNG, pdf1, optStatus, hist_userdata);
+        qDebug("CurveFittingThread: gmin2=%lf", gmin2);
         break;
     }
     }
 
-    // Report success
-    this->exit(0);
+    // Serialize results
+    double *fc = output;
+    double *q = output + numBands;
+    double *gain = output + numBands * 2;
+    for(uint i = 0; i < numBands; i++)
+    {
+        results.append(DeflatedBiquad(FilterType::PEAKING, pow(10, fc[i]), q[i], gain[i]));
+    }
+    free(output);
+
+    emit finished();
 }
 
-QVector<DeflatedBiquad> CurveFittingThread::getResults() const
+QVector<DeflatedBiquad> CurveFittingWorker::getResults() const
 {
     return results;
 }

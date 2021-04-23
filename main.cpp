@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
     setlocale(LC_ALL, "C");
     QLocale::setDefault(QLocale::c());
 
+    qRegisterMetaType<QVector<float>>("QVector<float>");
+
     VdcEditorWindow w;
     QApplication::setStyle(new ProxyStyle("Fusion"));
     QApplication::setPalette(qApp->style()->standardPalette());

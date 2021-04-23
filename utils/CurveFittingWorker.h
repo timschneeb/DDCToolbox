@@ -1,22 +1,27 @@
-#ifndef CURVEFITTINGTHREAD_H
-#define CURVEFITTINGTHREAD_H
+#ifndef CURVEFITTINGWORKER_H
+#define CURVEFITTINGWORKER_H
 
+#include <QtCore/QObject>
 #include <QThread>
+#include <array>
 #include <model/CurveFittingOptions.h>
 #include <model/DeflatedBiquad.h>
 
-class CurveFittingThread : public QThread
+class CurveFittingWorker : public QObject
 {
+    Q_OBJECT
 public:
-    CurveFittingThread(const CurveFittingOptions &_options);
-    ~CurveFittingThread();
-
-    bool cancel();
+    CurveFittingWorker(const CurveFittingOptions &_options, QObject* parent = nullptr);
+    ~CurveFittingWorker();
 
     QVector<DeflatedBiquad> getResults() const;
 
-protected:
-    virtual void run();
+signals:
+    void historyDataReceived(float fVar, const QVector<float>& currentResult);
+    void finished();
+
+public slots:
+    void run();
 
 private:
     /* Parameters */
@@ -24,7 +29,7 @@ private:
     double* target = nullptr;
     unsigned int array_size;
     uint64_t rng_seed;
-    float rng_density_dist;
+    CurveFittingOptions::ProbDensityFunc rng_density_func;
     CurveFittingOptions::AlgorithmType algorithm_type;
 
     /* Pointers */
@@ -45,7 +50,9 @@ private:
     /* Results */
     QVector<DeflatedBiquad> results;
 
+    /* Callback */
+    static void optimizationHistoryCallback(void *hostData, unsigned int n, double *currentResult, double *currentFval);
 };
 
 
-#endif // CURVEFITTINGTHREAD_H
+#endif // CURVEFITTINGWORKER_H

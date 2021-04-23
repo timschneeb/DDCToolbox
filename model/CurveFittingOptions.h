@@ -6,12 +6,19 @@
 class CurveFittingOptions {
 public:
     enum AlgorithmType {
-        AT_DIFF_EVOLUTION,
-        AT_FMINSEARCHBND
+        AT_DIFF_EVOLUTION = 0,
+        AT_FMINSEARCHBND = 1,
+        AT_FLOWERPOLLINATION = 2
+    };
+
+    enum ProbDensityFunc {
+        PDF_RANDN_PCG32X2 = 0,
+        PDF_RAND_TRI_PCG32X2 = 1,
+        PDF_RAND_HANN = 2
     };
 
     CurveFittingOptions(AlgorithmType _algorithm_type, double* _frequency, double* _gain, int _count,
-                        uint64_t _rng_seed, float _rng_density_dist){
+                        uint64_t _rng_seed, ProbDensityFunc _rng_density_dist){
         algorithm_type = _algorithm_type;
         frequency = _frequency;
         gain = _gain;
@@ -23,7 +30,7 @@ public:
     double *frequencyData() const;
     double *targetData() const;
     uint64_t seed() const;
-    float probabilityDensityDist() const;
+    ProbDensityFunc probabilityDensityFunc() const;
     unsigned int dataCount() const;
     AlgorithmType algorithmType() const;
 
@@ -32,7 +39,7 @@ private:
     double* gain;
     unsigned int count;
     uint64_t rng_seed;
-    float rng_density_dist;
+    ProbDensityFunc rng_density_dist;
     AlgorithmType algorithm_type;
 };
 
@@ -51,7 +58,7 @@ inline uint64_t CurveFittingOptions::seed() const
     return rng_seed;
 }
 
-inline float CurveFittingOptions::probabilityDensityDist() const
+inline CurveFittingOptions::ProbDensityFunc CurveFittingOptions::probabilityDensityFunc() const
 {
     return rng_density_dist;
 }
