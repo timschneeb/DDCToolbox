@@ -26,9 +26,9 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     auto * anyLayout = new QVBoxLayout();
     anyLayout->setContentsMargins(6, 0, 0, 0);
     anyLayout->addWidget(ui->widget);
-    Expander* spoiler = new Expander("Advanced options", 300, this);
-    spoiler->setContentLayout(*anyLayout);
-    this->layout()->addWidget(spoiler);
+    advanced_rng = new Expander("Advanced options", 300, this);
+    advanced_rng->setContentLayout(*anyLayout);
+    this->layout()->addWidget(advanced_rng);
     this->layout()->addWidget(ui->footer);
 
     // Prepare seed
@@ -40,6 +40,8 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setText("Calculate");
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &CurveFittingDialog::accept);
     connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &CurveFittingDialog::reject);
+
+    connect(ui->algorithmType, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CurveFittingDialog::updateSupportedProperties);
     ui->status_panel->setVisible(false);
 }
 
@@ -152,4 +154,16 @@ void CurveFittingDialog::accept()
     gain.clear();
 
     QDialog::accept();
+}
+
+void CurveFittingDialog::updateSupportedProperties(int index){
+    switch((CurveFittingOptions::AlgorithmType) index){
+    case CurveFittingOptions::AT_DIFF_EVOLUTION:
+    case CurveFittingOptions::AT_FLOWERPOLLINATION:
+        advanced_rng->setVisible(true);
+        break;
+    case CurveFittingOptions::AT_FMINSEARCHBND:
+        advanced_rng->setVisible(false);
+        break;
+    }
 }

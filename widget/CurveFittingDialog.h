@@ -2,6 +2,7 @@
 #define CURVEFITTINGDIALOG_H
 
 #include "CurveFittingWorkerDialog.h"
+#include "Expander.h"
 #include "model/DeflatedBiquad.h"
 
 #include <QDialog>
@@ -25,6 +26,7 @@ protected slots:
 
 private slots:
     void parseCsv();
+    void updateSupportedProperties(int index);
 
 private:
     void selectFile();
@@ -32,6 +34,7 @@ private:
     void setStatus(bool success, QString text);
 
     Ui::CurveFittingDialog *ui;
+    Expander* advanced_rng = nullptr;
 
     QVector<double> freq;
     QVector<double> gain;
