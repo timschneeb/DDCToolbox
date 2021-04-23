@@ -41,9 +41,14 @@ void CurveFittingWorker::optimizationHistoryCallback(void *hostData, unsigned in
 
     // Package array pointer as vector to avoid leaks due to unhandled signals
     QVector<float> temp;
+    QDebug d = qDebug();
     for(uint i = 0; i < n; i++){
         temp << currentResult[i];
+        d << currentResult[i] << ",";
     }
+    d << "\n";
+
+
     emit worker->historyDataReceived(*currentFval, temp);
 }
 

@@ -63,21 +63,24 @@ void CurveFittingWorkerDialog::workerFinished()
     ui->buttonBox->button(QDialogButtonBox::Ok)->setVisible(true);
 }
 
-void CurveFittingWorkerDialog::historyDataReceived(float fVar, QVector<float> currentResult)
+void CurveFittingWorkerDialog::historyDataReceived(float mse, QVector<float> currentResult)
 {
     // TODO: Handle currentResult
     Q_UNUSED(currentResult)
 
     iteration++;
-    ui->rmsePlot->graph()->addData(iteration, fVar);
+    ui->rmsePlot->graph()->addData(iteration, mse);
     if(iteration >= ui->rmsePlot->xAxis->range().upper){
         ui->rmsePlot->xAxis->setRange(0, iteration);
     }
-    if(fVar >= ui->rmsePlot->yAxis->range().upper){
-        ui->rmsePlot->yAxis->setRange(0, fVar);
+    if(mse >= ui->rmsePlot->yAxis->range().upper){
+        ui->rmsePlot->yAxis->setRange(0, mse);
     }
 
     ui->rmsePlot->replot(QCustomPlot::rpQueuedReplot);
+
+    ui->stat_iteration->setText(QString::number(iteration));
+    ui->stat_mse->setText(QString::number(mse));
 }
 
 QVector<DeflatedBiquad> CurveFittingWorkerDialog::getResults() const
