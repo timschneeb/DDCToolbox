@@ -177,42 +177,23 @@ void FrequencyPlot::updatePlot(QVector<float> table,int bandCount){
 
     switch (m_type) {
     case PlotType::phase_response:
-        for (int i = 0; i < (int)bandCount; i++){
-            if (m_table.at(i) > max)
-                max = m_table.at(i);
-            if (m_table.at(i) < min)
-                min = m_table.at(i);
-        }
-
-        yAxis->setRange(QCPRange(min, max));
-        plot = addGraph();
-        plot->setAdaptiveSampling(false);
-
-        for (int m = 0; m < (int)bandCount; m++)
-        {
-            double num3 = (48000.0 / 2.0) / ((double) bandCount);
-            plot->addData(num3 * (m + 1.0),(double)m_table.at(m));
-            xAxis->setRange(QCPRange(20, num3 * (m + 1.0)));
-        }
-        break;
     case PlotType::magnitude:
+        plot = addGraph();
+        plot->setAdaptiveSampling(false);
+
         for (int i = 0; i < (int)bandCount; i++){
             if (m_table.at(i) > max)
                 max = m_table.at(i);
             if (m_table.at(i) < min)
                 min = m_table.at(i);
+
+            double num3 = (48000.0 / 2.0) / ((double) bandCount);
+            plot->addData(num3 * (i + 1.0),(double)m_table.at(i));
+            xAxis->setRange(QCPRange(20, num3 * (i + 1.0)));
         }
 
         yAxis->setRange(QCPRange(min, max));
-        plot = addGraph();
-        plot->setAdaptiveSampling(false);
 
-        for (int m = 0; m < (int)bandCount; m++)
-        {
-            double num3 = (48000.0 / 2.0) / ((double) bandCount);
-            plot->addData(num3 * (m + 1.0),(double)m_table.at(m));
-            xAxis->setRange(QCPRange(20, num3 * (m + 1.0)));
-        }
         break;
     case PlotType::group_delay:
         max = 5.0f;
