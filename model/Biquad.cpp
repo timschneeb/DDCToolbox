@@ -8,12 +8,13 @@
 
 static uint64_t biquad_object_count = 0;
 
-Biquad::Biquad()
+Biquad::Biquad(bool idless)
 {
     if(biquad_object_count >= UINT64_MAX - 1)
         biquad_object_count = 0;
 
-    m_id = ++biquad_object_count;
+    if(!idless)
+        m_id = ++biquad_object_count;
 
     internalBiquadCoeffs[0] = 0.0;
     internalBiquadCoeffs[1] = 0.0;
@@ -32,6 +33,11 @@ void Biquad::RefreshFilter(FilterType type, double dbGain, double centreFreq, do
 
     auto coeffs = CalculateCoeffs(48000);
     for(double & internalBiquadCoeff : internalBiquadCoeffs){
+        if(coeffs.size() < 1){
+            qWarning() << "RefreshFilter: [Warning] failed to calculate coeff";
+            internalBiquadCoeff = 0;
+            continue;
+        }
         internalBiquadCoeff = coeffs.front();
         coeffs.pop_front();
     }

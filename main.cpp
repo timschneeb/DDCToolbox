@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
     QLocale::setDefault(QLocale::c());
 
     qRegisterMetaType<QVector<float>>("QVector<float>");
+    qRegisterMetaType<std::vector<double>>("std::vector<double>");
 
     VdcEditorWindow w;
     QApplication::setStyle(new ProxyStyle("Fusion"));

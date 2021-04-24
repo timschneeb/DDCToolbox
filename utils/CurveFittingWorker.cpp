@@ -8,6 +8,17 @@ extern "C" {
 
 #include "utils/CurveFittingUtils.h"
 
+typedef struct
+{
+    double fs;
+    double *phi;
+    unsigned int gridSize;
+    double *target;
+    unsigned int numBands;
+    double *tmp;
+    void* user_data;
+} optUserdata;
+
 CurveFittingWorker::CurveFittingWorker(const CurveFittingOptions& _options, QObject* parent) : QObject(parent)
 {
     freq =_options.frequencyData();
@@ -37,21 +48,46 @@ CurveFittingWorker::~CurveFittingWorker()
 
 void CurveFittingWorker::optimizationHistoryCallback(void *hostData, unsigned int n, double *currentResult, double *currentFval)
 {
+    Q_UNUSED(n);
+    Q_UNUSED(currentResult);
     CurveFittingWorker *worker = (CurveFittingWorker*)hostData;
-
-    // Package array pointer as vector to avoid leaks due to unhandled signals
-    QVector<float> temp;
-    QDebug d = qDebug();
-    for(uint i = 0; i < n; i++){
-        temp << currentResult[i];
-        d << currentResult[i] << ",";
-    }
-    d << "\n";
-
-
-    emit worker->historyDataReceived(*currentFval, temp);
+    emit worker->mseReceived(*currentFval);
 }
 
+double CurveFittingWorker::peakingCostFunctionMap(double *x, void *usd)
+{
+    optUserdata *userdata = (optUserdata*)usd;
+    CurveFittingWorker *worker = (CurveFittingWorker*)userdata->user_data;
+    double *fc = x;
+    double *Q = x + userdata->numBands;
+    double *gain = x + userdata->numBands * 2;
+    double b0, b1, b2, a1, a2;
+    memset(userdata->tmp, 0, userdata->gridSize * sizeof(double));
+
+    for (unsigned int i = 0; i < userdata->numBands; i++)
+    {
+        validatePeaking(gain[i], fc[i], Q[i], userdata->fs, &b0, &b1, &b2, &a1, &a2);
+        validateMagCal(b0, b1, b2, a1, a2, userdata->phi, userdata->gridSize, userdata->fs, userdata->tmp);
+        //printf("Band: %d, %1.14lf, %1.14lf, %1.14lf\n", i + 1, fc[i], Q[i], gain[i]);
+    }
+
+    /* Warning: Handing allocated pointer over to a new owner via a queued signal for performance reasons
+     * TODO: Research whether this could trigger memory leaks and keep a reference for later deletion here as well */
+    double* phi = (double*)malloc(sizeof(double) * userdata->gridSize);
+    double* tmp = (double*)malloc(sizeof(double) * userdata->gridSize);
+    memcpy(phi, userdata->phi, sizeof(double) * userdata->gridSize);
+    memcpy(tmp, userdata->tmp, sizeof(double) * userdata->gridSize);
+    emit worker->graphReceived(phi, tmp, userdata->gridSize);
+
+    double meanAcc = 0.0;
+    for (unsigned int i = 0; i < userdata->gridSize; i++)
+    {
+        double error = userdata->tmp[i] - userdata->target[i];
+        meanAcc += error * error;
+    }
+    meanAcc = meanAcc / (double)userdata->gridSize;
+    return meanAcc;
+}
 
 void CurveFittingWorker::run()
 {
@@ -182,6 +218,7 @@ void CurveFittingWorker::run()
     userdat.target = target;
     userdat.tmp = tmpDat;
     userdat.gridSize = array_size;
+    userdat.user_data = this;
     void *userdataPtr = (void*)&userdat;
 
     // Select probability distribution function

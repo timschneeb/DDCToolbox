@@ -6,6 +6,8 @@
 #include <QPushButton>
 #include <QTimer>
 
+#include <model/NanoPeakBiquad.h>
+
 CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _options, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::CurveFittingWorkerDialog),
@@ -25,11 +27,18 @@ CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _o
     ui->rmsePlot->addGraph();
     ui->rmsePlot->graph()->setAdaptiveSampling(false);
 
+    /* Plot 2 */
+    ui->previewPlot->yAxis->setRange(QCPRange(-5, 5));
+    ui->previewPlot->xAxis->setRange(QCPRange(0, 400));
+    ui->previewPlot->xAxis->setLabel("Optimization history");
+    ui->previewPlot->rescaleAxes();
+
     worker = new CurveFittingWorker(options);
     worker->moveToThread(&thread);
     connect(worker, &CurveFittingWorker::finished, this, &CurveFittingWorkerDialog::workerFinished);
     connect(this, &CurveFittingWorkerDialog::beginWork, worker, &CurveFittingWorker::run);
-    connect(worker, &CurveFittingWorker::historyDataReceived, this, &CurveFittingWorkerDialog::historyDataReceived);
+    connect(worker, &CurveFittingWorker::mseReceived, this, &CurveFittingWorkerDialog::mseReceived);
+    connect(worker, &CurveFittingWorker::graphReceived, this, &CurveFittingWorkerDialog::graphReceived);
     thread.start();
 
     QTimer::singleShot(400, [this]{
@@ -63,11 +72,8 @@ void CurveFittingWorkerDialog::workerFinished()
     ui->buttonBox->button(QDialogButtonBox::Ok)->setVisible(true);
 }
 
-void CurveFittingWorkerDialog::historyDataReceived(float mse, QVector<float> currentResult)
+void CurveFittingWorkerDialog::mseReceived(float mse)
 {
-    // TODO: Handle currentResult
-    Q_UNUSED(currentResult)
-
     iteration++;
     ui->rmsePlot->graph()->addData(iteration, mse);
     if(iteration >= ui->rmsePlot->xAxis->range().upper){
@@ -81,6 +87,43 @@ void CurveFittingWorkerDialog::historyDataReceived(float mse, QVector<float> cur
 
     ui->stat_iteration->setText(QString::number(iteration));
     ui->stat_mse->setText(QString::number(mse));
+}
+
+void CurveFittingWorkerDialog::graphReceived(double* phi, double* temp, uint grid_size)
+{
+   g_iteration++;
+     if((g_iteration % 120) != 0){
+      return;
+   }
+
+    ui->previewPlot->clearGraphs();
+
+    auto pGraph0 = ui->previewPlot->addGraph();
+    pGraph0->setAdaptiveSampling(true);
+
+    int ymax = ui->previewPlot->yAxis->range().upper;
+    int ymin = ui->previewPlot->yAxis->range().lower;
+    int xmax = ui->previewPlot->xAxis->range().upper;
+
+    if((int)grid_size > xmax){
+        xmax = grid_size;
+    }
+
+    for(uint i = 0; i < grid_size; i++){
+        if (temp[i] > ymax)
+            ymax = temp[i] + 1;
+        else if (temp[i] < ymin)
+            ymin = temp[i];
+
+        pGraph0->addData(i, (double)temp[i]);
+    }
+
+    ui->previewPlot->yAxis->setRange(ymin, ymax);
+    ui->previewPlot->xAxis->setRange(0, xmax);
+    ui->previewPlot->replot(QCustomPlot::rpQueuedReplot);
+
+    free(phi);
+    free(temp);
 }
 
 QVector<DeflatedBiquad> CurveFittingWorkerDialog::getResults() const

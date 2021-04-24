@@ -46,7 +46,7 @@ public:
         UNKNOWN = 0xFF
     };
 
-    Biquad();
+    Biquad(bool idless = false);
     ~Biquad(){};
     void RefreshFilter(FilterType type, double dbGain, double centreFreq, double dBandwidthOrS);
     void RefreshFilter(FilterType type, const CustomFilter& c441, const CustomFilter& c48);
@@ -154,18 +154,18 @@ private:
     int complexResponse(double centreFreq, double fs, double *HofZReal, double *HofZImag);
     double toMs(double sample, double fs);
 
-    inline void complexMultiplicationRI(double *zReal, double *zImag, double xReal, double xImag, double yReal, double yImag)
+public:
+    static void complexMultiplicationRI(double *zReal, double *zImag, double xReal, double xImag, double yReal, double yImag)
     {
         *zReal = xReal * yReal - xImag * yImag;
         *zImag = xReal * yImag + xImag * yReal;
     }
-    inline void complexDivisionRI(double *zReal, double *zImag, double xReal, double xImag, double yReal, double yImag)
+    static void complexDivisionRI(double *zReal, double *zImag, double xReal, double xImag, double yReal, double yImag)
     {
         *zReal = (xReal * yReal + xImag * yImag) / (yReal * yReal + yImag * yImag);
         *zImag = (xImag * yReal - xReal * yImag) / (yReal * yReal + yImag * yImag);
     }
 
-public:
     /* This section defines several comparators for use with a sorting algorithm */
     static bool compareFrequency(Biquad* s1, Biquad* s2)
     {

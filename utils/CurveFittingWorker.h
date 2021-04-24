@@ -17,7 +17,8 @@ public:
     QVector<DeflatedBiquad> getResults() const;
 
 signals:
-    void historyDataReceived(float fVar, const QVector<float>& currentResult);
+    void mseReceived(float fVar);
+    void graphReceived(double* phi, double* temp, uint grid_size);
     void finished();
 
 public slots:
@@ -52,6 +53,8 @@ private:
 
     /* Callback */
     static void optimizationHistoryCallback(void *hostData, unsigned int n, double *currentResult, double *currentFval);
+    static double peakingCostFunctionMap(double *x, void *usd);
+
 };
 
 

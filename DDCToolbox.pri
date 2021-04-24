@@ -12,6 +12,7 @@ HEADERS += \
     $$PWD/model/FilterModel.h \
     $$PWD/model/FilterType.h \
     $$PWD/model/FilterViewDelegate.h \
+    $$PWD/model/NanoPeakBiquad.h \
     $$PWD/model/command/AddCommand.h \
     $$PWD/model/command/EditCommand.h \
     $$PWD/model/command/InvertCommand.h \

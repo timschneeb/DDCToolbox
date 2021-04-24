@@ -4,7 +4,7 @@
 #include <math.h>
 #include <float.h>
 #include <string.h>
-#include <qDebug>
+#include <QDebug>
 
 #include <PeakingFit/peakfinder.h>
 
@@ -31,6 +31,8 @@ void validatePeaking(double gain, double fc, double Q, double fs_tf, double *b0,
 
 void validateMagCal(double b0, double b1, double b2, double a1, double a2, double *phi, int len, double fs_tf, double *out)
 {
+    Q_UNUSED(fs_tf);
+
     for (int i = 0; i < len; i++)
     {
         double termSqr1 = b0 + b1 + b2;
@@ -44,40 +46,6 @@ void validateMagCal(double b0, double b1, double b2, double a1, double a2, doubl
         double eq_op = 10.0 * (log10(term1) - log10(term2));
         out[i] += eq_op;
     }
-}
-
-typedef struct
-{
-    double fs;
-    double *phi;
-    unsigned int gridSize;
-    double *target;
-    unsigned int numBands;
-    double *tmp;
-} optUserdata;
-
-double peakingCostFunctionMap(double *x, void *usd)
-{
-    optUserdata *userdata = (optUserdata*)usd;
-    double *fc = x;
-    double *Q = x + userdata->numBands;
-    double *gain = x + userdata->numBands * 2;
-    double b0, b1, b2, a1, a2;
-    memset(userdata->tmp, 0, userdata->gridSize * sizeof(double));
-    for (unsigned int i = 0; i < userdata->numBands; i++)
-    {
-        validatePeaking(gain[i], fc[i], Q[i], userdata->fs, &b0, &b1, &b2, &a1, &a2);
-        validateMagCal(b0, b1, b2, a1, a2, userdata->phi, userdata->gridSize, userdata->fs, userdata->tmp);
-        // printf("Band: %d, %1.14lf, %1.14lf, %1.14lf\n", i + 1, fc[i], Q[i], gain[i]);
-    }
-    double meanAcc = 0.0;
-    for (unsigned int i = 0; i < userdata->gridSize; i++)
-    {
-        double error = userdata->tmp[i] - userdata->target[i];
-        meanAcc += error * error;
-    }
-    meanAcc = meanAcc / (double)userdata->gridSize;
-    return meanAcc;
 }
 
 unsigned int* peakfinder_wrapper(double *x, unsigned int n, double sel, unsigned int extrema, unsigned int *numPeaks)

@@ -7,6 +7,8 @@
 #include <model/CurveFittingOptions.h>
 #include <model/DeflatedBiquad.h>
 
+#include <plot/QCustomPlot.h>
+
 class CurveFittingWorker;
 
 namespace Ui {
@@ -30,7 +32,9 @@ signals:
 
 private slots:
     void workerFinished();
-    void historyDataReceived(float fVar, QVector<float> currentResult);
+    void mseReceived(float fVar);
+    void graphReceived(double* phi, double* temp, uint grid_size);
+
 
 private:
     Ui::CurveFittingWorkerDialog *ui;
@@ -39,8 +43,9 @@ private:
     CurveFittingWorker* worker;
     QThread thread;
 
-    QThread plot_thread;
     int iteration = 0;
+    int g_iteration = 0;
+
 };
 
 #endif // CURVEFITTINGWORKERDIALOG_H
