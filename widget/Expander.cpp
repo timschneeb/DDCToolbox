@@ -45,6 +45,7 @@ Expander::Expander(const QString & title, const int animationDuration, QWidget *
         toggleButton.setArrowType(checked ? Qt::ArrowType::DownArrow : Qt::ArrowType::RightArrow);
         toggleAnimation.setDirection(checked ? QAbstractAnimation::Forward : QAbstractAnimation::Backward);
         toggleAnimation.start();
+        emit stateChanged(checked);
     });
 
 }
@@ -64,4 +65,15 @@ void Expander::setContentLayout(QLayout & contentLayout) {
     contentAnimation->setDuration(animationDuration);
     contentAnimation->setStartValue(0);
     contentAnimation->setEndValue(contentHeight);
+}
+
+void Expander::setState(bool state)
+{
+    if(toggleButton.isChecked() == state)
+        return;
+
+    toggleButton.setChecked(state);
+    toggleButton.setArrowType(state ? Qt::ArrowType::DownArrow : Qt::ArrowType::RightArrow);
+    toggleAnimation.setDirection(state ? QAbstractAnimation::Forward : QAbstractAnimation::Backward);
+    toggleAnimation.start();
 }

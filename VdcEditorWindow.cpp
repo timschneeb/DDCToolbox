@@ -192,11 +192,12 @@ void VdcEditorWindow::exportProject()
 void VdcEditorWindow::curveFitting()
 {
     auto dlg = new CurveFittingDialog();
-    if(dlg->exec() && dlg->getResults().count() > 0){
+    int ret = dlg->exec();
+    if(ret && dlg->getResults().count() > 0){
         VdcProjectManager::instance().closeProject();
         filterModel->appendAllDeflated(dlg->getResults());
     }
-    else if(dlg->exec() && dlg->getResults().count() <= 0){
+    else if(ret && dlg->getResults().count() <= 0){
         QMessageBox::critical(this, "Error", "Failed to process data. Algorithm returned an empty response or was terminated.");
     }
 

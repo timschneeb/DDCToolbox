@@ -34,6 +34,7 @@ private:
     void setStatus(bool success, QString text);
 
     Ui::CurveFittingDialog *ui;
+    Expander* opt_boundary_constraints = nullptr;
     Expander* advanced_rng = nullptr;
 
     QVector<double> freq;

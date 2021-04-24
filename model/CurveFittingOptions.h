@@ -2,6 +2,9 @@
 #define CURVEFITTINGOPTIONS_H
 
 #include <cinttypes>
+#include <utility>
+
+typedef std::pair<double,double> DoubleRange;
 
 class CurveFittingOptions {
 public:
@@ -19,13 +22,17 @@ public:
     };
 
     CurveFittingOptions(AlgorithmType _algorithm_type, double* _frequency, double* _gain, int _count,
-                        uint64_t _rng_seed, ProbDensityFunc _rng_density_dist){
+                        uint64_t _rng_seed, ProbDensityFunc _rng_density_dist,
+                        DoubleRange _obc_freq, DoubleRange _obc_q, DoubleRange _obc_gain){
         algorithm_type = _algorithm_type;
         frequency = _frequency;
         gain = _gain;
         count = _count;
         rng_seed = _rng_seed;
         rng_density_dist = _rng_density_dist;
+        obc_freq = _obc_freq;
+        obc_q = _obc_q;
+        obc_gain = _obc_gain;
     }
 
     double *frequencyData() const;
@@ -35,6 +42,10 @@ public:
     unsigned int dataCount() const;
     AlgorithmType algorithmType() const;
 
+    DoubleRange obcFrequencyRange() const;
+    DoubleRange obcQRange() const;
+    DoubleRange obcGainRange() const;
+
 private:
     double* frequency;
     double* gain;
@@ -42,6 +53,9 @@ private:
     uint64_t rng_seed;
     ProbDensityFunc rng_density_dist;
     AlgorithmType algorithm_type;
+    DoubleRange obc_freq;
+    DoubleRange obc_q;
+    DoubleRange obc_gain;
 };
 
 inline double *CurveFittingOptions::frequencyData() const
@@ -72,6 +86,21 @@ inline unsigned int CurveFittingOptions::dataCount() const
 inline CurveFittingOptions::AlgorithmType CurveFittingOptions::algorithmType() const
 {
     return algorithm_type;
+}
+
+inline DoubleRange CurveFittingOptions::obcFrequencyRange() const
+{
+    return obc_freq;
+}
+
+inline DoubleRange CurveFittingOptions::obcQRange() const
+{
+    return obc_q;
+}
+
+inline DoubleRange CurveFittingOptions::obcGainRange() const
+{
+    return obc_gain;
 }
 
 #endif // CURVEFITTINGOPTIONS_H

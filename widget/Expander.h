@@ -18,9 +18,14 @@ private:
     QParallelAnimationGroup toggleAnimation;
     QScrollArea contentArea;
     int animationDuration{300};
+
+signals:
+    void stateChanged(bool open);
+
 public:
     explicit Expander(const QString & title = "", const int animationDuration = 300, QWidget *parent = 0);
     void setContentLayout(QLayout & contentLayout);
+    void setState(bool state);
 };
 
 #endif // EXPANDER_H

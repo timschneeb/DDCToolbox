@@ -34,10 +34,14 @@ CurveFittingWorker::CurveFittingWorker(const CurveFittingOptions& _options, QObj
     rng_density_func = _options.probabilityDensityFunc();
     array_size = _options.dataCount();
     algorithm_type = _options.algorithmType();
+    obc_freq = _options.obcFrequencyRange();
+    obc_q = _options.obcQRange();
+    obc_gain = _options.obcGainRange();
 }
 
 CurveFittingWorker::~CurveFittingWorker()
 {
+    free(targetList);
     free(flt_freqList);
     free(maximaIndex);
     free(minimaIndex);
@@ -90,29 +94,18 @@ double CurveFittingWorker::peakingCostFunctionMap(double *x, void *usd)
     return meanAcc;
 }
 
-void CurveFittingWorker::run()
-{
-    pcg32x2_random_t PRNG;
-    pcg32x2_srandom_r(&PRNG, rng_seed, rng_seed >> 2,
-                      rng_seed >> 4, rng_seed >> 6);
-
-    unsigned int i, j;
-    unsigned int K = 5;
-    unsigned int N = 3;
-    double fs = 44100.0;
-
-    flt_freqList = (double*)malloc(array_size * sizeof(double));
-    memcpy(flt_freqList, freq, array_size * sizeof(double));
+void CurveFittingWorker::preprocess(double *freq, double *target, uint &array_size, int fs){
+    uint i;
 
     // Detect X axis linearity
     // Assume frequency axis is sorted
-    double first = flt_freqList[0];
-    double last = flt_freqList[array_size - 1];
+    double first = freq[0];
+    double last = freq[array_size - 1];
     double stepLinspace = (last - first) / (double)(array_size - 1);
     double residue = 0.0;
     for (i = 0; i < array_size; i++)
     {
-        double vv = fabs((first + i * stepLinspace) - flt_freqList[i]);
+        double vv = fabs((first + i * stepLinspace) - freq[i]);
         residue += vv;
     }
     residue = residue / (double)array_size;
@@ -154,7 +147,7 @@ void CurveFittingWorker::run()
             for (i = 0; i < detailLinearGridLen; i++)
             {
                 double fl = i / ((double)detailLinearGridLen) * (fs / 2);
-                spectrum[i] = linearInterpolationNoExtrapolate(fl, flt_freqList, target, array_size);
+                spectrum[i] = linearInterpolationNoExtrapolate(fl, freq, target, array_size);
                 linGridFreq[i] = fl;
             }
         }
@@ -209,22 +202,47 @@ void CurveFittingWorker::run()
         free(ascendingIdx);
         free(linGridFreq);
         array_size = idxLen + 3 - hz18;
-        free(flt_freqList);
+        free(freq);
         free(target);
-        flt_freqList = newflt_freqList;
+        freq = newflt_freqList;
         target = newTarget;
         free(levels);
         free(multiplicationPrecompute);
         free(indexList);
         free(spectrum);
     }
+
+}
+
+void CurveFittingWorker::run()
+{
+    pcg32x2_random_t PRNG;
+    pcg32x2_srandom_r(&PRNG, rng_seed, rng_seed >> 2,
+                      rng_seed >> 4, rng_seed >> 6);
+
+    unsigned int i, j;
+    unsigned int K = 5;
+    unsigned int N = 3;
+    double fs = 44100.0;
+
+    flt_freqList = (double*)malloc(array_size * sizeof(double));
+    memcpy(flt_freqList, freq, array_size * sizeof(double));
+    targetList = (double*)malloc(array_size * sizeof(double));
+    memcpy(targetList, freq, array_size * sizeof(double));
+
+    preprocess(flt_freqList, target, array_size, fs);
+
     // Bound constraints
-    double lowFc = 20; // Hz
-    double upFc = fs / 2 - 1; // Hz
-    double lowQ = 0.2; // 0.01 - 1000, higher shaper the filter
-    double upQ = 16; // 0.01 - 1000, higher shaper the filter
-    double lowGain = target[0]; // dB
-    double upGain = target[0]; // dB
+    double lowFc = obc_freq.first; // Hz
+    double upFc = obc_freq.second; // Hz
+    double lowQ = obc_q.first; // 0.01 - 1000, higher shaper the filter
+    double upQ = obc_q.second; // 0.01 - 1000, higher shaper the filter
+    double lowGain = obc_gain.first; // dB
+    double upGain = obc_gain.second; // dB
+
+    /* --- VVV This is already pre-calculated in GUI code
+    lowGain = target[0];
+    upGain = target[0];
     for (i = 1; i < array_size; i++)
     {
         if (target[i] < lowGain)
@@ -234,6 +252,8 @@ void CurveFittingWorker::run()
     }
     lowGain -= 5.0;
     upGain += 5.0;
+    */
+
 
     // Parameter estimation
     unsigned int numMaximas, numMinimas;
