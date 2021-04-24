@@ -6,8 +6,6 @@
 #include <QPushButton>
 #include <QTimer>
 
-#include <model/NanoPeakBiquad.h>
-
 CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _options, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::CurveFittingWorkerDialog),

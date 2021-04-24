@@ -36,6 +36,7 @@ private:
     Ui::CurveFittingDialog *ui;
     Expander* opt_boundary_constraints = nullptr;
     Expander* advanced_rng = nullptr;
+    Expander* fgrid = nullptr;
 
     QVector<double> freq;
     QVector<double> gain;

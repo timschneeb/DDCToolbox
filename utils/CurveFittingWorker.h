@@ -16,7 +16,7 @@ public:
 
     QVector<DeflatedBiquad> getResults() const;
 
-    static void preprocess(double *freq, double *target, uint& array_size, int fs);
+    static void preprocess(double *freq, double *target, uint& array_size, int fs, bool force_to_oct_grid_conversion, bool* is_nonuniform = nullptr);
 
 signals:
     void mseReceived(float fVar);
@@ -37,6 +37,7 @@ private:
     DoubleRange obc_freq;
     DoubleRange obc_q;
     DoubleRange obc_gain;
+    bool force_to_oct_grid_conversion;
 
     /* Pointers */
     unsigned int *maximaIndex = nullptr;

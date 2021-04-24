@@ -37,6 +37,7 @@ CurveFittingWorker::CurveFittingWorker(const CurveFittingOptions& _options, QObj
     obc_freq = _options.obcFrequencyRange();
     obc_q = _options.obcQRange();
     obc_gain = _options.obcGainRange();
+    force_to_oct_grid_conversion = _options.forceLogOctGrid();
 }
 
 CurveFittingWorker::~CurveFittingWorker()
@@ -94,18 +95,18 @@ double CurveFittingWorker::peakingCostFunctionMap(double *x, void *usd)
     return meanAcc;
 }
 
-void CurveFittingWorker::preprocess(double *freq, double *target, uint &array_size, int fs){
+void CurveFittingWorker::preprocess(double *flt_freqList, double *target, uint &array_size, int fs, bool force_to_oct_grid_conversion, bool* is_nonuniform){
     uint i;
 
     // Detect X axis linearity
     // Assume frequency axis is sorted
-    double first = freq[0];
-    double last = freq[array_size - 1];
+    double first = flt_freqList[0];
+    double last = flt_freqList[array_size - 1];
     double stepLinspace = (last - first) / (double)(array_size - 1);
     double residue = 0.0;
     for (i = 0; i < array_size; i++)
     {
-        double vv = fabs((first + i * stepLinspace) - freq[i]);
+        double vv = fabs((first + i * stepLinspace) - flt_freqList[i]);
         residue += vv;
     }
     residue = residue / (double)array_size;
@@ -120,10 +121,14 @@ void CurveFittingWorker::preprocess(double *freq, double *target, uint &array_si
         gdType = 0;
         printf("Uniform grid\n");
     }
+
+    if(is_nonuniform != nullptr){
+        *is_nonuniform = gdType == 1;
+    }
+
     // Convert uniform grid to log grid is recommended
     // Nonuniform grid doesn't necessary to be a log grid, but we can force to make it log
-    char forceConvertCurrentGrid2OctaveGrid = 0;
-    if (forceConvertCurrentGrid2OctaveGrid)
+    if (force_to_oct_grid_conversion)
     {
         unsigned int detailLinearGridLen;
         double *spectrum;
@@ -147,7 +152,7 @@ void CurveFittingWorker::preprocess(double *freq, double *target, uint &array_si
             for (i = 0; i < detailLinearGridLen; i++)
             {
                 double fl = i / ((double)detailLinearGridLen) * (fs / 2);
-                spectrum[i] = linearInterpolationNoExtrapolate(fl, freq, target, array_size);
+                spectrum[i] = linearInterpolationNoExtrapolate(fl, flt_freqList, target, array_size);
                 linGridFreq[i] = fl;
             }
         }
@@ -202,14 +207,15 @@ void CurveFittingWorker::preprocess(double *freq, double *target, uint &array_si
         free(ascendingIdx);
         free(linGridFreq);
         array_size = idxLen + 3 - hz18;
-        free(freq);
-        free(target);
-        freq = newflt_freqList;
-        target = newTarget;
         free(levels);
         free(multiplicationPrecompute);
         free(indexList);
         free(spectrum);
+        free(flt_freqList);
+        free(target);
+
+        flt_freqList = newflt_freqList;
+        target = newTarget;
     }
 
 }
@@ -228,9 +234,9 @@ void CurveFittingWorker::run()
     flt_freqList = (double*)malloc(array_size * sizeof(double));
     memcpy(flt_freqList, freq, array_size * sizeof(double));
     targetList = (double*)malloc(array_size * sizeof(double));
-    memcpy(targetList, freq, array_size * sizeof(double));
+    memcpy(targetList, target, array_size * sizeof(double));
 
-    preprocess(flt_freqList, target, array_size, fs);
+    preprocess(flt_freqList, targetList, array_size, fs, force_to_oct_grid_conversion);
 
     // Bound constraints
     double lowFc = obc_freq.first; // Hz
@@ -241,14 +247,14 @@ void CurveFittingWorker::run()
     double upGain = obc_gain.second; // dB
 
     /* --- VVV This is already pre-calculated in GUI code
-    lowGain = target[0];
-    upGain = target[0];
+    lowGain = targetList[0];
+    upGain = targetList[0];
     for (i = 1; i < array_size; i++)
     {
-        if (target[i] < lowGain)
-            lowGain = target[i];
-        if (target[i] > upGain)
-            upGain = target[i];
+        if (targetList[i] < lowGain)
+            lowGain = targetList[i];
+        if (targetList[i] > upGain)
+            upGain = targetList[i];
     }
     lowGain -= 5.0;
     upGain += 5.0;
@@ -257,8 +263,8 @@ void CurveFittingWorker::run()
 
     // Parameter estimation
     unsigned int numMaximas, numMinimas;
-    maximaIndex = peakfinder_wrapper(target, array_size, 0.1, 1, &numMaximas);
-    minimaIndex = peakfinder_wrapper(target, array_size, 0.1, 0, &numMinimas);
+    maximaIndex = peakfinder_wrapper(targetList, array_size, 0.1, 1, &numMaximas);
+    minimaIndex = peakfinder_wrapper(targetList, array_size, 0.1, 0, &numMinimas);
     unsigned int numBands = numMaximas + numMinimas;
     flt_fc = (double*)malloc(numBands * sizeof(double));
     idx = (unsigned int*)malloc(numBands * sizeof(unsigned int));
@@ -295,7 +301,7 @@ void CurveFittingWorker::run()
     free(idx);
     flt_peak_g = (double*)malloc(numBands * sizeof(double));
     for (i = 0; i < numBands; i++)
-        flt_peak_g[i] = npointWndFunction(flt_fc[i], flt_freqList, target, array_size);
+        flt_peak_g[i] = npointWndFunction(flt_fc[i], flt_freqList, targetList, array_size);
     initialQ = (double*)malloc(numBands * sizeof(double));
     for (i = 0; i < numBands; i++)
     {
@@ -344,7 +350,7 @@ void CurveFittingWorker::run()
     userdat.fs = fs;
     userdat.numBands = numBands;
     userdat.phi = phi;
-    userdat.target = target;
+    userdat.target = targetList;
     userdat.tmp = tmpDat;
     userdat.gridSize = array_size;
     userdat.user_data = this;

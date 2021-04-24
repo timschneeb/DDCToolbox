@@ -30,21 +30,38 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     auto * optLayout = new QVBoxLayout();
     optLayout->setContentsMargins(6, 0, 0, 0);
     optLayout->addWidget(ui->obc_container);
+    auto * fgridLayout = new QVBoxLayout();
+    fgridLayout->setContentsMargins(6, 0, 0, 0);
+    fgridLayout->addWidget(ui->fgrid_container);
 
     opt_boundary_constraints = new Expander("Optimization boundary constraints", 300, this);
     opt_boundary_constraints->setContentLayout(*optLayout);
+    fgrid = new Expander("Axis rebuilding", 300, this);
+    fgrid->setContentLayout(*fgridLayout);
     advanced_rng = new Expander("Advanced options", 300, this);
     advanced_rng->setContentLayout(*rngLayout);
+
     this->layout()->addWidget(opt_boundary_constraints);
+    this->layout()->addWidget(fgrid);
     this->layout()->addWidget(advanced_rng);
     this->layout()->addWidget(ui->footer);
     connect(opt_boundary_constraints, &Expander::stateChanged, this, [this](bool state){
-        if(state)
+        if(state){
             advanced_rng->setState(false);
+            fgrid->setState(false);
+        }
     });
     connect(advanced_rng, &Expander::stateChanged, this, [this](bool state){
-        if(state)
+        if(state){
             opt_boundary_constraints->setState(false);
+            fgrid->setState(false);
+        }
+    });
+    connect(fgrid, &Expander::stateChanged, this, [this](bool state){
+        if(state){
+            opt_boundary_constraints->setState(false);
+            advanced_rng->setState(false);
+        }
     });
 
     // Prepare seed
@@ -134,7 +151,9 @@ void CurveFittingDialog::parseCsv(){
     memcpy(flt_freqList, freq.constData(), size * sizeof(double));
     memcpy(targetList, gain.constData(), size * sizeof(double));
 
-    CurveFittingWorker::preprocess(flt_freqList, targetList, size, 44100);
+    bool is_nonuniform = false;
+    CurveFittingWorker::preprocess(flt_freqList, targetList, size, 44100, false, &is_nonuniform);
+    ui->fgrid_axis_linearity->setText(is_nonuniform ? "Non-uniform grid" : "Uniform grid");
 
     double lowGain = targetList[0];
     double upGain = targetList[0];
@@ -185,7 +204,8 @@ void CurveFittingDialog::accept()
                                 (CurveFittingOptions::ProbDensityFunc) ui->adv_prob_density_func->currentIndex(),
                                 DoubleRange(ui->obc_freq_min->value(), ui->obc_freq_max->value()),
                                 DoubleRange(ui->obc_q_min->value(), ui->obc_q_max->value()),
-                                DoubleRange(ui->obc_gain_min->value(), ui->obc_gain_max->value()));
+                                DoubleRange(ui->obc_gain_min->value(), ui->obc_gain_max->value()),
+                                ui->fgrid_force_convert->isChecked());
 
     auto worker = new CurveFittingWorkerDialog(options, this);
 

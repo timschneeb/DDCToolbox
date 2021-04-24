@@ -23,7 +23,8 @@ public:
 
     CurveFittingOptions(AlgorithmType _algorithm_type, double* _frequency, double* _gain, int _count,
                         uint64_t _rng_seed, ProbDensityFunc _rng_density_dist,
-                        DoubleRange _obc_freq, DoubleRange _obc_q, DoubleRange _obc_gain){
+                        DoubleRange _obc_freq, DoubleRange _obc_q, DoubleRange _obc_gain,
+                        bool _force_oct_grid){
         algorithm_type = _algorithm_type;
         frequency = _frequency;
         gain = _gain;
@@ -33,6 +34,7 @@ public:
         obc_freq = _obc_freq;
         obc_q = _obc_q;
         obc_gain = _obc_gain;
+        force_oct_grid = _force_oct_grid;
     }
 
     double *frequencyData() const;
@@ -46,6 +48,8 @@ public:
     DoubleRange obcQRange() const;
     DoubleRange obcGainRange() const;
 
+    bool forceLogOctGrid() const;
+
 private:
     double* frequency;
     double* gain;
@@ -56,6 +60,7 @@ private:
     DoubleRange obc_freq;
     DoubleRange obc_q;
     DoubleRange obc_gain;
+    bool force_oct_grid;
 };
 
 inline double *CurveFittingOptions::frequencyData() const
@@ -101,6 +106,11 @@ inline DoubleRange CurveFittingOptions::obcQRange() const
 inline DoubleRange CurveFittingOptions::obcGainRange() const
 {
     return obc_gain;
+}
+
+inline bool CurveFittingOptions::forceLogOctGrid() const
+{
+    return force_oct_grid;
 }
 
 #endif // CURVEFITTINGOPTIONS_H
