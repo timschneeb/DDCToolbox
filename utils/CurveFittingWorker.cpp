@@ -68,11 +68,8 @@ double CurveFittingWorker::peakingCostFunctionMap(double *x, void *usd)
     {
         validatePeaking(gain[i], fc[i], Q[i], userdata->fs, &b0, &b1, &b2, &a1, &a2);
         validateMagCal(b0, b1, b2, a1, a2, userdata->phi, userdata->gridSize, userdata->fs, userdata->tmp);
-        //printf("Band: %d, %1.14lf, %1.14lf, %1.14lf\n", i + 1, fc[i], Q[i], gain[i]);
     }
 
-    /* Warning: Handing allocated pointer over to a new owner via a queued signal for performance reasons
-     * TODO: Research whether this could trigger memory leaks and keep a reference for later deletion here as well */
     emit worker->graphReceived(std::vector(userdata->tmp, userdata->tmp + userdata->gridSize));
 
     double meanAcc = 0.0;
