@@ -33,7 +33,7 @@ signals:
 private slots:
     void workerFinished();
     void mseReceived(float fVar);
-    void graphReceived(double* phi, double* temp, uint grid_size);
+    void graphReceived(std::vector<double> temp);
 
 
 private:

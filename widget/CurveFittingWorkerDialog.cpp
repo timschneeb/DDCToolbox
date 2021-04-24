@@ -89,12 +89,14 @@ void CurveFittingWorkerDialog::mseReceived(float mse)
     ui->stat_mse->setText(QString::number(mse));
 }
 
-void CurveFittingWorkerDialog::graphReceived(double* phi, double* temp, uint grid_size)
+void CurveFittingWorkerDialog::graphReceived(std::vector<double> temp)
 {
-   g_iteration++;
-     if((g_iteration % 120) != 0){
-      return;
-   }
+    g_iteration++;
+    if((g_iteration % 120) != 0){
+        return;
+    }
+
+    uint grid_size = temp.size();
 
     ui->previewPlot->clearGraphs();
 
@@ -121,9 +123,6 @@ void CurveFittingWorkerDialog::graphReceived(double* phi, double* temp, uint gri
     ui->previewPlot->yAxis->setRange(ymin, ymax);
     ui->previewPlot->xAxis->setRange(0, xmax);
     ui->previewPlot->replot(QCustomPlot::rpQueuedReplot);
-
-    free(phi);
-    free(temp);
 }
 
 QVector<DeflatedBiquad> CurveFittingWorkerDialog::getResults() const

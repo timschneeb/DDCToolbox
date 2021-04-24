@@ -73,11 +73,7 @@ double CurveFittingWorker::peakingCostFunctionMap(double *x, void *usd)
 
     /* Warning: Handing allocated pointer over to a new owner via a queued signal for performance reasons
      * TODO: Research whether this could trigger memory leaks and keep a reference for later deletion here as well */
-    double* phi = (double*)malloc(sizeof(double) * userdata->gridSize);
-    double* tmp = (double*)malloc(sizeof(double) * userdata->gridSize);
-    memcpy(phi, userdata->phi, sizeof(double) * userdata->gridSize);
-    memcpy(tmp, userdata->tmp, sizeof(double) * userdata->gridSize);
-    emit worker->graphReceived(phi, tmp, userdata->gridSize);
+    emit worker->graphReceived(std::vector(userdata->tmp, userdata->tmp + userdata->gridSize));
 
     double meanAcc = 0.0;
     for (unsigned int i = 0; i < userdata->gridSize; i++)

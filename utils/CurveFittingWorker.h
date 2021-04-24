@@ -18,7 +18,7 @@ public:
 
 signals:
     void mseReceived(float fVar);
-    void graphReceived(double* phi, double* temp, uint grid_size);
+    void graphReceived(std::vector<double>);
     void finished();
 
 public slots:
