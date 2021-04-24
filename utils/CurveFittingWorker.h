@@ -4,6 +4,7 @@
 #include <QtCore/QObject>
 #include <QThread>
 #include <array>
+#include <QVector>
 #include <model/CurveFittingOptions.h>
 #include <model/DeflatedBiquad.h>
 
