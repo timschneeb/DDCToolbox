@@ -8,7 +8,8 @@ public:
     enum AlgorithmType {
         AT_DIFF_EVOLUTION = 0,
         AT_FMINSEARCHBND = 1,
-        AT_FLOWERPOLLINATION = 2
+        AT_FLOWERPOLLINATION = 2,
+        AT_HYDRID_DE_FMIN = 3
     };
 
     enum ProbDensityFunc {

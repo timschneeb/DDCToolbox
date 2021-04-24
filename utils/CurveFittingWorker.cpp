@@ -1,5 +1,12 @@
 #include "CurveFittingWorker.h"
 
+#ifndef min
+#define min(a,b) (((a)<(b))?(a):(b))
+#endif
+#ifndef max
+#define max(a,b) (((a)>(b))?(a):(b))
+#endif
+
 extern "C" {
 #include <gradfreeOpt.h>
 #include <PeakingFit/linear_interpolation.h>
@@ -31,6 +38,7 @@ CurveFittingWorker::CurveFittingWorker(const CurveFittingOptions& _options, QObj
 
 CurveFittingWorker::~CurveFittingWorker()
 {
+    free(flt_freqList);
     free(maximaIndex);
     free(minimaIndex);
     free(flt_fc);
@@ -86,71 +94,137 @@ void CurveFittingWorker::run()
 {
     pcg32x2_random_t PRNG;
     pcg32x2_srandom_r(&PRNG, rng_seed, rng_seed >> 2,
-                             rng_seed >> 4, rng_seed >> 6);
+                      rng_seed >> 4, rng_seed >> 6);
 
     unsigned int i, j;
     unsigned int K = 5;
     unsigned int N = 3;
     double fs = 44100.0;
 
-    // Parameter estimation
-    unsigned int numMaximas, numMinimas;
-    maximaIndex = peakfinder_wrapper(target, array_size, 0.1, 1, &numMaximas);
-    minimaIndex = peakfinder_wrapper(target, array_size, 0.1, 0, &numMinimas);
-    flt_fc = (double*)malloc((numMaximas + numMinimas) * sizeof(double));
-    idx = (unsigned int*)malloc((numMaximas + numMinimas) * sizeof(unsigned int));
+    flt_freqList = (double*)malloc(array_size * sizeof(double));
+    memcpy(flt_freqList, freq, array_size * sizeof(double));
 
-    for (i = 0; i < numMaximas; i++)
-        flt_fc[i] = freq[maximaIndex[i]];
-    for (i = numMaximas; i < (numMaximas + numMinimas); i++)
-        flt_fc[i] = freq[minimaIndex[i - numMaximas]];
-    sort(flt_fc, (numMaximas + numMinimas), idx);
-
-    double smallestJump = 0.0;
-    double lowestFreq2Gen = 200.0;
-    double highestFreq2Gen = 14000.0;
-
-    dFreqDiscontin = (double*)malloc((numMaximas + numMinimas) * sizeof(double));
-    dif = (double*)malloc((numMaximas + numMinimas) * sizeof(double));
-    while (smallestJump <= 20.0)
+    // Detect X axis linearity
+    // Assume frequency axis is sorted
+    double first = flt_freqList[0];
+    double last = flt_freqList[array_size - 1];
+    double stepLinspace = (last - first) / (double)(array_size - 1);
+    double residue = 0.0;
+    for (i = 0; i < array_size; i++)
     {
-        derivative(flt_fc, numMaximas + numMinimas, 1, dFreqDiscontin, dif);
-        unsigned int smIdx;
-        smallestJump = minArray(dFreqDiscontin, numMaximas + numMinimas, &smIdx);
-        double newFreq = c_rand(&PRNG) * (highestFreq2Gen - lowestFreq2Gen) + lowestFreq2Gen;
-        flt_fc[smIdx] = newFreq;
-        sort(flt_fc, (numMaximas + numMinimas), idx);
+        double vv = fabs((first + i * stepLinspace) - flt_freqList[i]);
+        residue += vv;
     }
-    unsigned int numBands;
-    if (flt_fc[0] > 80.0)
+    residue = residue / (double)array_size;
+    char gdType;
+    if (residue > 10.0) // Allow margin of error, in fact, non-zero residue hint the grid is nonuniform
     {
-        numBands = numMaximas + numMinimas + 2;
-        double *tmp = (double*)malloc(numBands * sizeof(double));
-        memcpy(tmp + 2, flt_fc, (numMaximas + numMinimas) * sizeof(double));
-        tmp[0] = 20.0; tmp[1] = 60.0;
-        free(flt_fc);
-        flt_fc = tmp;
-    }
-    else if (flt_fc[0] > 40.0)
-    {
-        numBands = numMaximas + numMinimas + 1;
-        double *tmp = (double*)malloc(numBands * sizeof(double));
-        memcpy(tmp + 1, flt_fc, (numMaximas + numMinimas) * sizeof(double));
-        tmp[0] = 20.0;
-        free(flt_fc);
-        flt_fc = tmp;
+        gdType = 1;
+        printf("Nonuniform grid\n");
     }
     else
-        numBands = numMaximas + numMinimas;
-    flt_peak_g = (double*)malloc(numBands * sizeof(double));
-    for (i = 0; i < numBands; i++)
-        flt_peak_g[i] = npointWndFunction(flt_fc[i], freq, target, array_size);
-    double lowFc = 20;
-    double upFc = fs / 2 - 1;
-    double lowQ = 0.2;
-    double upQ = 16;
-    double lowGain = target[0];
-    double upGain = target[0];
+    {
+        gdType = 0;
+        printf("Uniform grid\n");
+    }
+    // Convert uniform grid to log grid is recommended
+    // Nonuniform grid doesn't necessary to be a log grid, but we can force to make it log
+    char forceConvertCurrentGrid2OctaveGrid = 0;
+    if (forceConvertCurrentGrid2OctaveGrid)
+    {
+        unsigned int detailLinearGridLen;
+        double *spectrum;
+        double *linGridFreq;
+        if (!gdType)
+        {
+            detailLinearGridLen = array_size;
+            spectrum = (double*)malloc(detailLinearGridLen * sizeof(double));
+            linGridFreq = (double*)malloc(detailLinearGridLen * sizeof(double));
+            for (i = 0; i < detailLinearGridLen; i++)
+            {
+                spectrum[i] = target[i];
+                linGridFreq[i] = i / ((double)detailLinearGridLen) * (fs / 2);
+            }
+        }
+        else
+        {
+            detailLinearGridLen = max(array_size, 8192); // Larger the value could be take care large(Especially for uniform grid)
+            spectrum = (double*)malloc(detailLinearGridLen * sizeof(double));
+            linGridFreq = (double*)malloc(detailLinearGridLen * sizeof(double));
+            for (i = 0; i < detailLinearGridLen; i++)
+            {
+                double fl = i / ((double)detailLinearGridLen) * (fs / 2);
+                spectrum[i] = linearInterpolationNoExtrapolate(fl, flt_freqList, target, array_size);
+                linGridFreq[i] = fl;
+            }
+        }
+        // Init octave grid shrinker
+        const double avgBW = 1.005; // Smaller the value less smooth the output gonna be, of course, don't go too large
+        unsigned int arrayLen = detailLinearGridLen;
+        unsigned int fcLen = getAuditoryBandLen(arrayLen, avgBW);
+        unsigned int idxLen = fcLen + 1;
+        unsigned int *indexList = (unsigned int*)malloc((idxLen << 1) * sizeof(unsigned int));
+        double *levels = (double*)malloc((idxLen + 3) * sizeof(double));
+        double *multiplicationPrecompute = (double*)malloc(idxLen * sizeof(double));
+        size_t virtualStructSize = sizeof(unsigned int) + sizeof(double) + sizeof(unsigned int) + (idxLen << 1) * sizeof(unsigned int) + idxLen * sizeof(double) + (idxLen + 3) * sizeof(double);
+        double *shrinkedAxis = (double*)malloc((idxLen + 3) * sizeof(double));
+        double reciprocal = 1.0 / arrayLen;
+        initInterpolationList(indexList, levels, avgBW, fcLen, arrayLen);
+        for (unsigned int i = 0; i < idxLen; i++)
+            multiplicationPrecompute[i] = 1.0 / (indexList[(i << 1) + 1] - indexList[(i << 1) + 0]);
+        // Do actual axis conversion
+        shrinkedAxis[0] = spectrum[0];
+        shrinkedAxis[1] = spectrum[1];
+        unsigned int i;
+        double sum;
+        for (i = 0; i < idxLen; i++)
+        {
+            sum = 0.0;
+            for (unsigned int j = indexList[(i << 1) + 0]; j < indexList[(i << 1) + 1]; j++)
+                sum += spectrum[j];
+            shrinkedAxis[2 + i] = sum * multiplicationPrecompute[i];
+        }
+        shrinkedAxis[(idxLen + 3) - 1] = shrinkedAxis[(idxLen + 3) - 2];
+        double *ascendingIdx = (double*)malloc(arrayLen * sizeof(double));
+        for (i = 0; i < arrayLen; i++)
+            ascendingIdx[i] = i;
+        unsigned int hz18 = 0;
+        for (i = 0; i < idxLen + 3; i++)
+        {
+            double freqIdxUR = levels[hz18 + i] * arrayLen;
+            double realFreq = linearInterpolationNoExtrapolate(freqIdxUR, ascendingIdx, linGridFreq, arrayLen);
+            hz18 = i;
+            if (realFreq >= 18.0)
+                break;
+        }
+        double *newflt_freqList = (double*)malloc((idxLen + 3 - hz18) * sizeof(double));
+        double *newTarget = (double*)malloc((idxLen + 3 - hz18) * sizeof(double));
+        for (i = 0; i < idxLen + 3 - hz18; i++)
+        {
+            double freqIdxUR = levels[hz18 + i] * arrayLen;
+            newflt_freqList[i] = linearInterpolationNoExtrapolate(freqIdxUR, ascendingIdx, linGridFreq, arrayLen);
+            newTarget[i] = shrinkedAxis[hz18 + i];
+        }
+        free(shrinkedAxis);
+        free(ascendingIdx);
+        free(linGridFreq);
+        array_size = idxLen + 3 - hz18;
+        free(flt_freqList);
+        free(target);
+        flt_freqList = newflt_freqList;
+        target = newTarget;
+        free(levels);
+        free(multiplicationPrecompute);
+        free(indexList);
+        free(spectrum);
+    }
+    // Bound constraints
+    double lowFc = 20; // Hz
+    double upFc = fs / 2 - 1; // Hz
+    double lowQ = 0.2; // 0.01 - 1000, higher shaper the filter
+    double upQ = 16; // 0.01 - 1000, higher shaper the filter
+    double lowGain = target[0]; // dB
+    double upGain = target[0]; // dB
     for (i = 1; i < array_size; i++)
     {
         if (target[i] < lowGain)
@@ -160,6 +234,48 @@ void CurveFittingWorker::run()
     }
     lowGain -= 5.0;
     upGain += 5.0;
+
+    // Parameter estimation
+    unsigned int numMaximas, numMinimas;
+    maximaIndex = peakfinder_wrapper(target, array_size, 0.1, 1, &numMaximas);
+    minimaIndex = peakfinder_wrapper(target, array_size, 0.1, 0, &numMinimas);
+    unsigned int numBands = numMaximas + numMinimas;
+    flt_fc = (double*)malloc(numBands * sizeof(double));
+    idx = (unsigned int*)malloc(numBands * sizeof(unsigned int));
+    for (i = 0; i < numMaximas; i++)
+        flt_fc[i] = flt_freqList[maximaIndex[i]];
+    for (i = numMaximas; i < numBands; i++)
+        flt_fc[i] = flt_freqList[minimaIndex[i - numMaximas]];
+    sort(flt_fc, numBands, idx);
+
+    // Initial value must not get out-of-bound, more importantly.
+    // If value go too extreme, NaN will happens when frequency place on either too close to DC and touching/beyond Nyquist
+    for (i = 0; i < numBands; i++)
+    {
+        if (flt_fc[i] < lowFc)
+            flt_fc[i] = lowFc;
+        if (flt_fc[i] > upFc)
+            flt_fc[i] = upFc;
+    }
+    // Naive way to prevent nearby filters go too close, because they could contribute nothing
+    double smallestJump = 0.0;
+    double lowestFreq2Gen = 200.0;
+    double highestFreq2Gen = 14000.0;
+    dFreqDiscontin = (double*)malloc(numBands * sizeof(double));
+    dif = (double*)malloc(numBands * sizeof(double));
+    while (smallestJump <= 20.0)
+    {
+        derivative(flt_fc, numBands, 1, dFreqDiscontin, dif);
+        unsigned int smIdx;
+        smallestJump = minArray(dFreqDiscontin, numBands, &smIdx);
+        double newFreq = c_rand(&PRNG) * (highestFreq2Gen - lowestFreq2Gen) + lowestFreq2Gen;
+        flt_fc[smIdx] = newFreq;
+        sort(flt_fc, numBands, idx);
+    }
+    free(idx);
+    flt_peak_g = (double*)malloc(numBands * sizeof(double));
+    for (i = 0; i < numBands; i++)
+        flt_peak_g[i] = npointWndFunction(flt_fc[i], flt_freqList, target, array_size);
     initialQ = (double*)malloc(numBands * sizeof(double));
     for (i = 0; i < numBands; i++)
     {
@@ -167,16 +283,15 @@ void CurveFittingWorker::run()
         flt_fc[i] = log10(flt_fc[i]);
     }
 
-    // Grid generation
     phi = (double*)malloc(array_size * sizeof(double));
     for (i = 0; i < array_size; i++)
     {
-        double term1 = sin(M_PI * freq[i] / fs);
+        double term1 = sin(M_PI * flt_freqList[i] / fs);
         phi[i] = 4.0 * term1 * term1;
     }
     unsigned int dim = numBands * 3;
 
-    // Local minima avoidance (DE)
+    // Local minima avoidance
     double initialLowGain = -1.5;
     double initialUpGain = 1.5;
     double initialLowQ = -0.5;
@@ -194,7 +309,7 @@ void CurveFittingWorker::run()
         }
     }
 
-    // Boundary constraint
+
     low = (double*)malloc(dim * sizeof(double));
     up = (double*)malloc(dim * sizeof(double));
     for (j = 0; j < numBands; j++)
@@ -203,6 +318,7 @@ void CurveFittingWorker::run()
         up[j] = log10(upFc); up[numBands + j] = upQ; up[numBands * 2 + j] = upGain;
     }
 
+    // Cost function data setup
     tmpDat = (double*)malloc(array_size * sizeof(double));
     optUserdata userdat;
     userdat.fs = fs;
@@ -235,18 +351,31 @@ void CurveFittingWorker::run()
     // Calculate
     double *output = (double*)malloc(dim * sizeof(double));
     switch(algorithm_type){
+    // DE is relatively robust, but require a lot iteration to converge, we then improve DE result using fminsearch
+    // fminsearchbnd can be a standalone algorithm, but would high dimension or even some simple curve
+    // but overall fminsearchbnd converge faster than other 2 algorithms in current library for current fitting purpose
     case CurveFittingOptions::AT_DIFF_EVOLUTION: {
         double gmin = differentialEvolution(peakingCostFunctionMap, userdataPtr, initialAns, K, N, dim, low, up, 10000, output, &PRNG, pdf1, optStatus, hist_userdata);
         qDebug("CurveFittingThread: gmin=%lf", gmin);
         break;
     }
+    case CurveFittingOptions::AT_HYDRID_DE_FMIN: {
+        double gmin = differentialEvolution(peakingCostFunctionMap, userdataPtr, initialAns, K, N, dim, low, up, 10000, output, &PRNG, pdf1, optStatus, hist_userdata);
+        qDebug("CurveFittingThread: gmin=%lf", gmin);
+        double fval = fminsearchbnd(peakingCostFunctionMap, userdataPtr, output, low, up, dim, 1e-8, 1e-8, 6000, output, 0, optStatus, hist_userdata);
+        qDebug("CurveFittingThread: fval=%lf", fval);
+
+        break;
+    }
+    // Standalone fminsearch
     case CurveFittingOptions::AT_FMINSEARCHBND: {
-        double fval = fminsearchbnd(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, 1e-8, 1e-8, 10000, output, optStatus, hist_userdata);
+        double fval = fminsearchbnd(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, 1e-8, 1e-8, 10000, output, 0, optStatus, hist_userdata);
         qDebug("CurveFittingThread: lval=%lf", fval);
         break;
     }
+    // Flower pollination could be as robust as DE, user could also improve FPA result using fminsearch
     case CurveFittingOptions::AT_FLOWERPOLLINATION: {
-        double gmin2 = flowerPollination(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, K * N, 0.1, 0.05, 2000, output, &PRNG, pdf1, optStatus, hist_userdata);
+        double gmin2 = flowerPollination(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, K * N, 0.1, 0.05, 3000, output, &PRNG, pdf1, optStatus, hist_userdata);
         qDebug("CurveFittingThread: gmin2=%lf", gmin2);
         break;
     }

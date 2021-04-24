@@ -182,6 +182,11 @@
            <string>Flower pollination search</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>Hybrid optimization</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>

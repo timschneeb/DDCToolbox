@@ -37,6 +37,7 @@ private:
     unsigned int *maximaIndex = nullptr;
     unsigned int *minimaIndex = nullptr;
     double *flt_fc = nullptr;
+    double *flt_freqList = nullptr;
     unsigned int *idx = nullptr;
     double *dFreqDiscontin = nullptr;
     double *dif = nullptr;
