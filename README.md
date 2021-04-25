@@ -38,6 +38,7 @@
  * Various IIR filters (peaking, low/high pass/shelf, notch, all/band pass and unity gain)
  * Embed custom IIR filters
  * Stability check for filters
+ * Advanced peaking filter curve fitting (using [libgradfreeOpt](https://github.com/james34602/libgradfreeOpt))
 
 # Installation
 Developed with Linux in mind. You can also find Windows and macOS installation instructions below.
@@ -189,6 +190,7 @@ Run it
 
 ## Contributors
 * [James Fung (@james34602):](https://github.com/james34602)
+  * Peaking filter curve fitting ([libgradfreeOpt](https://github.com/james34602/libgradfreeOpt))
   * VDC Importer
   * Group delay plot
   * Unity gain filter 
