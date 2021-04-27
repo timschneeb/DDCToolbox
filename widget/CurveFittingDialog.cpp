@@ -80,6 +80,8 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
 
     connect(ui->algorithmType, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CurveFittingDialog::updateSupportedProperties);
     ui->status_panel->setVisible(false);
+
+    this->setMaximumHeight(360);
 }
 
 CurveFittingDialog::~CurveFittingDialog()
@@ -152,7 +154,7 @@ void CurveFittingDialog::parseCsv(){
     memcpy(targetList, gain.constData(), size * sizeof(double));
 
     bool is_nonuniform = false;
-    CurveFittingWorker::preprocess(flt_freqList, targetList, size, 44100, false, &is_nonuniform);
+    CurveFittingWorker::preprocess(flt_freqList, targetList, size, 44100, false, 1.005, &is_nonuniform);
     ui->fgrid_axis_linearity->setText(is_nonuniform ? "Non-uniform grid" : "Uniform grid");
 
     double lowGain = targetList[0];
@@ -205,7 +207,9 @@ void CurveFittingDialog::accept()
                                 DoubleRange(ui->obc_freq_min->value(), ui->obc_freq_max->value()),
                                 DoubleRange(ui->obc_q_min->value(), ui->obc_q_max->value()),
                                 DoubleRange(ui->obc_gain_min->value(), ui->obc_gain_max->value()),
-                                ui->fgrid_force_convert->isChecked());
+                                ui->fgrid_force_convert->isChecked(),
+                                ui->iterations->value(),
+                                ui->fgrid_avgbw->value());
 
     auto worker = new CurveFittingWorkerDialog(options, this);
 

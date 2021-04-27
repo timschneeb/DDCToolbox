@@ -24,7 +24,7 @@ public:
     CurveFittingOptions(AlgorithmType _algorithm_type, double* _frequency, double* _gain, int _count,
                         uint64_t _rng_seed, ProbDensityFunc _rng_density_dist,
                         DoubleRange _obc_freq, DoubleRange _obc_q, DoubleRange _obc_gain,
-                        bool _force_oct_grid){
+                        bool _force_oct_grid, unsigned int _iterations, double _avgbw){
         algorithm_type = _algorithm_type;
         frequency = _frequency;
         gain = _gain;
@@ -35,6 +35,8 @@ public:
         obc_q = _obc_q;
         obc_gain = _obc_gain;
         force_oct_grid = _force_oct_grid;
+        iterations_count = _iterations;
+        avgbw = _avgbw;
     }
 
     double *frequencyData() const;
@@ -49,6 +51,9 @@ public:
     DoubleRange obcGainRange() const;
 
     bool forceLogOctGrid() const;
+    double averageBandwidth() const;
+
+    unsigned int iterations() const;
 
 private:
     double* frequency;
@@ -61,6 +66,8 @@ private:
     DoubleRange obc_q;
     DoubleRange obc_gain;
     bool force_oct_grid;
+    unsigned int iterations_count;
+    double avgbw;
 };
 
 inline double *CurveFittingOptions::frequencyData() const
@@ -111,6 +118,16 @@ inline DoubleRange CurveFittingOptions::obcGainRange() const
 inline bool CurveFittingOptions::forceLogOctGrid() const
 {
     return force_oct_grid;
+}
+
+inline unsigned int CurveFittingOptions::iterations() const
+{
+    return iterations_count;
+}
+
+inline double CurveFittingOptions::averageBandwidth() const
+{
+    return avgbw;
 }
 
 #endif // CURVEFITTINGOPTIONS_H

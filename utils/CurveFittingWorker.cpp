@@ -38,6 +38,8 @@ CurveFittingWorker::CurveFittingWorker(const CurveFittingOptions& _options, QObj
     obc_q = _options.obcQRange();
     obc_gain = _options.obcGainRange();
     force_to_oct_grid_conversion = _options.forceLogOctGrid();
+    iterations = _options.iterations();
+    avg_bw = _options.averageBandwidth();
 }
 
 CurveFittingWorker::~CurveFittingWorker()
@@ -95,7 +97,7 @@ double CurveFittingWorker::peakingCostFunctionMap(double *x, void *usd)
     return meanAcc;
 }
 
-void CurveFittingWorker::preprocess(double *flt_freqList, double *target, uint &array_size, int fs, bool force_to_oct_grid_conversion, bool* is_nonuniform){
+void CurveFittingWorker::preprocess(double *flt_freqList, double *target, uint &array_size, int fs, bool force_to_oct_grid_conversion, double avg_bw, bool* is_nonuniform){
     uint i;
 
     // Detect X axis linearity
@@ -157,7 +159,7 @@ void CurveFittingWorker::preprocess(double *flt_freqList, double *target, uint &
             }
         }
         // Init octave grid shrinker
-        const double avgBW = 1.005; // Smaller the value less smooth the output gonna be, of course, don't go too large
+        const double avgBW = avg_bw; //1.005; // Smaller the value less smooth the output gonna be, of course, don't go too large
         unsigned int arrayLen = detailLinearGridLen;
         unsigned int fcLen = getAuditoryBandLen(arrayLen, avgBW);
         unsigned int idxLen = fcLen + 1;
@@ -236,7 +238,7 @@ void CurveFittingWorker::run()
     targetList = (double*)malloc(array_size * sizeof(double));
     memcpy(targetList, target, array_size * sizeof(double));
 
-    preprocess(flt_freqList, targetList, array_size, fs, force_to_oct_grid_conversion);
+    preprocess(flt_freqList, targetList, array_size, fs, force_to_oct_grid_conversion, avg_bw);
 
     // Bound constraints
     double lowFc = obc_freq.first; // Hz
@@ -381,27 +383,27 @@ void CurveFittingWorker::run()
     // fminsearchbnd can be a standalone algorithm, but would high dimension or even some simple curve
     // but overall fminsearchbnd converge faster than other 2 algorithms in current library for current fitting purpose
     case CurveFittingOptions::AT_DIFF_EVOLUTION: {
-        double gmin = differentialEvolution(peakingCostFunctionMap, userdataPtr, initialAns, K, N, dim, low, up, 10000, output, &PRNG, pdf1, optStatus, hist_userdata);
+        double gmin = differentialEvolution(peakingCostFunctionMap, userdataPtr, initialAns, K, N, dim, low, up, iterations, output, &PRNG, pdf1, optStatus, hist_userdata);
         qDebug("CurveFittingThread: gmin=%lf", gmin);
         break;
     }
     case CurveFittingOptions::AT_HYDRID_DE_FMIN: {
-        double gmin = differentialEvolution(peakingCostFunctionMap, userdataPtr, initialAns, K, N, dim, low, up, 10000, output, &PRNG, pdf1, optStatus, hist_userdata);
+        double gmin = differentialEvolution(peakingCostFunctionMap, userdataPtr, initialAns, K, N, dim, low, up, iterations, output, &PRNG, pdf1, optStatus, hist_userdata);
         qDebug("CurveFittingThread: gmin=%lf", gmin);
-        double fval = fminsearchbnd(peakingCostFunctionMap, userdataPtr, output, low, up, dim, 1e-8, 1e-8, 6000, output, 0, optStatus, hist_userdata);
+        double fval = fminsearchbnd(peakingCostFunctionMap, userdataPtr, output, low, up, dim, 1e-8, 1e-8, iterations, output, 0, optStatus, hist_userdata);
         qDebug("CurveFittingThread: fval=%lf", fval);
 
         break;
     }
     // Standalone fminsearch
     case CurveFittingOptions::AT_FMINSEARCHBND: {
-        double fval = fminsearchbnd(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, 1e-8, 1e-8, 10000, output, 0, optStatus, hist_userdata);
+        double fval = fminsearchbnd(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, 1e-8, 1e-8, iterations, output, 0, optStatus, hist_userdata);
         qDebug("CurveFittingThread: lval=%lf", fval);
         break;
     }
     // Flower pollination could be as robust as DE, user could also improve FPA result using fminsearch
     case CurveFittingOptions::AT_FLOWERPOLLINATION: {
-        double gmin2 = flowerPollination(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, K * N, 0.1, 0.05, 3000, output, &PRNG, pdf1, optStatus, hist_userdata);
+        double gmin2 = flowerPollination(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, K * N, 0.1, 0.05, iterations, output, &PRNG, pdf1, optStatus, hist_userdata);
         qDebug("CurveFittingThread: gmin2=%lf", gmin2);
         break;
     }
