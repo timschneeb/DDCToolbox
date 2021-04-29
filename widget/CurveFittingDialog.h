@@ -37,6 +37,10 @@ private:
     Expander* opt_boundary_constraints = nullptr;
     Expander* advanced_rng = nullptr;
     Expander* fgrid = nullptr;
+    Expander* algo_de = nullptr;
+    Expander* algo_flower = nullptr;
+    Expander* algo_chio = nullptr;
+    Expander* algo_fmin = nullptr;
 
     QVector<double> freq;
     QVector<double> gain;

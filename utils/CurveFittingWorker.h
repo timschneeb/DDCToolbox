@@ -29,6 +29,7 @@ public slots:
 
 private:
     /* Parameters */
+    CurveFittingOptions options;
     double* freq = nullptr;
     double* target = nullptr;
     unsigned int array_size;

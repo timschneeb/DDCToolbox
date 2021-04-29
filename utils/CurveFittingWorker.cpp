@@ -26,7 +26,7 @@ typedef struct
     void* user_data;
 } optUserdata;
 
-CurveFittingWorker::CurveFittingWorker(const CurveFittingOptions& _options, QObject* parent) : QObject(parent)
+CurveFittingWorker::CurveFittingWorker(const CurveFittingOptions& _options, QObject* parent) : QObject(parent), options(_options)
 {
     freq =_options.frequencyData();
     target =_options.targetData();
@@ -229,9 +229,9 @@ void CurveFittingWorker::run()
                       rng_seed >> 4, rng_seed >> 6);
 
     unsigned int i, j;
-    unsigned int K = 5;
-    unsigned int N = 3;
-    double fs = 44100.0;
+    unsigned int K = options.populationK();
+    unsigned int N = options.populationN();
+    double fs = 48000.0;
 
     flt_freqList = (double*)malloc(array_size * sizeof(double));
     memcpy(flt_freqList, freq, array_size * sizeof(double));
@@ -383,28 +383,47 @@ void CurveFittingWorker::run()
     // fminsearchbnd can be a standalone algorithm, but would high dimension or even some simple curve
     // but overall fminsearchbnd converge faster than other 2 algorithms in current library for current fitting purpose
     case CurveFittingOptions::AT_DIFF_EVOLUTION: {
-        double gmin = differentialEvolution(peakingCostFunctionMap, userdataPtr, initialAns, K, N, dim, low, up, iterations, output, &PRNG, pdf1, optStatus, hist_userdata);
+        double gmin = differentialEvolution(peakingCostFunctionMap, userdataPtr, initialAns, K, N, options.deProbiBound(), dim, low, up, iterations, output, &PRNG, pdf1, optStatus, hist_userdata);
         qDebug("CurveFittingThread: gmin=%lf", gmin);
-        break;
-    }
-    case CurveFittingOptions::AT_HYDRID_DE_FMIN: {
-        double gmin = differentialEvolution(peakingCostFunctionMap, userdataPtr, initialAns, K, N, dim, low, up, iterations, output, &PRNG, pdf1, optStatus, hist_userdata);
-        qDebug("CurveFittingThread: gmin=%lf", gmin);
-        double fval = fminsearchbnd(peakingCostFunctionMap, userdataPtr, output, low, up, dim, 1e-8, 1e-8, iterations, output, 0, optStatus, hist_userdata);
-        qDebug("CurveFittingThread: fval=%lf", fval);
-
         break;
     }
     // Standalone fminsearch
     case CurveFittingOptions::AT_FMINSEARCHBND: {
-        double fval = fminsearchbnd(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, 1e-8, 1e-8, iterations, output, 0, optStatus, hist_userdata);
+        double fval = fminsearchbnd(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, 1e-8, 1e-8, iterations, output, options.fminDimensionAdaptive(), optStatus, hist_userdata);
         qDebug("CurveFittingThread: lval=%lf", fval);
         break;
     }
     // Flower pollination could be as robust as DE, user could also improve FPA result using fminsearch
     case CurveFittingOptions::AT_FLOWERPOLLINATION: {
-        double gmin2 = flowerPollination(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, K * N, 0.1, 0.05, iterations, output, &PRNG, pdf1, optStatus, hist_userdata);
-        qDebug("CurveFittingThread: gmin2=%lf", gmin2);
+        double gmin = flowerPollination(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, K * N, options.flowerPCond(), options.flowerWeightStep(), iterations, output, &PRNG, pdf1, optStatus, hist_userdata);
+        qDebug("CurveFittingThread: gmin=%lf", gmin);
+        break;
+    }
+    case CurveFittingOptions::AT_CHIO: {
+        double fval = CHIO(peakingCostFunctionMap, userdataPtr, initialAns, K * N, options.chioMaxSolSurviveEpoch(), options.chioC0(), options.chioSpreadingRate(), dim, low, up, iterations, output, &PRNG, optStatus, hist_userdata);
+        qDebug("CurveFittingThread: fval=%lf", fval);
+        break;
+    }
+    case CurveFittingOptions::AT_HYBRID_DE_FMIN: {
+        double gmin = differentialEvolution(peakingCostFunctionMap, userdataPtr, initialAns, K, N, options.deProbiBound(), dim, low, up, iterations, output, &PRNG, pdf1, optStatus, hist_userdata);
+        qDebug("CurveFittingThread: gmin=%lf", gmin);
+        double fval = fminsearchbnd(peakingCostFunctionMap, userdataPtr, output, low, up, dim, 1e-8, 1e-8, options.iterationsSecondary(), output, options.fminDimensionAdaptive(), optStatus, hist_userdata);
+        qDebug("CurveFittingThread: fval=%lf", fval);
+
+        break;
+    }
+    case CurveFittingOptions::AT_HYBRID_FLOWER_FMIN: {
+        double gmin = flowerPollination(peakingCostFunctionMap, userdataPtr, initialAns, low, up, dim, K * N, options.flowerPCond(), options.flowerWeightStep(), iterations, output, &PRNG, pdf1, optStatus, hist_userdata);
+        qDebug("CurveFittingThread: gmin=%lf", gmin);
+        double fval = fminsearchbnd(peakingCostFunctionMap, userdataPtr, output, low, up, dim, 1e-8, 1e-8, options.iterationsSecondary(), output, options.fminDimensionAdaptive(), optStatus, hist_userdata);
+        qDebug("CurveFittingThread: fval=%lf", fval);
+        break;
+    }
+    case CurveFittingOptions::AT_HYBRID_CHIO_FMIN: {
+        double fval = CHIO(peakingCostFunctionMap, userdataPtr, initialAns, K * N, options.chioMaxSolSurviveEpoch(), options.chioC0(), options.chioSpreadingRate(), dim, low, up, iterations, output, &PRNG, optStatus, hist_userdata);
+        qDebug("CurveFittingThread: fval=%lf", fval);
+        double fval2 = fminsearchbnd(peakingCostFunctionMap, userdataPtr, output, low, up, dim, 1e-8, 1e-8, options.iterationsSecondary(), output, options.fminDimensionAdaptive(), optStatus, hist_userdata);
+        qDebug("CurveFittingThread: fval2=%lf", fval2);
         break;
     }
     }

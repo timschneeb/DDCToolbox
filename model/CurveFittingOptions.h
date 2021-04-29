@@ -12,7 +12,10 @@ public:
         AT_DIFF_EVOLUTION = 0,
         AT_FMINSEARCHBND = 1,
         AT_FLOWERPOLLINATION = 2,
-        AT_HYDRID_DE_FMIN = 3
+        AT_CHIO = 3,
+        AT_HYBRID_DE_FMIN = 4,
+        AT_HYBRID_FLOWER_FMIN = 5,
+        AT_HYBRID_CHIO_FMIN = 6
     };
 
     enum ProbDensityFunc {
@@ -24,7 +27,10 @@ public:
     CurveFittingOptions(AlgorithmType _algorithm_type, double* _frequency, double* _gain, int _count,
                         uint64_t _rng_seed, ProbDensityFunc _rng_density_dist,
                         DoubleRange _obc_freq, DoubleRange _obc_q, DoubleRange _obc_gain,
-                        bool _force_oct_grid, unsigned int _iterations, double _avgbw){
+                        bool _force_oct_grid, unsigned int _iterations, unsigned int _iterations2, double _avgbw,
+                        double _pop_k, double _pop_n,
+                        bool _fmin_dimension_adaptive, double _de_probibound, double _flower_pcond, double _flower_weight_step,
+                        unsigned int _chio_max_sol_survive_epoch, unsigned int _chio_c0, double _chio_spreading_rate){
         algorithm_type = _algorithm_type;
         frequency = _frequency;
         gain = _gain;
@@ -36,7 +42,17 @@ public:
         obc_gain = _obc_gain;
         force_oct_grid = _force_oct_grid;
         iterations_count = _iterations;
+        iterations2_count = _iterations2;
         avgbw = _avgbw;
+        pop_k = _pop_k;
+        pop_n = _pop_n;
+        fmin_dimension_adaptive = _fmin_dimension_adaptive;
+        de_probibound = _de_probibound;
+        flower_pcond = _flower_pcond;
+        flower_weight_step = _flower_weight_step;
+        chio_max_sol_survive_epoch = _chio_max_sol_survive_epoch;
+        chio_c0 = _chio_c0;
+        chio_spreading_rate = _chio_spreading_rate;
     }
 
     double *frequencyData() const;
@@ -54,6 +70,19 @@ public:
     double averageBandwidth() const;
 
     unsigned int iterations() const;
+    unsigned int iterationsSecondary() const;
+
+    double populationK() const;
+    double populationN() const;
+
+    bool fminDimensionAdaptive() const;
+    double deProbiBound() const;
+    double flowerPCond() const;
+    double flowerWeightStep() const;
+
+    unsigned int chioMaxSolSurviveEpoch() const;
+    unsigned int chioC0() const;
+    double chioSpreadingRate() const;
 
 private:
     double* frequency;
@@ -67,7 +96,17 @@ private:
     DoubleRange obc_gain;
     bool force_oct_grid;
     unsigned int iterations_count;
+    unsigned int iterations2_count;
     double avgbw;
+    double pop_k;
+    double pop_n;
+    bool fmin_dimension_adaptive;
+    double de_probibound;
+    double flower_pcond;
+    double flower_weight_step;
+    unsigned int chio_max_sol_survive_epoch;
+    unsigned int chio_c0;
+    double chio_spreading_rate;
 };
 
 inline double *CurveFittingOptions::frequencyData() const
@@ -123,6 +162,56 @@ inline bool CurveFittingOptions::forceLogOctGrid() const
 inline unsigned int CurveFittingOptions::iterations() const
 {
     return iterations_count;
+}
+
+inline unsigned int CurveFittingOptions::iterationsSecondary() const
+{
+    return iterations2_count;
+}
+
+inline double CurveFittingOptions::populationK() const
+{
+    return pop_k;
+}
+
+inline double CurveFittingOptions::populationN() const
+{
+    return pop_n;
+}
+
+inline bool CurveFittingOptions::fminDimensionAdaptive() const
+{
+    return fmin_dimension_adaptive;
+}
+
+inline double CurveFittingOptions::deProbiBound() const
+{
+    return de_probibound;
+}
+
+inline double CurveFittingOptions::flowerPCond() const
+{
+    return flower_pcond;
+}
+
+inline double CurveFittingOptions::flowerWeightStep() const
+{
+    return flower_weight_step;
+}
+
+inline unsigned int CurveFittingOptions::chioMaxSolSurviveEpoch() const
+{
+    return chio_max_sol_survive_epoch;
+}
+
+inline unsigned int CurveFittingOptions::chioC0() const
+{
+    return chio_c0;
+}
+
+inline double CurveFittingOptions::chioSpreadingRate() const
+{
+    return chio_spreading_rate;
 }
 
 inline double CurveFittingOptions::averageBandwidth() const
