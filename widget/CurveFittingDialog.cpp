@@ -346,7 +346,7 @@ void CurveFittingDialog::updateSupportedProperties(int index){
         if(index == CurveFittingOptions::AT_HYBRID_DE_FMIN)
             shortcut = "de";
         else if(index == CurveFittingOptions::AT_HYBRID_FLOWER_FMIN)
-            shortcut = "flower";
+            shortcut = "fpa";
         else if(index == CurveFittingOptions::AT_HYBRID_CHIO_FMIN)
             shortcut = "chio";
 

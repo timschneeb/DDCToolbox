@@ -347,13 +347,6 @@
         <string/>
        </property>
        <layout class="QFormLayout" name="formLayout_6">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_17">
-          <property name="text">
-           <string>probiBound</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="1">
          <layout class="QHBoxLayout" name="horizontalLayout_11">
           <property name="spacing">
@@ -384,7 +377,7 @@
              </size>
             </property>
             <property name="maximum">
-             <double>100.000000000000000</double>
+             <double>1.000000000000000</double>
             </property>
             <property name="value">
              <double>0.990000000000000</double>
@@ -392,6 +385,16 @@
            </widget>
           </item>
          </layout>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_17">
+          <property name="text">
+           <string>Probability of randomizing out-of-bound variables</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -405,7 +408,10 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label_18">
           <property name="text">
-           <string>pCond</string>
+           <string>Probability of increased population diversity</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -439,7 +445,7 @@
              </size>
             </property>
             <property name="maximum">
-             <double>100.000000000000000</double>
+             <double>1.000000000000000</double>
             </property>
             <property name="value">
              <double>0.100000000000000</double>
@@ -478,8 +484,14 @@
               <height>0</height>
              </size>
             </property>
+            <property name="decimals">
+             <number>2</number>
+            </property>
+            <property name="minimum">
+             <double>0.000000000000000</double>
+            </property>
             <property name="maximum">
-             <double>100.000000000000000</double>
+             <double>1.000000000000000</double>
             </property>
             <property name="value">
              <double>0.050000000000000</double>
@@ -499,8 +511,17 @@
        <layout class="QFormLayout" name="formLayout_7">
         <item row="0" column="0">
          <widget class="QLabel" name="label_20">
+          <property name="minimumSize">
+           <size>
+            <width>165</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="text">
-           <string>maxSolSurviveEpoch</string>
+           <string>Max. iterations to regenerate a variable</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -527,6 +548,9 @@
               <height>0</height>
              </size>
             </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
             <property name="maximum">
              <number>100000</number>
             </property>
@@ -540,7 +564,7 @@
         <item row="1" column="0">
          <widget class="QLabel" name="label_21">
           <property name="text">
-           <string>C0</string>
+           <string>Initial spreading rate</string>
           </property>
          </widget>
         </item>
@@ -607,11 +631,14 @@
               <height>0</height>
              </size>
             </property>
+            <property name="minimum">
+             <double>0.000000000000000</double>
+            </property>
             <property name="maximum">
              <double>100.000000000000000</double>
             </property>
             <property name="value">
-             <double>0.100000000000000</double>
+             <double>0.050000000000000</double>
             </property>
            </widget>
           </item>
@@ -1312,6 +1339,9 @@
               <height>0</height>
              </size>
             </property>
+            <property name="minimum">
+             <number>3</number>
+            </property>
             <property name="maximum">
              <number>1000</number>
             </property>
@@ -1344,6 +1374,9 @@
               <width>60</width>
               <height>0</height>
              </size>
+            </property>
+            <property name="minimum">
+             <number>3</number>
             </property>
             <property name="maximum">
              <number>1000</number>

@@ -43,6 +43,8 @@ CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _o
         ui->progressText->setText("Calculating...");
         emit beginWork();
     });
+
+    this->setWindowFlag(Qt::WindowCloseButtonHint, false);
 }
 
 CurveFittingWorkerDialog::~CurveFittingWorkerDialog()
