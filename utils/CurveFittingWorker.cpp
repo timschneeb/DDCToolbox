@@ -231,7 +231,7 @@ void CurveFittingWorker::run()
     unsigned int i, j;
     unsigned int K = options.populationK();
     unsigned int N = options.populationN();
-    double fs = 48000.0;
+    double fs = 44100.0;
 
     flt_freqList = (double*)malloc(array_size * sizeof(double));
     memcpy(flt_freqList, freq, array_size * sizeof(double));

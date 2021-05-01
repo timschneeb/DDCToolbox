@@ -66,6 +66,7 @@ public:
             return cb;
         }
         else if (index.column()==2&&sp) {
+            sp->setSingleStep(0.01);
             if(specs.test(FilterType::SPEC_REQUIRE_SLOPE))
                 sp->setPrefix("S: ");
             else if(specs.test(FilterType::SPEC_REQUIRE_BW))

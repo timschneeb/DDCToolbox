@@ -89,7 +89,7 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     ui->adv_random_seed->setText(QString::number(((uint64_t)rand() << 32ull) | rand()));
 
     /* Update optimization boundary freq */
-    const double fs = 48000; // <- Don't forget to update this
+    const double fs = 44100; // <- Don't forget to update this
     ui->obc_freq_max->setValue(fs / 2 - 1);
 
     // Setup UI
@@ -176,7 +176,7 @@ void CurveFittingDialog::parseCsv(){
     memcpy(targetList, gain.constData(), size * sizeof(double));
 
     bool is_nonuniform = false;
-    CurveFittingWorker::preprocess(flt_freqList, targetList, size, 48000, false, 1.005, &is_nonuniform);
+    CurveFittingWorker::preprocess(flt_freqList, targetList, size, 44100, false, 1.005, &is_nonuniform);
     ui->fgrid_axis_linearity->setText(is_nonuniform ? "Non-uniform grid" : "Uniform grid");
 
     double lowGain = targetList[0];
