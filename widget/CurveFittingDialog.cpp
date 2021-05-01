@@ -260,7 +260,7 @@ void CurveFittingDialog::accept()
 void CurveFittingDialog::updateSupportedProperties(int index){
     switch((CurveFittingOptions::AlgorithmType) index){
     case CurveFittingOptions::AT_FMINSEARCHBND:
-        ui->iterations->setValue(10000);
+        ui->iterations->setValue(20000);
         break;
     case CurveFittingOptions::AT_DIFF_EVOLUTION:
         ui->iterations->setValue(20000);
