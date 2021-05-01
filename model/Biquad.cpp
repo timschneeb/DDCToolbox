@@ -72,7 +72,7 @@ std::list<double> Biquad::CalculateCoeffs(double fs)
         d = pow(10.0, m_dFilterGain / 40.0);
     else
         d = pow(10.0, m_dFilterGain / 20.0);
-    double a = (6.2831853071795862 * m_dFilterFreq) / fs; //omega
+    double a = (2.0 * M_PI * m_dFilterFreq) / fs; //omega
     double num3 = sin(a); //sn
     double cs = cos(a);
 
@@ -80,7 +80,7 @@ std::list<double> Biquad::CalculateCoeffs(double fs)
     if (m_dFilterType == FilterType::LOW_SHELF || m_dFilterType == FilterType::HIGH_SHELF) // S
         alpha = num3 / 2 * sqrt((d + 1 / d) * (1 / m_dFilterBQ - 1) + 2);
     else // BW
-        alpha = num3 * sinh(0.693147180559945309417 / 2 * m_dFilterBQ * a / num3);
+        alpha = num3 * sinh(log(2.0) / 2.0 * m_dFilterBQ * a / num3);
 
     double beta = 2 * sqrt(d) * alpha;
     double B0 = 0.0, B1 = 0.0, B2 = 0.0, A0 = 0.0, A1 = 0.0, A2 = 0.0;
