@@ -39,6 +39,8 @@ CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _o
     connect(worker, &CurveFittingWorker::graphReceived, this, &CurveFittingWorkerDialog::graphReceived);
     thread.start();
 
+    ui->previewPlot->yAxis->setRange(options.obcGainRange().first, options.obcGainRange().second);
+
     QTimer::singleShot(400, [this]{
         ui->progressText->setText("Calculating...");
         emit beginWork();
@@ -120,7 +122,7 @@ void CurveFittingWorkerDialog::graphReceived(std::vector<double> temp)
         pGraph0->addData(i, (double)temp[i]);
     }
 
-    ui->previewPlot->yAxis->setRange(ymin, ymax);
+    //ui->previewPlot->yAxis->setRange(ymin, ymax);
     ui->previewPlot->xAxis->setRange(0, xmax);
     ui->previewPlot->replot(QCustomPlot::rpQueuedReplot);
 }
