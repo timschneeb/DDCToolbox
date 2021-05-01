@@ -434,7 +434,10 @@ void CurveFittingWorker::run()
     double *gain = output + numBands * 2;
     for(uint i = 0; i < numBands; i++)
     {
-        results.append(DeflatedBiquad(FilterType::PEAKING, pow(10, fc[i]), q[i], gain[i]));
+        double QQ1st = ((2.0*q[i]*q[i])+1.0)/(2.0*q[i]*q[i]);
+        double QQ2nd = pow(2.0*QQ1st,2)/4.0;
+        double bw = round(1000000.0*log(QQ1st+sqrt(QQ2nd-1))/log(2))/1000000.0;
+        results.append(DeflatedBiquad(FilterType::PEAKING, pow(10, fc[i]), bw, gain[i]));
     }
     free(output);
 

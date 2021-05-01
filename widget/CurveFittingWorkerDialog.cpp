@@ -26,7 +26,7 @@ CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _o
     ui->rmsePlot->graph()->setAdaptiveSampling(false);
 
     /* Plot 2 */
-    ui->previewPlot->yAxis->setRange(QCPRange(-5, 5));
+    ui->previewPlot->yAxis->setRange(options.obcGainRange().first, options.obcGainRange().second);
     ui->previewPlot->xAxis->setRange(QCPRange(0, 400));
     ui->previewPlot->xAxis->setLabel("Optimization history");
     ui->previewPlot->rescaleAxes();
@@ -39,7 +39,6 @@ CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _o
     connect(worker, &CurveFittingWorker::graphReceived, this, &CurveFittingWorkerDialog::graphReceived);
     thread.start();
 
-    ui->previewPlot->yAxis->setRange(options.obcGainRange().first, options.obcGainRange().second);
 
     QTimer::singleShot(400, [this]{
         ui->progressText->setText("Calculating...");
