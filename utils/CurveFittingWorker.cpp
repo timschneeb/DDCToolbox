@@ -85,7 +85,7 @@ double CurveFittingWorker::peakingCostFunctionMap(double *x, void *usd)
         validateMagCal(b0, b1, b2, a1, a2, userdata->phi, userdata->gridSize, userdata->fs, userdata->tmp);
     }
 
-    emit worker->graphReceived(std::vector(userdata->tmp, userdata->tmp + userdata->gridSize));
+    emit worker->graphReceived(std::vector<double>(userdata->tmp, userdata->tmp + userdata->gridSize));
 
     double meanAcc = 0.0;
     for (unsigned int i = 0; i < userdata->gridSize; i++)
