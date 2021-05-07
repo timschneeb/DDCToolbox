@@ -15,6 +15,7 @@ CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _o
 
     ui->progressBar->setRange(0,0);
     ui->buttonBox->button(QDialogButtonBox::Ok)->setVisible(false);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
     /* Plot 1 */
     ui->rmsePlot->yAxis->setRange(QCPRange(0, 10));
@@ -71,6 +72,7 @@ void CurveFittingWorkerDialog::workerFinished()
 
     ui->buttonBox->button(QDialogButtonBox::Cancel)->setVisible(false);
     ui->buttonBox->button(QDialogButtonBox::Ok)->setVisible(true);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 }
 
 void CurveFittingWorkerDialog::mseReceived(float mse)

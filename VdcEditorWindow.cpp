@@ -70,7 +70,7 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     ui->tableView_DDCPoints->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     connect(ui->tableView_DDCPoints->selectionModel(), &QItemSelectionModel::selectionChanged, [=]{updatePlots(true);});
 
-    connect(&VdcProjectManager::instance(), &VdcProjectManager::projectClosed, [this]{ if(!undoStack->isClean()) undoStack->clear(); });
+    connect(&VdcProjectManager::instance(), &VdcProjectManager::projectClosed, [this]{ undoStack->clear(); });
     connect(&VdcProjectManager::instance(), &VdcProjectManager::projectMetaChanged, [this]{
         QString title = "DDCToolbox";
         if(VdcProjectManager::instance().currentProject().isEmpty()){
