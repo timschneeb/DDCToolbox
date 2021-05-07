@@ -1,6 +1,7 @@
 #ifndef PROXYSTYLE_H
 #define PROXYSTYLE_H
 
+#include <QMenu>
 #include <QProxyStyle>
 
 
@@ -15,6 +16,15 @@ public:
 
     ProxyStyle(const QString & key) : QProxyStyle(key)
     {
+    }
+
+    void polish (QWidget * w)
+    {
+    #ifdef __APPLE__
+        QMenu* mn = dynamic_cast<QMenu*>(w);
+        if(!mn && !w->testAttribute(Qt::WA_MacNormalSize))
+            w->setAttribute(Qt::WA_MacSmallSize);
+    #endif
     }
 
     virtual int pixelMetric(QStyle::PixelMetric metric, const QStyleOption * option = 0, const QWidget * widget = 0 ) const
