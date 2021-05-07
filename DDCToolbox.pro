@@ -39,6 +39,8 @@ win32 {
     }
 }
 
+ICON = img/icon.icns
+
 unix {
    QMAKE_CXXFLAGS += -Wno-unused-variable
 }
