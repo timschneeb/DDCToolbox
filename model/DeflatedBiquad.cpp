@@ -15,10 +15,15 @@ DeflatedBiquad::DeflatedBiquad(Biquad *biquad){
 }
 
 Biquad *DeflatedBiquad::inflate() const{
-    Biquad* b = new Biquad;
+    Biquad* b = nullptr;
 
-    if(id != 0)
+    if(id != 0){
+        b = new Biquad(true);
         b->SetId(id);
+    }
+    else{
+        b = new Biquad;
+    }
 
     if(type == FilterType::CUSTOM){
         b->RefreshFilter(type, c441, c48);

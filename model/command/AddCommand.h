@@ -16,21 +16,21 @@ public:
 
     void undo()
     {
-        model->remove(biquad);
+        model->removeById(biquad.id);
     }
 
     void redo()
     {
-        model->append(biquad);
+        model->append(biquad.inflate());
     }
 
     QString createCommandString(){
-        return QObject::tr("\"Add '%1' filter\"").arg((QString)biquad->GetFilterType());
+        return QObject::tr("\"Add '%1' filter\"").arg((QString)biquad.type);
     }
 
 private:
     FilterModel* model;
-    Biquad* biquad;
+    DeflatedBiquad biquad;
 };
 
 #endif // ADDCOMMAND_H
