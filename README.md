@@ -49,6 +49,7 @@ Recommended:
   * [Android](#android)
   * [Linux (Any distro)](#linux)
   * [Arch Linux (AUR)](#arch-aur)
+  * [macOS (OSX 10.13 and later)](#macos)
 
 Other installation methods (not recommended):
   * [Debian (Unmanaged/Nightly)](#debian-nightly)
@@ -97,6 +98,12 @@ A git package is available in the [AUR](https://aur.archlinux.org/packages/ddcto
 yay -S ddctoolbox-git
 ```
 ![AUR version](https://img.shields.io/aur/version/ddctoolbox-git?label=aur-git)
+
+
+## macOS
+macOS support is very experimental. Currently, the undo/redo framework causes memory corruption, please avoid using it.
+
+You can download one of nightly beta builds [from my server](https://nightly.timschneeberger.me/ddctoolbox-mac).
 
 ## Debian (Nightly)
 **Qt 5.11 or later required.** Debian 10 (or later releases) provide this version of Qt in their official repositories.
