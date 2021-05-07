@@ -46,7 +46,7 @@ public:
         switch (section) {
         case Type: return "Type";
         case Freq: return "Frequency";
-        case Bw: return "Bandwidth/Slope";
+        case Bw: return "Bandwidth";
         case Gain: return "Gain";
         default: return {};
         }
