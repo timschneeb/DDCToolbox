@@ -53,4 +53,5 @@ HEADERS += \
     AppRuntime.h
 
 DISTFILES += \
-    Info.plist
+    Info.plist \
+    img/icon_white.icns

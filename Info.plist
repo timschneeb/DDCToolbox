@@ -21,6 +21,11 @@
         <key>NSSupportsAutomaticGraphicsSwitching</key>
         <true/>
 
+        <key>NSPrincipalClass</key>
+        <string>NSApplication</string>
+        <key>NSHighResolutionCapable</key>
+        <string>True</string>
+
         <key>CFBundleDevelopmentRegion</key>
         <string>en</string>
 

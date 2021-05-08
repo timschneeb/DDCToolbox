@@ -120,7 +120,7 @@
      <x>0</x>
      <y>0</y>
      <width>976</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <property name="nativeMenuBar">
@@ -379,6 +379,11 @@ border: 1px solid rgb(208, 204, 201) </string>
    </property>
    <property name="toolTip">
     <string>Add point</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>13</pointsize>
+    </font>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>

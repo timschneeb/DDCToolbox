@@ -101,7 +101,7 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     connect(ui->algorithmType, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CurveFittingDialog::updateSupportedProperties);
     ui->status_panel->setVisible(false);
 
-    this->setMaximumHeight(420);
+    this->setMaximumHeight(430);
 
     updateSupportedProperties(ui->algorithmType->currentIndex());
 }

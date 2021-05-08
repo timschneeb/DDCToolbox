@@ -10,6 +10,10 @@ AppRuntime::AppRuntime(int& argc, char**argv): QApplication(argc, argv)
     this->setPalette(this->style()->standardPalette());
     this->setAttribute(Qt::AA_DisableWindowContextHelpButton);
 
+#ifdef __APPLE__
+    this->setStyleSheet("* {font-size: 13px;}");
+#endif
+
     _window = new VdcEditorWindow();
 
     if(argc > 1){

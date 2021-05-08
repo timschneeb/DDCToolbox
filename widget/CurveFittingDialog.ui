@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>350</width>
+    <width>385</width>
     <height>992</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>350</width>
+    <width>385</width>
     <height>0</height>
    </size>
   </property>
@@ -846,8 +846,14 @@
            <widget class="QDoubleSpinBox" name="obc_freq_min">
             <property name="minimumSize">
              <size>
-              <width>85</width>
+              <width>90</width>
               <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>90</width>
+              <height>16777215</height>
              </size>
             </property>
             <property name="alignment">
@@ -899,8 +905,14 @@
            <widget class="QDoubleSpinBox" name="obc_freq_max">
             <property name="minimumSize">
              <size>
-              <width>85</width>
+              <width>90</width>
               <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>90</width>
+              <height>16777215</height>
              </size>
             </property>
             <property name="alignment">
@@ -966,8 +978,14 @@
            <widget class="QDoubleSpinBox" name="obc_q_min">
             <property name="minimumSize">
              <size>
-              <width>85</width>
+              <width>90</width>
               <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>90</width>
+              <height>16777215</height>
              </size>
             </property>
             <property name="alignment">
@@ -1022,8 +1040,14 @@
            <widget class="QDoubleSpinBox" name="obc_q_max">
             <property name="minimumSize">
              <size>
-              <width>85</width>
+              <width>90</width>
               <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>90</width>
+              <height>16777215</height>
              </size>
             </property>
             <property name="alignment">
@@ -1082,8 +1106,14 @@
            <widget class="QDoubleSpinBox" name="obc_gain_min">
             <property name="minimumSize">
              <size>
-              <width>85</width>
+              <width>90</width>
               <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>90</width>
+              <height>16777215</height>
              </size>
             </property>
             <property name="alignment">
@@ -1135,8 +1165,14 @@
            <widget class="QDoubleSpinBox" name="obc_gain_max">
             <property name="minimumSize">
              <size>
-              <width>85</width>
+              <width>90</width>
               <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>90</width>
+              <height>16777215</height>
              </size>
             </property>
             <property name="alignment">
@@ -1190,7 +1226,7 @@
        </property>
        <layout class="QFormLayout" name="formLayout_3">
         <property name="horizontalSpacing">
-         <number>35</number>
+         <number>6</number>
         </property>
         <property name="verticalSpacing">
          <number>3</number>
@@ -1222,19 +1258,6 @@
           <property name="topMargin">
            <number>0</number>
           </property>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item>
            <widget class="QLineEdit" name="adv_random_seed">
             <property name="sizePolicy">
@@ -1274,19 +1297,6 @@
           <property name="topMargin">
            <number>0</number>
           </property>
-          <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item>
            <widget class="QComboBox" name="adv_prob_density_func">
             <property name="minimumSize">
