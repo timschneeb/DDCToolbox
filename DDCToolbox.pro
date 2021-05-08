@@ -32,14 +32,15 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 win32 {
-    RC_ICONS = img/icon.ico
+    RC_ICONS = $$PWD/img/icon.ico
     CONFIG(static) {
        DEFINES += WIN_STATIC
        LIBS += $$[QT_INSTALL_LIBS]/../plugins/imageformats/qsvg.lib
     }
 }
 
-ICON = img/icon.icns
+ICON = $$PWD/img/icon.icns
+QMAKE_INFO_PLIST = $$PWD/Info.plist
 
 unix {
    QMAKE_CXXFLAGS += -Wno-unused-variable
@@ -48,3 +49,6 @@ unix {
 FORMS +=
 
 HEADERS +=
+
+DISTFILES += \
+    Info.plist

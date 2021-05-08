@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>CFBundleName</key>
+        <string>DDCToolbox</string>
+        <key>CFBundleExecutable</key>
+        <string>DDCToolbox</string>
+        <key>CFBundleIconFile</key>
+        <string>icon.icns</string>
+        <key>CFBundleIdentifier</key>
+        <string>me.timschneeberger.DDCToolbox</string>
+        <key>CFBundlePackageType</key>
+        <string>APPL</string>
+        <key>CFBundleSignature</key>
+        <string>????</string>
+        <key>LSMinimumSystemVersion</key>
+        <string>10.13</string>
+        <key>NSPrincipalClass</key>
+        <string>NSApplication</string>
+        <key>NSSupportsAutomaticGraphicsSwitching</key>
+        <true/>
+
+        <key>CFBundleDevelopmentRegion</key>
+        <string>en</string>
+
+        <key>CFBundleShortVersionString</key>
+        <string>1.4</string>
+        <key>CFBundleVersion</key>
+        <string>1.4</string>
+
+        <key>NSHumanReadableCopyright</key>
+        <string>Copyright © 2021 Tim Schneeberger (thepbone). All rights reserved.</string>
+
+</dict>
+</plist>
