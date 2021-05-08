@@ -101,7 +101,8 @@ yay -S ddctoolbox-git
 
 
 ## macOS
-macOS support is very experimental. OSX 10.13 (High Sierra) or later Intel macOS devices only. If your device is older or an ARM-based device, try to [compile it from sources yourself](#manually-macos).
+macOS support is currently in beta; only cloud-compiled nightly binaries are available. The next stable release will include stable versions of OSX binaries.
+OSX 10.13 (High Sierra) or later Intel macOS devices only. If your device is older or an ARM-based device, try to [compile it from sources yourself](#manually-macos).
 
 You can download one of nightly beta builds [from my server](https://nightly.timschneeberger.me/ddctoolbox-mac).
 
