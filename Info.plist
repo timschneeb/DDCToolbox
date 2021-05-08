@@ -32,5 +32,42 @@
         <key>NSHumanReadableCopyright</key>
         <string>Copyright © 2021 Tim Schneeberger (thepbone). All rights reserved.</string>
 
+        <key>CFBundleDocumentTypes</key>
+        <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>me.timschneeberger.DDCToolbox.vdcprj</string>
+            </array>
+            <key>LSHandlerRank</key>
+            <string>Owner</string>
+            <key>CFBundleTypeIconFile</key>
+            <string>icon.icns</string>
+        </dict>
+        </array>
+        <key>UTExportedTypeDeclarations</key>
+        <array>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>me.timschneeberger.DDCToolbox.vdcprj</string>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>vdcprj</string>
+                </array>
+            </dict>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+            </array>
+            <key>UTTypeDescription</key>
+            <string>VDC project file</string>
+            <key>UTTypeIconFile</key>
+            <string>icon.icns</string>
+        </dict>
+        </array>
 </dict>
 </plist>

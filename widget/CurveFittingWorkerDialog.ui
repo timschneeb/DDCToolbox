@@ -18,7 +18,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="10,1">
+    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="5,3">
      <item>
       <widget class="QFrame" name="rmseFrame">
        <property name="styleSheet">

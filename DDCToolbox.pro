@@ -20,7 +20,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++17
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    AppRuntime.cpp
 
 QTPLUGIN += qsvg
 
@@ -48,7 +49,8 @@ unix {
 
 FORMS +=
 
-HEADERS +=
+HEADERS += \
+    AppRuntime.h
 
 DISTFILES += \
     Info.plist
