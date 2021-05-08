@@ -25,6 +25,8 @@ SOURCES += main.cpp \
 
 QTPLUGIN += qsvg
 
+VERSION = 1.4.0.0
+
 include($$PWD/DDCToolbox.pri)
 
 # Default rules for deployment.
@@ -53,5 +55,4 @@ HEADERS += \
     AppRuntime.h
 
 DISTFILES += \
-    Info.plist \
-    img/icon_white.icns
+    Info.plist

@@ -9,6 +9,8 @@ class AppRuntime : public QApplication
 {
 public:
     AppRuntime(int &argc, char **argv);
+    ~AppRuntime();
+
     bool event(QEvent *event);
 
 private:

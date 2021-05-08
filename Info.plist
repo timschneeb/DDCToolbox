@@ -30,9 +30,9 @@
         <string>en</string>
 
         <key>CFBundleShortVersionString</key>
-        <string>1.4</string>
+        <string>@SHORT_VERSION@</string>
         <key>CFBundleVersion</key>
-        <string>1.4</string>
+        <string>@FULL_VERSION@</string>
 
         <key>NSHumanReadableCopyright</key>
         <string>Copyright © 2021 Tim Schneeberger (thepbone). All rights reserved.</string>
@@ -69,7 +69,7 @@
                 <string>public.data</string>
             </array>
             <key>UTTypeDescription</key>
-            <string>VDC project file</string>
+            <string>VDC Project File</string>
             <key>UTTypeIconFile</key>
             <string>icon.icns</string>
         </dict>
