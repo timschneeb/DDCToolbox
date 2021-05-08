@@ -45,7 +45,7 @@ bool FilterModel::setData(const QModelIndex &index, const QVariant &value, int r
         case 2:
             if(value.toDouble() < BW_MIN || value.toDouble() > BW_MAX){
                 QMessageBox::warning(qobject_cast<QWidget*>(parent()), tr("Warning"),
-                                     tr("Bandwidth/slope value '%1' is out of range (%2 ~ %3)")
+                                     tr("Bandwidth value '%1' is out of range (%2 ~ %3)")
                                      .arg(value.toDouble()).arg(BW_MIN).arg(BW_MAX));
                 return false;
             }

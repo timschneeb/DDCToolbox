@@ -380,11 +380,6 @@ border: 1px solid rgb(208, 204, 201) </string>
    <property name="toolTip">
     <string>Add point</string>
    </property>
-   <property name="font">
-    <font>
-     <pointsize>13</pointsize>
-    </font>
-   </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
    </property>
