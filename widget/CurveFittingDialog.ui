@@ -1226,7 +1226,7 @@
        </property>
        <layout class="QFormLayout" name="formLayout_3">
         <property name="horizontalSpacing">
-         <number>6</number>
+         <number>10</number>
         </property>
         <property name="verticalSpacing">
          <number>3</number>
