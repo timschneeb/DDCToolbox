@@ -5,7 +5,7 @@ DEFINES += DDCTOOLBOX_PLUGIN
 
 CONFIG += c++17
 
-include($$PWD/src/DDCToolbox-lib.pri)
+include($$PWD/DDCToolbox-lib.pri)
 
 unix {
     target.path = /usr/lib

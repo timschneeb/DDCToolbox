@@ -3,6 +3,7 @@
 
 #include <QFileOpenEvent>
 #include <QDebug>
+#include <QStyleFactory>
 
 AppRuntime::AppRuntime(int& argc, char**argv): QApplication(argc, argv)
 {
