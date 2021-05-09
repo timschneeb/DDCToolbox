@@ -20,14 +20,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++17
 
-SOURCES += main.cpp \
-    AppRuntime.cpp
+SOURCES += src/main.cpp \
+    src/AppRuntime.cpp
 
 QTPLUGIN += qsvg
 
 VERSION = 1.4.0.0
 
-include($$PWD/DDCToolbox.pri)
+include($$PWD/src/DDCToolbox-lib.pri)
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -35,15 +35,15 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 win32 {
-    RC_ICONS = $$PWD/img/icon.ico
+    RC_ICONS = $$PWD/res/img/icon.ico
     CONFIG(static) {
        DEFINES += WIN_STATIC
        LIBS += $$[QT_INSTALL_LIBS]/../plugins/imageformats/qsvg.lib
     }
 }
 
-ICON = $$PWD/img/icon.icns
-QMAKE_INFO_PLIST = $$PWD/Info.plist
+ICON = $$PWD/res/img/icon.icns
+QMAKE_INFO_PLIST = $$PWD/deployment/Info.plist
 
 unix {
    QMAKE_CXXFLAGS += -Wno-unused-variable
@@ -52,7 +52,7 @@ unix {
 FORMS +=
 
 HEADERS += \
-    AppRuntime.h
+    src/AppRuntime.h
 
 DISTFILES += \
-    Info.plist
+    deployment/Info.plist

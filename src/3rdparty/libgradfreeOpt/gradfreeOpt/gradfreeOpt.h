@@ -1,0 +1,8 @@
+#include "rand_c.h"
+double minArray(double *x, unsigned int N, unsigned int *ind);
+void sort(double x_data[], const unsigned int xSize, unsigned int idx_data[]);
+double fminsearch(double(*funcPtr)(double*, void*), void *userdat, double *x, unsigned int n, double TolX, double TolFun, unsigned int MaxIter, double *outX, char adaptive, void(*optStatus)(void*, unsigned int, double*, double*), void *optHost);
+double fminsearchbnd(double(*funcPtr)(double*, void*), void *userdat, double *x0, double *lb, double *ub, unsigned int n, double TolX, double TolFun, unsigned int MaxIter, double *outX, char adaptive, void(*optStatus)(void*, unsigned int, double*, double*), void *optHost);
+double differentialEvolution(double(*funcPtr)(double*, void*), void *userdat, double *initialSolution, unsigned int K, unsigned int N, const double probiBound, unsigned int D, double *low, double *up, unsigned int MaxIter, double *gbest, pcg32x2_random_t *PRNG, double(*pdf1)(pcg32x2_random_t*), void(*optStatus)(void*, unsigned int, double*, double*), void *optHost);
+double flowerPollination(double(*funcPtr)(double*, void*), void *userdat, double *initialSolution, double *low, double *up, unsigned int D, unsigned int popSize, double pCond, double weightStep, unsigned int N_iter, double *gbest, pcg32x2_random_t *PRNG, double(*pdf1)(pcg32x2_random_t*), void(*optStatus)(void*, unsigned int, double*, double*), void *optHost);
+double CHIO(double(*funcPtr)(double*, void*), void *userdat, double *initialSolution, unsigned int popSize, unsigned int maxSolSurviveEpoch, unsigned int C0, double spreadingRate, unsigned int dim, double *lb, double *ub, unsigned int MaxIter, double *gbest, pcg32x2_random_t *PRNG, void(*optStatus)(void*, unsigned int, double*, double*), void *optHost);

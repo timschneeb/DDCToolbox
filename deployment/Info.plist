@@ -63,6 +63,8 @@
                 <array>
                     <string>vdcprj</string>
                 </array>
+                <key>public.mime-type</key>
+                <string>application/vdcprj</string>
             </dict>
             <key>UTTypeConformsTo</key>
             <array>
@@ -72,6 +74,7 @@
             <string>VDC Project File</string>
             <key>UTTypeIconFile</key>
             <string>icon.icns</string>
+
         </dict>
         </array>
 </dict>
