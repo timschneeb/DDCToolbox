@@ -52,7 +52,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: DDCToolbox_mac64_dmg
-        path: build/DDCToolbox.dmg
+        path: build/src/DDCToolbox.dmg
     
 
   publish-nightly:
