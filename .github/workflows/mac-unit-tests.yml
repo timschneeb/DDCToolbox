@@ -1,0 +1,46 @@
+name: Unit tests (macOS)
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  release:
+    types: 
+     - published
+     - prereleased
+
+jobs:
+  build-mac64:
+    runs-on: macos-10.15
+        
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+ 
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: '5.15.2'
+        
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: "10.3"
+      
+    - name: Initialize project
+      run: | 
+           mkdir build
+           cd build
+           qmake ../DDCToolbox.pro "CONFIG += CI" "CONFIG += no_app"
+    
+    - name: Build
+      run: |
+           cd build
+           make
+
+    - name: Run unit tests
+      run: |
+           cd build
+           make check

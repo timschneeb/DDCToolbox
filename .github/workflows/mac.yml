@@ -33,13 +33,12 @@ jobs:
       run: | 
            mkdir build
            cd build
-           qmake ../DDCToolbox.pro "CONFIG += CI"
+           qmake ../DDCToolbox.pro "CONFIG += CI" "CONFIG += no_tests"
     
     - name: Build
       run: |
            cd build
            make
-           make check
 
     - name: Build .dmg
       run: | 
