@@ -25,7 +25,7 @@
 </p>
 
 <p align="center">
-    <img alt="Screenshot" src="https://github.com/ThePBone/DDCToolbox/blob/master/img/screenshot.png?raw=true">
+    <img alt="Screenshot" src="https://github.com/ThePBone/DDCToolbox/blob/master/res/img/screenshot.png?raw=true">
 </p>
 
 ## Features
