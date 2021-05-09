@@ -39,10 +39,11 @@ jobs:
       run: |
            cd build
            make
+	   make check
       
     - name: Build .dmg
       run: | 
-           cd build
+           cd build/src
            macdeployqt DDCToolbox.app -dmg
       
     - run: ls -la build

@@ -28,13 +28,15 @@ jobs:
       run: qmake DDCToolbox.pro "CONFIG += CI"
     
     - name: Build
-      run: make
+      run: |
+        make
+        make check
     
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
         name: DDCToolbox_Portable_linux64
-        path: DDCToolbox
+        path: src/DDCToolbox
     
   build-deb-amd64:
     runs-on: ubuntu-20.04

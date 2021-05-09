@@ -60,7 +60,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: DDCToolbox_Portable_win64
-        path: release/DDCToolbox.exe
+        path: release/src/DDCToolbox.exe
   
   make-nsis-installer:
     runs-on: windows-latest
