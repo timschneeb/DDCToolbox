@@ -1,9 +1,7 @@
 #include <QtTest>
 #include <QCoreApplication>
 
-#include <model/Biquad.h>
-#include <model/DeflatedBiquad.h>
-
+#include "model/DeflatedBiquad.h"
 
 class TestBiquadCalculation : public QObject
 {
