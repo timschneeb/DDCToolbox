@@ -24,7 +24,8 @@ public:
         }
 
         for(auto size : sizes){
-            html.replace(re, QString("font-size:%1pt;").arg(size + OSX_HTML_POINT_SIZE_OFFSET));
+            html.replace(QString("font-size:%1pt;").arg(size),
+                         QString("font-size:%1pt;").arg(size + OSX_HTML_POINT_SIZE_OFFSET));
         }
 #endif
         return html;
