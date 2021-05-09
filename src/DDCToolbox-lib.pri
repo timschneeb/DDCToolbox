@@ -17,6 +17,7 @@ HEADERS += \
     $$PWD/model/command/InvertCommand.h \
     $$PWD/model/command/RemoveCommand.h \
     $$PWD/model/command/ShiftCommand.h \
+    $$PWD/platform/OSXHtmlSizingPatch.h \
     $$PWD/plot/FrequencyPlot.h \
     $$PWD/plot/QCustomPlot.h \
     $$PWD/utils/AutoEqClient.h \

@@ -13,6 +13,8 @@
 #include <utils/CurveFittingWorker.h>
 #include <utils/QInt64Validator.h>
 
+#include <platform/OSXHtmlSizingPatch.h>
+
 CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::CurveFittingDialog)
@@ -350,7 +352,16 @@ void CurveFittingDialog::updateSupportedProperties(int index){
         else if(index == CurveFittingOptions::AT_HYBRID_CHIO_FMIN)
             shortcut = "chio";
 
-        ui->iteration_label_a->setText("Iterations<span style='font-size:11pt; vertical-align:sub;'> " + shortcut + "</span>");
+        QString html = "Iterations<span style='font-size:11pt; vertical-align:sub;'> " + shortcut + "</span>";
+
+#ifdef __APPLE__
+        html = OSXHtmlSizingPatch::patchTextSize(html);
+#endif
+
+        ui->iteration_label_a->setText(html);
+#ifdef __APPLE__
+        ui->iteration_label_b->setText(OSXHtmlSizingPatch::patchTextSize("Iterations<span style='font-size:11pt; vertical-align:sub;'> simplex</span>"));
+#endif
         ui->iteration_label_b->setVisible(true);
         ui->iteration_content_b->setVisible(true);
         break;
