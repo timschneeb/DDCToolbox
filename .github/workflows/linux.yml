@@ -30,7 +30,6 @@ jobs:
     - name: Build
       run: |
         make
-        make check
     
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
