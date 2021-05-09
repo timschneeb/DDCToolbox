@@ -1,7 +1,6 @@
-<p align="center">
-    <img alt="Icon" width="100" src="https://github.com/ThePBone/DDCToolbox/blob/master/res/img/icon.png?raw=true">
-</p>
 <h1 align="center">
+  <img alt="Icon" width="75" src="https://github.com/ThePBone/DDCToolbox/blob/master/res/img/icon.png?raw=true">
+  <br>
   DDCToolbox
   <br>
 </h1>
