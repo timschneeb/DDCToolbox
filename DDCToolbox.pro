@@ -1,9 +1,8 @@
 TEMPLATE = subdirs
 TARGET = DDCToolbox
 
-SUBDIRS = src \
-          tests
+SUBDIRS = src
 
-src.subdir = src
-tests.subdir = tests
-
+!no_tests {
+    SUBDIRS += tests
+}

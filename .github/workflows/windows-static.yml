@@ -53,14 +53,14 @@ jobs:
       run: | 
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         cd D:\a\DDCToolbox\DDCToolbox
-        qmake DDCToolbox.pro "CONFIG += CI" "CONFIG += static" 
+        qmake DDCToolbox.pro "CONFIG += CI" "CONFIG += static" "CONFIG += no_tests"
         nmake release
       
     - name: Upload artifacts (x64)
       uses: actions/upload-artifact@v2
       with:
         name: DDCToolbox_Portable_win64
-        path: release/src/DDCToolbox.exe
+        path: release/DDCToolbox.exe
   
   make-nsis-installer:
     runs-on: windows-latest
