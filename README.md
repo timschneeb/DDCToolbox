@@ -1,3 +1,6 @@
+<p align="center">
+    <img alt="Icon" src="https://github.com/ThePBone/DDCToolbox/blob/master/res/img/icon.png?raw=true">
+</p>
 <h1 align="center">
   DDCToolbox
   <br>
