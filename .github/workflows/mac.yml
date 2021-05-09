@@ -39,7 +39,7 @@ jobs:
       run: |
            cd build
            make
-	   make check
+           make check
 
     - name: Build .dmg
       run: | 
