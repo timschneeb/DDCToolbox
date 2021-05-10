@@ -14,7 +14,7 @@
    <string>DDC Toolbox</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="ddceditor_resources.qrc">
+   <iconset resource="../res/ddceditor_resources.qrc">
     <normaloff>:/img/icon.png</normaloff>:/img/icon.png</iconset>
   </property>
   <property name="dockNestingEnabled">
@@ -397,7 +397,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   </action>
   <action name="actionOpen">
    <property name="icon">
-    <iconset resource="ddceditor_resources.qrc">
+    <iconset resource="../res/ddceditor_resources.qrc">
      <normaloff>:/img/open_folder.svg</normaloff>:/img/open_folder.svg</iconset>
    </property>
    <property name="text">
@@ -409,7 +409,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   </action>
   <action name="actionSaveAs">
    <property name="icon">
-    <iconset resource="ddceditor_resources.qrc">
+    <iconset resource="../res/ddceditor_resources.qrc">
      <normaloff>:/img/saveas.svg</normaloff>:/img/saveas.svg</iconset>
    </property>
    <property name="text">
@@ -426,7 +426,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   </action>
   <action name="actionKey_shortcuts">
    <property name="icon">
-    <iconset resource="ddceditor_resources.qrc">
+    <iconset resource="../res/ddceditor_resources.qrc">
      <normaloff>:/img/help.svg</normaloff>:/img/help.svg</iconset>
    </property>
    <property name="text">
@@ -443,7 +443,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   </action>
   <action name="actionQ_BW_Calculator">
    <property name="icon">
-    <iconset resource="ddceditor_resources.qrc">
+    <iconset resource="../res/ddceditor_resources.qrc">
      <normaloff>:/img/calculator.svg</normaloff>:/img/calculator.svg</iconset>
    </property>
    <property name="text">
@@ -462,7 +462,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset resource="ddceditor_resources.qrc">
+    <iconset resource="../res/ddceditor_resources.qrc">
      <normaloff>:/img/save.svg</normaloff>:/img/save.svg</iconset>
    </property>
    <property name="text">
@@ -474,7 +474,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   </action>
   <action name="actionClose_Project">
    <property name="icon">
-    <iconset resource="ddceditor_resources.qrc">
+    <iconset resource="../res/ddceditor_resources.qrc">
      <normaloff>:/img/close.svg</normaloff>:/img/close.svg</iconset>
    </property>
    <property name="text">
@@ -529,7 +529,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   </action>
   <action name="actionCheck_for_unstable_filters">
    <property name="icon">
-    <iconset resource="ddceditor_resources.qrc">
+    <iconset resource="../res/ddceditor_resources.qrc">
      <normaloff>:/img/database_test.svg</normaloff>:/img/database_test.svg</iconset>
    </property>
    <property name="text">
@@ -564,7 +564,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   </action>
   <action name="actionDownload_from_AutoEQ">
    <property name="icon">
-    <iconset resource="ddceditor_resources.qrc">
+    <iconset resource="../res/ddceditor_resources.qrc">
      <normaloff>:/img/download.svg</normaloff>:/img/download.svg</iconset>
    </property>
    <property name="text">
@@ -573,7 +573,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   </action>
   <action name="actionExport_as_VDC">
    <property name="icon">
-    <iconset resource="ddceditor_resources.qrc">
+    <iconset resource="../res/ddceditor_resources.qrc">
      <normaloff>:/img/export.svg</normaloff>:/img/export.svg</iconset>
    </property>
    <property name="text">
@@ -598,7 +598,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   </action>
   <action name="actionCurve_fitting">
    <property name="icon">
-    <iconset resource="ddceditor_resources.qrc">
+    <iconset resource="../res/ddceditor_resources.qrc">
      <normaloff>:/img/curve_fitting.svg</normaloff>:/img/curve_fitting.svg</iconset>
    </property>
    <property name="text">
@@ -616,7 +616,7 @@ border: 1px solid rgb(208, 204, 201) </string>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="ddceditor_resources.qrc"/>
+  <include location="../res/ddceditor_resources.qrc"/>
  </resources>
  <connections>
   <connection>

@@ -14,7 +14,7 @@
    <string>Add Point</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../ddceditor_resources.qrc">
+   <iconset resource="../../res/ddceditor_resources.qrc">
     <normaloff>:/img/icon.png</normaloff>:/img/icon.png</iconset>
   </property>
   <property name="modal">
@@ -130,8 +130,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>freq</tabstop>
+  <tabstop>bw</tabstop>
+  <tabstop>gain</tabstop>
+  <tabstop>ftype</tabstop>
+  <tabstop>custom_configure</tabstop>
+ </tabstops>
  <resources>
-  <include location="../ddceditor_resources.qrc"/>
+  <include location="../../res/ddceditor_resources.qrc"/>
  </resources>
  <connections>
   <connection>
