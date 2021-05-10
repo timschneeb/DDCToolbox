@@ -71,6 +71,7 @@ void CurveFittingWorkerDialog::workerFinished()
     ui->progressText->setText("Calculation finished");
 
     ui->buttonBox->button(QDialogButtonBox::Cancel)->setVisible(false);
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setEnabled(false);
     ui->buttonBox->button(QDialogButtonBox::Ok)->setVisible(true);
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 }
