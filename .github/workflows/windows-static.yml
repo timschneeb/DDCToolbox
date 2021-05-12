@@ -55,6 +55,14 @@ jobs:
         cd D:\a\DDCToolbox\DDCToolbox
         qmake DDCToolbox.pro "CONFIG += CI" "CONFIG += static" "CONFIG += no_tests"
         nmake release
+        
+    - name: Sign executable (x64)
+      uses: GabrielAcostaEngler/signtool-code-sign@v1.0.2
+      with:
+        certificate: ${{ secrets.SIGN_CERTIFICATE }}
+        cert-password: ${{ secrets.SIGN_PASSWORD }}
+        folder: src/release
+
       
     - name: Upload artifacts (x64)
       uses: actions/upload-artifact@v2
@@ -96,6 +104,13 @@ jobs:
       with:
         script-file: "install.nsi"
         arguments: "-DBASE_DIR=\"D:\\a\\DDCToolbox\\DDCToolbox\" -DPRODUCT_VERSION=\"${{steps.version.outputs.version}}\" -DPRODUCT_ARCH=\"64bit\""
+
+    - name: Sign installer (x64)
+      uses: GabrielAcostaEngler/signtool-code-sign@v1.0.2
+      with:
+        certificate: ${{ secrets.SIGN_CERTIFICATE }}
+        cert-password: ${{ secrets.SIGN_PASSWORD }}
+        folder: .
 
     - name: Rename artifact (x64)
       run: ren DDCToolbox_Setup_64bit_${{steps.version.outputs.version}}.exe DDCToolbox_Setup_win64_${{steps.version.outputs.version}}.exe
