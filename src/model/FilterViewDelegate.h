@@ -67,12 +67,6 @@ public:
         }
         else if (index.column()==2&&sp) {
             sp->setSingleStep(0.01);
-            if(specs.test(FilterType::SPEC_REQUIRE_SLOPE))
-                sp->setPrefix("S: ");
-            else if(specs.test(FilterType::SPEC_REQUIRE_BW))
-                sp->setPrefix("BW: ");
-            else
-                sp->setPrefix("");
         }
         else if (index.column() == 3 && getType(index) == FilterType::CUSTOM){
             CustomFilterItem* cf_item = new CustomFilterItem(parent);
