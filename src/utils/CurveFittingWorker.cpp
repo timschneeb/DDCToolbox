@@ -97,8 +97,13 @@ double CurveFittingWorker::peakingCostFunctionMap(double *x, void *usd)
     return meanAcc;
 }
 
-void CurveFittingWorker::preprocess(double *&flt_freqList, double *&target, uint& array_size, int fs, bool force_to_oct_grid_conversion, double avg_bw, bool* is_nonuniform){
+void CurveFittingWorker::preprocess(double *&flt_freqList, double *&target, uint& array_size, int fs, bool force_to_oct_grid_conversion, double avg_bw, bool* is_nonuniform, bool invert){
     uint i;
+
+    if(invert){
+        for(uint i = 0; i < array_size; i++)
+            target[i] = -target[i];
+    }
 
     // Detect X axis linearity
     // Assume frequency axis is sorted
@@ -238,7 +243,7 @@ void CurveFittingWorker::run()
     targetList = (double*)malloc(array_size * sizeof(double));
     memcpy(targetList, target, array_size * sizeof(double));
 
-    preprocess(flt_freqList, targetList, array_size, fs, force_to_oct_grid_conversion, avg_bw);
+    preprocess(flt_freqList, targetList, array_size, fs, force_to_oct_grid_conversion, avg_bw, nullptr, options.invertGain());
 
     // Bound constraints
     double lowFc = obc_freq.first; // Hz

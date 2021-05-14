@@ -104,18 +104,17 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     connect(ui->algorithmType, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CurveFittingDialog::updateSupportedProperties);
     ui->status_panel->setVisible(false);
 
-
     // Workaround to avoid glitched out window height sizing
     this->setGeometry(this->geometry().x(), this->geometry().y(), this->width(), 460);
     this->move(parentWidget()->window()->frameGeometry().topLeft() +
                parentWidget()->window()->rect().center() - rect().center());
-
 
     updateSupportedProperties(ui->algorithmType->currentIndex());
 
     // Prepare preview plot
     connect(ui->fgrid_avgbw, qOverload<double>(&QDoubleSpinBox::valueChanged), this, &CurveFittingDialog::updatePreviewPlot);
     connect(ui->fgrid_force_convert, &QCheckBox::toggled, this, &CurveFittingDialog::updatePreviewPlot);
+    connect(ui->invert_gain, &QCheckBox::toggled, this, &CurveFittingDialog::updatePreviewPlot);
     connect(ui->previewToggle, &QPushButton::toggled, this, &CurveFittingDialog::setWindowExpanded);
     setWindowExpanded(false);
 
@@ -184,7 +183,7 @@ void CurveFittingDialog::parseCsv(){
             // Check if field contains numeric content, otherwise skip row
             freq_val = std::stod(std::string(row[0]));
             gain_val = std::stod(std::string(row[1]));
-        } catch (std::invalid_argument &ex) {
+        } catch (std::invalid_argument&) {
             // Row does not contain expected data, skip it
             continue;
         }
@@ -206,13 +205,15 @@ void CurveFittingDialog::parseCsv(){
     memcpy(targetList, gain.constData(), size * sizeof(double));
 
     bool is_nonuniform = false;
+
     CurveFittingWorker::preprocess(flt_freqList,
                                    targetList,
                                    size,
                                    44100,
                                    ui->fgrid_force_convert->isChecked(),
                                    ui->fgrid_avgbw->value(),
-                                   &is_nonuniform);
+                                   &is_nonuniform,
+                                   ui->invert_gain->isChecked());
     ui->fgrid_axis_linearity->setText(is_nonuniform ? "Non-uniform grid" : "Uniform grid");
 
     ui->fgrid_force_convert->setChecked(!is_nonuniform);
@@ -278,7 +279,8 @@ void CurveFittingDialog::updatePreviewPlot(){
                                    44100,
                                    ui->fgrid_force_convert->isChecked(),
                                    ui->fgrid_avgbw->value(),
-                                   nullptr);
+                                   nullptr,
+                                   ui->invert_gain->isChecked());
 
     double lowGain = targetList[0];
     double upGain = targetList[0];
@@ -339,7 +341,8 @@ void CurveFittingDialog::accept()
                                 ui->rnd_pop_k->value(), ui->rnd_pop_n->value(),
                                 ui->algo_fmin_dimension_adaptive->isChecked(), ui->algo_de_probibound->value(),
                                 ui->algo_flower_pcond->value(), ui->algo_flower_weightstep->value(),
-                                ui->algo_chio_maxsolsurvive->value(), ui->algo_chio_c0->value(), ui->algo_chio_spreadingrate->value());
+                                ui->algo_chio_maxsolsurvive->value(), ui->algo_chio_c0->value(), ui->algo_chio_spreadingrate->value(),
+                                ui->invert_gain->isChecked());
 
     auto worker = new CurveFittingWorkerDialog(options, this);
 

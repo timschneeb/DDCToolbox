@@ -107,12 +107,6 @@ void CurveFittingWorkerDialog::graphReceived(std::vector<double> temp)
     auto pGraph0 = ui->previewPlot->addGraph();
     pGraph0->setAdaptiveSampling(true);
 
-    /*int xmax = ui->previewPlot->xAxis->range().upper;
-
-    if((int)grid_size > xmax){
-        xmax = grid_size;
-    }*/
-
     for(uint i = 0; i < grid_size; i++){
         pGraph0->addData(i, (double)temp[i]);
     }

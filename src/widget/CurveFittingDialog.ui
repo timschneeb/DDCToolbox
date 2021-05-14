@@ -229,13 +229,6 @@
                 </property>
                </widget>
               </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="iteration_label_b">
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Iterations &lt;span style=&quot; font-size:11pt; vertical-align:sub;&quot;&gt;simplex&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
-              </item>
               <item row="1" column="1">
                <widget class="QComboBox" name="algorithmType">
                 <item>
@@ -311,6 +304,13 @@
                  </widget>
                 </item>
                </layout>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="iteration_label_b">
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Iterations &lt;span style=&quot; font-size:11pt; vertical-align:sub;&quot;&gt;simplex&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
               </item>
               <item row="5" column="1">
                <widget class="QWidget" name="iteration_content_b" native="true">
@@ -780,6 +780,13 @@
                <property name="topMargin">
                 <number>0</number>
                </property>
+               <item>
+                <widget class="QCheckBox" name="invert_gain">
+                 <property name="text">
+                  <string>Invert gain</string>
+                 </property>
+                </widget>
+               </item>
                <item>
                 <widget class="QCheckBox" name="fgrid_force_convert">
                  <property name="text">
@@ -1618,6 +1625,9 @@ border: 1px solid rgb(208, 204, 201) </string>
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_7">
+        <property name="topMargin">
+         <number>9</number>
+        </property>
         <item>
          <widget class="QCustomPlot" name="previewPlot" native="true"/>
         </item>

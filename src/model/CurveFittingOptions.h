@@ -30,7 +30,7 @@ public:
                         bool _force_oct_grid, unsigned int _iterations, unsigned int _iterations2, double _avgbw,
                         double _pop_k, double _pop_n,
                         bool _fmin_dimension_adaptive, double _de_probibound, double _flower_pcond, double _flower_weight_step,
-                        unsigned int _chio_max_sol_survive_epoch, unsigned int _chio_c0, double _chio_spreading_rate){
+                        unsigned int _chio_max_sol_survive_epoch, unsigned int _chio_c0, double _chio_spreading_rate, bool _invert_gain){
         algorithm_type = _algorithm_type;
         frequency = _frequency;
         gain = _gain;
@@ -53,6 +53,7 @@ public:
         chio_max_sol_survive_epoch = _chio_max_sol_survive_epoch;
         chio_c0 = _chio_c0;
         chio_spreading_rate = _chio_spreading_rate;
+        invert_gain = _invert_gain;
     }
 
     double *frequencyData() const;
@@ -84,6 +85,8 @@ public:
     unsigned int chioC0() const;
     double chioSpreadingRate() const;
 
+    bool invertGain() const;
+
 private:
     double* frequency;
     double* gain;
@@ -107,6 +110,8 @@ private:
     unsigned int chio_max_sol_survive_epoch;
     unsigned int chio_c0;
     double chio_spreading_rate;
+    bool invert_gain;
+
 };
 
 inline double *CurveFittingOptions::frequencyData() const
@@ -212,6 +217,11 @@ inline unsigned int CurveFittingOptions::chioC0() const
 inline double CurveFittingOptions::chioSpreadingRate() const
 {
     return chio_spreading_rate;
+}
+
+inline bool CurveFittingOptions::invertGain() const
+{
+    return invert_gain;
 }
 
 inline double CurveFittingOptions::averageBandwidth() const
