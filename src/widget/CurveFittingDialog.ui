@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>873</width>
-    <height>816</height>
+    <height>856</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -770,60 +770,80 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_15">
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_10">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QCheckBox" name="fgrid_force_convert">
                  <property name="text">
-                  <string>Average bandwidth</string>
+                  <string>Convert into octave/log frequency grid</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_10">
-                 <item>
-                  <spacer name="horizontalSpacer_8">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <widget class="QDoubleSpinBox" name="fgrid_avgbw">
-                   <property name="minimumSize">
-                    <size>
-                     <width>85</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="decimals">
-                    <number>3</number>
-                   </property>
-                   <property name="minimum">
-                    <double>0.000000000000000</double>
-                   </property>
-                   <property name="maximum">
-                    <double>100.000000000000000</double>
-                   </property>
-                   <property name="value">
-                    <double>1.005000000000000</double>
+               <item>
+                <layout class="QFormLayout" name="formLayout_5">
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_15">
+                   <property name="text">
+                    <string>Average bandwidth</string>
                    </property>
                   </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <layout class="QHBoxLayout" name="horizontalLayout_10">
+                   <item>
+                    <spacer name="horizontalSpacer_8">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QDoubleSpinBox" name="fgrid_avgbw">
+                     <property name="minimumSize">
+                      <size>
+                       <width>85</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="decimals">
+                      <number>3</number>
+                     </property>
+                     <property name="minimum">
+                      <double>1.000000000000000</double>
+                     </property>
+                     <property name="maximum">
+                      <double>100.000000000000000</double>
+                     </property>
+                     <property name="singleStep">
+                      <double>0.005000000000000</double>
+                     </property>
+                     <property name="value">
+                      <double>1.005000000000000</double>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                 </layout>
                </item>
               </layout>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="fgrid_force_convert">
-               <property name="text">
-                <string>Force conversion into octave/log frequency grid</string>
-               </property>
-              </widget>
              </item>
             </layout>
            </widget>
@@ -1631,7 +1651,6 @@ border: 1px solid rgb(208, 204, 201) </string>
   <tabstop>algo_chio_spreadingrate</tabstop>
   <tabstop>algo_fmin_dimension_adaptive</tabstop>
   <tabstop>fgrid_avgbw</tabstop>
-  <tabstop>fgrid_force_convert</tabstop>
   <tabstop>obc_freq_min</tabstop>
   <tabstop>obc_freq_max</tabstop>
   <tabstop>obc_q_min</tabstop>

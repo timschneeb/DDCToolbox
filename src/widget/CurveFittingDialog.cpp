@@ -129,6 +129,11 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     ui->previewPlot->xAxis->setTicker(logTicker);
     ui->previewPlot->xAxis->setScaleType(QCPAxis::stLogarithmic);
     ui->previewPlot->rescaleAxes();
+
+    // Prepare fgrid
+    connect(ui->fgrid_force_convert, &QCheckBox::toggled, ui->fgrid_avgbw, &QCheckBox::setEnabled);
+    ui->fgrid_force_convert->setChecked(false);
+    ui->fgrid_avgbw->setEnabled(false);
 }
 
 CurveFittingDialog::~CurveFittingDialog()
@@ -210,6 +215,10 @@ void CurveFittingDialog::parseCsv(){
                                    &is_nonuniform);
     ui->fgrid_axis_linearity->setText(is_nonuniform ? "Non-uniform grid" : "Uniform grid");
 
+    ui->fgrid_force_convert->setChecked(!is_nonuniform);
+    ui->fgrid_avgbw->setEnabled(!is_nonuniform);
+
+
     double lowGain = targetList[0];
     double upGain = targetList[0];
     for (uint i = 1; i < size; i++)
@@ -258,13 +267,10 @@ void CurveFittingDialog::updatePreviewPlot(){
         return;
     }
 
-    qDebug() << "Redrawing";
-
     double* flt_freqList = (double*)malloc(size * sizeof(double));
     double* targetList = (double*)malloc(size * sizeof(double));
     memcpy(flt_freqList, freq.constData(), size * sizeof(double));
     memcpy(targetList, gain.constData(), size * sizeof(double));
-
 
     CurveFittingWorker::preprocess(flt_freqList,
                                    targetList,
@@ -273,7 +279,6 @@ void CurveFittingDialog::updatePreviewPlot(){
                                    ui->fgrid_force_convert->isChecked(),
                                    ui->fgrid_avgbw->value(),
                                    nullptr);
-
 
     double lowGain = targetList[0];
     double upGain = targetList[0];
@@ -295,7 +300,6 @@ void CurveFittingDialog::updatePreviewPlot(){
 
     for(uint i = 0; i < size; i++){
         pGraph0->addData(flt_freqList[i], (double)targetList[i]);
-        qDebug() << i << ">>" << flt_freqList[i] << targetList[i];
     }
 
     ui->previewPlot->replot(QCustomPlot::rpQueuedReplot);

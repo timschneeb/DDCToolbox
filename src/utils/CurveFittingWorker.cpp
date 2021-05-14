@@ -97,7 +97,7 @@ double CurveFittingWorker::peakingCostFunctionMap(double *x, void *usd)
     return meanAcc;
 }
 
-void CurveFittingWorker::preprocess(double *flt_freqList, double *target, uint& array_size, int fs, bool force_to_oct_grid_conversion, double avg_bw, bool* is_nonuniform){
+void CurveFittingWorker::preprocess(double *&flt_freqList, double *&target, uint& array_size, int fs, bool force_to_oct_grid_conversion, double avg_bw, bool* is_nonuniform){
     uint i;
 
     // Detect X axis linearity
@@ -204,7 +204,6 @@ void CurveFittingWorker::preprocess(double *flt_freqList, double *target, uint& 
             double freqIdxUR = levels[hz18 + i] * arrayLen;
             newflt_freqList[i] = linearInterpolationNoExtrapolate(freqIdxUR, ascendingIdx, linGridFreq, arrayLen);
             newTarget[i] = shrinkedAxis[hz18 + i];
-            qDebug() << i << ">>>" << newflt_freqList[i] << newTarget[i];
         }
         free(shrinkedAxis);
         free(ascendingIdx);
