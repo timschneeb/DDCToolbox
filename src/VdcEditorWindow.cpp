@@ -191,7 +191,7 @@ void VdcEditorWindow::exportProject()
 
 void VdcEditorWindow::curveFitting()
 {
-    auto dlg = new CurveFittingDialog();
+    auto dlg = new CurveFittingDialog(this);
     int ret = dlg->exec();
     if(ret && dlg->getResults().count() > 0){
         VdcProjectManager::instance().closeProject();
@@ -206,7 +206,7 @@ void VdcEditorWindow::curveFitting()
 
 /* ---- Editor interactions ----*/
 void VdcEditorWindow::addPoint(){
-    AddPointDialog *dlg = new AddPointDialog;
+    AddPointDialog *dlg = new AddPointDialog(this);
 
     if(dlg->exec()){
         Biquad* b = dlg->getBiquad();

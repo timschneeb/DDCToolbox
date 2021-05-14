@@ -49,29 +49,30 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     fminLayout->setContentsMargins(6, 0, 0, 0);
     fminLayout->addWidget(ui->algo_fmin_container);
 
-    algo_de = new Expander("Differential evolution options", 300, this);
+    algo_de = new Expander("Differential evolution options", 300, ui->mainPane);
     algo_de->setContentLayout(*deLayout);
-    algo_flower = new Expander("Flower pollination search options", 300, this);
+    algo_flower = new Expander("Flower pollination search options", 300, ui->mainPane);
     algo_flower->setContentLayout(*flowerLayout);
-    algo_chio = new Expander("CHIO options", 300, this);
+    algo_chio = new Expander("CHIO options", 300, ui->mainPane);
     algo_chio->setContentLayout(*chioLayout);
-    algo_fmin = new Expander("Bounded simplex search options", 300, this);
+    algo_fmin = new Expander("Bounded simplex search options", 300, ui->mainPane);
     algo_fmin->setContentLayout(*fminLayout);
-    opt_boundary_constraints = new Expander("Optimization boundary constraints", 300, this);
+    opt_boundary_constraints = new Expander("Optimization boundary constraints", 300, ui->mainPane);
     opt_boundary_constraints->setContentLayout(*optLayout);
-    fgrid = new Expander("Axis rebuilding", 300, this);
+    fgrid = new Expander("Axis rebuilding", 300, ui->mainPane);
     fgrid->setContentLayout(*fgridLayout);
-    advanced_rng = new Expander("Randomness options", 300, this);
+    advanced_rng = new Expander("Randomness options", 300, ui->mainPane);
     advanced_rng->setContentLayout(*rngLayout);
 
-    this->layout()->addWidget(algo_de);
-    this->layout()->addWidget(algo_flower);
-    this->layout()->addWidget(algo_chio);
-    this->layout()->addWidget(algo_fmin);
-    this->layout()->addWidget(opt_boundary_constraints);
-    this->layout()->addWidget(fgrid);
-    this->layout()->addWidget(advanced_rng);
-    this->layout()->addWidget(ui->footer);
+    ui->mainPane->layout()->addWidget(algo_de);
+    ui->mainPane->layout()->addWidget(algo_flower);
+    ui->mainPane->layout()->addWidget(algo_chio);
+    ui->mainPane->layout()->addWidget(algo_fmin);
+    ui->mainPane->layout()->addWidget(opt_boundary_constraints);
+    ui->mainPane->layout()->addWidget(fgrid);
+    ui->mainPane->layout()->addWidget(advanced_rng);
+    ui->mainPane->layout()->addWidget(ui->previewSwitchLayout);
+    ui->mainPane->layout()->addWidget(ui->footer);
 
     QList<Expander*> _expanders(std::initializer_list<Expander*>({algo_de, algo_flower, algo_chio, algo_fmin, opt_boundary_constraints, fgrid, advanced_rng}));
     for(const auto& exp : _expanders){
@@ -103,9 +104,31 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     connect(ui->algorithmType, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CurveFittingDialog::updateSupportedProperties);
     ui->status_panel->setVisible(false);
 
-    this->setMaximumHeight(430);
+
+    // Workaround to avoid glitched out window height sizing
+    this->setGeometry(this->geometry().x(), this->geometry().y(), this->width(), 460);
+    this->move(parentWidget()->window()->frameGeometry().topLeft() +
+               parentWidget()->window()->rect().center() - rect().center());
+
 
     updateSupportedProperties(ui->algorithmType->currentIndex());
+
+    // Prepare preview plot
+    connect(ui->fgrid_avgbw, qOverload<double>(&QDoubleSpinBox::valueChanged), this, &CurveFittingDialog::updatePreviewPlot);
+    connect(ui->fgrid_force_convert, &QCheckBox::toggled, this, &CurveFittingDialog::updatePreviewPlot);
+    connect(ui->previewToggle, &QPushButton::toggled, this, &CurveFittingDialog::setWindowExpanded);
+    setWindowExpanded(false);
+
+    ui->previewPlot->yAxis->setRange(-10, -10);
+    ui->previewPlot->yAxis->setLabel("Target");
+
+    ui->previewPlot->xAxis->setRange(QCPRange(20, 24000));
+    ui->previewPlot->xAxis->setLabel("Frequency");
+
+    QSharedPointer<QCPAxisTickerLog> logTicker(new QCPAxisTickerLog);
+    ui->previewPlot->xAxis->setTicker(logTicker);
+    ui->previewPlot->xAxis->setScaleType(QCPAxis::stLogarithmic);
+    ui->previewPlot->rescaleAxes();
 }
 
 CurveFittingDialog::~CurveFittingDialog()
@@ -178,7 +201,13 @@ void CurveFittingDialog::parseCsv(){
     memcpy(targetList, gain.constData(), size * sizeof(double));
 
     bool is_nonuniform = false;
-    CurveFittingWorker::preprocess(flt_freqList, targetList, size, 44100, false, 1.005, &is_nonuniform);
+    CurveFittingWorker::preprocess(flt_freqList,
+                                   targetList,
+                                   size,
+                                   44100,
+                                   ui->fgrid_force_convert->isChecked(),
+                                   ui->fgrid_avgbw->value(),
+                                   &is_nonuniform);
     ui->fgrid_axis_linearity->setText(is_nonuniform ? "Non-uniform grid" : "Uniform grid");
 
     double lowGain = targetList[0];
@@ -201,6 +230,9 @@ void CurveFittingDialog::parseCsv(){
     setStatus(true, QString::number(freq.size()) + " rows loaded");
     ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setEnabled(true);
 
+    if(ui->previewPlotContainer->isVisible()){
+        updatePreviewPlot();
+    }
 }
 
 void CurveFittingDialog::setStatus(bool success, QString text){
@@ -217,6 +249,70 @@ void CurveFittingDialog::setStatus(bool success, QString text){
 QVector<DeflatedBiquad> CurveFittingDialog::getResults() const
 {
     return results;
+}
+
+void CurveFittingDialog::updatePreviewPlot(){
+    uint size = freq.size();
+
+    if(size < 1){
+        return;
+    }
+
+    qDebug() << "Redrawing";
+
+    double* flt_freqList = (double*)malloc(size * sizeof(double));
+    double* targetList = (double*)malloc(size * sizeof(double));
+    memcpy(flt_freqList, freq.constData(), size * sizeof(double));
+    memcpy(targetList, gain.constData(), size * sizeof(double));
+
+
+    CurveFittingWorker::preprocess(flt_freqList,
+                                   targetList,
+                                   size,
+                                   44100,
+                                   ui->fgrid_force_convert->isChecked(),
+                                   ui->fgrid_avgbw->value(),
+                                   nullptr);
+
+
+    double lowGain = targetList[0];
+    double upGain = targetList[0];
+    for (uint i = 1; i < size; i++)
+    {
+        if (targetList[i] < lowGain)
+            lowGain = targetList[i];
+        if (targetList[i] > upGain)
+            upGain = targetList[i];
+    }
+    lowGain -= 5.0;
+    upGain += 5.0;
+
+    ui->previewPlot->yAxis->setRange(lowGain, upGain);
+    ui->previewPlot->clearGraphs();
+
+    auto pGraph0 = ui->previewPlot->addGraph();
+    pGraph0->setAdaptiveSampling(true);
+
+    for(uint i = 0; i < size; i++){
+        pGraph0->addData(flt_freqList[i], (double)targetList[i]);
+        qDebug() << i << ">>" << flt_freqList[i] << targetList[i];
+    }
+
+    ui->previewPlot->replot(QCustomPlot::rpQueuedReplot);
+
+    free(flt_freqList);
+    free(targetList);
+}
+
+void CurveFittingDialog::setWindowExpanded(bool b){
+    this->setMinimumWidth(b ? (385 + 515) : 385);
+    this->setMaximumWidth(b ? (385 + 515) : 385);
+    ui->previewPlotContainer->setVisible(b);
+    ui->previewToggle->setText(b ? "Preview <<" : "Preview >>");
+
+    if(b){
+        updatePreviewPlot();
+    }
 }
 
 void CurveFittingDialog::accept()

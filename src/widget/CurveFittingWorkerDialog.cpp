@@ -107,8 +107,6 @@ void CurveFittingWorkerDialog::graphReceived(std::vector<double> temp)
     auto pGraph0 = ui->previewPlot->addGraph();
     pGraph0->setAdaptiveSampling(true);
 
-    int ymax = ui->previewPlot->yAxis->range().upper;
-    int ymin = ui->previewPlot->yAxis->range().lower;
     int xmax = ui->previewPlot->xAxis->range().upper;
 
     if((int)grid_size > xmax){
@@ -116,15 +114,9 @@ void CurveFittingWorkerDialog::graphReceived(std::vector<double> temp)
     }
 
     for(uint i = 0; i < grid_size; i++){
-        if (temp[i] > ymax)
-            ymax = temp[i] + 1;
-        else if (temp[i] < ymin)
-            ymin = temp[i];
-
         pGraph0->addData(i, (double)temp[i]);
     }
 
-    //ui->previewPlot->yAxis->setRange(ymin, ymax);
     ui->previewPlot->xAxis->setRange(0, xmax);
     ui->previewPlot->replot(QCustomPlot::rpQueuedReplot);
 }

@@ -27,6 +27,8 @@ protected slots:
 private slots:
     void parseCsv();
     void updateSupportedProperties(int index);
+    void setWindowExpanded(bool b);
+    void updatePreviewPlot();
 
 private:
     void selectFile();
