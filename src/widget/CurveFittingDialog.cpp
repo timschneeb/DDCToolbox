@@ -119,10 +119,10 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     setWindowExpanded(false);
 
     ui->previewPlot->yAxis->setRange(-10, -10);
-    ui->previewPlot->yAxis->setLabel("Target");
+    ui->previewPlot->yAxis->setLabel("Target (dB)");
 
     ui->previewPlot->xAxis->setRange(QCPRange(20, 24000));
-    ui->previewPlot->xAxis->setLabel("Frequency");
+    ui->previewPlot->xAxis->setLabel("Frequency (Hz)");
 
     QSharedPointer<QCPAxisTickerLog> logTicker(new QCPAxisTickerLog);
     ui->previewPlot->xAxis->setTicker(logTicker);
