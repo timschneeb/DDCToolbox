@@ -352,7 +352,7 @@ void CurveFittingDialog::updatePreviewPlot(){
     }
 
     auto pGraph0 = ui->previewPlot->addGraph();
-    pGraph0->setName("Smoothed curve");
+    pGraph0->setName("Processed curve");
     pGraph0->setAdaptiveSampling(true);
 
     for(uint i = 0; i < size; i++){
