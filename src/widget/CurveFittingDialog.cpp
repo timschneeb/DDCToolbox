@@ -118,8 +118,6 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     connect(ui->previewToggle, &QPushButton::toggled, this, &CurveFittingDialog::setWindowExpanded);
     setWindowExpanded(false);
 
-    ui->previewPlot->setInteractions(QCP::iSelectLegend);
-
     ui->previewPlot->yAxis->setRange(-10, -10);
     ui->previewPlot->yAxis->setLabel("Target (dB)");
 
