@@ -375,6 +375,14 @@ border: 1px solid rgb(208, 204, 201) </string>
    <addaction name="actionAdd_Point"/>
    <addaction name="actionRemove_Point"/>
   </widget>
+  <widget class="QStatusBar" name="updateBar">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="sizeGripEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
   <action name="actionAdd_Point">
    <property name="text">
     <string>Add point</string>

@@ -11,7 +11,17 @@ public:
 
 public slots:
     void checkForUpdates();
-    void checkForUpdatesSilently();
+    void silentCheck();
+    void silentCheckDeferred(uint ms_delay);
+
+    void userRequestedChangelog();
+    void userRequestedInstall();
+
+private slots:
+    void silentCheckFinished(const QString& url);
+
+signals:
+    void updateAvailable();
 
 private:
     QSimpleUpdater *updater = new QSimpleUpdater();

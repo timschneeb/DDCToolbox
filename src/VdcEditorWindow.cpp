@@ -41,13 +41,6 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     undoStack->setUndoLimit(100);
     undoView->setVisible(false);
 
-#ifdef Q_OS_WIN
-    swUpdater = new SoftwareUpdateManager();
-    connect(ui->actionCheck_for_updates, &QAction::triggered, swUpdater, &SoftwareUpdateManager::checkForUpdates);
-#else
-    ui->actionCheck_for_updates->setVisible(false);
-#endif
-
 #define DECL_UNDO_ACTION(type)\
     QAction* action##type = undoStack->create##type##Action(this, tr(#type));\
     action##type->setIcon(QPixmap(":/img/" + QString(#type).toLower() + ".svg"));\
@@ -104,6 +97,56 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
 #ifndef QT_DEBUG
     ui->actionEnable_table_debug_mode->setVisible(false);
 #endif
+
+    // Setup update notify bar
+    ui->updateBar->setVisible(false);
+#ifdef Q_OS_WINDOWS
+    QLabel* updateLabel = new QLabel(ui->updateBar);
+    QLabel* fakeSpacer = new QLabel(ui->updateBar);
+    QPushButton* installButton = new QPushButton(ui->updateBar);
+    QPushButton* changelogButton = new QPushButton(ui->updateBar);
+    QPushButton* notNowButton = new QPushButton(ui->updateBar);
+
+    fakeSpacer->setMaximumWidth(6);
+
+    installButton->setText("Install update");
+    installButton->setStyleSheet("font-weight:600;");
+
+    changelogButton->setText("View changelog");
+    changelogButton->setMaximumWidth(90);
+    notNowButton->setText("Not now");
+    notNowButton->setMaximumWidth(90);
+
+    updateLabel->setText("A new version of this application has been released. Press 'Install' to update automatically.");
+
+    ui->updateBar->setStyleSheet(
+        "QStatusBar {"
+            "background-color: rgb(255, 209, 117);"
+            "border: 1px solid rgb(208, 204, 201);"
+        "}"
+        "QStatusBar QLabel {"
+            "padding: 6px;"
+        "}");
+    ui->updateBar->addWidget(updateLabel);
+    ui->updateBar->addWidget(fakeSpacer);
+    ui->updateBar->addPermanentWidget(installButton);
+    ui->updateBar->addPermanentWidget(changelogButton);
+    ui->updateBar->addPermanentWidget(notNowButton);
+    ui->updateBar->addPermanentWidget(fakeSpacer);
+
+    swUpdater = new SoftwareUpdateManager();
+    connect(ui->actionCheck_for_updates, &QAction::triggered, swUpdater, &SoftwareUpdateManager::checkForUpdates);
+
+    connect(notNowButton, &QAbstractButton::clicked, [this]{ ui->updateBar->setVisible(false); });
+    connect(changelogButton, &QAbstractButton::clicked, swUpdater, &SoftwareUpdateManager::userRequestedChangelog);
+    connect(installButton, &QAbstractButton::clicked, swUpdater, &SoftwareUpdateManager::userRequestedInstall);
+
+    connect(swUpdater, &SoftwareUpdateManager::updateAvailable, [this]{ ui->updateBar->setVisible(true); });
+    swUpdater->silentCheckDeferred(1000);
+#else
+    ui->actionCheck_for_updates->setVisible(false);
+#endif
+
 }
 
 VdcEditorWindow::~VdcEditorWindow()

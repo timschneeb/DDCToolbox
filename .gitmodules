@@ -1,6 +1,3 @@
 [submodule "3rdparty/libgradfreeOpt"]
 	path = src/3rdparty/libgradfreeOpt
 	url = https://github.com/james34602/libgradfreeOpt
-[submodule "src/3rdparty/QSimpleUpdater"]
-	path = src/3rdparty/QSimpleUpdater
-	url = https://github.com/alex-spataru/QSimpleUpdater
