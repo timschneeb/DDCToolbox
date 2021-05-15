@@ -25,7 +25,8 @@ SOURCES += $$PWD/main.cpp \
 
 QTPLUGIN += qsvg
 
-VERSION = 1.4.0.0
+VERSION = 1.4.0
+DEFINES += CURRENT_APP_VERSION=$${VERSION}
 
 include($$PWD/DDCToolbox-lib.pri)
 
@@ -44,8 +45,6 @@ win32 {
 
 ICON = $$PWD/../res/img/icon.icns
 QMAKE_INFO_PLIST = $$PWD/../deployment/Info.plist
-
-FORMS +=
 
 HEADERS += \
     $$PWD/AppRuntime.h

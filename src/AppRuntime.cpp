@@ -5,8 +5,15 @@
 #include <QDebug>
 #include <QStyleFactory>
 
+#define _STR(x) #x
+#define STRINGIFY(x)  _STR(x)
+
 AppRuntime::AppRuntime(int& argc, char**argv): QApplication(argc, argv)
 {
+
+    this->setApplicationVersion(STRINGIFY(CURRENT_APP_VERSION));
+    this->setApplicationName("DDCToolbox");
+
     this->setStyle(new ProxyStyle("Fusion"));
     this->setPalette(this->style()->standardPalette());
     this->setAttribute(Qt::AA_DisableWindowContextHelpButton);

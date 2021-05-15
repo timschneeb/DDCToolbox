@@ -120,7 +120,7 @@
      <x>0</x>
      <y>0</y>
      <width>976</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <property name="nativeMenuBar">
@@ -159,6 +159,8 @@
     <addaction name="separator"/>
     <addaction name="actionIntroduction"/>
     <addaction name="actionKey_shortcuts"/>
+    <addaction name="separator"/>
+    <addaction name="actionCheck_for_updates"/>
    </widget>
    <widget class="QMenu" name="menuToold">
     <property name="title">
@@ -603,6 +605,11 @@ border: 1px solid rgb(208, 204, 201) </string>
    </property>
    <property name="text">
     <string>Peaking filter curve fitting</string>
+   </property>
+  </action>
+  <action name="actionCheck_for_updates">
+   <property name="text">
+    <string>Check for updates...</string>
    </property>
   </action>
  </widget>

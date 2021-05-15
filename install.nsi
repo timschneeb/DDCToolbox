@@ -53,6 +53,8 @@
 
 ; MUI end ------
 
+!include WinMessages.nsh
+
 ; !defines for use with SHChangeNotify
 !ifdef SHCNE_ASSOCCHANGED
 !undef SHCNE_ASSOCCHANGED
@@ -69,6 +71,41 @@
   System::Call "shell32::SHChangeNotify(i,i,i,i) (${SHCNE_ASSOCCHANGED}, ${SHCNF_FLUSH}, 0, 0)"
 !macroend
 
+!define WND_CLASS "Qt5152QWindowIcon"
+!define WND_TITLE "DDC Toolbox"
+!define TO_MS 2000
+!define SYNC_TERM 0x00100001
+
+LangString termMsg ${LANG_ENGLISH} "Installer cannot stop running ${WND_TITLE}.$\nDo you want to terminate process?"
+LangString stopMsg ${LANG_ENGLISH} "Stopping ${WND_TITLE} Application"
+ 
+!macro TerminateApp
+ 
+    Push $0 ; window handle
+    Push $1
+    Push $2 ; process handle
+    DetailPrint "$(stopMsg)"
+    FindWindow $0 '${WND_CLASS}' ''
+    IntCmp $0 0 done
+    System::Call 'user32.dll::GetWindowThreadProcessId(i r0, *i .r1) i .r2'
+    System::Call 'kernel32.dll::OpenProcess(i ${SYNC_TERM}, i 0, i r1) i .r2'
+    SendMessage $0 ${WM_CLOSE} 0 0 /TIMEOUT=${TO_MS}
+    System::Call 'kernel32.dll::WaitForSingleObject(i r2, i ${TO_MS}) i .r1'
+    IntCmp $1 0 close
+    MessageBox MB_YESNOCANCEL|MB_ICONEXCLAMATION "$(termMsg)" /SD IDYES IDYES terminate IDNO close
+    System::Call 'kernel32.dll::CloseHandle(i r2) i .r1'
+    Quit
+  terminate:
+    System::Call 'kernel32.dll::TerminateProcess(i r2, i 0) i .r1'
+  close:
+    System::Call 'kernel32.dll::CloseHandle(i r2) i .r1'
+  done:
+    Pop $2
+    Pop $1
+    Pop $0
+ 
+!macroend
+
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "DDCToolbox_Setup_${PRODUCT_ARCH}_${PRODUCT_VERSION}.exe"
 InstallDir "$PROGRAMFILES\DDCToolbox"
@@ -77,7 +114,7 @@ ShowInstDetails show
 ShowUnInstDetails show
 
 Section "Hauptgruppe" SEC01
-  ExecWait "taskkill /f /t /im $\"DDCToolbox.exe$\""
+  !insertmacro TerminateApp
 
   SetOutPath "$INSTDIR"
   SetOverwrite on
@@ -123,7 +160,7 @@ Function un.onInit
 FunctionEnd
 
 Section Uninstall
-  ExecWait "taskkill /f /t /im $\"DDCToolbox.exe$\""
+  !insertmacro TerminateApp
 
   Delete "$INSTDIR\${PRODUCT_NAME}.url"
   Delete "$INSTDIR\uninst.exe"

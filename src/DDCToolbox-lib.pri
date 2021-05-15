@@ -26,6 +26,7 @@ HEADERS += \
     $$PWD/utils/CurveFittingUtils.h \
     $$PWD/utils/CurveFittingWorker.h \
     $$PWD/utils/QInt64Validator.h \
+    $$PWD/utils/SoftwareUpdateManager.h \
     $$PWD/utils/VdcImporter.h \
     $$PWD/utils/VdcProjectManager.h \
     $$PWD/widget/AddPointDialog.h \
@@ -54,6 +55,7 @@ SOURCES += \
     $$PWD/plot/QCustomPlot.cpp \
     $$PWD/utils/AutoEqClient.cpp \
     $$PWD/utils/CurveFittingWorker.cpp \
+    $$PWD/utils/SoftwareUpdateManager.cpp \
     $$PWD/utils/VdcProjectManager.cpp \
     $$PWD/widget/AddPointDialog.cpp \
     $$PWD/widget/AutoEqSelector.cpp \

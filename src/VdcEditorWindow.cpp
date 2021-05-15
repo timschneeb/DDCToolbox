@@ -14,16 +14,21 @@
 #include "widget/HtmlPopup.h"
 #include "widget/StabilityReport.h"
 #include "widget/AutoEqSelector.h"
+#include "widget/CurveFittingDialog.h"
+
 #include "utils/VdcProjectManager.h"
 #include "item/CustomFilterListItem.h"
 #include "plot/FrequencyPlot.h"
+
+#ifdef Q_OS_WIN
+#include "utils/SoftwareUpdateManager.h"
+#endif
 
 #include <QAction>
 #include <QDebug>
 #include <QFileDialog>
 #include <QMessageBox>
 
-#include <widget/CurveFittingDialog.h>
 
 VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -35,6 +40,13 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     ui->setupUi(this);
     undoStack->setUndoLimit(100);
     undoView->setVisible(false);
+
+#ifdef Q_OS_WIN
+    swUpdater = new SoftwareUpdateManager();
+    connect(ui->actionCheck_for_updates, &QAction::triggered, swUpdater, &SoftwareUpdateManager::checkForUpdates);
+#else
+    ui->actionCheck_for_updates->setVisible(false);
+#endif
 
 #define DECL_UNDO_ACTION(type)\
     QAction* action##type = undoStack->create##type##Action(this, tr(#type));\

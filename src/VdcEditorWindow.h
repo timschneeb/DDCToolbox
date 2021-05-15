@@ -13,6 +13,7 @@ class FilterModel;
 class BwCalculator;
 class QUndoStack;
 class QUndoView;
+class SoftwareUpdateManager;
 
 class VdcEditorWindow : public QMainWindow
 {
@@ -64,6 +65,10 @@ protected:
 
 private:
     Ui::VdcEditorWindowHost *ui;
+
+#ifdef Q_OS_WIN
+    SoftwareUpdateManager *swUpdater;
+#endif
 
     FilterModel    *filterModel;
     QUndoStack     *undoStack;
