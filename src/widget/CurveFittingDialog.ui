@@ -802,7 +802,7 @@
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_15">
                    <property name="text">
-                    <string>Octave bandwidth</string>
+                    <string>Octave smoothing</string>
                    </property>
                   </widget>
                  </item>
