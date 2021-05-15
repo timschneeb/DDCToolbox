@@ -59,6 +59,7 @@ private:
     double *low = nullptr;
     double *up = nullptr;
     double *tmpDat = nullptr;
+    double *lastCallbackResult = nullptr;
 
     /* Results */
     QVector<DeflatedBiquad> results;

@@ -23,6 +23,7 @@ typedef struct
     double *target;
     unsigned int numBands;
     double *tmp;
+    double *last_result_callback;
     void* user_data;
 } optUserdata;
 
@@ -59,6 +60,7 @@ CurveFittingWorker::~CurveFittingWorker()
     free(low);
     free(up);
     free(tmpDat);
+    free(lastCallbackResult);
 }
 
 void CurveFittingWorker::optimizationHistoryCallback(void *hostData, unsigned int n, double *currentResult, double *currentFval)
@@ -72,21 +74,24 @@ void CurveFittingWorker::optimizationHistoryCallback(void *hostData, unsigned in
 
     emit worker->mseReceived(*currentFval);
 
-
     double *fc = currentResult;
     double *Q = currentResult + userdata->numBands;
     double *gain = currentResult + userdata->numBands * 2;
     double b0, b1, b2, a1, a2;
     memset(userdata->tmp, 0, userdata->gridSize * sizeof(double));
-
     for (unsigned int i = 0; i < userdata->numBands; i++)
     {
         validatePeaking(gain[i], fc[i], Q[i], userdata->fs, &b0, &b1, &b2, &a1, &a2);
         validateMagCal(b0, b1, b2, a1, a2, userdata->phi, userdata->gridSize, userdata->fs, userdata->tmp);
     }
 
-    emit worker->graphReceived(std::vector<double>(userdata->tmp, userdata->tmp + userdata->gridSize));
+    // Check if result changed
+    if(memcmp(userdata->last_result_callback, userdata->tmp, userdata->gridSize * sizeof(double)) != 0)
+    {
+        emit worker->graphReceived(std::vector<double>(userdata->tmp, userdata->tmp + userdata->gridSize));
+    }
 
+    memcpy(userdata->last_result_callback, userdata->tmp, userdata->gridSize * sizeof(double));
 }
 
 double CurveFittingWorker::peakingCostFunctionMap(double *x, void *usd)
@@ -387,12 +392,15 @@ void CurveFittingWorker::run()
 
     // Cost function data setup
     tmpDat = (double*)malloc(array_size * sizeof(double));
+    lastCallbackResult = (double*)malloc(array_size * sizeof(double));
+    memset(lastCallbackResult, 0, array_size * sizeof(double));
     optUserdata userdat;
     userdat.fs = fs;
     userdat.numBands = numBands;
     userdat.phi = phi;
     userdat.target = targetList;
     userdat.tmp = tmpDat;
+    userdat.last_result_callback = lastCallbackResult;
     userdat.gridSize = array_size;
     userdat.user_data = this;
     void *userdataPtr = (void*)&userdat;

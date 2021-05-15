@@ -44,7 +44,6 @@ private:
     QThread thread;
 
     int iteration = 0;
-
 };
 
 #endif // CURVEFITTINGWORKERDIALOG_H

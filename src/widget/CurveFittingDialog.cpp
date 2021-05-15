@@ -521,7 +521,7 @@ void CurveFittingDialog::updateSupportedProperties(int index){
 #endif
         ui->iteration_label_b->setVisible(true);
         ui->iteration_content_b->setVisible(true);
-        ui->formLayout->insertRow(4, ui->iteration_label_b, ui->iteration_content_b);
+        ui->formLayout->insertRow(5, ui->iteration_label_b, ui->iteration_content_b);
         break;
     }
     default:
