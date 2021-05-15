@@ -45,10 +45,6 @@ win32 {
 ICON = $$PWD/../res/img/icon.icns
 QMAKE_INFO_PLIST = $$PWD/../deployment/Info.plist
 
-unix {
-   QMAKE_CXXFLAGS += -Wno-unused-variable
-}
-
 FORMS +=
 
 HEADERS += \

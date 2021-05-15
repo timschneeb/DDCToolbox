@@ -1,11 +1,7 @@
-#include "VdcEditorWindow.h"
-
-#include "widget/ProxyStyle.h"
+#include "AppRuntime.h"
 
 #include <clocale>
 #include <QtPlugin>
-
-#include "AppRuntime.h"
 
 int main(int argc, char *argv[])
 {

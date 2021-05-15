@@ -85,6 +85,7 @@ FORMS += \
 INCLUDEPATH += $$PWD
 
 include ($$PWD/3rdparty/WebLoader/WebLoader.pri)
+include ($$PWD/3rdparty/QSimpleUpdater/QSimpleUpdater.pri)
 include ($$PWD/3rdparty/libgradfreeOpt.pri)
 
 RESOURCES += \
