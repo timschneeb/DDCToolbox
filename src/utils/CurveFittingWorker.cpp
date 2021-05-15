@@ -121,12 +121,10 @@ void CurveFittingWorker::preprocess(double *&flt_freqList, double *&target, uint
     if (residue > 10.0) // Allow margin of error, in fact, non-zero residue hint the grid is nonuniform
     {
         gdType = 1;
-        printf("Nonuniform grid\n");
     }
     else
     {
         gdType = 0;
-        printf("Uniform grid\n");
     }
 
     if(is_nonuniform != nullptr){
