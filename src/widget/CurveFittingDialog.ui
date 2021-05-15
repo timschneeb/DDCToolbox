@@ -295,6 +295,12 @@
                 </item>
                 <item>
                  <widget class="QSpinBox" name="iterations">
+                  <property name="minimumSize">
+                   <size>
+                    <width>90</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="maximum">
                    <number>1000000000</number>
                   </property>
@@ -345,6 +351,12 @@
                  </item>
                  <item>
                   <widget class="QSpinBox" name="iterations_simplex">
+                   <property name="minimumSize">
+                    <size>
+                     <width>90</width>
+                     <height>0</height>
+                    </size>
+                   </property>
                    <property name="minimum">
                     <number>1</number>
                    </property>
@@ -358,6 +370,52 @@
                  </item>
                 </layout>
                </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="label_23">
+                <property name="text">
+                 <string>Model complexity</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1">
+               <layout class="QHBoxLayout" name="horizontalLayout_20">
+                <item>
+                 <spacer name="horizontalSpacer_2">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QDoubleSpinBox" name="modelComplex">
+                  <property name="minimumSize">
+                   <size>
+                    <width>90</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="suffix">
+                   <string>%</string>
+                  </property>
+                  <property name="minimum">
+                   <double>10.000000000000000</double>
+                  </property>
+                  <property name="maximum">
+                   <double>120.000000000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>100.000000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
              </layout>
             </item>
@@ -840,6 +898,9 @@
                      </property>
                      <property name="singleStep">
                       <double>0.000001000000000</double>
+                     </property>
+                     <property name="stepType">
+                      <enum>QAbstractSpinBox::DefaultStepType</enum>
                      </property>
                      <property name="value">
                       <double>1.005000000000000</double>

@@ -65,8 +65,28 @@ void CurveFittingWorker::optimizationHistoryCallback(void *hostData, unsigned in
 {
     Q_UNUSED(n);
     Q_UNUSED(currentResult);
-    CurveFittingWorker *worker = (CurveFittingWorker*)hostData;
+    //CurveFittingWorker *worker = (CurveFittingWorker*)hostData;
+
+    optUserdata *userdata = (optUserdata*)hostData;
+    CurveFittingWorker *worker = (CurveFittingWorker*)userdata->user_data;
+
     emit worker->mseReceived(*currentFval);
+
+
+    double *fc = currentResult;
+    double *Q = currentResult + userdata->numBands;
+    double *gain = currentResult + userdata->numBands * 2;
+    double b0, b1, b2, a1, a2;
+    memset(userdata->tmp, 0, userdata->gridSize * sizeof(double));
+
+    for (unsigned int i = 0; i < userdata->numBands; i++)
+    {
+        validatePeaking(gain[i], fc[i], Q[i], userdata->fs, &b0, &b1, &b2, &a1, &a2);
+        validateMagCal(b0, b1, b2, a1, a2, userdata->phi, userdata->gridSize, userdata->fs, userdata->tmp);
+    }
+
+    emit worker->graphReceived(std::vector<double>(userdata->tmp, userdata->tmp + userdata->gridSize));
+
 }
 
 double CurveFittingWorker::peakingCostFunctionMap(double *x, void *usd)
@@ -85,7 +105,7 @@ double CurveFittingWorker::peakingCostFunctionMap(double *x, void *usd)
         validateMagCal(b0, b1, b2, a1, a2, userdata->phi, userdata->gridSize, userdata->fs, userdata->tmp);
     }
 
-    emit worker->graphReceived(std::vector<double>(userdata->tmp, userdata->tmp + userdata->gridSize));
+    //emit worker->graphReceived(std::vector<double>(userdata->tmp, userdata->tmp + userdata->gridSize));
 
     double meanAcc = 0.0;
     for (unsigned int i = 0; i < userdata->gridSize; i++)
@@ -271,12 +291,23 @@ void CurveFittingWorker::run()
     maximaIndex = peakfinder_wrapper(targetList, array_size, 0.1, 1, &numMaximas);
     minimaIndex = peakfinder_wrapper(targetList, array_size, 0.1, 0, &numMinimas);
     unsigned int numBands = numMaximas + numMinimas;
-    flt_fc = (double*)malloc(numBands * sizeof(double));
-    idx = (unsigned int*)malloc(numBands * sizeof(unsigned int));
+
+    // Model complexity code start
+    float modelComplexity = options.modelComplexity(); // 10% - 120%
+    unsigned int oldBandNum = numBands;
+    numBands = roundf(numBands * modelComplexity / 100.0f);
+    double *flt_fc = (double*)malloc(numBands * sizeof(double));
     for (i = 0; i < numMaximas; i++)
         flt_fc[i] = flt_freqList[maximaIndex[i]];
-    for (i = numMaximas; i < numBands; i++)
+    for (i = numMaximas; i < ((numBands < oldBandNum) ? numBands : oldBandNum); i++)
         flt_fc[i] = flt_freqList[minimaIndex[i - numMaximas]];
+    if (numBands > oldBandNum)
+    {
+        for (i = oldBandNum; i < numBands; i++)
+            flt_fc[i] = c_rand(&PRNG) * (upFc - lowFc) + lowFc;
+    }
+    // Model complexity code end
+    unsigned int *idx = (unsigned int*)malloc(numBands * sizeof(unsigned int));
     sort(flt_fc, numBands, idx);
 
     // Initial value must not get out-of-bound, more importantly.
@@ -294,6 +325,7 @@ void CurveFittingWorker::run()
     double highestFreq2Gen = 14000.0;
     dFreqDiscontin = (double*)malloc(numBands * sizeof(double));
     dif = (double*)malloc(numBands * sizeof(double));
+    unsigned int cnt = 0;
     while (smallestJump <= 20.0)
     {
         derivative(flt_fc, numBands, 1, dFreqDiscontin, dif);
@@ -302,6 +334,10 @@ void CurveFittingWorker::run()
         double newFreq = c_rand(&PRNG) * (highestFreq2Gen - lowestFreq2Gen) + lowestFreq2Gen;
         flt_fc[smIdx] = newFreq;
         sort(flt_fc, numBands, idx);
+
+        cnt++;
+        if (cnt > 50)
+            break;
     }
     free(idx);
     flt_peak_g = (double*)malloc(numBands * sizeof(double));
@@ -376,7 +412,7 @@ void CurveFittingWorker::run()
     }
 
     // Create optimization history callback
-    void *hist_userdata = (void*)this;
+    void *hist_userdata = (void*)userdataPtr;
     void(*optStatus)(void*, unsigned int, double*, double*) = optimizationHistoryCallback;
 
     // Calculate

@@ -395,7 +395,8 @@ void CurveFittingDialog::accept()
                                 ui->algo_fmin_dimension_adaptive->isChecked(), ui->algo_de_probibound->value(),
                                 ui->algo_flower_pcond->value(), ui->algo_flower_weightstep->value(),
                                 ui->algo_chio_maxsolsurvive->value(), ui->algo_chio_c0->value(), ui->algo_chio_spreadingrate->value(),
-                                ui->invert_gain->isChecked());
+                                ui->invert_gain->isChecked(),
+                                ui->modelComplex->value());
 
     auto worker = new CurveFittingWorkerDialog(options, this);
 
@@ -520,12 +521,15 @@ void CurveFittingDialog::updateSupportedProperties(int index){
 #endif
         ui->iteration_label_b->setVisible(true);
         ui->iteration_content_b->setVisible(true);
+        ui->formLayout->insertRow(4, ui->iteration_label_b, ui->iteration_content_b);
         break;
     }
     default:
         ui->iteration_label_a->setText("Iterations");
         ui->iteration_label_b->setVisible(false);
         ui->iteration_content_b->setVisible(false);
+        ui->formLayout->removeWidget(ui->iteration_label_b);
+        ui->formLayout->removeWidget(ui->iteration_content_b);
         break;
     }
 

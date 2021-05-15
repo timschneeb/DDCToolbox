@@ -95,11 +95,6 @@ void CurveFittingWorkerDialog::mseReceived(float mse)
 
 void CurveFittingWorkerDialog::graphReceived(std::vector<double> temp)
 {
-    g_iteration++;
-    if((g_iteration % 20) != 0){
-        return;
-    }
-
     uint grid_size = temp.size();
 
     ui->previewPlot->clearGraphs();
