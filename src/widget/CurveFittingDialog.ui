@@ -802,7 +802,7 @@
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_15">
                    <property name="text">
-                    <string>Average bandwidth</string>
+                    <string>Octave bandwidth</string>
                    </property>
                   </widget>
                  </item>
@@ -830,16 +830,16 @@
                       </size>
                      </property>
                      <property name="decimals">
-                      <number>3</number>
+                      <number>6</number>
                      </property>
                      <property name="minimum">
                       <double>1.000000000000000</double>
                      </property>
                      <property name="maximum">
-                      <double>100.000000000000000</double>
+                      <double>5.000000000000000</double>
                      </property>
                      <property name="singleStep">
-                      <double>0.005000000000000</double>
+                      <double>0.000001000000000</double>
                      </property>
                      <property name="value">
                       <double>1.005000000000000</double>
