@@ -59,7 +59,6 @@ private:
     double *low = nullptr;
     double *up = nullptr;
     double *tmpDat = nullptr;
-    double *lastCallbackResult = nullptr;
 
     /* Results */
     QVector<DeflatedBiquad> results;
@@ -68,6 +67,20 @@ private:
     static void optimizationHistoryCallback(void *hostData, unsigned int n, double *currentResult, double *currentFval);
     static double peakingCostFunctionMap(double *x, void *usd);
 
+    // implements relative method - do not use for comparing with zero
+    // use this most of the time, tolerance needs to be meaningful in your context
+    template<typename TReal>
+    static bool isApproximatelyEqual(TReal a, TReal b, TReal tolerance = std::numeric_limits<TReal>::epsilon())
+    {
+        TReal diff = std::fabs(a - b);
+        if (diff <= tolerance)
+            return true;
+
+        if (diff < std::fmax(std::fabs(a), std::fabs(b)) * tolerance)
+            return true;
+
+        return false;
+    }
 };
 
 

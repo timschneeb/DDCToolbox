@@ -23,7 +23,7 @@ typedef struct
     double *target;
     unsigned int numBands;
     double *tmp;
-    double *last_result_callback;
+    double last_mse;
     void* user_data;
 } optUserdata;
 
@@ -60,7 +60,6 @@ CurveFittingWorker::~CurveFittingWorker()
     free(low);
     free(up);
     free(tmpDat);
-    free(lastCallbackResult);
 }
 
 void CurveFittingWorker::optimizationHistoryCallback(void *hostData, unsigned int n, double *currentResult, double *currentFval)
@@ -85,13 +84,13 @@ void CurveFittingWorker::optimizationHistoryCallback(void *hostData, unsigned in
         validateMagCal(b0, b1, b2, a1, a2, userdata->phi, userdata->gridSize, userdata->fs, userdata->tmp);
     }
 
-    // Check if result changed
-    if(memcmp(userdata->last_result_callback, userdata->tmp, userdata->gridSize * sizeof(double)) != 0)
+    // Determine if result changed using fuzzy compare
+    if(!isApproximatelyEqual<double>(userdata->last_mse, *currentFval))
     {
         emit worker->graphReceived(std::vector<double>(userdata->tmp, userdata->tmp + userdata->gridSize));
     }
 
-    memcpy(userdata->last_result_callback, userdata->tmp, userdata->gridSize * sizeof(double));
+    userdata->last_mse = *currentFval;
 }
 
 double CurveFittingWorker::peakingCostFunctionMap(double *x, void *usd)
@@ -392,15 +391,13 @@ void CurveFittingWorker::run()
 
     // Cost function data setup
     tmpDat = (double*)malloc(array_size * sizeof(double));
-    lastCallbackResult = (double*)malloc(array_size * sizeof(double));
-    memset(lastCallbackResult, 0, array_size * sizeof(double));
     optUserdata userdat;
     userdat.fs = fs;
     userdat.numBands = numBands;
     userdat.phi = phi;
     userdat.target = targetList;
     userdat.tmp = tmpDat;
-    userdat.last_result_callback = lastCallbackResult;
+    userdat.last_mse = -1;
     userdat.gridSize = array_size;
     userdat.user_data = this;
     void *userdataPtr = (void*)&userdat;
