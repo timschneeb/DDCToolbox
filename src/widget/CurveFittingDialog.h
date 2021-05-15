@@ -30,6 +30,9 @@ private slots:
     void setWindowExpanded(bool b);
     void updatePreviewPlot();
 
+    void contextMenuRequest(QPoint pos);
+    void moveLegend();
+
 private:
     void selectFile();
     void visitProject();

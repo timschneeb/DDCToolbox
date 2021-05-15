@@ -118,16 +118,30 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     connect(ui->previewToggle, &QPushButton::toggled, this, &CurveFittingDialog::setWindowExpanded);
     setWindowExpanded(false);
 
+    ui->previewPlot->setInteractions(QCP::iSelectLegend);
+
     ui->previewPlot->yAxis->setRange(-10, -10);
     ui->previewPlot->yAxis->setLabel("Target (dB)");
 
     ui->previewPlot->xAxis->setRange(QCPRange(20, 24000));
     ui->previewPlot->xAxis->setLabel("Frequency (Hz)");
 
+    ui->previewPlot->legend->setVisible(true);
+    QFont legendFont = font();
+    legendFont.setPointSize(10);
+    ui->previewPlot->legend->setFont(legendFont);
+    ui->previewPlot->legend->setSelectedFont(legendFont);
+    ui->previewPlot->legend->setSelectableParts(QCPLegend::spItems);
+
     QSharedPointer<QCPAxisTickerLog> logTicker(new QCPAxisTickerLog);
     ui->previewPlot->xAxis->setTicker(logTicker);
     ui->previewPlot->xAxis->setScaleType(QCPAxis::stLogarithmic);
     ui->previewPlot->rescaleAxes();
+
+    ui->previewPlot->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->previewPlot, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
+    ui->previewPlot->axisRect()->insetLayout()->setInsetAlignment(0, (Qt::Alignment)(Qt::AlignBottom|Qt::AlignRight));
+    ui->previewPlot->replot();
 
     // Prepare fgrid
     connect(ui->fgrid_force_convert, &QCheckBox::toggled, ui->fgrid_avgbw, &QCheckBox::setEnabled);
@@ -138,6 +152,36 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
 CurveFittingDialog::~CurveFittingDialog()
 {
     delete ui;
+}
+
+void CurveFittingDialog::contextMenuRequest(QPoint pos)
+{
+    QMenu *menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+
+    if (ui->previewPlot->legend->selectTest(pos, false) >= 0)
+    {
+        menu->addAction("Move to top left", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop|Qt::AlignLeft));
+        menu->addAction("Move to top center", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop|Qt::AlignHCenter));
+        menu->addAction("Move to top right", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop|Qt::AlignRight));
+        menu->addAction("Move to bottom right", this, SLOT(moveLegend()))->setData((int)(Qt::AlignBottom|Qt::AlignRight));
+        menu->addAction("Move to bottom left", this, SLOT(moveLegend()))->setData((int)(Qt::AlignBottom|Qt::AlignLeft));
+    }
+    menu->popup(ui->previewPlot->mapToGlobal(pos));
+}
+
+void CurveFittingDialog::moveLegend()
+{
+    if (QAction* contextAction = qobject_cast<QAction*>(sender()))
+    {
+        bool ok;
+        int dataInt = contextAction->data().toInt(&ok);
+        if (ok)
+        {
+            ui->previewPlot->axisRect()->insetLayout()->setInsetAlignment(0, (Qt::Alignment)dataInt);
+            ui->previewPlot->replot();
+        }
+    }
 }
 
 void CurveFittingDialog::visitProject()
@@ -297,7 +341,18 @@ void CurveFittingDialog::updatePreviewPlot(){
     ui->previewPlot->yAxis->setRange(lowGain, upGain);
     ui->previewPlot->clearGraphs();
 
+    auto pGraphOrig = ui->previewPlot->addGraph();
+    QPen graphPen;
+    graphPen.setColor(QColor(60, 60, 60));
+    pGraphOrig->setPen(graphPen);
+    pGraphOrig->setName("Original curve");
+    pGraphOrig->setAdaptiveSampling(true);
+    for(int i = 0; i < freq.size(); i++){
+        pGraphOrig->addData(freq.constData()[i], (double)gain.constData()[i]);
+    }
+
     auto pGraph0 = ui->previewPlot->addGraph();
+    pGraph0->setName("Smoothed curve");
     pGraph0->setAdaptiveSampling(true);
 
     for(uint i = 0; i < size; i++){
