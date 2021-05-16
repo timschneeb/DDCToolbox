@@ -76,7 +76,7 @@
 !define TO_MS 2000
 !define SYNC_TERM 0x00100001
 
-LangString termMsg ${LANG_ENGLISH} "Installer cannot stop running ${WND_TITLE}.$\nDo you want to terminate process?"
+LangString termMsg ${LANG_ENGLISH} "${WND_TITLE} is still running and cannot be closed gracefully.$\nDo you want to forcefully exit the application to continue?"
 LangString stopMsg ${LANG_ENGLISH} "Stopping ${WND_TITLE} Application"
  
 !macro TerminateApp
