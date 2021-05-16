@@ -22,6 +22,7 @@ private slots:
 
 signals:
     void updateAvailable();
+    void requestGracefulShutdown();
 
 private:
     QSimpleUpdater *updater = new QSimpleUpdater();

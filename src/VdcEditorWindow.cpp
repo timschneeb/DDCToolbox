@@ -111,11 +111,12 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
 
     installButton->setText("Install update");
     installButton->setStyleSheet("font-weight:600;");
+    installButton->setMinimumWidth(100);
 
     changelogButton->setText("View changelog");
-    changelogButton->setMaximumWidth(90);
+    changelogButton->setMinimumWidth(100);
     notNowButton->setText("Not now");
-    notNowButton->setMaximumWidth(90);
+    notNowButton->setMinimumWidth(100);
 
     updateLabel->setText("A new version of this application has been released. Press 'Install' to update automatically.");
 
@@ -141,6 +142,7 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     connect(changelogButton, &QAbstractButton::clicked, swUpdater, &SoftwareUpdateManager::userRequestedChangelog);
     connect(installButton, &QAbstractButton::clicked, swUpdater, &SoftwareUpdateManager::userRequestedInstall);
 
+    connect(swUpdater, &SoftwareUpdateManager::requestGracefulShutdown, this, &VdcEditorWindow::announceGracefulShutdown);
     connect(swUpdater, &SoftwareUpdateManager::updateAvailable, [this]{ ui->updateBar->setVisible(true); });
     swUpdater->silentCheckDeferred(1000);
 #else

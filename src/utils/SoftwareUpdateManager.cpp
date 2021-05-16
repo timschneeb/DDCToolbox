@@ -19,7 +19,7 @@ SoftwareUpdateManager::SoftwareUpdateManager(QObject* parent) : QObject(parent)
     updater->setModuleVersion(DEFS_URL, STRINGIFY(CURRENT_APP_VERSION));
     updater->setDownloaderEnabled(DEFS_URL, true);
 
-    connect(updater, &QSimpleUpdater::startedInstall, static_cast<VdcEditorWindow*>(parent), &VdcEditorWindow::announceGracefulShutdown);
+    connect(updater, &QSimpleUpdater::startedInstall, this, &SoftwareUpdateManager::requestGracefulShutdown);
 }
 
 void SoftwareUpdateManager::checkForUpdates()
@@ -46,7 +46,7 @@ void SoftwareUpdateManager::silentCheckDeferred(uint ms_delay)
 void SoftwareUpdateManager::userRequestedChangelog()
 {
     if(!updater->getUpdateAvailable(DEFS_URL)){
-        QMessageBox::warning((QWidget*)this, "Software updates", "Update details partially missing. Please select 'Help > Check for updates...'");
+        QMessageBox::warning(QApplication::activeWindow(), "Software updates", "Update details partially missing. Please select 'Help > Check for updates...'");
         return;
     }
 
@@ -56,7 +56,7 @@ void SoftwareUpdateManager::userRequestedChangelog()
 void SoftwareUpdateManager::userRequestedInstall()
 {
     if(!updater->getUpdateAvailable(DEFS_URL)){
-        QMessageBox::warning((QWidget*)this, "Software updates", "Update details partially missing. Please select 'Help > Check for updates...'");
+        QMessageBox::warning(QApplication::activeWindow(), "Software updates", "Update details partially missing. Please select 'Help > Check for updates...'");
         return;
     }
 

@@ -228,7 +228,7 @@ void Downloader::installUpdate()
    if (box.exec() == QMessageBox::Ok)
    {
       if (!useCustomInstallProcedures()){
-         emit startedInstall();
+         emit startedInstall(m_url);
          openDownload();
       }
    }

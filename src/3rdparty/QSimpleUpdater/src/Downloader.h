@@ -81,7 +81,7 @@ private slots:
    void calculateTimeRemaining(qint64 received, qint64 total);
 
 signals:
-   void startedInstall();
+   void startedInstall(const QString &url);
 
 private:
    qreal round(const qreal &input);
