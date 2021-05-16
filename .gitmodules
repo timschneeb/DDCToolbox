@@ -1,3 +1,3 @@
-[submodule "3rdparty/libgradfreeOpt"]
+[submodule "src/3rdparty/libgradfreeOpt"]
 	path = src/3rdparty/libgradfreeOpt
 	url = https://github.com/james34602/libgradfreeOpt
