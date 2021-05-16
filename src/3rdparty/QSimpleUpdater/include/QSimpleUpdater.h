@@ -71,6 +71,7 @@ class QSU_DECL QSimpleUpdater : public QObject
 
 signals:
    void checkingFinished(const QString &url);
+   void startedInstall(const QString &url);
    void appcastDownloaded(const QString &url, const QByteArray &data);
    void downloadFinished(const QString &url, const QString &filepath);
 

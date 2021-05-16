@@ -31,6 +31,9 @@ public:
 
     void setOrientation(Qt::Orientation orientation);
 
+public slots:
+    void announceGracefulShutdown();
+
 private slots:
     void saveProject();
     void loadProject();
@@ -75,6 +78,7 @@ private:
     QUndoView      *undoView;
     BwCalculator   *bwCalc;
     bool markerPointsVisible = false;
+    bool suppressCloseConfirmation = false;
 
     void preparePlots();
 };

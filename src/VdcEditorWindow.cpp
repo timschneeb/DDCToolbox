@@ -156,7 +156,7 @@ VdcEditorWindow::~VdcEditorWindow()
 
 void VdcEditorWindow::closeEvent(QCloseEvent *ev)
 {
-    if(VdcProjectManager::instance().hasUnsavedChanges() && filterModel->rowCount() > 0){
+    if(!suppressCloseConfirmation && VdcProjectManager::instance().hasUnsavedChanges() && filterModel->rowCount() > 0){
         int ret = QMessageBox::warning(
                     this,
                     tr("DDCToolbox"),
@@ -181,6 +181,12 @@ void VdcEditorWindow::closeEvent(QCloseEvent *ev)
 
 void VdcEditorWindow::setOrientation(Qt::Orientation orientation){
     ui->splitter->setOrientation(orientation);
+}
+
+void VdcEditorWindow::announceGracefulShutdown()
+{
+    // Disable exit-confirmations to enable an external controlled graceful exit without interruptions
+    suppressCloseConfirmation = true;
 }
 
 void VdcEditorWindow::saveProject()

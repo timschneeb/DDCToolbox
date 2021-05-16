@@ -227,8 +227,10 @@ void Downloader::installUpdate()
    /* User wants to install the download */
    if (box.exec() == QMessageBox::Ok)
    {
-      if (!useCustomInstallProcedures())
+      if (!useCustomInstallProcedures()){
+         emit startedInstall();
          openDownload();
+      }
    }
    /* Wait */
    else

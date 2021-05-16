@@ -1,7 +1,8 @@
 #include "SoftwareUpdateManager.h"
 
-#include <Updater.h>
+#include "VdcEditorWindow.h"
 
+#include <Updater.h>
 #include <QTimer>
 #include <QMessageBox>
 #include <QDesktopServices>
@@ -17,6 +18,8 @@ SoftwareUpdateManager::SoftwareUpdateManager(QObject* parent) : QObject(parent)
 
     updater->setModuleVersion(DEFS_URL, STRINGIFY(CURRENT_APP_VERSION));
     updater->setDownloaderEnabled(DEFS_URL, true);
+
+    connect(updater, &QSimpleUpdater::startedInstall, static_cast<VdcEditorWindow*>(parent), &VdcEditorWindow::announceGracefulShutdown);
 }
 
 void SoftwareUpdateManager::checkForUpdates()

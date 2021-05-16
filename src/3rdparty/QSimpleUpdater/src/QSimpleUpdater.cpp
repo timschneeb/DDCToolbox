@@ -405,6 +405,7 @@ Updater *QSimpleUpdater::getUpdater(const QString &url) const
       URLS.append(url);
       UPDATERS.append(updater);
 
+      connect(updater->downloader(), SIGNAL(startedInstall(QString)), this, SIGNAL(startedInstall(QString)));
       connect(updater, SIGNAL(checkingFinished(QString)), this, SIGNAL(checkingFinished(QString)));
       connect(updater, SIGNAL(downloadFinished(QString, QString)), this, SIGNAL(downloadFinished(QString, QString)));
       connect(updater, SIGNAL(appcastDownloaded(QString, QByteArray)), this,

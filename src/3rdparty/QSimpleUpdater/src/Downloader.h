@@ -80,6 +80,9 @@ private slots:
    void updateProgress(qint64 received, qint64 total);
    void calculateTimeRemaining(qint64 received, qint64 total);
 
+signals:
+   void startedInstall();
+
 private:
    qreal round(const qreal &input);
 
