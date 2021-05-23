@@ -60,7 +60,7 @@ void Biquad::RefreshFilter(FilterType type, const CustomFilter& c441, const Cust
     CalculateStability();
 }
 
-std::list<double> Biquad::CalculateCoeffs(double fs)
+std::list<double> Biquad::CalculateCoeffs(double fs, bool noA0divide)
 {
     if (m_dFilterFreq <= 2.2204460492503131e-016 || fs <= 2.2204460492503131e-016){
         qWarning() << "Biquad::CalculateCoeffs: Invalid frequency or samplerate";
@@ -192,16 +192,30 @@ std::list<double> Biquad::CalculateCoeffs(double fs)
     }
 
     std::list<double> result;
-    result.push_back(B0 / A0);
-    result.push_back(B1 / A0);
-    result.push_back(B2 / A0);
-    result.push_back(-A1 / A0);
-    result.push_back(-A2 / A0);
+    if(noA0divide){
+        result.push_back(B0);
+        result.push_back(B1);
+        result.push_back(B2);
+        result.push_back(A0);
+        result.push_back(A1);
+        result.push_back(A2);
+    }
+    else {
+        result.push_back(B0 / A0);
+        result.push_back(B1 / A0);
+        result.push_back(B2 / A0);
+        result.push_back(-A1 / A0);
+        result.push_back(-A2 / A0);
+    }
     return result;
 }
 
-std::list<double> Biquad::CalculateCoeffs(CustomFilter coeffs)
+std::list<double> Biquad::CalculateCoeffs(CustomFilter coeffs, bool noA0divide)
 {
+    if(noA0divide){
+        return coeffs.toList();
+    }
+
     std::list<double> result;
     double A0 = coeffs.a0;
     result.push_back(coeffs.b0 / A0);
@@ -212,15 +226,15 @@ std::list<double> Biquad::CalculateCoeffs(CustomFilter coeffs)
     return result;
 }
 
-std::list<double> Biquad::ExportCoeffs(double dSamplingRate)
+std::list<double> Biquad::ExportCoeffs(double dSamplingRate, bool noA0divide)
 {
     if(m_isCustom)
         if(trunc(dSamplingRate) == 44100.0)
-            return CalculateCoeffs(m_custom441);
+            return CalculateCoeffs(m_custom441, noA0divide);
         else
-            return CalculateCoeffs(m_custom48);
+            return CalculateCoeffs(m_custom48, noA0divide);
     else
-        return CalculateCoeffs(dSamplingRate);
+        return CalculateCoeffs(dSamplingRate, noA0divide);
 }
 
 void Biquad::CalculateStability(){

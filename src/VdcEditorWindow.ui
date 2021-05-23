@@ -111,7 +111,7 @@
    <addaction name="actionOpen"/>
    <addaction name="actionSave"/>
    <addaction name="actionSaveAs"/>
-   <addaction name="actionExport_as_VDC"/>
+   <addaction name="actionCheck_for_unstable_filters"/>
    <addaction name="separator"/>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -140,6 +140,14 @@
      <addaction name="actionAutoEQ_ParametricEQ_txt"/>
      <addaction name="actionimportVDC_file"/>
     </widget>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export</string>
+     </property>
+     <addaction name="separator"/>
+     <addaction name="actionVDC"/>
+     <addaction name="actionEqualizerAPO_configuration"/>
+    </widget>
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
@@ -148,9 +156,9 @@
     <addaction name="separator"/>
     <addaction name="actionDownload_from_AutoEQ"/>
     <addaction name="actionCurve_fitting"/>
-    <addaction name="menuImport"/>
-    <addaction name="actionExport_as_VDC"/>
     <addaction name="separator"/>
+    <addaction name="menuImport"/>
+    <addaction name="menuExport"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -581,18 +589,6 @@ border: 1px solid rgb(208, 204, 201) </string>
     <string>Download from AutoEQ...</string>
    </property>
   </action>
-  <action name="actionExport_as_VDC">
-   <property name="icon">
-    <iconset resource="../res/ddceditor_resources.qrc">
-     <normaloff>:/img/export.svg</normaloff>:/img/export.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Export as VDC</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+E</string>
-   </property>
-  </action>
   <action name="actionClear_all">
    <property name="text">
     <string>Clear all</string>
@@ -618,6 +614,16 @@ border: 1px solid rgb(208, 204, 201) </string>
   <action name="actionCheck_for_updates">
    <property name="text">
     <string>Check for updates...</string>
+   </property>
+  </action>
+  <action name="actionVDC">
+   <property name="text">
+    <string>VDC file</string>
+   </property>
+  </action>
+  <action name="actionEqualizerAPO_configuration">
+   <property name="text">
+    <string>EqualizerAPO configuration</string>
    </property>
   </action>
  </widget>
@@ -859,7 +865,7 @@ border: 1px solid rgb(208, 204, 201) </string>
    </hints>
   </connection>
   <connection>
-   <sender>actionExport_as_VDC</sender>
+   <sender>actionVDC</sender>
    <signal>triggered()</signal>
    <receiver>VdcEditorWindowHost</receiver>
    <slot>exportProject()</slot>
@@ -1039,6 +1045,22 @@ border: 1px solid rgb(208, 204, 201) </string>
    <signal>triggered()</signal>
    <receiver>VdcEditorWindowHost</receiver>
    <slot>curveFitting()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>487</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionEqualizerAPO_configuration</sender>
+   <signal>triggered()</signal>
+   <receiver>VdcEditorWindowHost</receiver>
+   <slot>exportProject()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>

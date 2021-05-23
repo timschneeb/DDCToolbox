@@ -29,12 +29,14 @@ public:
 
     bool saveProject(const QString& fileName);
     bool exportProject(QString fileName, const std::list<double>& p1, const std::list<double>& p2);
+    bool exportEapoConfig(QString fileName, const std::list<double> &p1, int sr);
     bool loadProject(const QString& fileName);
     void closeProject();
 
     bool loadParametricEq(const QString& fileName);
     bool loadParametricEqString(QString string);
     bool loadVdc(const QString &fileName);
+
 
     static bool writeProject(const QString& fileName, QVector<Biquad*> bank);
     static bool writeProject(const QString &fileName, QVector<DeflatedBiquad> bank);

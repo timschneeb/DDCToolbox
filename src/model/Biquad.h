@@ -33,6 +33,17 @@ public:
         return this->a0 == rhs.a0 && this->a1 == rhs.a1 && this->a2 == rhs.a2
                 && this->b0 == rhs.b0 && this->b1 == rhs.b1 && this->b2 == rhs.b2;
     }
+
+    std::list<double> toList(){
+        std::list<double> result;
+        result.push_back(b0);
+        result.push_back(b1);
+        result.push_back(b2);
+        result.push_back(a0);
+        result.push_back(a1);
+        result.push_back(a2);
+        return result;
+    }
 };
 
 class Biquad
@@ -50,7 +61,7 @@ public:
     ~Biquad(){};
     void RefreshFilter(FilterType type, double dbGain, double centreFreq, double dBandwidthOrS);
     void RefreshFilter(FilterType type, const CustomFilter& c441, const CustomFilter& c48);
-    std::list<double> ExportCoeffs(double dSamplingRate);
+    std::list<double> ExportCoeffs(double dSamplingRate, bool noA0divide = false);
 
     double GainAt(double centreFreq, double fs);
     double PhaseResponseAt(double centreFreq, double fs);
@@ -145,8 +156,8 @@ private:
     CustomFilter m_custom441;
     CustomFilter m_custom48;
 
-    std::list<double> CalculateCoeffs(CustomFilter coeffs);
-    std::list<double> CalculateCoeffs(double fs);
+    std::list<double> CalculateCoeffs(CustomFilter coeffs, bool noA0divide = false);
+    std::list<double> CalculateCoeffs(double fs, bool noA0divide = false);
 
     void CalculateStability();
 

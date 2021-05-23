@@ -29,6 +29,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+#include <widget/SamplerateChooseDialog.h>
+
 
 VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -235,7 +237,7 @@ void VdcEditorWindow::exportProject()
 
     if (p1.empty() || p2.empty())
     {
-        QMessageBox::warning(this,tr("Error"),tr("Failed to export to VDC. No valid data found"));
+        QMessageBox::warning(this,tr("Error"),tr("Your current project is empty and contains no filters"));
         return;
     }
 
@@ -247,9 +249,27 @@ void VdcEditorWindow::exportProject()
     }
     delete s;
 
-    QString fileName = QFileDialog::getSaveFileName(this,
-                                                    tr("Save VDC"), "", tr("VDC File (*.vdc)"));
-    VdcProjectManager::instance().exportProject(fileName, p1, p2);
+    if(sender() == ui->actionVDC)
+    {
+        QString fileName = QFileDialog::getSaveFileName(this,
+                                                        tr("Save VDC"), "", tr("VDC File (*.vdc)"));
+        VdcProjectManager::instance().exportProject(fileName, p1, p2);
+    }
+    else if(sender() == ui->actionEqualizerAPO_configuration)
+    {
+        auto srDlg = new SamplerateChooseDialog(this);
+        if(!srDlg->exec()){
+            return;
+        }
+
+        std::list<double> p = filterModel->exportCoeffs(srDlg->getResult(), true);
+
+        QString fileName = QFileDialog::getSaveFileName(this,
+                                                        tr("Save EqualizerAPO config"), "C:\\Program Files\\EqualizerAPO\\config", tr("Equalizer APO config file (*.txt)"));
+        VdcProjectManager::instance().exportEapoConfig(fileName, p, srDlg->getResult());
+        srDlg->deleteLater();
+    }
+
 }
 
 void VdcEditorWindow::curveFitting()

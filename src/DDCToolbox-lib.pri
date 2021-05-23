@@ -41,6 +41,7 @@ HEADERS += \
     $$PWD/widget/ProxyStyle.h \
     $$PWD/widget/QMessageOverlay.h \
     $$PWD/widget/QTintableProgressBar.h \
+    $$PWD/widget/SamplerateChooseDialog.h \
     $$PWD/widget/ShiftFrequencyDialog.h \
     $$PWD/widget/StabilityReport.h
 
@@ -67,6 +68,7 @@ SOURCES += \
     $$PWD/widget/HtmlPopup.cpp \
     $$PWD/widget/ModalOverlayMsgProxy.cpp \
     $$PWD/widget/QMessageOverlay.cpp \
+    $$PWD/widget/SamplerateChooseDialog.cpp \
     $$PWD/widget/ShiftFrequencyDialog.cpp \
     $$PWD/widget/StabilityReport.cpp
 
@@ -80,6 +82,7 @@ FORMS += \
     $$PWD/widget/CurveFittingDialog.ui \
     $$PWD/widget/CurveFittingWorkerDialog.ui \
     $$PWD/widget/CustomFilterDialog.ui \
+    $$PWD/widget/SamplerateChooseDialog.ui \
     $$PWD/widget/ShiftFrequencyDialog.ui \
     $$PWD/widget/StabilityReport.ui \
     $$PWD/widget/TextPopup.ui

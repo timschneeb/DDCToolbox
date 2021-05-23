@@ -11,6 +11,8 @@
 #include <cmath>
 
 #define n QString("\n")
+#define _STR(x) #x
+#define STRINGIFY(x)  _STR(x)
 
 VdcProjectManager::VdcProjectManager()
 {
@@ -62,6 +64,46 @@ bool VdcProjectManager::exportProject(QString fileName, const std::list<double>&
     WRITE_VDC(p2,48000);
 
 #undef WRITE_VDC
+
+    outStream << buffer;
+    caFile.close();
+    return true;
+}
+
+bool VdcProjectManager::exportEapoConfig(QString fileName, const std::list<double>& p1, int sr){
+    if (fileName.isEmpty())
+        return false;
+
+    if(QFileInfo(fileName).suffix() != "txt")
+        fileName.append(".txt");
+
+    QFile caFile(fileName);
+    caFile.open(QIODevice::WriteOnly | QIODevice::Text);
+
+    if(!caFile.isOpen())
+        return false;
+
+    QTextStream outStream(&caFile);
+    QString buffer;
+    std::vector<double> v{ std::begin(p1), std::end(p1) };
+
+    buffer.append(QString("Created by DDCToolbox v%1\n").arg(STRINGIFY(CURRENT_APP_VERSION)));
+    buffer.append(QString("Target sampling rate: %1Hz\n\n").arg(sr));
+
+    uint filterCount = 0;
+    for(size_t i = 0; i < v.size(); i = i + 6){
+        filterCount++;
+
+        buffer += QString("Filter %1: ON IIR Order 2 Coefficients ").arg(filterCount);
+
+        for(size_t j = 0; (j < 6 && v.size() >= i + j); j++){
+            buffer += QString::number(v[i + j], 'f', 16) + " ";
+        }
+
+        buffer += n;
+    }
+
+    qDebug() << buffer;
 
     outStream << buffer;
     caFile.close();

@@ -258,12 +258,12 @@ public:
         return vector;
     }
 
-    std::list<double> exportCoeffs(double dSamplingRate)
+    std::list<double> exportCoeffs(double dSamplingRate, bool noA0Divide = false)
     {
         std::list<double> numArray;
         for (int i = 0; i < m_data.size(); i++)
         {
-            std::list<double> numArray2 = m_data[i]->ExportCoeffs(dSamplingRate);
+            std::list<double> numArray2 = m_data[i]->ExportCoeffs(dSamplingRate, noA0Divide);
             if (numArray2.empty())
             {
                 qWarning() << "Export failed: Biquad::ExportCoeffs returned empty list";
