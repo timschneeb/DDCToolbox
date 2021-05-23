@@ -103,7 +103,87 @@ bool VdcProjectManager::exportEapoConfig(QString fileName, const std::list<doubl
         buffer += n;
     }
 
-    qDebug() << buffer;
+    outStream << buffer;
+    caFile.close();
+    return true;
+}
+
+bool VdcProjectManager::exportCsv(QString fileName, const std::list<double> &p1, CsvExportDialog::Delimiter delimiter,
+                                  CsvExportDialog::Format format, CsvExportDialog::NumericFormat numFormat, bool includeHeader)
+{
+    if (fileName.isEmpty())
+        return false;
+
+    if(QFileInfo(fileName).suffix() != "csv")
+        fileName.append(".csv");
+
+    QFile caFile(fileName);
+    caFile.open(QIODevice::WriteOnly | QIODevice::Text);
+
+    if(!caFile.isOpen())
+        return false;
+
+    QChar delimiterChar;
+    switch(delimiter){
+    case CsvExportDialog::SComma:
+        delimiterChar = ',';
+        break;
+    case CsvExportDialog::SSemicolon:
+        delimiterChar = ';';
+        break;
+    case CsvExportDialog::SSpace:
+        delimiterChar = ' ';
+        break;
+    case CsvExportDialog::STab:
+        delimiterChar = '\t';
+        break;
+    }
+
+    QTextStream outStream(&caFile);
+    QString buffer;
+    std::vector<double> v{ std::begin(p1), std::end(p1) };
+
+    if(includeHeader){
+        switch(format){
+        case CsvExportDialog::F_B0B1B2A0A1A2:
+            buffer.append(QString("b0,b1,b2,a0,a1,a2\n").replace(',', delimiterChar));
+            break;
+        case CsvExportDialog::F_A0A1A2B0B1B2:
+            buffer.append(QString("a0,a1,a2,b0,b1,b2\n").replace(',', delimiterChar));
+            break;
+        }
+    }
+
+    char numType;
+    switch(numFormat){
+    case CsvExportDialog::NFloat:
+        numType = 'f';
+        break;
+    case CsvExportDialog::NScientific:
+        numType = 'e';
+        break;
+    }
+
+    for(size_t i = 0; i < v.size(); i = i + 6){
+        switch(format){
+        case CsvExportDialog::F_B0B1B2A0A1A2:
+            for(size_t j = 0; (j < 6 && v.size() >= i + j); j++){
+                buffer += QString::number(v[i + j], numType, 14) + delimiterChar;
+            }
+            break;
+        case CsvExportDialog::F_A0A1A2B0B1B2:
+            for(size_t j = 3; (j < 6 && v.size() >= i + j); j++){
+                buffer += QString::number(v[i + j], numType, 14) + delimiterChar;
+            }
+            for(size_t j = 0; (j < 3 && v.size() >= i + j); j++){
+                buffer += QString::number(v[i + j], numType, 14) + delimiterChar;
+            }
+            break;
+        }
+
+        buffer.chop(1);
+        buffer += n;
+    }
 
     outStream << buffer;
     caFile.close();

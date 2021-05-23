@@ -51,3 +51,5 @@ HEADERS += \
 
 DISTFILES += \
     $$PWD/../deployment/Info.plist
+
+FORMS +=

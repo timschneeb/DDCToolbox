@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>873</width>
-    <height>856</height>
+    <height>913</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -297,8 +297,14 @@
                  <widget class="QSpinBox" name="iterations">
                   <property name="minimumSize">
                    <size>
-                    <width>90</width>
+                    <width>107</width>
                     <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>107</width>
+                    <height>16777215</height>
                    </size>
                   </property>
                   <property name="maximum">
@@ -353,8 +359,14 @@
                   <widget class="QSpinBox" name="iterations_simplex">
                    <property name="minimumSize">
                     <size>
-                     <width>90</width>
+                     <width>107</width>
                      <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>107</width>
+                     <height>16777215</height>
                     </size>
                    </property>
                    <property name="minimum">
@@ -397,8 +409,14 @@
                  <widget class="QDoubleSpinBox" name="modelComplex">
                   <property name="minimumSize">
                    <size>
-                    <width>90</width>
+                    <width>107</width>
                     <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>107</width>
+                    <height>16777215</height>
                    </size>
                   </property>
                   <property name="suffix">

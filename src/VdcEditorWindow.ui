@@ -120,7 +120,7 @@
      <x>0</x>
      <y>0</y>
      <width>976</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <property name="nativeMenuBar">
@@ -146,6 +146,7 @@
      </property>
      <addaction name="separator"/>
      <addaction name="actionVDC"/>
+     <addaction name="actionCSV_dataset"/>
      <addaction name="actionEqualizerAPO_configuration"/>
     </widget>
     <addaction name="separator"/>
@@ -626,6 +627,11 @@ border: 1px solid rgb(208, 204, 201) </string>
     <string>EqualizerAPO configuration</string>
    </property>
   </action>
+  <action name="actionCSV_dataset">
+   <property name="text">
+    <string>CSV dataset</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -1058,6 +1064,22 @@ border: 1px solid rgb(208, 204, 201) </string>
   </connection>
   <connection>
    <sender>actionEqualizerAPO_configuration</sender>
+   <signal>triggered()</signal>
+   <receiver>VdcEditorWindowHost</receiver>
+   <slot>exportProject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>487</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCSV_dataset</sender>
    <signal>triggered()</signal>
    <receiver>VdcEditorWindowHost</receiver>
    <slot>exportProject()</slot>

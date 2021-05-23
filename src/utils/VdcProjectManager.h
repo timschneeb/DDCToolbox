@@ -6,6 +6,7 @@
 #include <cmath>
 
 #include "model/DeflatedBiquad.h"
+#include "widget/CsvExportDialog.h"
 
 class FilterModel;
 class Biquad;
@@ -30,6 +31,8 @@ public:
     bool saveProject(const QString& fileName);
     bool exportProject(QString fileName, const std::list<double>& p1, const std::list<double>& p2);
     bool exportEapoConfig(QString fileName, const std::list<double> &p1, int sr);
+    bool exportCsv(QString fileName, const std::list<double> &p1, CsvExportDialog::Delimiter delimiter,
+                   CsvExportDialog::Format format, CsvExportDialog::NumericFormat numFormat, bool includeHeader);
     bool loadProject(const QString& fileName);
     void closeProject();
 

@@ -32,6 +32,7 @@ HEADERS += \
     $$PWD/widget/AddPointDialog.h \
     $$PWD/widget/AutoEqSelector.h \
     $$PWD/widget/BwCalculator.h \
+    $$PWD/widget/CsvExportDialog.h \
     $$PWD/widget/CurveFittingDialog.h \
     $$PWD/widget/CurveFittingWorkerDialog.h \
     $$PWD/widget/CustomFilterDialog.h \
@@ -61,6 +62,7 @@ SOURCES += \
     $$PWD/widget/AddPointDialog.cpp \
     $$PWD/widget/AutoEqSelector.cpp \
     $$PWD/widget/BwCalculator.cpp \
+    $$PWD/widget/CsvExportDialog.cpp \
     $$PWD/widget/CurveFittingDialog.cpp \
     $$PWD/widget/CurveFittingWorkerDialog.cpp \
     $$PWD/widget/CustomFilterDialog.cpp \
@@ -79,6 +81,7 @@ FORMS += \
     $$PWD/widget/AddPointDialog.ui \
     $$PWD/widget/AutoEqSelector.ui \
     $$PWD/widget/BwCalculator.ui \
+    $$PWD/widget/CsvExportDialog.ui \
     $$PWD/widget/CurveFittingDialog.ui \
     $$PWD/widget/CurveFittingWorkerDialog.ui \
     $$PWD/widget/CustomFilterDialog.ui \

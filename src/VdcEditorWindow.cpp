@@ -29,6 +29,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+#include <widget/CsvExportDialog.h>
 #include <widget/SamplerateChooseDialog.h>
 
 
@@ -264,10 +265,30 @@ void VdcEditorWindow::exportProject()
 
         std::list<double> p = filterModel->exportCoeffs(srDlg->getResult(), true);
 
+#ifdef Q_OS_WINDOWS
+        QString dir = "C:\\Program Files\\EqualizerAPO\\config";
+#else
+        QString dir = "";
+#endif
+
         QString fileName = QFileDialog::getSaveFileName(this,
-                                                        tr("Save EqualizerAPO config"), "C:\\Program Files\\EqualizerAPO\\config", tr("Equalizer APO config file (*.txt)"));
+                                                        tr("Save EqualizerAPO config"), dir, tr("Equalizer APO config file (*.txt)"));
         VdcProjectManager::instance().exportEapoConfig(fileName, p, srDlg->getResult());
         srDlg->deleteLater();
+    }
+    else if(sender() == ui->actionCSV_dataset)
+    {
+        auto dlg = new CsvExportDialog(this);
+        if(!dlg->exec()){
+            return;
+        }
+
+        std::list<double> p = filterModel->exportCoeffs(dlg->samplerate(), true);
+
+        QString fileName = QFileDialog::getSaveFileName(this,
+                                                        tr("Save CSV dataset"), "", tr("CSV dataset (*.csv)"));
+        VdcProjectManager::instance().exportCsv(fileName, p, dlg->delimiter(), dlg->format(), dlg->numFormat(), dlg->includeHeader());
+        dlg->deleteLater();
     }
 
 }
