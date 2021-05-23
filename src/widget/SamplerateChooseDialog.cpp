@@ -1,5 +1,5 @@
-#include "sampleratechoosedialog.h"
-#include "ui_sampleratechoosedialog.h"
+#include "SamplerateChooseDialog.h"
+#include "ui_SamplerateChooseDialog.h"
 
 SamplerateChooseDialog::SamplerateChooseDialog(QWidget *parent) :
     QDialog(parent),
