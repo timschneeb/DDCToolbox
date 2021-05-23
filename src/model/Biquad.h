@@ -180,14 +180,28 @@ public:
     /* This section defines several comparators for use with a sorting algorithm */
     static bool compareFrequency(Biquad* s1, Biquad* s2)
     {
+        if(!s1->GetFilterType().getSpecs().test(FilterType::SPEC_REQUIRE_FREQ))
+            return false;
+        else if(!s2->GetFilterType().getSpecs().test(FilterType::SPEC_REQUIRE_FREQ))
+            return true;
         return s1->GetFrequency() < s2->GetFrequency();
     }
     static bool compareBwOrSlope(Biquad* s1, Biquad* s2)
     {
+        if(!s1->GetFilterType().getSpecs().test(FilterType::SPEC_REQUIRE_BW) &&
+           !s1->GetFilterType().getSpecs().test(FilterType::SPEC_REQUIRE_SLOPE))
+            return false;
+        else if(!s2->GetFilterType().getSpecs().test(FilterType::SPEC_REQUIRE_BW) &&
+           !s2->GetFilterType().getSpecs().test(FilterType::SPEC_REQUIRE_SLOPE))
+            return true;
         return s1->GetBandwithOrSlope() < s2->GetBandwithOrSlope();
     }
     static bool compareGain(Biquad* s1, Biquad* s2)
     {
+        if(!s1->GetFilterType().getSpecs().test(FilterType::SPEC_REQUIRE_GAIN))
+            return false;
+        else if(!s2->GetFilterType().getSpecs().test(FilterType::SPEC_REQUIRE_GAIN))
+            return true;
         return s1->GetGain() < s2->GetGain();
     }
     static bool compareType(Biquad* s1, Biquad* s2)
