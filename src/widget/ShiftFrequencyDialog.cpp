@@ -8,7 +8,6 @@ ShiftFrequencyDialog::ShiftFrequencyDialog(FilterModel* model, QWidget *parent) 
     QDialog(parent), ui(new Ui::shiftfreq), model(model)
 {
     ui->setupUi(this);
-    ui->warning->setVisible(false);
 }
 
 ShiftFrequencyDialog::~ShiftFrequencyDialog()
@@ -20,28 +19,15 @@ int ShiftFrequencyDialog::getResult(){
     return ui->shift->value();
 }
 
-void ShiftFrequencyDialog::validate(){
-    int fail = 0;
-
-    for (const auto& biquad : model->getFilterBank())
-    {
-        int result = biquad->GetFrequency() + ui->shift->value();
-
-        if(result < 1 || result > 24000)
-            fail++;
-    }
-
-    ui->warning->setVisible(fail > 0);
-}
-
 void ShiftFrequencyDialog::confirm(){
     for (const auto& biquad : model->getFilterBank())
     {
         int result = biquad->GetFrequency() + ui->shift->value();
 
         if(result < 1 || result > 24000){
-            ui->warning->setVisible(true);
-            QMessageBox::warning(this,tr("Shift frequencies"),tr("Invalid number"));
+            QMessageBox::warning(this,tr("Shift frequencies"),
+                                 tr("Some frequency values are shifted out of range. "
+                                    "Please choose a smaller factor."));
             return;
          }
         else accept();

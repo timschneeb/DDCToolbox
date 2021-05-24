@@ -19,7 +19,6 @@ public:
     int getResult();
 
 private slots:
-    void validate();
     void confirm();
 
 private:

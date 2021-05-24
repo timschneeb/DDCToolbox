@@ -120,7 +120,7 @@
      <x>0</x>
      <y>0</y>
      <width>976</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <property name="nativeMenuBar">
@@ -394,10 +394,10 @@ border: 1px solid rgb(208, 204, 201) </string>
   </widget>
   <action name="actionAdd_Point">
    <property name="text">
-    <string>Add point</string>
+    <string>Add filter</string>
    </property>
    <property name="toolTip">
-    <string>Add point</string>
+    <string>Add filter</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>

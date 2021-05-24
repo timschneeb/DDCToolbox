@@ -30,7 +30,7 @@
 #include <QMessageBox>
 
 #include <widget/CsvExportDialog.h>
-#include <widget/SamplerateChooseDialog.h>
+#include <widget/EapoExportDialog.h>
 
 
 VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
@@ -258,7 +258,7 @@ void VdcEditorWindow::exportProject()
     }
     else if(sender() == ui->actionEqualizerAPO_configuration)
     {
-        auto srDlg = new SamplerateChooseDialog(this);
+        auto srDlg = new EapoExportDialog(this);
         if(!srDlg->exec()){
             return;
         }

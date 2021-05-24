@@ -36,13 +36,13 @@ HEADERS += \
     $$PWD/widget/CurveFittingDialog.h \
     $$PWD/widget/CurveFittingWorkerDialog.h \
     $$PWD/widget/CustomFilterDialog.h \
+    $$PWD/widget/EapoExportDialog.h \
     $$PWD/widget/Expander.h \
     $$PWD/widget/HtmlPopup.h \
     $$PWD/widget/ModalOverlayMsgProxy.h \
     $$PWD/widget/ProxyStyle.h \
     $$PWD/widget/QMessageOverlay.h \
     $$PWD/widget/QTintableProgressBar.h \
-    $$PWD/widget/SamplerateChooseDialog.h \
     $$PWD/widget/ShiftFrequencyDialog.h \
     $$PWD/widget/StabilityReport.h
 
@@ -66,11 +66,11 @@ SOURCES += \
     $$PWD/widget/CurveFittingDialog.cpp \
     $$PWD/widget/CurveFittingWorkerDialog.cpp \
     $$PWD/widget/CustomFilterDialog.cpp \
+    $$PWD/widget/EapoExportDialog.cpp \
     $$PWD/widget/Expander.cpp \
     $$PWD/widget/HtmlPopup.cpp \
     $$PWD/widget/ModalOverlayMsgProxy.cpp \
     $$PWD/widget/QMessageOverlay.cpp \
-    $$PWD/widget/SamplerateChooseDialog.cpp \
     $$PWD/widget/ShiftFrequencyDialog.cpp \
     $$PWD/widget/StabilityReport.cpp
 
@@ -85,7 +85,7 @@ FORMS += \
     $$PWD/widget/CurveFittingDialog.ui \
     $$PWD/widget/CurveFittingWorkerDialog.ui \
     $$PWD/widget/CustomFilterDialog.ui \
-    $$PWD/widget/SamplerateChooseDialog.ui \
+    $$PWD/widget/EapoExportDialog.ui \
     $$PWD/widget/ShiftFrequencyDialog.ui \
     $$PWD/widget/StabilityReport.ui \
     $$PWD/widget/TextPopup.ui
