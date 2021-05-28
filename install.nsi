@@ -97,13 +97,9 @@ LangString stopMsg ${LANG_ENGLISH} "Stopping ${WND_TITLE} Application"
 	SendMessage $0 ${WM_CLOSE} 0 0 /TIMEOUT=${TO_MS}
 	System::Call 'kernel32.dll::WaitForSingleObject(i r2, i ${TO_MS}) i .r1'
 	IntCmp $1 0 close
-	MessageBox MB_YESNOCANCEL|MB_ICONEXCLAMATION "$(termMsg)" /SD IDYES IDYES terminate IDNO close
-	System::Call 'kernel32.dll::CloseHandle(i r2) i .r1'
-	Quit
-  terminate:
 	System::Call 'kernel32.dll::TerminateProcess(i r2, i 0) i .r1'
-	FindProcDLL::WaitProcEnd "DDCToolbox.exe" 1000
-	Sleep 250
+	FindProcDLL::WaitProcEnd "DDCToolbox.exe" 500
+	Sleep 150
   close:
 	System::Call 'kernel32.dll::CloseHandle(i r2) i .r1'
   done:
