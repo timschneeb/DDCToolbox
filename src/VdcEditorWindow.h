@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QSessionManager>
 
 #include "utils/VdcProjectManager.h"
 
@@ -31,10 +32,9 @@ public:
 
     void setOrientation(Qt::Orientation orientation);
 
-public slots:
-    void announceGracefulShutdown();
-
 private slots:
+    void commitData(QSessionManager& manager);
+
     void saveProject();
     void loadProject();
     void closeProject();
@@ -63,8 +63,7 @@ private slots:
     void drawPlots(){ updatePlots(false); }; /* <- required for signal system */
     void setDebugMode(bool state);
 
-    void createActionsAndConnections();
-    void createMenus();
+    void createRecentFileActions();
     void adjustForCurrentFile(const QString &filePath);
     void updateRecentActionList();
 
@@ -87,7 +86,6 @@ private:
     QUndoView      *undoView;
     BwCalculator   *bwCalc;
     bool markerPointsVisible = false;
-    bool suppressCloseConfirmation = false;
 
     void preparePlots();
 };

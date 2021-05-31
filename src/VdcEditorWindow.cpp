@@ -101,8 +101,7 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     ui->actionEnable_table_debug_mode->setVisible(false);
 #endif
 
-    createActionsAndConnections();
-    createMenus();
+    createRecentFileActions();
 
     // Setup update notify bar
     ui->updateBar->setVisible(false);
@@ -148,12 +147,16 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     connect(changelogButton, &QAbstractButton::clicked, swUpdater, &SoftwareUpdateManager::userRequestedChangelog);
     connect(installButton, &QAbstractButton::clicked, swUpdater, &SoftwareUpdateManager::userRequestedInstall);
 
-    connect(swUpdater, &SoftwareUpdateManager::requestGracefulShutdown, this, &VdcEditorWindow::announceGracefulShutdown);
+    connect(swUpdater, &SoftwareUpdateManager::requestGracefulShutdown, this, &VdcEditorWindow::close);
     connect(swUpdater, &SoftwareUpdateManager::updateAvailable, [this]{ ui->updateBar->setVisible(true); });
     swUpdater->silentCheckDeferred(1000);
 #else
     ui->actionCheck_for_updates->setVisible(false);
 #endif
+
+    // OS session management
+    connect(qApp, &QGuiApplication::commitDataRequest,
+                this, &VdcEditorWindow::commitData);
 
 }
 
@@ -162,7 +165,7 @@ VdcEditorWindow::~VdcEditorWindow()
     delete ui;
 }
 
-void VdcEditorWindow::createActionsAndConnections()
+void VdcEditorWindow::createRecentFileActions()
 {
     QAction* recentFileAction = 0;
     for(auto i = 0; i < maxFileNr; ++i){
@@ -181,9 +184,7 @@ void VdcEditorWindow::createActionsAndConnections()
         });
         recentFileActionList.append(recentFileAction);
     }
-}
 
-void VdcEditorWindow::createMenus(){
     recentFilesMenu = new QMenu(tr("Recent projects..."));
 
     /* Workaround to insert the action *above* the seperator instead of below */
@@ -211,7 +212,6 @@ void VdcEditorWindow::adjustForCurrentFile(const QString &filePath){
         recentFilePaths.removeLast();
     settings.setValue("recentFiles", recentFilePaths);
 
-    // see note
     updateRecentActionList();
 }
 
@@ -241,7 +241,7 @@ void VdcEditorWindow::updateRecentActionList(){
 
 void VdcEditorWindow::closeEvent(QCloseEvent *ev)
 {
-    if(!suppressCloseConfirmation && VdcProjectManager::instance().hasUnsavedChanges() && filterModel->rowCount() > 0){
+    if(VdcProjectManager::instance().hasUnsavedChanges() && filterModel->rowCount() > 0){
         int ret = QMessageBox::warning(
                     this,
                     tr("DDCToolbox"),
@@ -268,10 +268,42 @@ void VdcEditorWindow::setOrientation(Qt::Orientation orientation){
     ui->splitter->setOrientation(orientation);
 }
 
-void VdcEditorWindow::announceGracefulShutdown()
+void VdcEditorWindow::commitData(QSessionManager& manager)
 {
-    // Disable exit-confirmations to enable an external controlled graceful exit without interruptions
-    suppressCloseConfirmation = true;
+    if (VdcProjectManager::instance().hasUnsavedChanges() &&
+        filterModel->rowCount() > 0)
+    {
+        if(manager.allowsInteraction()){
+            int ret = QMessageBox::warning(
+                        this,
+                        tr("DDCToolbox"),
+                        tr("The document has been modified and your operating system has sent a shutdown request.\n"
+                           "Do you want to save your changes?"),
+                        QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+
+            switch (ret) {
+            case QMessageBox::Save:
+                saveProject();
+                manager.release();
+                break;
+            case QMessageBox::Discard:
+                break;
+            case QMessageBox::Cancel:
+            default:
+                manager.cancel();
+                return;
+            }
+        }
+        else
+        {
+            // No interaction allowed. Attempt to save project.
+            QString path = VdcProjectManager::instance().currentProject();
+            if (path.isEmpty())
+                return;
+
+            VdcProjectManager::instance().saveProject(path);
+        }
+    }
 }
 
 void VdcEditorWindow::saveProject()
