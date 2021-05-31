@@ -74,6 +74,7 @@ void CurveFittingWorkerDialog::workerFinished()
     thread.wait(500);
 
     QGuiApplication::restoreOverrideCursor();
+    QApplication::alert(this->parentWidget()->parentWidget());
 
     ui->progressBar->setRange(0,100);
     ui->progressBar->setValue(100);
