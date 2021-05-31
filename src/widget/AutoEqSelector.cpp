@@ -73,6 +73,8 @@ void AutoEQSelector::updateDetails(){
     ui->title->setText(result.getModel());
     ui->group->setText(result.getGroup());
 
+    QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
     waitScreen = new ModalOverlayMsgProxy(this);
     waitScreen->openBase("Please wait...","Fetching headphone details from GitHub");
 
@@ -89,12 +91,28 @@ void AutoEQSelector::updateDetails(){
                                                          Qt::TransformationMode::SmoothTransformation));
     ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setEnabled(true);
 
+    QGuiApplication::restoreOverrideCursor();
+
     waitScreen->hide();
 }
 
 void AutoEQSelector::doQuery(){
     ui->listWidget->setEnabled(false);
     ui->search->setEnabled(false);
+
+    if(ui->searchInput->text().count() < 3){
+        ui->listWidget->clear();
+        DetailListItem *item = new DetailListItem(ui->listWidget);
+        item->setData("Query too short","Please enter at least three characters into the search box");
+        ui->listWidget->addItem(new QListWidgetItem());
+        ui->listWidget->setItemWidget(ui->listWidget->item(ui->listWidget->count()-1),item);
+
+        ui->listWidget->setEnabled(true);
+        ui->search->setEnabled(true);
+        return;
+    }
+
+    QGuiApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
     ui->listWidget->clear();
     DetailListItem *item = new DetailListItem();
@@ -107,6 +125,8 @@ void AutoEQSelector::doQuery(){
     ui->listWidget->clear();
     for(const auto& res : qAsConst(ress))
         appendToList(res);
+
+    QGuiApplication::restoreOverrideCursor();
 
     ui->listWidget->setEnabled(true);
     ui->search->setEnabled(true);

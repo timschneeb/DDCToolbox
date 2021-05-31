@@ -43,6 +43,9 @@ CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _o
 
     QTimer::singleShot(400, [this]{
         ui->progressText->setText("Calculating...");
+
+        QGuiApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+
         emit beginWork();
     });
 
@@ -58,12 +61,19 @@ CurveFittingWorkerDialog::~CurveFittingWorkerDialog()
 void CurveFittingWorkerDialog::reject()
 {
     thread.terminate();
+    thread.wait(500);
+
     QDialog::reject();
+
+    QGuiApplication::restoreOverrideCursor();
 }
 
 void CurveFittingWorkerDialog::workerFinished()
 {
     thread.terminate();
+    thread.wait(500);
+
+    QGuiApplication::restoreOverrideCursor();
 
     ui->progressBar->setRange(0,100);
     ui->progressBar->setValue(100);
