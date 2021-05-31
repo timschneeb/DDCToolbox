@@ -25,7 +25,6 @@
         <file>img/icon.icns</file>
         <file>img/clear_recents.svg</file>
         <file>img/recents.svg</file>
-        <file>img/close_project.svg</file>
         <file>img/close.svg</file>
     </qresource>
 </RCC>
