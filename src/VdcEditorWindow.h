@@ -63,6 +63,11 @@ private slots:
     void drawPlots(){ updatePlots(false); }; /* <- required for signal system */
     void setDebugMode(bool state);
 
+    void createActionsAndConnections();
+    void createMenus();
+    void adjustForCurrentFile(const QString &filePath);
+    void updateRecentActionList();
+
 protected:
     void closeEvent(QCloseEvent* ev) override;
 
@@ -72,6 +77,10 @@ private:
 #ifdef Q_OS_WIN
     SoftwareUpdateManager *swUpdater;
 #endif
+
+    QMenu          *recentFilesMenu;
+    QList<QAction*> recentFileActionList;
+    const int       maxFileNr = 5;
 
     FilterModel    *filterModel;
     QUndoStack     *undoStack;

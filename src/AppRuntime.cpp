@@ -13,6 +13,7 @@ AppRuntime::AppRuntime(int& argc, char**argv): QApplication(argc, argv)
 
     this->setApplicationVersion(STRINGIFY(CURRENT_APP_VERSION));
     this->setApplicationName("DDCToolbox");
+    this->setOrganizationName("Tim Schneeberger");
 
     this->setStyle(new ProxyStyle("Fusion"));
     this->setPalette(this->style()->standardPalette());

@@ -126,41 +126,6 @@
    <property name="nativeMenuBar">
     <bool>true</bool>
    </property>
-   <widget class="QMenu" name="menuProject">
-    <property name="tearOffEnabled">
-     <bool>false</bool>
-    </property>
-    <property name="title">
-     <string>Project</string>
-    </property>
-    <widget class="QMenu" name="menuImport">
-     <property name="title">
-      <string>Import</string>
-     </property>
-     <addaction name="actionAutoEQ_ParametricEQ_txt"/>
-     <addaction name="actionimportVDC_file"/>
-    </widget>
-    <widget class="QMenu" name="menuExport">
-     <property name="title">
-      <string>Export</string>
-     </property>
-     <addaction name="separator"/>
-     <addaction name="actionVDC"/>
-     <addaction name="actionCSV_dataset"/>
-     <addaction name="actionEqualizerAPO_configuration"/>
-    </widget>
-    <addaction name="separator"/>
-    <addaction name="actionOpen"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionSaveAs"/>
-    <addaction name="actionClose_Project"/>
-    <addaction name="separator"/>
-    <addaction name="actionDownload_from_AutoEQ"/>
-    <addaction name="actionCurve_fitting"/>
-    <addaction name="separator"/>
-    <addaction name="menuImport"/>
-    <addaction name="menuExport"/>
-   </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
@@ -222,6 +187,41 @@
     </property>
     <addaction name="actionInvert_gain_2"/>
     <addaction name="actionShift_frequency"/>
+   </widget>
+   <widget class="QMenu" name="menuProject">
+    <property name="tearOffEnabled">
+     <bool>false</bool>
+    </property>
+    <property name="title">
+     <string>Project</string>
+    </property>
+    <widget class="QMenu" name="menuImport">
+     <property name="title">
+      <string>Import</string>
+     </property>
+     <addaction name="actionAutoEQ_ParametricEQ_txt"/>
+     <addaction name="actionimportVDC_file"/>
+    </widget>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export</string>
+     </property>
+     <addaction name="separator"/>
+     <addaction name="actionVDC"/>
+     <addaction name="actionCSV_dataset"/>
+     <addaction name="actionEqualizerAPO_configuration"/>
+    </widget>
+    <addaction name="separator"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSaveAs"/>
+    <addaction name="actionClose_Project"/>
+    <addaction name="separator"/>
+    <addaction name="actionDownload_from_AutoEQ"/>
+    <addaction name="actionCurve_fitting"/>
+    <addaction name="separator"/>
+    <addaction name="menuImport"/>
+    <addaction name="menuExport"/>
    </widget>
    <addaction name="menuProject"/>
    <addaction name="menuEdit"/>

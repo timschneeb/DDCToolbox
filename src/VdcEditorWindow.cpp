@@ -101,6 +101,9 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     ui->actionEnable_table_debug_mode->setVisible(false);
 #endif
 
+    createActionsAndConnections();
+    createMenus();
+
     // Setup update notify bar
     ui->updateBar->setVisible(false);
 #ifdef Q_OS_WINDOWS
@@ -159,6 +162,83 @@ VdcEditorWindow::~VdcEditorWindow()
     delete ui;
 }
 
+void VdcEditorWindow::createActionsAndConnections()
+{
+    QAction* recentFileAction = 0;
+    for(auto i = 0; i < maxFileNr; ++i){
+        recentFileAction = new QAction(this);
+        recentFileAction->setVisible(false);
+        QObject::connect(recentFileAction, &QAction::triggered,
+                         this, [this]{
+            QAction *action = qobject_cast<QAction *>(sender());
+            if (action){
+                VdcProjectManager::instance().closeProject();
+                bool success = VdcProjectManager::instance().loadProject(action->data().toString());
+
+                if(!success)
+                    QMessageBox::critical(this, "Error", "No valid data found");
+            }
+        });
+        recentFileActionList.append(recentFileAction);
+    }
+}
+
+void VdcEditorWindow::createMenus(){
+    recentFilesMenu = new QMenu(tr("Recent projects..."));
+
+    /* Workaround to insert the action *above* the seperator instead of below */
+    for(int i = 0; i < ui->menuProject->actions().count() - 1 /* <- prevent overflow */; i++){
+        auto c = ui->menuProject->actions().at(i);
+        auto n = ui->menuProject->actions().at(i + 1);
+
+        if(c == ui->actionClose_Project)
+            ui->menuProject->insertMenu(n, recentFilesMenu);
+    }
+
+    for(auto i = 0; i < maxFileNr; ++i)
+        recentFilesMenu->addAction(recentFileActionList.at(i));
+
+    updateRecentActionList();
+}
+
+void VdcEditorWindow::adjustForCurrentFile(const QString &filePath){
+    QSettings settings;
+    QStringList recentFilePaths =
+            settings.value("recentFiles").toStringList();
+    recentFilePaths.removeAll(filePath);
+    recentFilePaths.prepend(filePath);
+    while (recentFilePaths.size() > maxFileNr)
+        recentFilePaths.removeLast();
+    settings.setValue("recentFiles", recentFilePaths);
+
+    // see note
+    updateRecentActionList();
+}
+
+void VdcEditorWindow::updateRecentActionList(){
+    QSettings settings;
+    QStringList recentFilePaths =
+            settings.value("recentFiles").toStringList();
+
+    auto itEnd = 0;
+    if(recentFilePaths.size() <= maxFileNr)
+        itEnd = recentFilePaths.size();
+    else
+        itEnd = maxFileNr;
+
+    for (auto i = 0; i < itEnd; ++i) {
+        QString strippedName = QFileInfo(recentFilePaths.at(i)).fileName();
+        recentFileActionList.at(i)->setText(strippedName);
+        recentFileActionList.at(i)->setData(recentFilePaths.at(i));
+        recentFileActionList.at(i)->setVisible(true);
+    }
+
+    recentFilesMenu->setEnabled(itEnd > 0);
+
+    for (auto i = itEnd; i < maxFileNr; ++i)
+        recentFileActionList.at(i)->setVisible(false);
+}
+
 void VdcEditorWindow::closeEvent(QCloseEvent *ev)
 {
     if(!suppressCloseConfirmation && VdcProjectManager::instance().hasUnsavedChanges() && filterModel->rowCount() > 0){
@@ -206,6 +286,7 @@ void VdcEditorWindow::saveProject()
         return;
 
     VdcProjectManager::instance().saveProject(path);
+    adjustForCurrentFile(path);
 }
 
 void VdcEditorWindow::loadProject()
@@ -220,6 +301,8 @@ void VdcEditorWindow::loadProject()
 
     if(!success)
         QMessageBox::critical(this, "Error", "No valid data found");
+
+    adjustForCurrentFile(file);
 }
 
 void VdcEditorWindow::closeProject(){
