@@ -211,11 +211,24 @@
      <addaction name="actionCSV_dataset"/>
      <addaction name="actionEqualizerAPO_configuration"/>
     </widget>
+    <widget class="QMenu" name="menuRecents_projects">
+     <property name="tearOffEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>Recent projects...</string>
+     </property>
+     <property name="separatorsCollapsible">
+      <bool>false</bool>
+     </property>
+     <addaction name="separator"/>
+    </widget>
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
     <addaction name="actionClose_Project"/>
+    <addaction name="menuRecents_projects"/>
     <addaction name="separator"/>
     <addaction name="actionDownload_from_AutoEQ"/>
     <addaction name="actionCurve_fitting"/>
@@ -500,7 +513,7 @@ border: 1px solid rgb(208, 204, 201) </string>
     <string>Close project</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+X</string>
+    <string>Ctrl+W</string>
    </property>
   </action>
   <action name="actionBatchAutoEq">

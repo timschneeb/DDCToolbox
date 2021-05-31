@@ -8,7 +8,6 @@
         <file>img/icon.ico</file>
         <file>img/warning.svg</file>
         <file>img/critical.svg</file>
-        <file>img/close.svg</file>
         <file>img/open.svg</file>
         <file>img/redo.svg</file>
         <file>img/save.svg</file>
@@ -24,5 +23,9 @@
         <file>img/curve_fitting.svg</file>
         <file>img/success.svg</file>
         <file>img/icon.icns</file>
+        <file>img/clear_recents.svg</file>
+        <file>img/recents.svg</file>
+        <file>img/close_project.svg</file>
+        <file>img/close.svg</file>
     </qresource>
 </RCC>

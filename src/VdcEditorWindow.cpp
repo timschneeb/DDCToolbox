@@ -185,19 +185,19 @@ void VdcEditorWindow::createRecentFileActions()
         recentFileActionList.append(recentFileAction);
     }
 
-    recentFilesMenu = new QMenu(tr("Recent projects..."));
-
-    /* Workaround to insert the action *above* the seperator instead of below */
-    for(int i = 0; i < ui->menuProject->actions().count() - 1 /* <- prevent overflow */; i++){
-        auto c = ui->menuProject->actions().at(i);
-        auto n = ui->menuProject->actions().at(i + 1);
-
-        if(c == ui->actionClose_Project)
-            ui->menuProject->insertMenu(n, recentFilesMenu);
-    }
+    ui->menuRecents_projects->setIcon(QIcon(QPixmap(":/img/recents.svg")));
 
     for(auto i = 0; i < maxFileNr; ++i)
-        recentFilesMenu->addAction(recentFileActionList.at(i));
+        ui->menuRecents_projects->addAction(recentFileActionList.at(i));
+
+    ui->menuRecents_projects->addSeparator();
+    auto clearAct = new QAction(QIcon(QPixmap(":/img/clear_recents.svg")), "Clear recent projects");
+    connect(clearAct, &QAction::triggered, this, [this]{
+        QSettings settings;
+        settings.remove("recentFiles");
+        updateRecentActionList();
+    });
+    ui->menuRecents_projects->addAction(clearAct);
 
     updateRecentActionList();
 }
@@ -233,7 +233,7 @@ void VdcEditorWindow::updateRecentActionList(){
         recentFileActionList.at(i)->setVisible(true);
     }
 
-    recentFilesMenu->setEnabled(itEnd > 0);
+    ui->menuRecents_projects->setEnabled(itEnd > 0);
 
     for (auto i = itEnd; i < maxFileNr; ++i)
         recentFileActionList.at(i)->setVisible(false);

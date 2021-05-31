@@ -77,7 +77,6 @@ private:
     SoftwareUpdateManager *swUpdater;
 #endif
 
-    QMenu          *recentFilesMenu;
     QList<QAction*> recentFileActionList;
     const int       maxFileNr = 5;
 
