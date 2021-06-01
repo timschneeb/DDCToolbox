@@ -9,41 +9,65 @@ class ShiftCommand : public QUndoCommand
 {
 public:
     ShiftCommand(FilterModel* model, QModelIndexList indices, int shiftAmount, QUndoCommand *parent = 0)
-        : QUndoCommand(parent), model(model), indices(indices), shiftAmount(shiftAmount)
+        : QUndoCommand(parent), model(model), shiftAmount(shiftAmount)
     {
+        for (int i = 0; i < indices.count(); i++)
+        {
+            cache.append(model->getFilter(indices.at(i).row())->GetId());
+        }
+
         setText(createCommandString());
     }
 
     void undo()
     {
-        for (int i = 0; i < indices.count(); i++)
+        QModelIndexList indices;
+        for (int i = 0; i < cache.count(); i++)
         {
-            auto filter = DeflatedBiquad(model->getFilter(indices.at(i).row()));
+            auto ref = model->getFilterById(cache.at(i));
+            if(ref == nullptr){
+                qWarning() << "ShiftCommand::undo: getFilterById(" << cache.at(i)
+                           << ") returned nullptr";
+                continue;
+            }
+
+            auto filter = DeflatedBiquad(ref);
             filter.freq = filter.freq - shiftAmount;
-            model->replace(indices.at(i), filter, true);
+            indices.append(model->replaceById(cache.at(i), filter, true));
         }
-        model->emit dataChanged(indices.at(0), indices.at(indices.count() - 1));
+        qSort(indices.begin(), indices.end(), qGreater<QModelIndex>());
+
+        emit model->dataChanged(indices.first(), indices.last().siblingAtColumn(3));
     }
     void redo()
     {
-        for (int i = 0; i < indices.count(); i++)
+        QModelIndexList indices;
+        for (int i = 0; i < cache.count(); i++)
         {
-            auto filter = DeflatedBiquad(model->getFilter(indices.at(i).row()));
-            filter.freq = filter.freq + shiftAmount;
-            model->replace(indices.at(i), filter, true);
-        }
+            auto ref = model->getFilterById(cache.at(i));
+            if(ref == nullptr){
+                qWarning() << "ShiftCommand::undo: getFilterById(" << cache.at(i)
+                           << ") returned nullptr";
+                continue;
+            }
 
-        model->emit dataChanged(indices.at(0), indices.at(indices.count() - 1));
+            auto filter = DeflatedBiquad(ref);
+            filter.freq = filter.freq + shiftAmount;
+            indices.append(model->replaceById(cache.at(i), filter, true));
+        }
+        qSort(indices.begin(), indices.end(), qGreater<QModelIndex>());
+
+        emit model->dataChanged(indices.first(), indices.last().siblingAtColumn(3));
     }
 
     QString createCommandString(){
-        return QObject::tr("\"Shift frequencies (selection)\"");
+        return QObject::tr("\"Shift frequencies of selection\"");
     }
 
 
 private:
     FilterModel* model;
-    QModelIndexList indices;
+    QVector<uint> cache;
     int shiftAmount;
 };
 

@@ -17,12 +17,12 @@ public:
 
     void undo()
     {
-        model->replace(index, previous);
+        model->replaceById(current.id, previous);
     }
 
     void redo()
     {
-        model->replace(index, current);
+        model->replaceById(previous.id, current);
     }
 
     QString createCommandString(){

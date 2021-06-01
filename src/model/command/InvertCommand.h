@@ -10,8 +10,13 @@ class InvertCommand : public QUndoCommand
 {
 public:
     InvertCommand(FilterModel* model, QModelIndexList indices, QUndoCommand *parent = 0)
-        : QUndoCommand(parent), model(model), indices(indices)
+        : QUndoCommand(parent), model(model)
     {
+        for (int i = 0; i < indices.count(); i++)
+        {
+            cache.append(model->getFilter(indices.at(i).row())->GetId());
+        }
+
         setText(createCommandString());
     }
 
@@ -26,13 +31,23 @@ public:
     }
 
     void invert(){
-        for (int i = 0; i < indices.count(); i++)
+        QModelIndexList indices;
+        for (int i = 0; i < cache.count(); i++)
         {
-            auto filter = DeflatedBiquad(model->getFilter(indices.at(i).row()));
+            auto ref = model->getFilterById(cache.at(i));
+            if(ref == nullptr){
+                qWarning() << "InvertCommand::invert: getFilterById(" << cache.at(i)
+                           << ") returned nullptr";
+                continue;
+            }
+
+            auto filter = DeflatedBiquad(ref);
             filter.gain = -filter.gain;
-            model->replace(indices.at(i), filter, true);
+            indices.append(model->replaceById(cache.at(i), filter, true));
         }
-        model->emit dataChanged(indices.at(0), indices.at(indices.count() - 1));
+        qSort(indices.begin(), indices.end(), qGreater<QModelIndex>());
+
+        emit model->dataChanged(indices.first(), indices.last().siblingAtColumn(3));
     }
 
     QString createCommandString(){
@@ -41,7 +56,7 @@ public:
 
 private:
     FilterModel* model;
-    QModelIndexList indices;
+    QVector<uint> cache;
 };
 
 #endif // INVERTCOMMAND_H

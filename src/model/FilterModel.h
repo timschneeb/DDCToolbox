@@ -89,6 +89,16 @@ public:
         return m_data[row];
     }
 
+    Biquad* getFilterById(uint id){
+        for(int i = 0; i < m_data.length(); i++){
+            if(m_data[i]->GetId() == id){
+               return m_data[i];
+            }
+        }
+
+        return nullptr;
+    }
+
     const QVector<Biquad*>& getFilterBank() const {
         return m_data;
     }
@@ -198,9 +208,33 @@ public:
             m_data[index.row()]->RefreshFilter(current.type, current.gain, current.freq, current.bwOrSlope);
 
         if(!stealth)
-            emit dataChanged(index, index);
+            emit dataChanged(index, index.siblingAtColumn(3));
     }
 
+    QModelIndex replaceById(uint id, DeflatedBiquad current, bool stealth = false)
+    {
+        QModelIndex index;
+        for(int i = 0; i < m_data.length(); i++){
+            if(m_data[i]->GetId() == id){
+                index = this->index(i, 0);
+            }
+        }
+
+        if(!index.isValid()){
+            qWarning() << "FilterModel::replaceById: Index of filter id" << id << "not found";
+            return index;
+        }
+
+        if(current.type == FilterType::CUSTOM)
+            m_data[index.row()]->RefreshFilter(current.type, current.c441, current.c48);
+        else
+            m_data[index.row()]->RefreshFilter(current.type, current.gain, current.freq, current.bwOrSlope);
+
+        if(!stealth)
+            emit dataChanged(index, index.siblingAtColumn(3));
+
+        return index;
+    }
 
     QVector<float> getMagnitudeResponseTable(int nBandCount, double dSRate)
     {

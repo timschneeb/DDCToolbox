@@ -75,15 +75,19 @@ bool FilterModel::setData(const QModelIndex &index, const QVariant &value, int r
 }
 
 QVariant FilterModel::data(const QModelIndex &index, int role) const {
-    if (role != Qt::DisplayRole && role != Qt::EditRole) return {};
-    const auto & filter = m_data[index.row()];
-    switch (index.column()) {
-    case Type: return filter->GetFilterType().operator QString();
-    case Freq: return filter->GetFrequency();
-    case Bw:   return filter->GetBandwithOrSlope();
-    case Gain: return filter->GetGain();
-    default: return {};
-    };
+    if (role == Qt::DisplayRole || role == Qt::EditRole)
+    {
+        const auto & filter = m_data[index.row()];
+        switch (index.column()) {
+        case Type: return filter->GetFilterType().operator QString();
+        case Freq: return filter->GetFrequency();
+        case Bw:   return filter->GetBandwithOrSlope();
+        case Gain: return filter->GetGain();
+        default: return {};
+        };
+    }
+
+    return {};
 }
 
 bool FilterModel::getDebugMode() const
