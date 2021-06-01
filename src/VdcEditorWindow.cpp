@@ -40,6 +40,8 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
 {
     Q_INIT_RESOURCE(ddceditor_resources);
 
+    QSettings settings;
+
     ui->setupUi(this);
     undoStack->setUndoLimit(100);
     undoView->setVisible(false);
@@ -56,6 +58,58 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     DECL_UNDO_ACTION(Redo);
 #undef DECL_UNDO_ACTION
 
+#ifndef QT_DEBUG
+    ui->actionEnable_table_debug_mode->setVisible(false);
+#endif
+
+    createFilterModel();
+    createPlotLayout();
+    createRecentFileActions();
+    createUpdater();
+
+    connect(&VdcProjectManager::instance(), &VdcProjectManager::projectClosed, undoStack, &QUndoStack::clear);
+    connect(&VdcProjectManager::instance(), &VdcProjectManager::projectMetaChanged, [this]{
+        QString title = qApp->applicationName();
+
+        if(VdcProjectManager::instance().currentProject().isEmpty()){
+            this->setWindowTitle(title);
+            return;
+        }
+
+        QString fileName = QFileInfo(VdcProjectManager::instance().currentProject()).fileName();
+
+        title += " - " + fileName + "[*]";
+
+        this->setWindowModified(VdcProjectManager::instance().hasUnsavedChanges());
+        this->setWindowFilePath(QFileInfo(VdcProjectManager::instance().currentProject()).fileName());
+        this->setWindowTitle(title);
+    });
+
+    // OS session management
+    QGuiApplication::setFallbackSessionManagementEnabled(false);
+    connect(qApp, &QGuiApplication::commitDataRequest,
+                this, &VdcEditorWindow::commitData);
+
+    setUnifiedTitleAndToolBarOnMac(true);
+
+    // Restore settings
+    ui->actionSwitch_orientation->setChecked(settings.value("verticalOrientation").toBool());
+    ui->actionToggle_marker_points->setChecked(settings.value("pointsAlwaysVisible").toBool());
+
+    const QByteArray geometry = settings.value("geometry", QByteArray()).toByteArray();
+    if (!geometry.isEmpty())
+        restoreGeometry(geometry);
+}
+
+VdcEditorWindow::~VdcEditorWindow()
+{
+    delete ui;
+}
+
+/** -------- Initialization -------- **/
+
+void VdcEditorWindow::createFilterModel()
+{
     filterModel = new FilterModel();
     connect(filterModel, &FilterModel::dataChanged, &VdcProjectManager::instance(), &VdcProjectManager::projectModified);
     connect(filterModel, &FilterModel::dataChanged, this, &VdcEditorWindow::drawPlots);
@@ -78,31 +132,52 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     ui->tableView_DDCPoints->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     connect(ui->tableView_DDCPoints->selectionModel(), &QItemSelectionModel::selectionChanged, [=]{updatePlots(true);});
 
-    connect(&VdcProjectManager::instance(), &VdcProjectManager::projectClosed, [this]{ undoStack->clear(); });
-    connect(&VdcProjectManager::instance(), &VdcProjectManager::projectMetaChanged, [this]{
-        QString title = "DDCToolbox";
-        if(VdcProjectManager::instance().currentProject().isEmpty()){
-            this->setWindowTitle(title);
-            return;
-        }
+}
 
-        title += " - " + QFileInfo(VdcProjectManager::instance().currentProject()).fileName();
+void VdcEditorWindow::createPlotLayout(){
+    QMainWindow* subMainWindow = new QMainWindow(0);
+    QHBoxLayout* lay = new QHBoxLayout;
+    subMainWindow->setWindowTitle("sub-mainwindow") ;
+    subMainWindow->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea,
+                                 ui->magnitude_dock);
+    subMainWindow->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea,
+                                 ui->phase_dock);
+    subMainWindow->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea,
+                                 ui->groupdelay_dock);
+    subMainWindow->tabifyDockWidget(ui->magnitude_dock,ui->phase_dock);
+    subMainWindow->tabifyDockWidget(ui->phase_dock,ui->groupdelay_dock);
+    subMainWindow->setDockOptions(DockOption::VerticalTabs
+                                  | DockOption::AllowTabbedDocks
+                                  | DockOption::AnimatedDocks);
+    ui->magnitude_dock->show();
+    ui->magnitude_dock->raise();
+    lay->addWidget(subMainWindow);
+    ui->plotcontainer->setLayout(lay);
 
-        if(VdcProjectManager::instance().hasUnsavedChanges())
-            title += "*";
-        this->setWindowTitle(title);
-        emit windowTitleChanged(title);
+    connect(ui->actionReset_plot_layout,&QAction::triggered,this,[subMainWindow,this]{
+        ui->magnitude_dock->setFloating(false);
+        ui->phase_dock->setFloating(false);
+        ui->groupdelay_dock->setFloating(false);
+        subMainWindow->tabifyDockWidget(ui->magnitude_dock,ui->phase_dock);
+        subMainWindow->tabifyDockWidget(ui->phase_dock,ui->groupdelay_dock);
+        subMainWindow->setDockOptions(DockOption::VerticalTabs
+                                      | DockOption::AllowTabbedDocks
+                                      | DockOption::AnimatedDocks);
+        ui->magnitude_dock->show();
+        ui->magnitude_dock->raise();
     });
 
-    preparePlots();
-    drawPlots();
+    ui->graph->setModel(ui->tableView_DDCPoints, filterModel);
+    ui->gdelay_graph->setModel(ui->tableView_DDCPoints, filterModel);
+    ui->phase_graph->setModel(ui->tableView_DDCPoints, filterModel);
 
-#ifndef QT_DEBUG
-    ui->actionEnable_table_debug_mode->setVisible(false);
-#endif
+    ui->graph->setMode(FrequencyPlot::PlotType::magnitude, this);
+    ui->gdelay_graph->setMode(FrequencyPlot::PlotType::group_delay, this);
+    ui->phase_graph->setMode(FrequencyPlot::PlotType::phase_response, this);
+}
 
-    createRecentFileActions();
-
+void VdcEditorWindow::createUpdater()
+{
     // Setup update notify bar
     ui->updateBar->setVisible(false);
 #ifdef Q_OS_WINDOWS
@@ -153,16 +228,6 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
 #else
     ui->actionCheck_for_updates->setVisible(false);
 #endif
-
-    // OS session management
-    connect(qApp, &QGuiApplication::commitDataRequest,
-                this, &VdcEditorWindow::commitData);
-
-}
-
-VdcEditorWindow::~VdcEditorWindow()
-{
-    delete ui;
 }
 
 void VdcEditorWindow::createRecentFileActions()
@@ -179,7 +244,7 @@ void VdcEditorWindow::createRecentFileActions()
                 bool success = VdcProjectManager::instance().loadProject(action->data().toString());
 
                 if(!success)
-                    QMessageBox::critical(this, "Error", "No valid data found");
+                    QMessageBox::critical(this, "Error", "No valid data found. The selected file does not exist or contains unknown data.");
             }
         });
         recentFileActionList.append(recentFileAction);
@@ -202,14 +267,19 @@ void VdcEditorWindow::createRecentFileActions()
     updateRecentActionList();
 }
 
+/** -------- Recent file actions -------- **/
+
 void VdcEditorWindow::adjustForCurrentFile(const QString &filePath){
     QSettings settings;
     QStringList recentFilePaths =
             settings.value("recentFiles").toStringList();
+
     recentFilePaths.removeAll(filePath);
     recentFilePaths.prepend(filePath);
+
     while (recentFilePaths.size() > maxFileNr)
         recentFilePaths.removeLast();
+
     settings.setValue("recentFiles", recentFilePaths);
 
     updateRecentActionList();
@@ -219,6 +289,11 @@ void VdcEditorWindow::updateRecentActionList(){
     QSettings settings;
     QStringList recentFilePaths =
             settings.value("recentFiles").toStringList();
+
+    for (auto i = recentFilePaths.size() - 1; i >= 0; --i) {
+        if(!QFileInfo::exists(recentFilePaths.at(i)))
+            recentFilePaths.removeAt(i);
+    }
 
     auto itEnd = 0;
     if(recentFilePaths.size() <= maxFileNr)
@@ -239,72 +314,7 @@ void VdcEditorWindow::updateRecentActionList(){
         recentFileActionList.at(i)->setVisible(false);
 }
 
-void VdcEditorWindow::closeEvent(QCloseEvent *ev)
-{
-    if(VdcProjectManager::instance().hasUnsavedChanges() && filterModel->rowCount() > 0){
-        int ret = QMessageBox::warning(
-                    this,
-                    tr("DDCToolbox"),
-                    tr("The document has been modified.\nDo you want to save your changes?"),
-                    QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-
-        switch (ret) {
-        case QMessageBox::Save:
-            saveProject();
-            break;
-        case QMessageBox::Discard:
-            break;
-        case QMessageBox::Cancel:
-        default:
-            ev->ignore();
-            return;
-        }
-    }
-    ev->accept();
-    QMainWindow::closeEvent(ev);
-}
-
-void VdcEditorWindow::setOrientation(Qt::Orientation orientation){
-    ui->splitter->setOrientation(orientation);
-}
-
-void VdcEditorWindow::commitData(QSessionManager& manager)
-{
-    if (VdcProjectManager::instance().hasUnsavedChanges() &&
-        filterModel->rowCount() > 0)
-    {
-        if(manager.allowsInteraction()){
-            int ret = QMessageBox::warning(
-                        this,
-                        tr("DDCToolbox"),
-                        tr("The document has been modified and your operating system has sent a shutdown request.\n"
-                           "Do you want to save your changes?"),
-                        QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-
-            switch (ret) {
-            case QMessageBox::Save:
-                saveProject();
-                manager.release();
-                break;
-            case QMessageBox::Discard:
-                break;
-            case QMessageBox::Cancel:
-            default:
-                manager.cancel();
-                return;
-            }
-        }
-        else
-        {
-            // No interaction allowed. Attempt to save project.
-            QString path = VdcProjectManager::instance().currentProject();
-            if (path.isEmpty())
-                return;
-
-            VdcProjectManager::instance().saveProject(path);
-        }
-    }
-}
+/** -------- File operations -------- **/
 
 void VdcEditorWindow::saveProject()
 {
@@ -332,12 +342,13 @@ void VdcEditorWindow::loadProject()
     bool success = VdcProjectManager::instance().loadProject(file);
 
     if(!success)
-        QMessageBox::critical(this, "Error", "No valid data found");
+        QMessageBox::critical(this, "Error", "No valid data found. The selected file does not exist or contains unknown data.");
 
     adjustForCurrentFile(file);
 }
 
-void VdcEditorWindow::closeProject(){
+void VdcEditorWindow::closeProject()
+{
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "DDC Toolbox", tr("Are you sure? All unsaved changes will be lost."),
                                   QMessageBox::Yes|QMessageBox::No);
@@ -423,11 +434,14 @@ void VdcEditorWindow::curveFitting()
     dlg->deleteLater();
 }
 
-/* ---- Editor interactions ----*/
-void VdcEditorWindow::addPoint(){
+/** -------- Editor operations -------- **/
+
+void VdcEditorWindow::addPoint()
+{
     AddPointDialog *dlg = new AddPointDialog(this);
 
-    if(dlg->exec()){
+    if(dlg->exec())
+    {
         Biquad* b = dlg->getBiquad();
         QUndoCommand *addCommand = new AddCommand(filterModel, b);
         undoStack->push(addCommand);
@@ -436,7 +450,8 @@ void VdcEditorWindow::addPoint(){
     dlg->deleteLater();
 }
 
-void VdcEditorWindow::removePoint(){
+void VdcEditorWindow::removePoint()
+{
     QItemSelectionModel* select = ui->tableView_DDCPoints->selectionModel();
     
     if (select->hasSelection())
@@ -446,12 +461,14 @@ void VdcEditorWindow::removePoint(){
     }
 }
 
-void VdcEditorWindow::clearAll(){
+void VdcEditorWindow::clearAll()
+{
     QUndoCommand *removeCommand = new RemoveCommand(filterModel);
     undoStack->push(removeCommand);
 }
 
-void VdcEditorWindow::invertSelection(){
+void VdcEditorWindow::invertSelection()
+{
     QItemSelectionModel* select = ui->tableView_DDCPoints->selectionModel();
 
     if(!select->hasSelection()){
@@ -464,7 +481,8 @@ void VdcEditorWindow::invertSelection(){
     undoStack->push(invertCommand);
 }
 
-void VdcEditorWindow::shiftSelection(){
+void VdcEditorWindow::shiftSelection()
+{
     QItemSelectionModel* select = ui->tableView_DDCPoints->selectionModel();
 
     if(!select->hasSelection()){
@@ -483,7 +501,8 @@ void VdcEditorWindow::shiftSelection(){
     sf->deleteLater();
 }
 
-void VdcEditorWindow::checkStability(){
+void VdcEditorWindow::checkStability()
+{
     auto s = new StabilityReport(filterModel, this);
 
     if(s->isReportPositive())
@@ -493,13 +512,19 @@ void VdcEditorWindow::checkStability(){
     s->deleteLater();
 }
 
-/* ---- View ----*/
-void VdcEditorWindow::showPointsAlways(bool state){
+/** -------- View operations -------- **/
+
+void VdcEditorWindow::showPointsAlways(bool state)
+{
+    QSettings settings;
+    settings.setValue("pointsAlwaysVisible", state);
+
     markerPointsVisible = state;
     drawPlots();
 }
 
-void VdcEditorWindow::savePlotScreenshot(){
+void VdcEditorWindow::savePlotScreenshot()
+{
     QObject* obj = sender();
     if(obj == nullptr) return;
     
@@ -508,7 +533,8 @@ void VdcEditorWindow::savePlotScreenshot(){
     else if(obj == ui->actionScr_Group_delay) ui->gdelay_graph->saveScreenshot();
 }
 
-void VdcEditorWindow::updatePlots(bool onlyUpdatePoints){
+void VdcEditorWindow::updatePlots(bool onlyUpdatePoints)
+{
     if(!onlyUpdatePoints)
     {
         const int bandCount = 8192 * 2;
@@ -531,12 +557,22 @@ void VdcEditorWindow::updatePlots(bool onlyUpdatePoints){
     ui->gdelay_graph->updatePoints();
 }
 
-void VdcEditorWindow::setDebugMode(bool state){
+void VdcEditorWindow::setDebugMode(bool state)
+{
     filterModel->setDebugMode(state);
     ui->tableView_DDCPoints->repaint();
 }
 
-/* ---- Dialogues ----*/
+void VdcEditorWindow::setOrientation(bool vertical)
+{
+    QSettings settings;
+    settings.setValue("verticalOrientation", vertical);
+
+    ui->splitter->setOrientation(vertical ? Qt::Vertical : Qt::Horizontal);
+}
+
+/** -------- Dialogs -------- **/
+
 void VdcEditorWindow::showHelp(){
     QString res;
 
@@ -570,8 +606,10 @@ void VdcEditorWindow::showUndoView(){
     undoView->setAttribute(Qt::WA_QuitOnClose, false);
 }
 
-/* ---- Conversion ----*/
-void VdcEditorWindow::importClassicVdc(){
+/** -------- Conversion operations -------- **/
+
+void VdcEditorWindow::importClassicVdc()
+{
 
     QString file = QFileDialog::getOpenFileName(this, tr("Open classic VDC file"),
                                                 "", tr("Viper VDC file (*.vdc)"));
@@ -601,7 +639,9 @@ void VdcEditorWindow::importParametricAutoEQ(){
 void VdcEditorWindow::downloadFromAutoEQ(){
     AutoEQSelector* sel = new AutoEQSelector();
     sel->setModal(true);
-    if(sel->exec() == QDialog::Accepted){
+
+    if(sel->exec() == QDialog::Accepted)
+    {
         HeadphoneMeasurement hp = sel->getSelection();
         
         VdcProjectManager::instance().closeProject();
@@ -609,6 +649,7 @@ void VdcEditorWindow::downloadFromAutoEQ(){
         if(!success)
             QMessageBox::critical(this, "Error", "No valid data found\nConversion failed");
     }
+
     sel->deleteLater();
 }
 
@@ -629,7 +670,8 @@ void VdcEditorWindow::batchConvert(){
         if(dir.isEmpty())
             return;
 
-        for (const auto& file : files){
+        for (const auto& file : files)
+        {
             QVector<DeflatedBiquad> biquads;
 
             if(isVdcConversion)
@@ -644,45 +686,73 @@ void VdcEditorWindow::batchConvert(){
     }
 }
 
-/* ---- Preparation ---- */
-void VdcEditorWindow::preparePlots(){
-    QMainWindow* subMainWindow = new QMainWindow(0);
-    QHBoxLayout* lay = new QHBoxLayout;
-    subMainWindow->setWindowTitle("sub-mainwindow") ;
-    subMainWindow->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea,
-                                 ui->magnitude_dock);
-    subMainWindow->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea,
-                                 ui->phase_dock);
-    subMainWindow->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea,
-                                 ui->groupdelay_dock);
-    subMainWindow->tabifyDockWidget(ui->magnitude_dock,ui->phase_dock);
-    subMainWindow->tabifyDockWidget(ui->phase_dock,ui->groupdelay_dock);
-    subMainWindow->setDockOptions(DockOption::VerticalTabs
-                                  | DockOption::AllowTabbedDocks
-                                  | DockOption::AnimatedDocks);
-    ui->magnitude_dock->show();
-    ui->magnitude_dock->raise();
-    lay->addWidget(subMainWindow);
-    ui->plotcontainer->setLayout(lay);
+/** -------- Session management -------- **/
 
-    connect(ui->actionReset_plot_layout,&QAction::triggered,this,[subMainWindow,this]{
-        ui->magnitude_dock->setFloating(false);
-        ui->phase_dock->setFloating(false);
-        ui->groupdelay_dock->setFloating(false);
-        subMainWindow->tabifyDockWidget(ui->magnitude_dock,ui->phase_dock);
-        subMainWindow->tabifyDockWidget(ui->phase_dock,ui->groupdelay_dock);
-        subMainWindow->setDockOptions(DockOption::VerticalTabs
-                                      | DockOption::AllowTabbedDocks
-                                      | DockOption::AnimatedDocks);
-        ui->magnitude_dock->show();
-        ui->magnitude_dock->raise();
-    });
+void VdcEditorWindow::closeEvent(QCloseEvent *ev)
+{
+    if(VdcProjectManager::instance().hasUnsavedChanges() && filterModel->rowCount() > 0)
+    {
+        int ret = QMessageBox::warning(
+                    this,
+                    tr("DDCToolbox"),
+                    tr("The document has been modified.\nDo you want to save your changes?"),
+                    QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
 
-    ui->graph->setModel(ui->tableView_DDCPoints, filterModel);
-    ui->gdelay_graph->setModel(ui->tableView_DDCPoints, filterModel);
-    ui->phase_graph->setModel(ui->tableView_DDCPoints, filterModel);
+        switch (ret) {
+        case QMessageBox::Save:
+            saveProject();
+            break;
+        case QMessageBox::Discard:
+            break;
+        case QMessageBox::Cancel:
+        default:
+            ev->ignore();
+            return;
+        }
+    }
 
-    ui->graph->setMode(FrequencyPlot::PlotType::magnitude, this);
-    ui->gdelay_graph->setMode(FrequencyPlot::PlotType::group_delay, this);
-    ui->phase_graph->setMode(FrequencyPlot::PlotType::phase_response, this);
+    QSettings settings;
+    settings.setValue("geometry", saveGeometry());
+
+    ev->accept();
+    QMainWindow::closeEvent(ev);
+}
+
+void VdcEditorWindow::commitData(QSessionManager& manager)
+{
+    if (VdcProjectManager::instance().hasUnsavedChanges() &&
+        filterModel->rowCount() > 0)
+    {
+        if(manager.allowsInteraction())
+        {
+            int ret = QMessageBox::warning(
+                        this,
+                        tr("DDCToolbox"),
+                        tr("The document has been modified and your operating system has sent a shutdown request.\n"
+                           "Do you want to save your changes?"),
+                        QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+
+            switch (ret) {
+            case QMessageBox::Save:
+                saveProject();
+                manager.release();
+                break;
+            case QMessageBox::Discard:
+                break;
+            case QMessageBox::Cancel:
+            default:
+                manager.cancel();
+                return;
+            }
+        }
+        else
+        {
+            // No interaction allowed. Attempt to save project.
+            QString path = VdcProjectManager::instance().currentProject();
+            if (path.isEmpty())
+                return;
+
+            VdcProjectManager::instance().saveProject(path);
+        }
+    }
 }

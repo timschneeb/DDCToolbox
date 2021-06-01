@@ -18,7 +18,7 @@ HtmlPopup::HtmlPopup(const QString& txtbrw,QWidget *parent) :
     auto html = txtbrw;
 #endif
 
-    ui->textBrowser->setHtml(html);
+    ui->textBrowser->setText(html);
 }
 
 HtmlPopup::~HtmlPopup()

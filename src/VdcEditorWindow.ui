@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>DDC Toolbox</string>
+   <string>DDCToolbox</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../res/ddceditor_resources.qrc">
@@ -168,6 +168,7 @@
     </widget>
     <addaction name="actionReset_plot_layout"/>
     <addaction name="actionToggle_marker_points"/>
+    <addaction name="actionSwitch_orientation"/>
     <addaction name="separator"/>
     <addaction name="menuSave_screenshot"/>
    </widget>
@@ -645,6 +646,17 @@ border: 1px solid rgb(208, 204, 201) </string>
     <string>CSV dataset</string>
    </property>
   </action>
+  <action name="actionSwitch_orientation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Switch orientation</string>
+   </property>
+   <property name="shortcut">
+    <string>F4</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -1107,6 +1119,22 @@ border: 1px solid rgb(208, 204, 201) </string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSwitch_orientation</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>VdcEditorWindowHost</receiver>
+   <slot>setOrientation(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>487</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>clearAll()</slot>
@@ -1131,5 +1159,6 @@ border: 1px solid rgb(208, 204, 201) </string>
   <slot>downloadFromAutoEQ()</slot>
   <slot>setDebugMode(bool)</slot>
   <slot>curveFitting()</slot>
+  <slot>setOrientation(bool)</slot>
  </slots>
 </ui>

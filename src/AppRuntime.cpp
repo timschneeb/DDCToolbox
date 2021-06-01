@@ -1,9 +1,12 @@
 #include "AppRuntime.h"
+
+#include "utils/VdcProjectManager.h"
 #include "widget/ProxyStyle.h"
 
 #include <QFileOpenEvent>
 #include <QDebug>
 #include <QStyleFactory>
+
 
 #define _STR(x) #x
 #define STRINGIFY(x)  _STR(x)

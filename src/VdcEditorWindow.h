@@ -4,8 +4,6 @@
 #include <QMainWindow>
 #include <QSessionManager>
 
-#include "utils/VdcProjectManager.h"
-
 namespace Ui {
 class VdcEditorWindowHost;
 }
@@ -23,14 +21,6 @@ class VdcEditorWindow : public QMainWindow
 public:
     explicit VdcEditorWindow(QWidget *parent = nullptr);
     ~VdcEditorWindow();
-
-public:
-    VdcProjectManager* projectManager() const
-    {
-        return &VdcProjectManager::instance();
-    }
-
-    void setOrientation(Qt::Orientation orientation);
 
 private slots:
     void commitData(QSessionManager& manager);
@@ -62,10 +52,16 @@ private slots:
     void updatePlots(bool onlyUpdatePoints);
     void drawPlots(){ updatePlots(false); }; /* <- required for signal system */
     void setDebugMode(bool state);
+    void setOrientation(bool orientation);
 
-    void createRecentFileActions();
     void adjustForCurrentFile(const QString &filePath);
     void updateRecentActionList();
+
+private:
+    void createFilterModel();
+    void createUpdater();
+    void createRecentFileActions();
+    void createPlotLayout();
 
 protected:
     void closeEvent(QCloseEvent* ev) override;
@@ -86,7 +82,6 @@ private:
     BwCalculator   *bwCalc;
     bool markerPointsVisible = false;
 
-    void preparePlots();
 };
 
 #endif // MAINWINDOW_H

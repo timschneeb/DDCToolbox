@@ -195,6 +195,9 @@ bool VdcProjectManager::loadProject(const QString &fileName)
     closeProject();
 
     auto biquads = readProject(fileName);
+    if(biquads.count() < 1)
+        return false;
+
     m_model->clear();
 
     m_model->appendAllDeflated(biquads);
