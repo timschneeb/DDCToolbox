@@ -51,7 +51,7 @@ Recommended:
   * [Android](#android)
   * [Linux (Any distro)](#linux)
   * [Arch Linux (AUR)](#arch-aur)
-  * [macOS (OSX 10.13 and later)](#macos)
+  * [macOS (OSX 10.13 and later, Intel x64 only)](#macos-intel)
 
 Other installation methods (not recommended):
   * [Debian (Unmanaged/Nightly)](#debian-nightly)
@@ -102,7 +102,7 @@ yay -S ddctoolbox-git
 ![AUR version](https://img.shields.io/aur/version/ddctoolbox-git?label=aur-git)
 
 
-## macOS
+## macOS (Intel)
 macOS support is currently in beta; only cloud-compiled nightly binaries are available. The next stable release will include stable versions of OSX binaries.
 OSX 10.13 (High Sierra) or later Intel macOS devices only. If your device is older or an ARM-based device, try to [compile it from sources yourself](#manually-macos).
 
