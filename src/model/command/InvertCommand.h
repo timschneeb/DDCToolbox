@@ -4,7 +4,7 @@
 #include "model/FilterModel.h"
 
 #include <QUndoCommand>
-
+#include <QDebug>
 
 class InvertCommand : public QUndoCommand
 {

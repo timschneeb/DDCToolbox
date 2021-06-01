@@ -3,6 +3,8 @@
 
 #include <QModelIndex>
 #include <QUndoCommand>
+#include <QDebug>
+
 #include "model/Biquad.h"
 #include "model/FilterModel.h"
 

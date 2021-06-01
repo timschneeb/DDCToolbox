@@ -3,17 +3,16 @@
 #include "ui_CurveFittingDialog.h"
 
 #include "Expander.h"
+#include "CurveFittingWorkerDialog.h"
 #include "utils/CSVParser.h"
+#include "utils/CurveFittingWorker.h"
+#include "utils/QInt64Validator.h"
+#include "platform/OSXHtmlSizingPatch.h"
 
 #include <QDebug>
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QMessageBox>
-
-#include <utils/CurveFittingWorker.h>
-#include <utils/QInt64Validator.h>
-
-#include <platform/OSXHtmlSizingPatch.h>
 
 CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     QDialog(parent),

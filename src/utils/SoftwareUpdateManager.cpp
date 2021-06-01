@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QMessageBox>
 #include <QDesktopServices>
+#include <QSimpleUpdater.h>
 
 static const QString DEFS_URL = "https://timschneeberger.me/updates/ddctoolbox/software.json";
 

@@ -2,6 +2,7 @@
 #include "ui_CurveFittingWorkerDialog.h"
 
 #include <utils/CurveFittingWorker.h>
+#include <plot/QCustomPlot.h>
 
 #include <QPushButton>
 #include <QTimer>

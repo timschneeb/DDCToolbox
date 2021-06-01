@@ -2,8 +2,6 @@
 #define PROJECTMANAGER_H
 
 #include <QObject>
-#include <QFile>
-#include <cmath>
 
 #include "model/DeflatedBiquad.h"
 #include "widget/CsvExportDialog.h"

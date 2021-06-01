@@ -5,14 +5,15 @@
 
 #include <QObject>
 #include <cmath>
-#include <QTableWidget>
 
+class QTableView;
 class FilterModel;
 
 class FrequencyPlot : public QCustomPlot
 {
 public:
-    enum class PlotType{
+    enum class PlotType
+    {
         magnitude,
         phase_response,
         group_delay

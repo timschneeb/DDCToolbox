@@ -1,11 +1,11 @@
 #ifndef CURVEFITTINGDIALOG_H
 #define CURVEFITTINGDIALOG_H
 
-#include "CurveFittingWorkerDialog.h"
-#include "Expander.h"
 #include "model/DeflatedBiquad.h"
 
 #include <QDialog>
+
+class Expander;
 
 namespace Ui {
 class CurveFittingDialog;

@@ -2,6 +2,8 @@
 #define REMOVECOMMAND_H
 
 #include <QUndoCommand>
+#include <QDebug>
+
 #include "model/FilterModel.h"
 
 class RemoveCommand : public QUndoCommand

@@ -3,6 +3,7 @@
 
 #include "model/FilterModel.h"
 
+#include <QDebug>
 #include <QUndoCommand>
 
 class AddCommand : public QUndoCommand

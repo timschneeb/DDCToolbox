@@ -1,7 +1,11 @@
 #include "FrequencyPlot.h"
+
+#include "model/FilterModel.h"
+
 #include <utility>
 #include <cassert>
-#include <model/FilterModel.h>
+
+#include <QTableWidget>
 
 FrequencyPlot::FrequencyPlot(QFrame* frame) : QCustomPlot(frame)
 {

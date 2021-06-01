@@ -2,7 +2,6 @@
 #define AUTOEQSELECTOR_H
 
 #include <QDialog>
-#include <QThread>
 
 #include "utils/AutoEqClient.h"
 

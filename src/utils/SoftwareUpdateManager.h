@@ -1,7 +1,9 @@
 #ifndef SOFTWAREUPDATEMANAGER_H
 #define SOFTWAREUPDATEMANAGER_H
 
-#include <QSimpleUpdater.h>
+#include <QObject>
+
+class QSimpleUpdater;
 
 class SoftwareUpdateManager : public QObject
 {
@@ -25,7 +27,7 @@ signals:
     void requestGracefulShutdown();
 
 private:
-    QSimpleUpdater *updater = new QSimpleUpdater();
+    QSimpleUpdater *updater = nullptr;
 
 };
 

@@ -7,8 +7,6 @@
 #include <model/CurveFittingOptions.h>
 #include <model/DeflatedBiquad.h>
 
-#include <plot/QCustomPlot.h>
-
 class CurveFittingWorker;
 
 namespace Ui {
@@ -34,7 +32,6 @@ private slots:
     void workerFinished();
     void mseReceived(float fVar);
     void graphReceived(std::vector<double> temp);
-
 
 private:
     Ui::CurveFittingWorkerDialog *ui;

@@ -4,6 +4,7 @@
 #include "model/FilterModel.h"
 
 #include <QUndoCommand>
+#include <QDebug>
 
 class ShiftCommand : public QUndoCommand
 {
