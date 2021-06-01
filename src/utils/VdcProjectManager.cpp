@@ -6,6 +6,7 @@
 #include <QTextStream>
 #include <QFileInfo>
 #include <QRegularExpression>
+#include <QDebug>
 
 #include <cassert>
 #include <cmath>

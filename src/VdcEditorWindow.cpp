@@ -490,7 +490,7 @@ void VdcEditorWindow::shiftSelection()
         return;
     }
 
-    ShiftFrequencyDialog* sf = new ShiftFrequencyDialog(filterModel, this);
+    ShiftFrequencyDialog* sf = new ShiftFrequencyDialog(filterModel, select->selectedRows(), this);
 
     if(sf->exec()){
         QUndoCommand *shiftCommand =

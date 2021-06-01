@@ -1,11 +1,12 @@
 #include "ShiftFrequencyDialog.h"
 #include "ui_ShiftFrequencyDialog.h"
 
-#include <model/FilterModel.h>
-#include <utility>
+#include "model/FilterModel.h"
 
-ShiftFrequencyDialog::ShiftFrequencyDialog(FilterModel* model, QWidget *parent) :
-    QDialog(parent), ui(new Ui::shiftfreq), model(model)
+#include <QMessageBox>
+
+ShiftFrequencyDialog::ShiftFrequencyDialog(FilterModel* model, const QModelIndexList &indices, QWidget *parent) :
+    QDialog(parent), ui(new Ui::shiftfreq), model(model), indices(indices)
 {
     ui->setupUi(this);
 }
@@ -20,16 +21,16 @@ int ShiftFrequencyDialog::getResult(){
 }
 
 void ShiftFrequencyDialog::confirm(){
-    for (const auto& biquad : model->getFilterBank())
+    for (const auto& index : qAsConst(indices))
     {
-        int result = biquad->GetFrequency() + ui->shift->value();
+        int result = model->getFilter(index.row())->GetFrequency() + ui->shift->value();
 
         if(result < 1 || result > 24000){
             QMessageBox::warning(this,tr("Shift frequencies"),
                                  tr("Some frequency values are shifted out of range. "
                                     "Please choose a smaller factor."));
             return;
-         }
+        }
         else accept();
     }
 }
