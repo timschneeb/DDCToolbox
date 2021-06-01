@@ -46,17 +46,23 @@
 Developed with Linux in mind. You can also find Windows and macOS installation instructions below.
 
 Recommended:
+* **Windows**
   * [Windows (Stable)](#windows-stable)
   * [Windows (Nightly)](#windows-nightly)
-  * [Android](#android)
+* **Linux**
   * [Linux (Any distro)](#linux)
   * [Arch Linux (AUR)](#arch-aur)
+* **macOS**
   * [macOS (OSX 10.13 and later, Intel x64 only)](#macos-intel)
+* **Android**
+  * [Android app (basic features only)](#android)
 
 Other installation methods (not recommended):
+* **Linux**
   * [Debian (Unmanaged/Nightly)](#debian-nightly)
-  * [Manually (Linux)](#manuallyportable-linux)
-  * [Manually (macOS)](#manually-macos)
+  * [Build from sources (Linux)](#manuallyportable-linux)
+* **macOS**
+  * [Build from sources (macOS)](#manually-macos)
 
 ## Windows (Stable)
 You can find stable windows packages attached on the [release page](https://github.com/ThePBone/DDCToolbox/releases).
