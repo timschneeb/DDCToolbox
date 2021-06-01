@@ -74,7 +74,21 @@ bool FilterModel::setData(const QModelIndex &index, const QVariant &value, int r
     return false;
 }
 
-QVariant FilterModel::data(const QModelIndex &index, int role) const {
+QVariant FilterModel::data(const QModelIndex &index, int role) const
+{
+    if(role == Qt::BackgroundRole)
+    {
+        switch (m_data[index.row()]->IsStable())
+        {
+        case Biquad::UNSTABLE:
+            return QVariant(QColor(255, 88, 60));
+        case Biquad::PARTIALLY_STABLE:
+            return QVariant(QColor(255, 210, 66));
+        default:
+            return {};
+        }
+    }
+
     if (role == Qt::DisplayRole || role == Qt::EditRole)
     {
         const auto & filter = m_data[index.row()];
