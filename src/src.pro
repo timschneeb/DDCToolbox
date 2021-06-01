@@ -43,6 +43,11 @@ win32 {
     }
 }
 
+QMAKE_TARGET_PRODUCT = "DDCToolbox"
+QMAKE_TARGET_DESCRIPTION = "Create and design audio filters using biquads"
+QMAKE_TARGET_COPYRIGHT = "(c) 2019-2021 Tim Schneeberger (thepbone)"
+QMAKE_TARGET_COMPANY = "Tim Schneeberger"
+
 ICON = $$PWD/../res/img/icon.icns
 QMAKE_INFO_PLIST = $$PWD/../deployment/Info.plist
 
