@@ -25,7 +25,7 @@ SOURCES += $$PWD/main.cpp \
 
 QTPLUGIN += qsvg
 
-VERSION = 1.4.0
+VERSION = 2.0.0.0
 DEFINES += CURRENT_APP_VERSION=$${VERSION}
 
 include($$PWD/DDCToolbox-lib.pri)
