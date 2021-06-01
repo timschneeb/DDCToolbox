@@ -46,17 +46,23 @@
 Developed with Linux in mind. You can also find Windows and macOS installation instructions below.
 
 Recommended:
+* **Windows**
   * [Windows (Stable)](#windows-stable)
   * [Windows (Nightly)](#windows-nightly)
-  * [Android](#android)
+* **Linux**
   * [Linux (Any distro)](#linux)
   * [Arch Linux (AUR)](#arch-aur)
-  * [macOS (OSX 10.13 and later)](#macos)
+* **macOS**
+  * [macOS (OSX 10.13 and later, Intel x64 only)](#macos-intel)
+* **Android**
+  * [Android app (basic features only)](#android)
 
 Other installation methods (not recommended):
+* **Linux**
   * [Debian (Unmanaged/Nightly)](#debian-nightly)
-  * [Manually (Linux)](#manuallyportable-linux)
-  * [Manually (macOS)](#manually-macos)
+  * [Build from sources (Linux)](#manuallyportable-linux)
+* **macOS**
+  * [Build from sources (macOS)](#manually-macos)
 
 ## Windows (Stable)
 You can find stable windows packages attached on the [release page](https://github.com/ThePBone/DDCToolbox/releases).
@@ -102,7 +108,7 @@ yay -S ddctoolbox-git
 ![AUR version](https://img.shields.io/aur/version/ddctoolbox-git?label=aur-git)
 
 
-## macOS
+## macOS (Intel)
 macOS support is currently in beta; only cloud-compiled nightly binaries are available. The next stable release will include stable versions of OSX binaries.
 OSX 10.13 (High Sierra) or later Intel macOS devices only. If your device is older or an ARM-based device, try to [compile it from sources yourself](#manually-macos).
 
