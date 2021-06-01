@@ -188,6 +188,7 @@
     </property>
     <addaction name="actionInvert_gain_2"/>
     <addaction name="actionShift_frequency"/>
+    <addaction name="actionRemove_Point"/>
    </widget>
    <widget class="QMenu" name="menuProject">
     <property name="tearOffEnabled">
