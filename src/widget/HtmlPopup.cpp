@@ -15,7 +15,7 @@ HtmlPopup::HtmlPopup(const QString& txtbrw,QWidget *parent) :
 #ifdef __APPLE__
     auto html = OSXHtmlSizingPatch::patchTextSize(txtbrw);
 #else
-    auto html = txtbrw;
+    const auto& html = txtbrw;
 #endif
 
     ui->textBrowser->setText(html);

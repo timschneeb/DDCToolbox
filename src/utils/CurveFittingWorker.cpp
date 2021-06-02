@@ -8,9 +8,9 @@
 #endif
 
 extern "C" {
-#include <gradfreeOpt.h>
 #include <PeakingFit/linear_interpolation.h>
 #include <PeakingFit/peakfinder.h>
+#include <gradfreeOpt.h>
 }
 
 #include "utils/CurveFittingUtils.h"
@@ -96,7 +96,6 @@ void CurveFittingWorker::optimizationHistoryCallback(void *hostData, unsigned in
 double CurveFittingWorker::peakingCostFunctionMap(double *x, void *usd)
 {
     optUserdata *userdata = (optUserdata*)usd;
-    CurveFittingWorker *worker = (CurveFittingWorker*)userdata->user_data;
     double *fc = x;
     double *Q = x + userdata->numBands;
     double *gain = x + userdata->numBands * 2;
@@ -108,8 +107,6 @@ double CurveFittingWorker::peakingCostFunctionMap(double *x, void *usd)
         validatePeaking(gain[i], fc[i], Q[i], userdata->fs, &b0, &b1, &b2, &a1, &a2);
         validateMagCal(b0, b1, b2, a1, a2, userdata->phi, userdata->gridSize, userdata->fs, userdata->tmp);
     }
-
-    //emit worker->graphReceived(std::vector<double>(userdata->tmp, userdata->tmp + userdata->gridSize));
 
     double meanAcc = 0.0;
     for (unsigned int i = 0; i < userdata->gridSize; i++)
@@ -193,9 +190,7 @@ void CurveFittingWorker::preprocess(double *&flt_freqList, double *&target, uint
         unsigned int *indexList = (unsigned int*)malloc((idxLen << 1) * sizeof(unsigned int));
         double *levels = (double*)malloc((idxLen + 3) * sizeof(double));
         double *multiplicationPrecompute = (double*)malloc(idxLen * sizeof(double));
-        size_t virtualStructSize = sizeof(unsigned int) + sizeof(double) + sizeof(unsigned int) + (idxLen << 1) * sizeof(unsigned int) + idxLen * sizeof(double) + (idxLen + 3) * sizeof(double);
         double *shrinkedAxis = (double*)malloc((idxLen + 3) * sizeof(double));
-        double reciprocal = 1.0 / arrayLen;
         initInterpolationList(indexList, levels, avgBW, fcLen, arrayLen);
         for (unsigned int i = 0; i < idxLen; i++)
             multiplicationPrecompute[i] = 1.0 / (indexList[(i << 1) + 1] - indexList[(i << 1) + 0]);

@@ -36,7 +36,7 @@ private slots:
 private:
     void selectFile();
     void visitProject();
-    void setStatus(bool success, QString text);
+    void setStatus(bool success, const QString& text);
 
     Ui::CurveFittingDialog *ui;
     Expander* opt_boundary_constraints = nullptr;

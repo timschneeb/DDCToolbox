@@ -1,7 +1,7 @@
 #include "AppRuntime.h"
 
-#include <clocale>
 #include <QtPlugin>
+#include <clocale>
 
 int main(int argc, char *argv[])
 {

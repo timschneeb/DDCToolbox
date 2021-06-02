@@ -63,7 +63,7 @@ void AutoEQSelector::updateDetails(){
     if(ui->listWidget->selectedItems().isEmpty())
         return;
 
-    auto selection = ui->listWidget->selectedItems().first();
+    auto *selection = ui->listWidget->selectedItems().first();
     if(!selection->data(Qt::UserRole).canConvert<QueryResult>())
         return;
 
@@ -136,7 +136,7 @@ HeadphoneMeasurement AutoEQSelector::getSelection(){
     if(ui->listWidget->selectedItems().count() < 1)
         return HeadphoneMeasurement();
 
-    auto selection = ui->listWidget->selectedItems().first();
+    auto *selection = ui->listWidget->selectedItems().first();
     if(!selection->data(Qt::UserRole).canConvert<QueryResult>())
         return HeadphoneMeasurement();
 

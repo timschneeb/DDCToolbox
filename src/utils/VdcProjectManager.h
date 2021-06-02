@@ -39,12 +39,12 @@ public:
     bool loadVdc(const QString &fileName);
 
 
-    static bool writeProject(const QString& fileName, QVector<Biquad*> bank);
-    static bool writeProject(const QString &fileName, QVector<DeflatedBiquad> bank);
+    static bool writeProject(const QString& fileName, const QVector<Biquad*>& bank);
+    static bool writeProject(const QString &fileName, const QVector<DeflatedBiquad>& bank);
     static QVector<DeflatedBiquad> readProject(const QString& fileName);
     static DeflatedBiquad parseProjectLine(QString str);
     static QVector<DeflatedBiquad> readParametricEq(const QString &path);
-    static DeflatedBiquad parseParametricEqLine(QString string);
+    static DeflatedBiquad parseParametricEqLine(const QString& string);
     static QVector<DeflatedBiquad> readVdc(const QString &inputVdc);
 
     QString currentProject() const

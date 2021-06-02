@@ -2,12 +2,12 @@
 #include "CurveFittingWorkerDialog.h"
 #include "ui_CurveFittingDialog.h"
 
-#include "Expander.h"
 #include "CurveFittingWorkerDialog.h"
+#include "Expander.h"
+#include "platform/OSXHtmlSizingPatch.h"
 #include "utils/CSVParser.h"
 #include "utils/CurveFittingWorker.h"
 #include "utils/QInt64Validator.h"
-#include "platform/OSXHtmlSizingPatch.h"
 
 #include <QDebug>
 #include <QDesktopServices>
@@ -74,7 +74,7 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     ui->mainPane->layout()->addWidget(ui->footer);
 
     QList<Expander*> _expanders(std::initializer_list<Expander*>({algo_de, algo_flower, algo_chio, algo_fmin, opt_boundary_constraints, fgrid, advanced_rng}));
-    for(const auto& exp : _expanders){
+    for(const auto& exp : qAsConst(_expanders)){
         connect(exp, &Expander::stateChanged, this, [=](bool state){
             if(state){
                 for(const auto& exp : _expanders){
@@ -211,7 +211,7 @@ void CurveFittingDialog::parseCsv(){
     }
 
     std::ifstream file(path.toStdString());
-    for(auto& row: CSVRange(file))
+    for(const auto& row: CSVRange(file))
     {
         double freq_val, gain_val;
 
@@ -233,7 +233,7 @@ void CurveFittingDialog::parseCsv(){
         gain.push_back(gain_val);
     }
 
-    if(freq.size() < 1 && gain.size() < 1){
+    if(freq.empty() && gain.empty()){
         setStatus(false, "No valid rows found");
         return;
     }
@@ -286,7 +286,7 @@ void CurveFittingDialog::parseCsv(){
     }
 }
 
-void CurveFittingDialog::setStatus(bool success, QString text){
+void CurveFittingDialog::setStatus(bool success, const QString& text){
     ui->status_panel->setVisible(true);
 
     if(success)
@@ -338,7 +338,7 @@ void CurveFittingDialog::updatePreviewPlot(){
     ui->previewPlot->yAxis->setRange(lowGain, upGain);
     ui->previewPlot->clearGraphs();
 
-    auto pGraphOrig = ui->previewPlot->addGraph();
+    auto *pGraphOrig = ui->previewPlot->addGraph();
     QPen graphPen;
     graphPen.setColor(QColor(60, 60, 60));
     pGraphOrig->setPen(graphPen);
@@ -348,7 +348,7 @@ void CurveFittingDialog::updatePreviewPlot(){
         pGraphOrig->addData(freq.constData()[i], (double)gain.constData()[i]);
     }
 
-    auto pGraph0 = ui->previewPlot->addGraph();
+    auto *pGraph0 = ui->previewPlot->addGraph();
     pGraph0->setName("Processed curve");
     pGraph0->setAdaptiveSampling(true);
 
@@ -397,7 +397,7 @@ void CurveFittingDialog::accept()
                                 ui->invert_gain->isChecked(),
                                 ui->modelComplex->value());
 
-    auto worker = new CurveFittingWorkerDialog(options, this);
+    auto *worker = new CurveFittingWorkerDialog(options, this);
 
     // Launch worker dialog and halt until finished or cancelled
     if(!worker->exec()){

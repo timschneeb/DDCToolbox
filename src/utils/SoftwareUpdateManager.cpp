@@ -2,11 +2,11 @@
 
 #include "VdcEditorWindow.h"
 
-#include <Updater.h>
-#include <QTimer>
-#include <QMessageBox>
 #include <QDesktopServices>
+#include <QMessageBox>
 #include <QSimpleUpdater.h>
+#include <QTimer>
+#include <Updater.h>
 
 static const QString DEFS_URL = "https://timschneeberger.me/updates/ddctoolbox/software.json";
 
@@ -39,7 +39,7 @@ void SoftwareUpdateManager::silentCheck()
     updater->checkForUpdates(DEFS_URL);
 }
 
-void SoftwareUpdateManager::silentCheckDeferred(uint ms_delay)
+void SoftwareUpdateManager::silentCheckDeferred(uint ms_delay) const
 {
     QTimer::singleShot(ms_delay, this, &SoftwareUpdateManager::silentCheck);
 }
@@ -61,8 +61,8 @@ void SoftwareUpdateManager::userRequestedInstall()
         return;
     }
 
-    auto dl = updater->getDownloader(DEFS_URL);
-    auto upd = updater->getUpdater(DEFS_URL);
+    auto *dl = updater->getDownloader(DEFS_URL);
+    auto *upd = updater->getUpdater(DEFS_URL);
     dl->setUrlId(upd->url());
     dl->setFileName(upd->downloadUrl().split("/").last());
     dl->setMandatoryUpdate(false);

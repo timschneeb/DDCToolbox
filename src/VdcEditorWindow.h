@@ -52,7 +52,7 @@ private slots:
     void updatePlots(bool onlyUpdatePoints);
     void drawPlots(){ updatePlots(false); }; /* <- required for signal system */
     void setDebugMode(bool state);
-    void setOrientation(bool orientation);
+    void setOrientation(bool vertical);
 
     void adjustForCurrentFile(const QString &filePath);
     void updateRecentActionList();

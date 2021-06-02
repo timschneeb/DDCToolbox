@@ -33,7 +33,7 @@ void Biquad::RefreshFilter(FilterType type, double dbGain, double centreFreq, do
 
     auto coeffs = CalculateCoeffs(48000);
     for(double & internalBiquadCoeff : internalBiquadCoeffs){
-        if(coeffs.size() < 1){
+        if(coeffs.empty()){
             qWarning() << "RefreshFilter: [Warning] failed to calculate coeff";
             internalBiquadCoeff = 0;
             continue;

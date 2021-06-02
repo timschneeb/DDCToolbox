@@ -1,5 +1,5 @@
-#include <QtTest>
 #include <QCoreApplication>
+#include <QtTest>
 
 #include "model/DeflatedBiquad.h"
 

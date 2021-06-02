@@ -12,6 +12,7 @@ public:
     InvertCommand(FilterModel* model, QModelIndexList indices, QUndoCommand *parent = 0)
         : QUndoCommand(parent), model(model)
     {
+        cache.reserve(indices.count());
         for (int i = 0; i < indices.count(); i++)
         {
             cache.append(model->getFilter(indices.at(i).row())->GetId());

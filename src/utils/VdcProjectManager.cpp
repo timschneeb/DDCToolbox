@@ -1,12 +1,12 @@
 #include "VdcProjectManager.h"
 
-#include "utils/VdcImporter.h"
 #include "model/FilterModel.h"
+#include "utils/VdcImporter.h"
 
-#include <QTextStream>
+#include <QDebug>
 #include <QFileInfo>
 #include <QRegularExpression>
-#include <QDebug>
+#include <QTextStream>
 
 #include <cassert>
 #include <cmath>
@@ -220,15 +220,16 @@ void VdcProjectManager::closeProject()
     emit projectMetaChanged();
 }
 
-bool VdcProjectManager::writeProject(const QString& fileName, QVector<Biquad *> bank)
+bool VdcProjectManager::writeProject(const QString& fileName, const QVector<Biquad *>& bank)
 {
     QVector<DeflatedBiquad> biquads;
+    biquads.reserve(bank.count());
     for(const auto& b : bank)
         biquads.append(b);
     return writeProject(fileName, biquads);
 }
 
-bool VdcProjectManager::writeProject(const QString& fileName, QVector<DeflatedBiquad> bank)
+bool VdcProjectManager::writeProject(const QString& fileName, const QVector<DeflatedBiquad>& bank)
 {
     QString name = fileName;
     if(QFileInfo(fileName).suffix() != "vdcprj")
@@ -522,7 +523,7 @@ QVector<DeflatedBiquad> VdcProjectManager::readParametricEq(const QString& path)
     return biquads;
 }
 
-DeflatedBiquad VdcProjectManager::parseParametricEqLine(QString str){
+DeflatedBiquad VdcProjectManager::parseParametricEqLine(const QString& str){
     if (str.isEmpty() || str.startsWith("#"))
         return DeflatedBiquad();
 

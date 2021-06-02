@@ -1,10 +1,10 @@
 #include "FilterModel.h"
 
+#include <QDebug>
 #include <QMessageBox>
 #include <QModelIndex>
 #include <QUndoCommand>
 #include <QWidget>
-#include <QDebug>
 
 #include "model/command/EditCommand.h"
 
@@ -93,7 +93,7 @@ QVariant FilterModel::data(const QModelIndex &index, int role) const
         switch (m_data[index.row()]->IsStable())
         {
         case Biquad::UNSTABLE:
-            return QVariant(QColor(255, 88, 60));
+            return QVariant(QColor(255, 149, 117));
         case Biquad::PARTIALLY_STABLE:
             return QVariant(QColor(255, 210, 66));
         default:
@@ -190,7 +190,7 @@ void FilterModel::append(Biquad *filter) {
     this->sort(Freq, Qt::AscendingOrder);
 }
 
-void FilterModel::appendAll(QVector<Biquad *> filters) {
+void FilterModel::appendAll(const QVector<Biquad *>& filters) {
     beginInsertRows({}, m_data.count(), m_data.count());
     for(const auto& filter : filters){
         m_data.push_back(filter);
@@ -204,8 +204,9 @@ void FilterModel::appendAll(QVector<Biquad *> filters) {
     this->sort(Freq, Qt::AscendingOrder);
 }
 
-void FilterModel::appendAllDeflated(QVector<DeflatedBiquad> filters) {
+void FilterModel::appendAllDeflated(const QVector<DeflatedBiquad>& filters) {
     QVector<Biquad*> vector;
+    vector.reserve(filters.count());
     for(const auto& filter : filters){
         vector.push_back(filter.inflate());
     }
@@ -232,7 +233,7 @@ bool FilterModel::removeById(uint32_t id){
     return false;
 }
 
-bool FilterModel::removeAllById(QVector<uint32_t> ids){
+bool FilterModel::removeAllById(const QVector<uint32_t>& ids){
     QVector<int> rows;
     for(const auto& id : ids){
         for(int i = 0; i < m_data.length(); i++){
@@ -318,6 +319,7 @@ QVector<float> FilterModel::getMagnitudeResponseTable(int nBandCount, double dSR
         return vector;
     }
 
+    vector.reserve(nBandCount);
     for (int j = 0; j < nBandCount; j++)
     {
         double num3 = (dSRate / 2.0) / ((double) nBandCount);
@@ -337,6 +339,7 @@ QVector<float> FilterModel::getPhaseResponseTable(int nBandCount, double dSRate)
         return vector;
     }
 
+    vector.reserve(nBandCount);
     for (int j = 0; j < nBandCount; j++)
     {
         double num3 = (dSRate / 2.0) / ((double) nBandCount);
@@ -356,6 +359,7 @@ QVector<float> FilterModel::getGroupDelayTable(int nBandCount, double dSRate)
         return vector;
     }
 
+    vector.reserve(nBandCount);
     for (int j = 0; j < nBandCount; j++)
     {
         double num3 = (dSRate / 2.0) / ((double) nBandCount);

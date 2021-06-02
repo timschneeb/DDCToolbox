@@ -156,14 +156,14 @@ private:
     CustomFilter m_custom441;
     CustomFilter m_custom48;
 
-    std::list<double> CalculateCoeffs(CustomFilter coeffs, bool noA0divide = false);
+    static std::list<double> CalculateCoeffs(CustomFilter coeffs, bool noA0divide = false);
     std::list<double> CalculateCoeffs(double fs, bool noA0divide = false);
 
     void CalculateStability();
 
-    void iirroots(double b, double c, double *roots);
+    static void iirroots(double b, double c, double *roots);
     int complexResponse(double centreFreq, double fs, double *HofZReal, double *HofZImag);
-    double toMs(double sample, double fs);
+    static double toMs(double sample, double fs);
 
 public:
     static void complexMultiplicationRI(double *zReal, double *zImag, double xReal, double xImag, double yReal, double yImag)

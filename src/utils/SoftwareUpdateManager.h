@@ -14,7 +14,7 @@ public:
 public slots:
     void checkForUpdates();
     void silentCheck();
-    void silentCheckDeferred(uint ms_delay);
+    void silentCheckDeferred(uint ms_delay) const;
 
     void userRequestedChangelog();
     void userRequestedInstall();

@@ -3,22 +3,22 @@
 
 #include "model/FilterViewDelegate.h"
 #include "model/command/AddCommand.h"
+#include "model/command/EditCommand.h"
 #include "model/command/InvertCommand.h"
 #include "model/command/RemoveCommand.h"
 #include "model/command/ShiftCommand.h"
-#include "model/command/EditCommand.h"
 
 #include "widget/AddPointDialog.h"
-#include "widget/BwCalculator.h"
-#include "widget/ShiftFrequencyDialog.h"
-#include "widget/HtmlPopup.h"
-#include "widget/StabilityReport.h"
 #include "widget/AutoEqSelector.h"
+#include "widget/BwCalculator.h"
 #include "widget/CurveFittingDialog.h"
+#include "widget/HtmlPopup.h"
+#include "widget/ShiftFrequencyDialog.h"
+#include "widget/StabilityReport.h"
 
-#include "utils/VdcProjectManager.h"
 #include "item/CustomFilterListItem.h"
 #include "plot/FrequencyPlot.h"
+#include "utils/VdcProjectManager.h"
 
 #ifdef Q_OS_WIN
 #include "utils/SoftwareUpdateManager.h"
@@ -97,8 +97,9 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     ui->actionToggle_marker_points->setChecked(settings.value("pointsAlwaysVisible").toBool());
 
     const QByteArray geometry = settings.value("geometry", QByteArray()).toByteArray();
-    if (!geometry.isEmpty())
+    if (!geometry.isEmpty()) {
         restoreGeometry(geometry);
+}
 }
 
 VdcEditorWindow::~VdcEditorWindow()
@@ -118,7 +119,7 @@ void VdcEditorWindow::createFilterModel()
         undoStack->push(editCmd);
     });
 
-    auto delegate = new FilterViewDelegate();
+    auto *delegate = new FilterViewDelegate();
     delegate->setModel(filterModel);
     ui->tableView_DDCPoints->setItemDelegate(delegate);
     connect(delegate, &FilterViewDelegate::requireEditCommit, [this](EditCommand* cmd){
@@ -256,7 +257,7 @@ void VdcEditorWindow::createRecentFileActions()
         ui->menuRecents_projects->addAction(recentFileActionList.at(i));
 
     ui->menuRecents_projects->addSeparator();
-    auto clearAct = new QAction(QIcon(QPixmap(":/img/clear_recents.svg")), "Clear recent projects");
+    auto *clearAct = new QAction(QIcon(QPixmap(":/img/clear_recents.svg")), "Clear recent projects");
     connect(clearAct, &QAction::triggered, this, [this]{
         QSettings settings;
         settings.remove("recentFiles");
@@ -368,7 +369,7 @@ void VdcEditorWindow::exportProject()
         return;
     }
 
-    auto s = new StabilityReport(filterModel, this);
+    auto *s = new StabilityReport(filterModel, this);
     if(!s->isReportPositive()){
         s->exec();
         delete s;
@@ -384,7 +385,7 @@ void VdcEditorWindow::exportProject()
     }
     else if(sender() == ui->actionEqualizerAPO_configuration)
     {
-        auto srDlg = new EapoExportDialog(this);
+        auto *srDlg = new EapoExportDialog(this);
         if(!srDlg->exec()){
             return;
         }
@@ -404,7 +405,7 @@ void VdcEditorWindow::exportProject()
     }
     else if(sender() == ui->actionCSV_dataset)
     {
-        auto dlg = new CsvExportDialog(this);
+        auto *dlg = new CsvExportDialog(this);
         if(!dlg->exec()){
             return;
         }
@@ -421,7 +422,7 @@ void VdcEditorWindow::exportProject()
 
 void VdcEditorWindow::curveFitting()
 {
-    auto dlg = new CurveFittingDialog(this);
+    auto *dlg = new CurveFittingDialog(this);
     int ret = dlg->exec();
     if(ret && dlg->getResults().count() > 0){
         VdcProjectManager::instance().closeProject();
@@ -503,7 +504,7 @@ void VdcEditorWindow::shiftSelection()
 
 void VdcEditorWindow::checkStability()
 {
-    auto s = new StabilityReport(filterModel, this);
+    auto *s = new StabilityReport(filterModel, this);
 
     if(s->isReportPositive())
         QMessageBox::information(this, "Stability check", "All filters appear to be stable");
@@ -576,8 +577,8 @@ void VdcEditorWindow::setOrientation(bool vertical)
 void VdcEditorWindow::showHelp(){
     QString res;
 
-    if(sender() == nullptr) return;
-    else if(sender() == ui->actionIntroduction) res = ":/html/introduction.html";
+    if(sender() == nullptr) { return;
+    } else if(sender() == ui->actionIntroduction) res = ":/html/introduction.html";
     else if(sender() == ui->actionKey_shortcuts) res = ":/html/keycombos.html";
 
     QFile file(res);

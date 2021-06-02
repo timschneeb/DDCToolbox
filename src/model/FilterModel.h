@@ -46,11 +46,11 @@ public:
     const QVector<Biquad*>& getFilterBank() const;
 
     void append(Biquad* filter);
-    void appendAll(QVector<Biquad*> filters);
-    void appendAllDeflated(QVector<DeflatedBiquad> filters);
+    void appendAll(const QVector<Biquad*>& filters);
+    void appendAllDeflated(const QVector<DeflatedBiquad>& filters);
     bool remove(Biquad* filter);
     bool removeById(uint32_t id);
-    bool removeAllById(QVector<uint32_t> ids);
+    bool removeAllById(const QVector<uint32_t>& ids);
     void clear();
     void replace(QModelIndex index, DeflatedBiquad current, bool stealth = false);
     QModelIndex replaceById(uint id, DeflatedBiquad current, bool stealth = false);

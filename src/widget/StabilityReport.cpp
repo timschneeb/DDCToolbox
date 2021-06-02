@@ -53,16 +53,16 @@ StabilityReport::~StabilityReport()
     delete ui;
 }
 
-bool StabilityReport::isReportPositive(){
+bool StabilityReport::isReportPositive() const{
     return unstableCount < 1;
 }
 
-void StabilityReport::addIssue(int stable, QString location, QString description){
+void StabilityReport::addIssue(int stability, const QString& location, const QString& description){
 
-    if(stable == Biquad::STABLE)
+    if(stability == Biquad::STABLE)
         return;
 
-    auto tw = ui->issueTable;
+    auto *tw = ui->issueTable;
     tw->insertRow(tw->rowCount());
 
 #define ADD_ITEM(index, value) \
@@ -77,7 +77,7 @@ void StabilityReport::addIssue(int stable, QString location, QString description
     tw->setItem(tw->rowCount()-1, index, c##index); \
     tw->setCellWidget(tw->rowCount()-1, index, lbl);
 
-    ADD_ICON(0, stable == Biquad::UNSTABLE ? ":/img/critical.svg" : ":/img/warning.svg");
+    ADD_ICON(0, stability == Biquad::UNSTABLE ? ":/img/critical.svg" : ":/img/warning.svg");
     ADD_ITEM(1, location);
     ADD_ITEM(2, description);
 

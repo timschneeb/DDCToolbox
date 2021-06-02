@@ -2,8 +2,8 @@
 
 #include "model/FilterModel.h"
 
-#include <utility>
 #include <cassert>
+#include <utility>
 
 #include <QTableWidget>
 
@@ -203,7 +203,7 @@ void FrequencyPlot::updatePlot(QVector<float> table,int bandCount){
         max = 5.0f;
         min = -5.0f;
 
-        for (float i : m_table){
+        for (float i : qAsConst(m_table)){
             if (i > max)
                 max = i;
             if (i < min)

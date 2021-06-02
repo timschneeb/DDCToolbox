@@ -12,6 +12,7 @@ public:
     ShiftCommand(FilterModel* model, QModelIndexList indices, int shiftAmount, QUndoCommand *parent = 0)
         : QUndoCommand(parent), model(model), shiftAmount(shiftAmount)
     {
+        cache.reserve(indices.count());
         for (int i = 0; i < indices.count(); i++)
         {
             cache.append(model->getFilter(indices.at(i).row())->GetId());

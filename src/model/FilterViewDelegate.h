@@ -91,15 +91,14 @@ public:
 
         switch(index.column()){
         case 0: {
-            auto model = static_cast<FilterModel*>(m_model);
-            if(model->getDebugMode()){
+            if(m_model->getDebugMode()){
                 QStyleOptionButton button;
                 QRect r = option.rect;
                 button.rect = QRect(r.left() + 2,
                                     r.top() + 2,
                                     r.width() - 4,
                                     r.height() - 4);
-                button.text = "ID: " + QString::number(model->getFilter(index.row())->GetId());
+                button.text = "ID: " + QString::number(m_model->getFilter(index.row())->GetId());
                 button.state = option.state;
                 QApplication::style()->drawControl(QStyle::CE_PushButton,
                                                    &button, painter);
@@ -142,7 +141,7 @@ public:
 
     void setEditorData(QWidget *editor, const QModelIndex &index) const Q_DECL_OVERRIDE
     {
-        auto filter = static_cast<FilterModel*>(m_model)->getFilter(index.row());
+        auto filter = m_model->getFilter(index.row());
         const QString currentText = index.data(Qt::EditRole).toString();
 
         if(index.column() == 0){

@@ -30,7 +30,7 @@ signals:
 
 private slots:
     void workerFinished();
-    void mseReceived(float fVar);
+    void mseReceived(float mse);
     void graphReceived(std::vector<double> temp);
 
 private:

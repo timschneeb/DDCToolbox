@@ -3,8 +3,8 @@
 #include "utils/VdcProjectManager.h"
 #include "widget/ProxyStyle.h"
 
-#include <QFileOpenEvent>
 #include <QDebug>
+#include <QFileOpenEvent>
 #include <QStyleFactory>
 
 
@@ -14,13 +14,13 @@
 AppRuntime::AppRuntime(int& argc, char**argv): QApplication(argc, argv)
 {
 
-    this->setApplicationVersion(STRINGIFY(CURRENT_APP_VERSION));
-    this->setApplicationName("DDCToolbox");
-    this->setOrganizationName("Tim Schneeberger");
+    AppRuntime::setApplicationVersion(STRINGIFY(CURRENT_APP_VERSION));
+    AppRuntime::setApplicationName("DDCToolbox");
+    AppRuntime::setOrganizationName("Tim Schneeberger");
 
-    this->setStyle(new ProxyStyle("Fusion"));
-    this->setPalette(this->style()->standardPalette());
-    this->setAttribute(Qt::AA_DisableWindowContextHelpButton);
+    AppRuntime::setStyle(new ProxyStyle("Fusion"));
+    AppRuntime::setPalette(AppRuntime::style()->standardPalette());
+    AppRuntime::setAttribute(Qt::AA_DisableWindowContextHelpButton);
 
 #ifdef __APPLE__
     this->setStyleSheet("* {font-size: 13px;}");

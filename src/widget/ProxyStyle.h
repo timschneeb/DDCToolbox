@@ -20,11 +20,13 @@ public:
 
     void polish (QWidget * w)
     {
-    #ifdef __APPLE__
+#ifdef __APPLE__
         QMenu* mn = dynamic_cast<QMenu*>(w);
         if(!mn && !w->testAttribute(Qt::WA_MacNormalSize))
             w->setAttribute(Qt::WA_MacSmallSize);
-    #endif
+#else
+        Q_UNUSED(w);
+#endif
     }
 
     virtual int pixelMetric(QStyle::PixelMetric metric, const QStyleOption * option = 0, const QWidget * widget = 0 ) const

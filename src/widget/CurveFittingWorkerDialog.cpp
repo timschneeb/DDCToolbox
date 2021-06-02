@@ -1,8 +1,8 @@
 #include "CurveFittingWorkerDialog.h"
 #include "ui_CurveFittingWorkerDialog.h"
 
-#include <utils/CurveFittingWorker.h>
 #include <plot/QCustomPlot.h>
+#include <utils/CurveFittingWorker.h>
 
 #include <QPushButton>
 #include <QTimer>
@@ -42,7 +42,7 @@ CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _o
     thread.start();
 
 
-    QTimer::singleShot(400, [this]{
+    QTimer::singleShot(400, this, [this]{
         ui->progressText->setText("Calculating...");
 
         QGuiApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
@@ -111,7 +111,7 @@ void CurveFittingWorkerDialog::graphReceived(std::vector<double> temp)
 
     ui->previewPlot->clearGraphs();
 
-    auto pGraph0 = ui->previewPlot->addGraph();
+    auto *pGraph0 = ui->previewPlot->addGraph();
     pGraph0->setAdaptiveSampling(true);
 
     for(uint i = 0; i < grid_size; i++){
