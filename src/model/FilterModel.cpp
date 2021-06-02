@@ -88,6 +88,31 @@ bool FilterModel::setData(const QModelIndex &index, const QVariant &value, int r
 
 QVariant FilterModel::data(const QModelIndex &index, int role) const
 {
+    if(role == Qt::ToolTipRole)
+    {
+        auto* filter = m_data[index.row()];
+        if(filter->GetFilterType() == FilterType::CUSTOM)
+        {
+#define APPEND_COEFF(_1,_2) #_1" = " + QString::number(filter->GetCustomFilter(_2)._1, 'f', 16) +
+#define HTMLIFY_COEFFS(_2) QString( \
+    APPEND_COEFF(b0, _2) "<br/>"\
+    APPEND_COEFF(b1, _2) "<br/>"\
+    APPEND_COEFF(b2, _2) "<br/>"\
+    APPEND_COEFF(a0, _2) "<br/>"\
+    APPEND_COEFF(a1, _2) "<br/>"\
+    APPEND_COEFF(a2, _2) "<br/>")
+
+            return QString("<b>Coefficients (44100Hz)</b><br/>"
+                           "%1<br/>"
+                           "<b>Coefficients (48000Hz)</b><br/>"
+                           "%2")
+                    .arg(HTMLIFY_COEFFS(44100)).arg(HTMLIFY_COEFFS(48000));
+
+#undef HTMLIFY_COEFFS
+#undef APPEND_COEFF
+        }
+    }
+
     if(role == Qt::BackgroundRole)
     {
         switch (m_data[index.row()]->IsStable())
