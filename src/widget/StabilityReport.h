@@ -17,6 +17,7 @@ public:
     explicit StabilityReport(FilterModel* model, QWidget *parent = nullptr);
     ~StabilityReport();
 
+    bool hasIssue() const;
     bool hasCriticalIssue() const;
 private:
     Ui::StabilityReport *ui;

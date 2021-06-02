@@ -54,7 +54,7 @@ StabilityReport::StabilityReport(FilterModel* model, QWidget *parent) :
     if(unstableCount < 1)
         ui->summary->setText("All filters appear to be stable");
     else
-        ui->summary->setText(QString("%1 issue(s) found. Please fix the problems listed below.").arg(criticalUnstableCount));
+        ui->summary->setText(QString("%1 issue(s) found. Please fix the problems listed below.").arg(unstableCount));
 
     ui->issueTable->resizeColumnsToContents();
 }
@@ -64,8 +64,12 @@ StabilityReport::~StabilityReport()
     delete ui;
 }
 
+bool StabilityReport::hasIssue() const{
+    return unstableCount >= 1;
+}
+
 bool StabilityReport::hasCriticalIssue() const{
-    return criticalUnstableCount < 1;
+    return criticalUnstableCount >= 1;
 }
 
 void StabilityReport::addIssue(int stability, const QString& location, const QString& description){
