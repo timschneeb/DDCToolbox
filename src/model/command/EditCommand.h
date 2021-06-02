@@ -28,7 +28,7 @@ public:
     }
 
     QString createCommandString(){
-        return QObject::tr("\"Edit row %1\"").arg(index.row());
+        return QObject::tr("\"Edit row %1\"").arg(index.row() + 1);
     }
 
 private:
