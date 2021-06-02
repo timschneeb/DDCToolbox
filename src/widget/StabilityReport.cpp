@@ -21,22 +21,31 @@ StabilityReport::StabilityReport(FilterModel* model, QWidget *parent) :
 
             Biquad::Stability stability = filter->IsStable();
             if(stability == Biquad::UNSTABLE)
+            {
+                unstableCount++;
                 issue = QString("Pole outside the unit circle");
+            }
             else if(stability == Biquad::PARTIALLY_STABLE)
+            {
                 issue = QString("Pole approaches the unit circle");
+            }
             else
+            {
                 continue;
+            }
 
             if(type.getSpecs().test(FilterType::SPEC_REQUIRE_FREQ))
+            {
                 addIssue(stability,
                          QString("%1 at %2Hz (row %3)").arg((QString)type).arg(round(filter->GetFrequency())).arg(i+1),
                          issue);
+            }
             else
+            {
                 addIssue(stability,
                          QString("%1 (row %2)").arg((QString)type).arg(i+1),
                          issue);
-
-            unstableCount++;
+            }
         }
     }
 
