@@ -22,7 +22,7 @@ StabilityReport::StabilityReport(FilterModel* model, QWidget *parent) :
             Biquad::Stability stability = filter->IsStable();
             if(stability == Biquad::UNSTABLE)
             {
-                unstableCount++;
+                criticalUnstableCount++;
                 issue = QString("Pole outside the unit circle");
             }
             else if(stability == Biquad::PARTIALLY_STABLE)
@@ -46,13 +46,15 @@ StabilityReport::StabilityReport(FilterModel* model, QWidget *parent) :
                          QString("%1 (row %2)").arg((QString)type).arg(i+1),
                          issue);
             }
+
+            unstableCount++;
         }
     }
 
     if(unstableCount < 1)
         ui->summary->setText("All filters appear to be stable");
     else
-        ui->summary->setText(QString("%1 issue(s) found. Please fix the problems listed below.").arg(unstableCount));
+        ui->summary->setText(QString("%1 issue(s) found. Please fix the problems listed below.").arg(criticalUnstableCount));
 
     ui->issueTable->resizeColumnsToContents();
 }
@@ -62,8 +64,8 @@ StabilityReport::~StabilityReport()
     delete ui;
 }
 
-bool StabilityReport::isReportPositive() const{
-    return unstableCount < 1;
+bool StabilityReport::hasCriticalIssue() const{
+    return criticalUnstableCount < 1;
 }
 
 void StabilityReport::addIssue(int stability, const QString& location, const QString& description){

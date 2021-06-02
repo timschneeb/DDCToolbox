@@ -370,7 +370,7 @@ void VdcEditorWindow::exportProject()
     }
 
     auto *s = new StabilityReport(filterModel, this);
-    if(!s->isReportPositive()){
+    if(!s->hasCriticalIssue()){
         s->exec();
         delete s;
         return;
@@ -506,7 +506,7 @@ void VdcEditorWindow::checkStability()
 {
     auto *s = new StabilityReport(filterModel, this);
 
-    if(s->isReportPositive())
+    if(s->hasCriticalIssue())
         QMessageBox::information(this, "Stability check", "All filters appear to be stable");
     else
         s->exec();

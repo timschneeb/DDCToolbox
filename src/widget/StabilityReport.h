@@ -17,10 +17,11 @@ public:
     explicit StabilityReport(FilterModel* model, QWidget *parent = nullptr);
     ~StabilityReport();
 
-    bool isReportPositive() const;
+    bool hasCriticalIssue() const;
 private:
     Ui::StabilityReport *ui;
     int unstableCount = 0;
+    int criticalUnstableCount = 0;
 
     void addIssue(int stability, const QString& location, const QString& description);
 };
