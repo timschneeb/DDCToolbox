@@ -360,10 +360,7 @@ void VdcEditorWindow::closeProject()
 
 void VdcEditorWindow::exportProject()
 {
-    std::list<double> p1 = filterModel->exportCoeffs(44100.0);
-    std::list<double> p2 = filterModel->exportCoeffs(48000.0);
-
-    if (p1.empty() || p2.empty())
+    if (filterModel->rowCount() < 1)
     {
         QMessageBox::warning(this,tr("Error"),tr("Your current project is empty and contains no filters"));
         return;
@@ -379,6 +376,9 @@ void VdcEditorWindow::exportProject()
 
     if(sender() == ui->actionVDC)
     {
+        std::list<double> p1 = filterModel->exportCoeffs(44100.0);
+        std::list<double> p2 = filterModel->exportCoeffs(48000.0);
+
         QString fileName = QFileDialog::getSaveFileName(this,
                                                         tr("Save VDC"), "", tr("VDC File (*.vdc)"));
         VdcProjectManager::instance().exportProject(fileName, p1, p2);
@@ -391,6 +391,25 @@ void VdcEditorWindow::exportProject()
         }
 
         std::list<double> p = filterModel->exportCoeffs(srDlg->getResult(), true);
+        /* Check custom filter compatibility with selected sampling rate */
+        if(srDlg->getResult() != 44100 && srDlg->getResult() != 48000){
+            for(const auto& filter : qAsConst(filterModel->getFilterBank()))
+            {
+                if(filter->GetFilterType() == FilterType::CUSTOM)
+                {
+                    auto button = QMessageBox::warning(this, "Export", "<b>Custom filters in your project can not be exported using the selected sampling rate</b><br/>"
+                                                       "Currently, custom filters can only contain filter coefficents designed for sampling rates 44100Hz and 48000Hz. Please choose a supported value to ensure all filters are exported correctly.",
+                                                       QMessageBox::Ignore | QMessageBox::Cancel);
+                    if(button == QMessageBox::Cancel)
+                    {
+                        srDlg->deleteLater();
+                        return;
+                    }
+
+                    break;
+                }
+            }
+        }
 
 #ifdef Q_OS_WINDOWS
         QString dir = "C:\\Program Files\\EqualizerAPO\\config";
@@ -400,6 +419,7 @@ void VdcEditorWindow::exportProject()
 
         QString fileName = QFileDialog::getSaveFileName(this,
                                                         tr("Save EqualizerAPO config"), dir, tr("Equalizer APO config file (*.txt)"));
+
         VdcProjectManager::instance().exportEapoConfig(fileName, p, srDlg->getResult());
         srDlg->deleteLater();
     }
@@ -411,9 +431,29 @@ void VdcEditorWindow::exportProject()
         }
 
         std::list<double> p = filterModel->exportCoeffs(dlg->samplerate(), true);
+        /* Check custom filter compatibility with selected sampling rate */
+        if(dlg->samplerate() != 44100 && dlg->samplerate() != 48000){
+            for(const auto& filter : qAsConst(filterModel->getFilterBank()))
+            {
+                if(filter->GetFilterType() == FilterType::CUSTOM)
+                {
+                    auto button = QMessageBox::warning(this, "Export", "<b>Custom filters in your project can not be exported using the selected sampling rate</b><br/>"
+                                                       "Currently, custom filters can only contain filter coefficents designed for sampling rates 44100Hz and 48000Hz. Please choose a supported value to ensure all filters are exported correctly.",
+                                                       QMessageBox::Ignore | QMessageBox::Cancel);
+                    if(button == QMessageBox::Cancel)
+                    {
+                        dlg->deleteLater();
+                        return;
+                    }
+                    break;
+                }
+            }
+        }
 
         QString fileName = QFileDialog::getSaveFileName(this,
                                                         tr("Save CSV dataset"), "", tr("CSV dataset (*.csv)"));
+
+
         VdcProjectManager::instance().exportCsv(fileName, p, dlg->delimiter(), dlg->format(), dlg->numFormat(), dlg->includeHeader());
         dlg->deleteLater();
     }

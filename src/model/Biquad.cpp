@@ -229,10 +229,15 @@ std::list<double> Biquad::CalculateCoeffs(CustomFilter coeffs, bool noA0divide)
 std::list<double> Biquad::ExportCoeffs(double dSamplingRate, bool noA0divide)
 {
     if(m_isCustom)
-        if(trunc(dSamplingRate) == 44100.0)
+        if(qFuzzyCompare(dSamplingRate, 44100))
             return CalculateCoeffs(m_custom441, noA0divide);
-        else
+        else if(qFuzzyCompare(dSamplingRate, 48000))
             return CalculateCoeffs(m_custom48, noA0divide);
+        else
+        {
+            qWarning() << "ERROR: Biquad::ExportCoeffs: Invalid sampling rate for CustomFilter. Cannot export coeffs.";
+            return std::list<double>();
+        }
     else
         return CalculateCoeffs(dSamplingRate, noA0divide);
 }

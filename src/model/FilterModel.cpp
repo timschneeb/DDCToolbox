@@ -404,8 +404,8 @@ std::list<double> FilterModel::exportCoeffs(double dSamplingRate, bool noA0Divid
         std::list<double> numArray2 = m_data[i]->ExportCoeffs(dSamplingRate, noA0Divide);
         if (numArray2.empty())
         {
-            qWarning() << "Export failed: Biquad::ExportCoeffs returned empty list";
-            return std::list<double>();
+            qWarning() << "WARNING: FilterModel::exportCoeffs: Biquad::ExportCoeffs returned empty list. Skipping filter.";
+            continue;
         }
         numArray.splice(numArray.end(), numArray2);
     }
