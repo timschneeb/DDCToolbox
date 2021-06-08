@@ -122,9 +122,6 @@ void VdcEditorWindow::createFilterModel()
     auto *delegate = new FilterViewDelegate();
     delegate->setModel(filterModel);
     ui->tableView_DDCPoints->setItemDelegate(delegate);
-    connect(delegate, &FilterViewDelegate::requireEditCommit, [this](EditCommand* cmd){
-        undoStack->push(cmd);
-    });
 
     VdcProjectManager::instance().initialize(filterModel);
     ui->tableView_DDCPoints->setModel(filterModel);

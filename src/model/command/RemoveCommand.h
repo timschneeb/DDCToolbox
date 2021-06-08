@@ -43,7 +43,7 @@ public:
         QVector<uint32_t> ids;
         ids.reserve(cache.count());
         for( int i = cache.count(); i > 0; i--){
-            ids.push_back(cache.at(i-1).id);
+            ids.push_back(cache.at(i-1).id());
         }
         model->removeAllById(ids);
     }

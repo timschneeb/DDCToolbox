@@ -64,6 +64,9 @@ public:
     bool getDebugMode() const;
     void setDebugMode(bool value);
 
+public slots:
+    void notifyExternalDataChange(DeflatedBiquad previous, DeflatedBiquad current, QModelIndex index);
+
 signals:
     void filterEdited(DeflatedBiquad previous, DeflatedBiquad current, QModelIndex index);
 

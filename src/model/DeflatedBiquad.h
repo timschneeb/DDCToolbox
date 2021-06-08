@@ -22,13 +22,16 @@ public:
 
     bool operator==(const DeflatedBiquad& rhs);
 
-    uint32_t id = 0;
+    uint32_t _id = 0;
     FilterType type = FilterType::INVALID;
     int freq = 0;
     double bwOrSlope = 1;
     double gain = 0;
     CustomFilter c441 = CustomFilter();
     CustomFilter c48 = CustomFilter();
+
+    uint32_t id() const;
+    void setId(uint32_t newId);
 };
 
 #endif // CACHEDBIQUAD_H

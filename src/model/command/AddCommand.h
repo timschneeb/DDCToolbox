@@ -17,7 +17,7 @@ public:
 
     void undo()
     {
-        model->removeById(biquad.id);
+        model->removeById(biquad.id());
     }
 
     void redo()

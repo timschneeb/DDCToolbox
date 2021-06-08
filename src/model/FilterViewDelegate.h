@@ -74,10 +74,13 @@ public:
                     [this, index](CustomFilter prev44100, CustomFilter prev48000,
                     CustomFilter c44100, CustomFilter c48000){
 
+                uint id = m_model->getFilter(index.row())->GetId();
                 DeflatedBiquad previous(FilterType::CUSTOM, prev44100, prev48000);
                 DeflatedBiquad current(FilterType::CUSTOM, c44100, c48000);
+                previous.setId(id);
+                current.setId(id);
 
-                emit requireEditCommit(new EditCommand(m_model, previous, current, index));
+                m_model->notifyExternalDataChange(previous, current, index);
             });
             return cf_item;
         }
@@ -169,9 +172,6 @@ public:
         else
             QStyledItemDelegate::setModelData(editor, model, index);
     }
-
-signals:
-    void requireEditCommit(EditCommand*) const;
 
 private:
     FilterModel* m_model;

@@ -3,6 +3,8 @@
 
 #include "widget/CustomFilterDialog.h"
 
+#include <QDebug>
+
 CustomFilterItem::CustomFilterItem(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CustomFilterItem)
@@ -35,6 +37,7 @@ CustomFilterItem::CustomFilterItem(QWidget *parent) :
         if(cd->exec()){
             m_cfilter441 = cd->getCoefficients(false);
             m_cfilter48 = cd->getCoefficients(true);
+
             emit coefficientsUpdated(prev441, prev48, m_cfilter441, m_cfilter48);
             updateText();
         }

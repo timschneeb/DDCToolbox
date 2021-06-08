@@ -81,6 +81,7 @@ bool FilterModel::setData(const QModelIndex &index, const QVariant &value, int r
             return false;
 
         emit filterEdited(backup, DeflatedBiquad(m_data[index.row()]), index);
+        emit dataChanged(index, index.siblingAtColumn(3));
         return true;
     }
     return false;
@@ -421,4 +422,10 @@ bool FilterModel::getDebugMode() const
 void FilterModel::setDebugMode(bool value)
 {
     debugMode = value;
+}
+
+void FilterModel::notifyExternalDataChange(DeflatedBiquad previous, DeflatedBiquad current, QModelIndex index)
+{
+    emit filterEdited(previous, current, index);
+    emit dataChanged(index, index.siblingAtColumn(3));
 }
