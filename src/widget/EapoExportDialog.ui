@@ -130,10 +130,10 @@
    <item>
     <widget class="QListWidget" name="rateList">
      <property name="selectionMode">
-      <enum>QAbstractItemView::MultiSelection</enum>
+      <enum>QAbstractItemView::ContiguousSelection</enum>
      </property>
      <property name="selectionBehavior">
-      <enum>QAbstractItemView::SelectRows</enum>
+      <enum>QAbstractItemView::SelectItems</enum>
      </property>
      <item>
       <property name="text">
