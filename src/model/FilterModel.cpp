@@ -143,6 +143,13 @@ QVariant FilterModel::data(const QModelIndex &index, int role) const
 }
 
 QVariant FilterModel::headerData(int section, Qt::Orientation orientation, int role) const {
+    if (role == Qt::DisplayRole) {
+        if (orientation == Qt::Vertical) {
+            // Render row number in vertical header rows
+            return section;
+        }
+    }
+
     if (orientation != Qt::Horizontal || role != Qt::DisplayRole) return {};
     switch (section) {
     case Type: return "Type";
