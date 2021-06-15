@@ -50,6 +50,7 @@ void DeflatedBiquad::setId(uint32_t newId)
 
 uint32_t DeflatedBiquad::id() const
 {
-    qWarning() << "WARNING: DeflatedBiquad::id(): Requested id of filter is null";
+    if (_id <= 0)
+        qWarning() << "WARNING: DeflatedBiquad::id(): Requested id of filter is null";
     return _id;
 }
