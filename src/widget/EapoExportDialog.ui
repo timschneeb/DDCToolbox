@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>257</width>
-    <height>128</height>
+    <width>361</width>
+    <height>273</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -68,7 +68,7 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Select the target sampling rate</string>
+           <string>Select target sampling rates</string>
           </property>
          </widget>
         </item>
@@ -78,22 +78,12 @@
     </widget>
    </item>
    <item>
-    <layout class="QFormLayout" name="formLayout">
-     <property name="leftMargin">
-      <number>3</number>
-     </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="9,0,0">
      <property name="topMargin">
       <number>0</number>
      </property>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Sampling rate</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QSpinBox" name="spinBox">
+     <item>
+      <widget class="QSpinBox" name="rateInput">
        <property name="suffix">
         <string>Hz</string>
        </property>
@@ -108,7 +98,64 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="rateInsert">
+       <property name="text">
+        <string>Insert</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="rateRemove">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Remove selection</string>
+       </property>
+      </widget>
+     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Selected values:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QListWidget" name="rateList">
+     <property name="selectionMode">
+      <enum>QAbstractItemView::MultiSelection</enum>
+     </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+     <item>
+      <property name="text">
+       <string>44100</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>48000</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generated configurations contain dynamic expressions that automatically select the correct set of coefficients based on the current sampling rate.&lt;br/&gt;Please add all sampling rates you want it to support above.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer">

@@ -387,15 +387,29 @@ void VdcEditorWindow::exportProject()
             return;
         }
 
-        std::list<double> p = filterModel->exportCoeffs(srDlg->getResult(), true);
-        /* Check custom filter compatibility with selected sampling rate */
-        if(srDlg->getResult() != 44100 && srDlg->getResult() != 48000){
+        if(srDlg->getResult().count() < 1){
+            QMessageBox::warning(this, "Error", "Export cancelled due to empty selection");
+            return;
+        }
+
+        bool onlyStandardRates = true; /* only 44100 and 48000Hz requested */
+        std::map<int /* samplerate */, std::list<double> /* coeffs */> allCoeffs;
+        for(auto sr : srDlg->getResult()){
+            allCoeffs[sr] = filterModel->exportCoeffs(sr, true);
+
+            if(sr != 44100 && sr != 48000)
+                onlyStandardRates = false;
+        }
+
+        /* Check whether a user attempts to export custom filters (which only support 44100Hz and 48000Hz fields) using an unsupported srate */
+        if(!onlyStandardRates){
             for(const auto& filter : qAsConst(filterModel->getFilterBank()))
             {
                 if(filter->GetFilterType() == FilterType::CUSTOM)
                 {
                     auto button = QMessageBox::warning(this, "Export", "<b>Custom filters in your project can not be exported using the selected sampling rate</b><br/>"
-                                                       "Currently, custom filters can only contain filter coefficents designed for sampling rates 44100Hz and 48000Hz. Please choose a supported value to ensure all filters are exported correctly.",
+                                                       "Currently, custom filters can only contain filter coefficents designed for sampling rates 44100Hz and 48000Hz. Please choose a supported value to ensure all filters are exported correctly.<br/>"
+                                                       "Select 'Ignore' if you want to skip the affected filters and continue anyway.",
                                                        QMessageBox::Ignore | QMessageBox::Cancel);
                     if(button == QMessageBox::Cancel)
                     {
@@ -417,7 +431,7 @@ void VdcEditorWindow::exportProject()
         QString fileName = QFileDialog::getSaveFileName(this,
                                                         tr("Save EqualizerAPO config"), dir, tr("Equalizer APO config file (*.txt)"));
 
-        VdcProjectManager::instance().exportEapoConfig(fileName, p, srDlg->getResult());
+        VdcProjectManager::instance().exportEapoConfig(fileName, allCoeffs);
         srDlg->deleteLater();
     }
     else if(sender() == ui->actionCSV_dataset)
@@ -435,7 +449,8 @@ void VdcEditorWindow::exportProject()
                 if(filter->GetFilterType() == FilterType::CUSTOM)
                 {
                     auto button = QMessageBox::warning(this, "Export", "<b>Custom filters in your project can not be exported using the selected sampling rate</b><br/>"
-                                                       "Currently, custom filters can only contain filter coefficents designed for sampling rates 44100Hz and 48000Hz. Please choose a supported value to ensure all filters are exported correctly.",
+                                                       "Currently, custom filters can only contain filter coefficents designed for sampling rates 44100Hz and 48000Hz. Please choose a supported value to ensure all filters are exported correctly.<br/>"
+                                                       "Select 'Ignore' if you want to skip the affected filters and continue anyway.",
                                                        QMessageBox::Ignore | QMessageBox::Cancel);
                     if(button == QMessageBox::Cancel)
                     {

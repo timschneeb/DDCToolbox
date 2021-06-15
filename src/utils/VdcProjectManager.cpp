@@ -57,7 +57,7 @@ bool VdcProjectManager::exportProject(QString fileName, const std::list<double>&
 #define WRITE_VDC(input,sr) \
     buffer += "SR_"#sr":"; \
     for(const auto& coeff : input) \
-        buffer += QString::number(coeff, 'f', 16) + ","; \
+    buffer += QString::number(coeff, 'f', 16) + ","; \
     buffer.chop(1); \
     buffer += n;
 
@@ -71,8 +71,11 @@ bool VdcProjectManager::exportProject(QString fileName, const std::list<double>&
     return true;
 }
 
-bool VdcProjectManager::exportEapoConfig(QString fileName, const std::list<double>& p1, int sr){
+bool VdcProjectManager::exportEapoConfig(QString fileName, const std::map<int, std::list<double>>& allCoeffs){
     if (fileName.isEmpty())
+        return false;
+
+    if(allCoeffs.size() < 1)
         return false;
 
     if(QFileInfo(fileName).suffix() != "txt")
@@ -86,23 +89,43 @@ bool VdcProjectManager::exportEapoConfig(QString fileName, const std::list<doubl
 
     QTextStream outStream(&caFile);
     QString buffer;
-    std::vector<double> v{ std::begin(p1), std::end(p1) };
 
     buffer.append(QString("Created by DDCToolbox v%1\n").arg(STRINGIFY(CURRENT_APP_VERSION)));
-    buffer.append(QString("Target sampling rate: %1Hz\n\n").arg(sr));
+    buffer.append(QString("Supported sampling rates:"));
+    for(auto [sr, _] : allCoeffs)
+        buffer.append(QString(" %1Hz,").arg(sr));
+    buffer.chop(1);
+    buffer.append(QString("\n\n"));
 
-    uint filterCount = 0;
-    for(size_t i = 0; i < v.size(); i = i + 6){
-        filterCount++;
+    int currentIndex = 0;
+    for(auto [sr, data] : allCoeffs)
+    {
+        if(currentIndex == 0)
+            buffer += "If sampleRate == " + QString::number(sr) + ":\n";
+        else
+            buffer += "ElseIf sampleRate == " + QString::number(sr) + ":\n";
 
-        buffer += QString("Filter %1: ON IIR Order 2 Coefficients ").arg(filterCount);
+        std::vector<double> v{ std::begin(data), std::end(data) };
 
-        for(size_t j = 0; (j < 6 && v.size() >= i + j); j++){
-            buffer += QString::number(v[i + j], 'f', 16) + " ";
+        uint filterCount = 0;
+        for(size_t i = 0; i < v.size(); i = i + 6){
+            filterCount++;
+
+            buffer += QString("\tFilter %1: ON IIR Order 2 Coefficients ").arg(filterCount);
+
+            for(size_t j = 0; (j < 6 && v.size() >= i + j); j++){
+                buffer += QString::number(v[i + j], 'f', 16) + " ";
+            }
+
+            buffer += n;
         }
 
-        buffer += n;
+        currentIndex++;
     }
+
+    buffer += "Else:\n";
+    buffer += "\t# Other sample rates than those specified above are not supported\n";
+    buffer += "EndIf";
 
     outStream << buffer;
     caFile.close();

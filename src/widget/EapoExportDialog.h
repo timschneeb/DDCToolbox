@@ -15,7 +15,11 @@ public:
     explicit EapoExportDialog(QWidget *parent = nullptr);
     ~EapoExportDialog();
 
-    int getResult();
+    QList<int> getResult();
+
+private slots:
+    void insertValue();
+    void removeValue();
 
 private:
     Ui::SamplerateChooseDialog *ui;
