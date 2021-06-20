@@ -68,6 +68,9 @@ VdcEditorWindow::VdcEditorWindow(QWidget *parent) :
     createUpdater();
 
     connect(&VdcProjectManager::instance(), &VdcProjectManager::projectClosed, undoStack, &QUndoStack::clear);
+    connect(&VdcProjectManager::instance(), &VdcProjectManager::projectClosed, undoStack, []{
+        Biquad::ResetIds();
+    });
     connect(&VdcProjectManager::instance(), &VdcProjectManager::projectMetaChanged, [this]{
         QString title = qApp->applicationName();
 

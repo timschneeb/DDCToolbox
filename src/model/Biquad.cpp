@@ -1,26 +1,36 @@
 #include "Biquad.h"
+
 #include <QDebug>
+
 #include <cstdio>
 #include <list>
+
+#include <makeid.h>
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
-static uint64_t biquad_object_count = 0;
+MakeID* Biquad::id_factory = new MakeID(UINT32_MAX);
 
 Biquad::Biquad(bool idless)
 {
-    if(biquad_object_count >= UINT64_MAX - 1)
-        biquad_object_count = 0;
-
-    if(!idless)
-        m_id = ++biquad_object_count;
+    if(!idless){
+       if(!id_factory->CreateID(m_id))
+           qWarning() << "ERROR: Biquad::Biquad unable to create id for biquad object";
+    }
 
     internalBiquadCoeffs[0] = 0.0;
     internalBiquadCoeffs[1] = 0.0;
     internalBiquadCoeffs[2] = 0.0;
     internalBiquadCoeffs[3] = 0.0;
     internalBiquadCoeffs[4] = 0.0;
+}
+
+void Biquad::ResetIds()
+{
+    delete id_factory;
+    id_factory = new MakeID(UINT32_MAX);
 }
 
 void Biquad::RefreshFilter(FilterType type, double dbGain, double centreFreq, double dBandwidthOrS)

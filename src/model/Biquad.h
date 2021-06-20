@@ -4,6 +4,9 @@
 #include <cmath>
 #include <cfloat>
 #include <cstdint>
+#include <memory>
+
+#include <makeid.h>
 
 #include "FilterType.h"
 
@@ -57,8 +60,12 @@ public:
         UNKNOWN = 0xFF
     };
 
+    static MakeID* id_factory;
+    static void ResetIds();
+
     Biquad(bool idless = false);
     ~Biquad(){};
+
     void RefreshFilter(FilterType type, double dbGain, double centreFreq, double dBandwidthOrS);
     void RefreshFilter(FilterType type, const CustomFilter& c441, const CustomFilter& c48);
     std::list<double> ExportCoeffs(double dSamplingRate, bool noA0divide = false);
@@ -145,7 +152,7 @@ public:
     };
 
 private:
-    int32_t m_id = 0;
+    uint32_t m_id = 0;
     double internalBiquadCoeffs[5];
     double m_dFilterBQ = 1;
     double m_dFilterFreq = 10;

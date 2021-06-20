@@ -1,0 +1,3 @@
+INCLUDEPATH += $$PWD
+
+HEADERS += $$PWD/makeid.h
