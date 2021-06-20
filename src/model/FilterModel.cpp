@@ -285,9 +285,9 @@ bool FilterModel::removeAllById(const QVector<uint32_t>& ids){
 
     beginRemoveRows({}, rows.last(), rows.first());
     for(const int& row : rows){
-        delete m_data[row]; // TODO: Safe deletion without undo/redo corruption
-        m_data[row] = nullptr;
-        m_data.remove(row, 1);
+        auto* ptr = m_data[row]; // TODO: Safe deletion without undo/redo corruption
+        m_data.removeAt(row);
+        delete ptr;
     }
     endRemoveRows();
 
