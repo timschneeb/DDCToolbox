@@ -71,7 +71,7 @@ parts:
     override-build: |
       set -eux
       qmake -set prefix $SNAPCRAFT_PART_INSTALL
-      qmake DDCToolbox.pro
+      qmake DDCToolbox.pro "CONFIG += no_tests"
       snapcraftctl build
       mv DDCToolbox $SNAPCRAFT_PART_INSTALL/ddctoolbox
     source: .
