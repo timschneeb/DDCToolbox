@@ -73,7 +73,7 @@ parts:
       qmake -set prefix $SNAPCRAFT_PART_INSTALL
       qmake DDCToolbox.pro "CONFIG += no_tests"
       snapcraftctl build
-      mv DDCToolbox $SNAPCRAFT_PART_INSTALL/ddctoolbox
+      mv src/DDCToolbox $SNAPCRAFT_PART_INSTALL/ddctoolbox
     source: .
     stage:
       - ddctoolbox
