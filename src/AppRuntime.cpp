@@ -20,7 +20,9 @@ AppRuntime::AppRuntime(int& argc, char**argv): QApplication(argc, argv)
 
     AppRuntime::setStyle(new ProxyStyle("Fusion"));
     AppRuntime::setPalette(AppRuntime::style()->standardPalette());
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     AppRuntime::setAttribute(Qt::AA_DisableWindowContextHelpButton);
+#endif
 
 #ifdef __APPLE__
     this->setStyleSheet("* {font-size: 13px;}");
