@@ -81,7 +81,7 @@ bool FilterModel::setData(const QModelIndex &index, const QVariant &value, int r
             return false;
 
         emit filterEdited(backup, DeflatedBiquad(m_data[index.row()]), index);
-        emit dataChanged(index, index.siblingAtColumn(3));
+        emit dataChanged(index, index.sibling(index.row(), 3));
         return true;
     }
     return false;
@@ -316,7 +316,7 @@ void FilterModel::replace(QModelIndex index, DeflatedBiquad current, bool stealt
         m_data[index.row()]->RefreshFilter(current.type, current.gain, current.freq, current.bwOrSlope);
 
     if(!stealth)
-        emit dataChanged(index, index.siblingAtColumn(3));
+        emit dataChanged(index, index.sibling(index.row(), 3));
 }
 
 QModelIndex FilterModel::replaceById(uint id, DeflatedBiquad current, bool stealth)
@@ -339,7 +339,7 @@ QModelIndex FilterModel::replaceById(uint id, DeflatedBiquad current, bool steal
         m_data[index.row()]->RefreshFilter(current.type, current.gain, current.freq, current.bwOrSlope);
 
     if(!stealth)
-        emit dataChanged(index, index.siblingAtColumn(3));
+        emit dataChanged(index, index.sibling(index.row(), 3));
 
     return index;
 }
@@ -434,5 +434,5 @@ void FilterModel::setDebugMode(bool value)
 void FilterModel::notifyExternalDataChange(DeflatedBiquad previous, DeflatedBiquad current, QModelIndex index)
 {
     emit filterEdited(previous, current, index);
-    emit dataChanged(index, index.siblingAtColumn(3));
+    emit dataChanged(index, index.sibling(index.row(), 3));
 }

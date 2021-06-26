@@ -39,7 +39,7 @@ public:
         }
         qSort(indices.begin(), indices.end(), qGreater<QModelIndex>());
 
-        emit model->dataChanged(indices.first(), indices.last().siblingAtColumn(3));
+        emit model->dataChanged(indices.first(), indices.last().sibling(indices.last().row(), 3));
     }
     void redo()
     {
@@ -59,7 +59,7 @@ public:
         }
         qSort(indices.begin(), indices.end(), qGreater<QModelIndex>());
 
-        emit model->dataChanged(indices.first(), indices.last().siblingAtColumn(3));
+        emit model->dataChanged(indices.first(), indices.last().sibling(indices.last().row(), 3));
     }
 
     QString createCommandString(){
