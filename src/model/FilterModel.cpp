@@ -35,8 +35,10 @@ bool FilterModel::removeRows(int row, int count, const QModelIndex &parent)
 bool FilterModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (role == Qt::EditRole) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
         if (!checkIndex(index))
             return false;
+#endif
 
         DeflatedBiquad backup = DeflatedBiquad(m_data[index.row()]);
 
