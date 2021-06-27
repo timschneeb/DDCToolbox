@@ -59,7 +59,24 @@ parts:
       - try: [appmenu-qt5] # not available on core18
       - locales-all
       - xdg-user-dirs
-      - fcitx-frontend-qt5
+      - fcitx-frontend-qt5 
+      - libblkid1
+      - libgcc1
+      - libgcrypt20
+      - libgpg-error0
+      - libgtk2.0-0
+      - liblz4-1
+      - liblzma5
+      - libmount1
+      - libpcre3
+      - libselinux1
+      - libstdc++6
+      - libsystemd0
+      - libtinfo5
+      - libudev1
+      - libuuid1
+      - zlib1g
+
 
   qt5-gtk-platform:
     plugin: nil
