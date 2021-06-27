@@ -42,6 +42,9 @@ win32 {
        LIBS += $$[QT_INSTALL_LIBS]/../plugins/imageformats/qsvg.lib
     }
 }
+linux {
+    QMAKE_CXXFLAGS += -Wno-switch
+}
 
 QMAKE_TARGET_PRODUCT = "DDCToolbox"
 QMAKE_TARGET_DESCRIPTION = "Create and design audio filters using biquads"
