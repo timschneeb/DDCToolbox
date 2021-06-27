@@ -31,9 +31,9 @@ DEFINES += CURRENT_APP_VERSION=$${VERSION}
 include($$PWD/DDCToolbox-lib.pri)
 
 # Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+# qnx: target.path = /tmp/$${TARGET}/bin
+# else: unix:!android: target.path = /opt/$${TARGET}/bin
+# !isEmpty(target.path): INSTALLS += target
 
 win32 {
     RC_ICONS = $$PWD/../res/img/icon.ico
