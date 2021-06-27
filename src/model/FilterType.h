@@ -95,7 +95,7 @@ public:
         return specs;
     }
 
-    constexpr static StringMap string_map[] = {
+    constexpr inline static StringMap string_map[] = {
         {PEAKING, "Peaking"},
         {LOW_PASS, "Low Pass"},
         {HIGH_PASS, "High Pass"},
@@ -111,7 +111,7 @@ public:
         {CUSTOM, "Custom"},
         {INVALID, "Invalid"},
     };
-    constexpr static auto string_map_size = sizeof string_map/sizeof string_map[0];
+    constexpr inline static auto string_map_size = sizeof string_map/sizeof string_map[0];
 
 private:
     Value value;

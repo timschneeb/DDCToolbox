@@ -1,12 +1,5 @@
 #include "CurveFittingWorker.h"
 
-#ifndef min
-#define min(a,b) (((a)<(b))?(a):(b))
-#endif
-#ifndef max
-#define max(a,b) (((a)>(b))?(a):(b))
-#endif
-
 extern "C" {
 #include <PeakingFit/linear_interpolation.h>
 #include <PeakingFit/peakfinder.h>
@@ -172,7 +165,7 @@ void CurveFittingWorker::preprocess(double *&flt_freqList, double *&target, uint
         }
         else
         {
-            detailLinearGridLen = max(array_size, 8192); // Larger the value could be take care large(Especially for uniform grid)
+            detailLinearGridLen = fmax(array_size, 8192); // Larger the value could be take care large(Especially for uniform grid)
             spectrum = (double*)malloc(detailLinearGridLen * sizeof(double));
             linGridFreq = (double*)malloc(detailLinearGridLen * sizeof(double));
             for (i = 0; i < detailLinearGridLen; i++)
