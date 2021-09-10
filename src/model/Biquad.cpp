@@ -87,8 +87,10 @@ std::list<double> Biquad::CalculateCoeffs(double fs, bool noA0divide)
     double cs = cos(a);
 
     double alpha;
-    if (m_dFilterType == FilterType::LOW_SHELF || m_dFilterType == FilterType::HIGH_SHELF) // S
-        alpha = num3 / 2 * sqrt((d + 1 / d) * (1 / m_dFilterBQ - 1) + 2);
+    if (m_dFilterType == FilterType::LOW_SHELF || m_dFilterType == FilterType::HIGH_SHELF) {
+        double q = round(1000000*pow(2,m_dFilterBQ*0.5)/(pow(2,m_dFilterBQ)-1))/1000000; // convert bw to q
+        alpha = num3 / 2 * sqrt((d + 1 / d) * (1 / q - 1) + 2);
+    }
     else // BW
         alpha = num3 * sinh(log(2.0) / 2.0 * m_dFilterBQ * a / num3);
 
