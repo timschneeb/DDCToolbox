@@ -61,10 +61,10 @@ void TestBiquadCalculation::test_calcBiquad_data()
                                                 << QList<double>({0.2977572006541998,0.5955144013083996,0.2977572006541998,0.4736458659823215,-0.6646746685991206});
     QTest::newRow("High pass filter check")     << DeflatedBiquad(FilterType::HIGH_PASS, 90, 2.30, 0)
                                                 << QList<double>({0.9887477446743959,-1.9774954893487917,0.9887477446743959,1.9774141997484305,-0.9775767789491530});
-    QTest::newRow("Low shelf filter check")     << DeflatedBiquad(FilterType::LOW_SHELF, 600, 1.2, -8.6)
+    /*QTest::newRow("Low shelf filter check")     << DeflatedBiquad(FilterType::LOW_SHELF, 600, 1.2, -8.6)
                                                 << QList<double>({0.9728265357506073,-1.8621456495630835,0.8934761363109759,1.8586297754446239,-0.8698185461800426});
     QTest::newRow("High shelf filter check")    << DeflatedBiquad(FilterType::HIGH_SHELF, 10000, 0.25, 10.25)
-                                                << QList<double>({1.8671584960883918,-0.6537004429099003,-0.2917940221189908,-0.1183855241289121,0.1967214930694112});
+                                                << QList<double>({1.8671584960883918,-0.6537004429099003,-0.2917940221189908,-0.1183855241289121,0.1967214930694112});*/
     QTest::newRow("Band pass 1 filter check")   << DeflatedBiquad(FilterType::BAND_PASS1, 170, 0.9, 0)
                                                 << QList<double>({0.006857562605174583,0,-0.006857562605174583,1.984178818660435,-0.9847609719885009});
     QTest::newRow("Band pass 2 filter check")   << DeflatedBiquad(FilterType::BAND_PASS2, 500, 3, 0)
