@@ -83,7 +83,7 @@ If the server is down, you can also get one from the GitHub artifact storage:
 ## Linux
 Linux users can download a stable release of this app from the Snap Store. If `snap` is not yet installed on your system, you need to install it before you can continue: <https://snapcraft.io/docs/installing-snapd>. (All Ubuntu flavors, KDE Neon, Manjaro and Zorin OS have this utility already pre-installed)
 
-> NOTE: The snapcraft package are currently outdated. Consider using the AUR or compiling from sources manually.
+**NOTE: The snapcraft package are currently outdated. Consider using the AUR or compiling from sources manually.**
 
 Once `snap` is properly installed, you can install ddctoolbox:
 ```bash
