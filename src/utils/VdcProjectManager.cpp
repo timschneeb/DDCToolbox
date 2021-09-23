@@ -551,13 +551,13 @@ DeflatedBiquad VdcProjectManager::parseParametricEqLine(const QString& str){
         return DeflatedBiquad();
 
     QRegularExpression re
-            (R"(Filter\s\d+[\s\S][^PK]*PK\s+Fc\s+(?<hz>\d+)\s*Hz\s*Gain\s*(?<gain>-?\d*.?\d+)\s*dB\s*Q\s*(?<q>-?\d*.?\d+))");
+            (R"(Filter\s+\d+[\s\S][^PK]*PK\s+Fc\s+(?<hz>\d+(?:\.\d+)?)\s*Hz\s*Gain\s*(?<gain>-?\d*.?\d+)\s*dB\s*Q\s*(?<q>-?\d*.?\d+))");
     QRegularExpressionMatch match = re.match(str);
     if(!match.hasMatch())
         return DeflatedBiquad();
 
     bool freqOk, gainOk, qOk;
-    int freq = match.captured("hz").toInt(&freqOk);
+    int freq = (int)match.captured("hz").toDouble(&freqOk);
     double gain = match.captured("gain").toDouble(&gainOk);
     double q = match.captured("q").toDouble(&qOk);
 
