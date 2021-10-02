@@ -8,27 +8,27 @@ mkdir $debname"/DEBIAN"
 mkdir -p $debname"/usr/bin"
 mkdir -p $debname"/usr/share/applications"
 mkdir -p $debname"/usr/share/pixmaps"
-cp "DDCToolbox" $debname"/usr/bin/ddc-toolbox"
+cp "DDCToolbox" $debname"/usr/bin/ddctoolbox"
 
-cp "img/icon.png" $debname"/usr/share/pixmaps/ddc-toolbox.png"
+cp "img/icon.png" $debname"/usr/share/pixmaps/ddctoolbox.png"
 cp "LICENSE" $debname"/DEBIAN"
 
-cat <<EOT >> $debname"/usr/share/applications/ddc-toolbox.desktop"
+cat <<EOT >> $debname"/usr/share/applications/ddctoolbox.desktop"
 [Desktop Entry]
 Name=DDC Toolbox
 GenericName=DDC Editor
 Comment=Create and edit DDCs on Linux
 Keywords=editor
 Categories=AudioVideo;Audio;Editor
-Exec=ddc-toolbox
-Icon=/usr/share/pixmaps/ddc-toolbox.png
+Exec=ddctoolbox
+Icon=/usr/share/pixmaps/ddctoolbox.png
 StartupNotify=false
 Terminal=false
 Type=Application
 EOT
 
 cat <<EOT >> $debname"/DEBIAN/control"
-Package: ddc-toolbox
+Package: ddctoolbox
 Version: $1
 Section: sound
 Priority: optional
