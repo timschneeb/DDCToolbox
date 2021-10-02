@@ -172,7 +172,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         repository: 'ThePBone/PPA-Repository'
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.REPO_AUTH_TOKEN }}
         persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
         fetch-depth: 0
         
@@ -227,6 +227,6 @@ jobs:
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ secrets.REPO_AUTH_TOKEN }}
         repository: ThePBone/PPA-Repository
         force: true
