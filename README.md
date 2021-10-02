@@ -50,7 +50,7 @@ Recommended:
   * [Windows (Stable)](#windows-stable)
   * [Windows (Nightly)](#windows-nightly)
 * **Linux**
-  * [Linux (Any distro)](#linux)
+  * [Debian/Ubuntu (PPA)](#debianubuntu-ppa)
   * [Arch Linux (AUR)](#arch-aur)
 * **macOS**
   * [macOS (OSX 10.13 and later, Intel x64 only)](#macos-intel)
@@ -80,27 +80,25 @@ If the server is down, you can also get one from the GitHub artifact storage:
 
 **NOTE: You need a GitHub account to download these build artifacts, otherwise you'll get redirected to a 404 page.**
 
-## Linux
-Linux users can download a stable release of this app from the Snap Store. If `snap` is not yet installed on your system, you need to install it before you can continue: <https://snapcraft.io/docs/installing-snapd>. (All Ubuntu flavors, KDE Neon, Manjaro and Zorin OS have this utility already pre-installed)
+## Debian/Ubuntu (PPA)
 
-**NOTE: The snapcraft package are currently outdated. Consider using the AUR or compiling from sources manually.**
+Recommended system requirements:
+* Distro based on Debian 11 or later **OR**
+* Distro based on Ubuntu 20.04 or later
 
-Once `snap` is properly installed, you can install ddctoolbox:
+Add PPA Repo
 ```bash
-sudo snap install ddctoolbox
+sudo apt install -y curl
+curl -s --compressed "https://thepbone.github.io/PPA-Repository/KEY.gpg" | sudo apt-key add -
+sudo curl -s --compressed -o /etc/apt/sources.list.d/thepbone_ppa.list "https://thepbone.github.io/PPA-Repository/thepbone_ppa.list"
+sudo apt update
 ```
-You can launch ddctoolbox by executing `ddctoolbox` in a terminal, or by selecting the application shortcut in your drop-down menu bar.
+Install from PPA
 
-> Note: If you installed snap for the first time, it may be necessary to relogin in order to make the application shortcut in your menu bar visible.
-
-<p align="center">
-  <a href="https://snapcraft.io/ddctoolbox">
-    <img alt="Snapcraft Badge" src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg">
-  </a>
-</p>
-
-## Android
-There is an Android version of DDCToolbox with limited functionality available here: [ThePBone/DDCToolbox-Android](https://github.com/ThePBone/DDCToolbox-Android)
+```bash
+sudo apt install ddctoolbox
+```
+[View PPA on GitHub](https://github.com/ThePBone/PPA-Repository)
 
 ## Arch (AUR)
 A git package is available in the [AUR](https://aur.archlinux.org/packages/ddctoolbox-git/).
@@ -109,6 +107,8 @@ yay -S ddctoolbox-git
 ```
 ![AUR version](https://img.shields.io/aur/version/ddctoolbox-git?label=aur-git)
 
+## Android
+There is an Android version of DDCToolbox with limited functionality available here: [ThePBone/DDCToolbox-Android](https://github.com/ThePBone/DDCToolbox-Android)
 
 ## macOS (Intel)
 macOS support is currently in beta; only cloud-compiled nightly binaries are available. The next stable release will include stable versions of OSX binaries.
@@ -119,7 +119,7 @@ You can download one of nightly beta builds [from my server](https://nightly.tim
 ## Debian (Nightly)
 **Qt 5.11 or later required.** Debian 10 (or later releases) provide this version of Qt in their official repositories.
 
-Since these nightly (beta) packages are not downloaded by your package manager, you will not be notified about any updates. **If possible, please install this app from the [Snap Store](#linux) instead!**
+Since these nightly (beta) packages are not downloaded by your package manager, you will not be notified about any updates. **If possible, please install this app from the stable [PPA](#debianubuntu-ppa) instead!**
 
 You can download one of these nightly debian packages or precompiled binaries [from my server](https://nightly.timschneeberger.me/ddctoolbox-linux).
 They are automatically compiled and may contain bugs. Dependencies are not included with precompiled standalone executables.
