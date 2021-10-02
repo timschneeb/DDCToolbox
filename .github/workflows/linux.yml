@@ -162,3 +162,71 @@ jobs:
       with:
         files: '*.deb'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
+      
+  update-ppa:
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    needs: [build-deb-amd64]
+        
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        repository: 'ThePBone/PPA-Repository'
+        token: ${{ secrets.GITHUB_TOKEN }}
+        persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+        fetch-depth: 0
+        
+    - name: Prepare version information (1/3)
+      uses: oprypin/find-latest-tag@v1
+      with:
+        repository: ThePBone/DDCToolbox
+        releases-only: false
+      id: last_release  
+      
+    - name: Prepare version information (2/3)
+      uses: benjlevesque/short-sha@v1.2
+      id: short-sha
+      with:
+        length: 6
+    - name: Prepare version information (3/3)
+      run: echo '::set-output name=version::${{steps.last_release.outputs.tag}}-${{steps.short-sha.outputs.sha}}'
+      id: version
+        
+    - name: Download package artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: ddctoolbox_${{steps.version.outputs.version}}_linux64.deb
+
+    - name: Import GPG key
+      id: import_gpg
+      uses: crazy-max/ghaction-import-gpg@v4
+      with:
+        gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+
+    - name: GPG user IDs
+      run: |
+        echo "fingerprint: ${{ steps.import_gpg.outputs.fingerprint }}"
+        echo "keyid:       ${{ steps.import_gpg.outputs.keyid }}"
+        echo "name:        ${{ steps.import_gpg.outputs.name }}"
+        echo "email:       ${{ steps.import_gpg.outputs.email }}"
+    - name: Update packages
+      run: |
+        sudo apt install dpkg-dev apt-utils
+        export EMAIL="tim.schneeberger@outlook.de"
+        dpkg-scanpackages --multiversion . > Packages
+        gzip -k -f Packages
+        apt-ftparchive release . > Release
+        gpg --default-key "${EMAIL}" -abs -o - Release > Release.gpg
+        gpg --default-key "${EMAIL}" --clearsign -o - Release > InRelease
+    - name: Commit
+      run: |
+        git config --local user.email "tim.schneeberger@outlook.de"
+        git config --local user.name "Tim Schneeberger"
+        git add .
+        git commit -m "Update DDCToolbox packages"
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        repository: ThePBone/PPA-Repository
+        force: true
