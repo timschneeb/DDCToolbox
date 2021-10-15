@@ -799,7 +799,9 @@ void kann_shuffle(int n, int *s)
  *** @@MIN: minimization ***
  ***************************/
 
-#ifdef __SSE__
+/* thepbone: SSE optimized version commented out due to missing symbols and type casting issues */
+
+/*#ifdef __SSE__
 #include <xmmintrin.h>
 
 void kann_RMSprop(grad_optimizer *state, const double *g, double *t)
@@ -824,7 +826,7 @@ void kann_RMSprop(grad_optimizer *state, const double *g, double *t)
 		t[i] = t[i] - (g[i] * state->param1 / sqrtf(state->eps + state->history[i]));
 	}
 }
-#else
+#else*/
 void kann_InitRMSprop(grad_optimizer *state, int n, double *rho, double decay, double eps)
 {
 	state->n = n;
@@ -848,7 +850,7 @@ void kann_RMSprop(grad_optimizer *state, const double *g, double *t)
 		t[i] = t[i] - (g[i] * *state->param1 / sqrt(state->eps + state->history[i]));
 	}
 }
-#endif
+//#endif
 
 double kann_grad_clip(double thres, int n, double *g)
 {
@@ -912,7 +914,7 @@ int kann_train_fnn1(kann_t *ann, double lr, int mini_size, int max_epoch, int ma
 			train_cost += cost;
 			c = kann_class_error(ann, &b);
 			n_train_err += c, n_train_base += b;
-			kann_RMSprop(&state, ann->g, ann->x, updateEpoch);
+            kann_RMSprop(&state, ann->g, ann->x /*, updateEpoch*/); // thepbone: kann_RMSprop has only 3 parameters, omit updateEpoch
 			updateEpoch = 0;
 			n_proc += ms;
 		}
@@ -932,15 +934,15 @@ int kann_train_fnn1(kann_t *ann, double lr, int mini_size, int max_epoch, int ma
 			n_proc += ms;
 		}
 		if (n_val > 0) val_cost /= n_val;
-		if (kann_verbose >= 3) {
-			fprintf(stderr, "epoch: %d; training cost: %g", i+1, train_cost);
-			if (n_train_base) fprintf(stderr, " (class error: %.2f%%)", 100.0f * n_train_err / n_train);
+        if (kann_verbose >= 3) {
+            fprintf(stderr, "epoch: %d; training cost: %g", i+1, train_cost);
+            if (n_train_base) fprintf(stderr, " (class error: %.2f%%)", 100.0f * n_train_err / n_train);
 			if (n_val > 0) {
 				fprintf(stderr, "; validation cost: %g", val_cost);
 				if (n_val_base) fprintf(stderr, " (class error: %.2f%%)", 100.0f * n_val_err / n_val);
 			}
 			fputc('\n', stderr);
-		}
+        }
 		if (i >= max_drop_streak && n_val > 0) {
 			if (val_cost < min_val_cost) {
 				min_set = 1;

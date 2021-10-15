@@ -33,6 +33,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#undef __SSE__  // Workaround: FPA crash caused by SSE instructions on Linux (thepbone)
+
 #ifdef __STRICT_ANSI__
 #define inline
 #endif
