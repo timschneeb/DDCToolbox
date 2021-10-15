@@ -1,4 +1,4 @@
-QT       += core gui network
+QT       += core gui network svg
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -94,7 +94,7 @@ INCLUDEPATH += $$PWD
 
 include ($$PWD/3rdparty/WebLoader/WebLoader.pri)
 include ($$PWD/3rdparty/QSimpleUpdater/QSimpleUpdater.pri)
-include ($$PWD/3rdparty/libgradfreeOpt.pri)
+include ($$PWD/3rdparty/libMultivariateOpt.pri)
 include ($$PWD/3rdparty/makeid/makeid.pri)
 
 RESOURCES += \

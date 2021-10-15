@@ -7,12 +7,14 @@
 #include <QFileOpenEvent>
 #include <QStyleFactory>
 
+#include <model/CurveFittingOptions.h>
 
 #define _STR(x) #x
 #define STRINGIFY(x)  _STR(x)
 
 AppRuntime::AppRuntime(int& argc, char**argv): QApplication(argc, argv)
-{
+{    
+    qRegisterMetaType<CurveFittingOptions::AlgorithmType>();
 
     AppRuntime::setApplicationVersion(STRINGIFY(CURRENT_APP_VERSION));
     AppRuntime::setApplicationName("DDCToolbox");

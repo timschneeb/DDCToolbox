@@ -22,6 +22,7 @@ public:
 signals:
     void mseReceived(float fVar);
     void graphReceived(std::vector<double>);
+    void stageChanged(uint stage, CurveFittingOptions::AlgorithmType algo);
     void finished();
 
 public slots:
@@ -40,12 +41,17 @@ private:
     DoubleRange obc_q;
     DoubleRange obc_gain;
     bool force_to_oct_grid_conversion;
-    uint iterations;
+    uint stage1Epk;
+    uint stage2Epk;
+    uint stage3Epk;
     double avg_bw;
 
+    double lr1;
+    double lr1DecayRate;
+    double lr2;
+    double lr2DecayRate;
+
     /* Pointers */
-    unsigned int *maximaIndex = nullptr;
-    unsigned int *minimaIndex = nullptr;
     double *flt_fc = nullptr;
     double *flt_freqList = nullptr;
     double *targetList = nullptr;

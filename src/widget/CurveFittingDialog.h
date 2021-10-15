@@ -46,6 +46,7 @@ private:
     Expander* algo_flower = nullptr;
     Expander* algo_chio = nullptr;
     Expander* algo_fmin = nullptr;
+    Expander* algo_sgd = nullptr;
 
     QVector<double> freq;
     QVector<double> gain;

@@ -39,6 +39,7 @@ CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _o
     connect(this, &CurveFittingWorkerDialog::beginWork, worker, &CurveFittingWorker::run);
     connect(worker, &CurveFittingWorker::mseReceived, this, &CurveFittingWorkerDialog::mseReceived);
     connect(worker, &CurveFittingWorker::graphReceived, this, &CurveFittingWorkerDialog::graphReceived);
+    connect(worker, &CurveFittingWorker::stageChanged, this, &CurveFittingWorkerDialog::stageChanged);
     thread.start();
 
 
@@ -69,9 +70,32 @@ void CurveFittingWorkerDialog::reject()
     QGuiApplication::restoreOverrideCursor();
 }
 
+void CurveFittingWorkerDialog::accept()
+{
+    accepted = true;
+    QDialog::accept();
+}
+
+void CurveFittingWorkerDialog::closeEvent(QCloseEvent *ev)
+{
+    if(!thread.isFinished())
+    {
+        ev->ignore();
+        QMessageBox::warning(this, "Warning", "The calculation is still running. Are you sure you want to close this window?\n"
+                                              "If you really want to terminate this process, click the 'Cancel' button below.");
+        return;
+    }
+    else if(!accepted)
+    {
+        accept();
+        return;
+    }
+    QDialog::closeEvent(ev);
+}
+
 void CurveFittingWorkerDialog::workerFinished()
 {
-    thread.terminate();
+    thread.exit();
     thread.wait(500);
 
     QGuiApplication::restoreOverrideCursor();
@@ -120,6 +144,35 @@ void CurveFittingWorkerDialog::graphReceived(std::vector<double> temp)
 
     ui->previewPlot->xAxis->setRange(0, grid_size);
     ui->previewPlot->replot(QCustomPlot::rpQueuedReplot);
+}
+
+void CurveFittingWorkerDialog::stageChanged(uint stage, CurveFittingOptions::AlgorithmType algo)
+{
+    QString name;
+    switch(algo)
+    {
+    case CurveFittingOptions::AT_DIFF_EVOLUTION:
+        name = "DE";
+        break;
+    case CurveFittingOptions::AT_SGD:
+        name = "SGD";
+        break;
+    case CurveFittingOptions::AT_FMINSEARCHBND:
+        name = "Simplex";
+        break;
+    case CurveFittingOptions::AT_FLOWERPOLLINATION:
+        name = "FPA";
+        break;
+    case CurveFittingOptions::AT_CHIO:
+        name = "CHIO";
+        break;
+    default:
+        name = "???";
+        break;
+    }
+
+    ui->stat_algo->setText(name);
+    ui->stat_stage->setText(QString::number(stage));
 }
 
 QVector<DeflatedBiquad> CurveFittingWorkerDialog::getResults() const

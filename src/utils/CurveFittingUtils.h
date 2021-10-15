@@ -6,7 +6,11 @@
 #include <string.h>
 #include <QDebug>
 
+extern "C" {
 #include <peakfinder.h>
+#include <interpolation2.h>
+#include <gradfreeOpt.h>
+}
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -113,6 +117,93 @@ void derivative(double *x, unsigned int n, unsigned int NorderDerivative, double
         }
         dx[n - 1] = dif[n - 2];
     }
+}
+
+
+void smoothSpectral(int gdType, double *flt_freqList, double *target, unsigned int ud_gridSize, double avgBW, double fs, unsigned int *outGridSize, double **out1, double **out2)
+{
+    unsigned int i;
+    unsigned int detailLinearGridLen;
+    double *spectrum;
+    double *linGridFreq;
+    if (!gdType)
+    {
+        detailLinearGridLen = ud_gridSize;
+        spectrum = (double*)malloc(detailLinearGridLen * sizeof(double));
+        linGridFreq = (double*)malloc(detailLinearGridLen * sizeof(double));
+        for (i = 0; i < detailLinearGridLen; i++)
+        {
+            spectrum[i] = target[i];
+            linGridFreq[i] = i / ((double)detailLinearGridLen) * (fs / 2);
+        }
+    }
+    else
+    {
+        detailLinearGridLen = fmax(ud_gridSize, 8192); // Larger the value could be take care large, especially for uniform grid
+        spectrum = (double*)malloc(detailLinearGridLen * sizeof(double));
+        linGridFreq = (double*)malloc(detailLinearGridLen * sizeof(double));
+        for (i = 0; i < detailLinearGridLen; i++)
+        {
+            double fl = i / ((double)detailLinearGridLen) * (fs / 2);
+            spectrum[i] = linearInterpolationNoExtrapolate(fl, flt_freqList, target, ud_gridSize);
+            linGridFreq[i] = fl;
+        }
+    }
+    // Init octave grid shrinker
+    unsigned int arrayLen = detailLinearGridLen;
+    unsigned int fcLen = getAuditoryBandLen(arrayLen, avgBW);
+    unsigned int idxLen = fcLen + 1;
+    unsigned int *indexList = (unsigned int*)malloc((idxLen << 1) * sizeof(unsigned int));
+    double *levels = (double*)malloc((idxLen + 3) * sizeof(double));
+    double *multiplicationPrecompute = (double*)malloc(idxLen * sizeof(double));
+    size_t virtualStructSize = sizeof(unsigned int) + sizeof(double) + sizeof(unsigned int) + (idxLen << 1) * sizeof(unsigned int) + idxLen * sizeof(double) + (idxLen + 3) * sizeof(double);
+    double *shrinkedAxis = (double*)malloc((idxLen + 3) * sizeof(double));
+    double reciprocal = 1.0 / arrayLen;
+    initInterpolationList(indexList, levels, avgBW, fcLen, arrayLen);
+    for (unsigned int i = 0; i < idxLen; i++)
+        multiplicationPrecompute[i] = 1.0 / (indexList[(i << 1) + 1] - indexList[(i << 1) + 0]);
+    // Do actual axis conversion
+    shrinkedAxis[0] = spectrum[0];
+    shrinkedAxis[1] = spectrum[1];
+    double sum;
+    for (i = 0; i < idxLen; i++)
+    {
+        sum = 0.0;
+        for (unsigned int j = indexList[(i << 1) + 0]; j < indexList[(i << 1) + 1]; j++)
+            sum += spectrum[j];
+        shrinkedAxis[2 + i] = sum * multiplicationPrecompute[i];
+    }
+    shrinkedAxis[(idxLen + 3) - 1] = shrinkedAxis[(idxLen + 3) - 2];
+    double *ascendingIdx = (double*)malloc(arrayLen * sizeof(double));
+    for (i = 0; i < arrayLen; i++)
+        ascendingIdx[i] = i;
+    unsigned int hz18 = 0;
+    for (i = 0; i < idxLen + 3; i++)
+    {
+        double freqIdxUR = levels[hz18 + i] * arrayLen;
+        double realFreq = linearInterpolationNoExtrapolate(freqIdxUR, ascendingIdx, linGridFreq, arrayLen);
+        hz18 = i;
+        if (realFreq >= 18.0)
+            break;
+    }
+    double *newflt_freqList = (double*)malloc((idxLen + 3 - hz18) * sizeof(double));
+    double *newTarget = (double*)malloc((idxLen + 3 - hz18) * sizeof(double));
+    for (i = 0; i < idxLen + 3 - hz18; i++)
+    {
+        double freqIdxUR = levels[hz18 + i] * arrayLen;
+        newflt_freqList[i] = linearInterpolationNoExtrapolate(freqIdxUR, ascendingIdx, linGridFreq, arrayLen);
+        newTarget[i] = shrinkedAxis[hz18 + i];
+    }
+    free(shrinkedAxis);
+    free(ascendingIdx);
+    free(linGridFreq);
+    *outGridSize = idxLen + 3 - hz18;
+    *out1 = newflt_freqList;
+    *out2 = newTarget;
+    free(levels);
+    free(multiplicationPrecompute);
+    free(indexList);
+    free(spectrum);
 }
 
 #endif // CURVEFITTINGUTILS_H

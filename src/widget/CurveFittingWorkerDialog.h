@@ -21,7 +21,9 @@ public:
     explicit CurveFittingWorkerDialog(const CurveFittingOptions &_options, QWidget *parent = nullptr);
     ~CurveFittingWorkerDialog();
 
-    virtual void reject();
+    void reject() override;
+    void accept() override;
+    void closeEvent(QCloseEvent *) override;
 
     QVector<DeflatedBiquad> getResults() const;
 
@@ -32,6 +34,7 @@ private slots:
     void workerFinished();
     void mseReceived(float mse);
     void graphReceived(std::vector<double> temp);
+    void stageChanged(uint stage, CurveFittingOptions::AlgorithmType algo);
 
 private:
     Ui::CurveFittingWorkerDialog *ui;
@@ -41,6 +44,7 @@ private:
     QThread thread;
 
     int iteration = 0;
+    bool accepted = false;
 };
 
 #endif // CURVEFITTINGWORKERDIALOG_H

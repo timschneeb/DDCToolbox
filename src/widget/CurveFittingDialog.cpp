@@ -47,6 +47,9 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     auto * fminLayout = new QVBoxLayout(this);
     fminLayout->setContentsMargins(6, 0, 0, 0);
     fminLayout->addWidget(ui->algo_fmin_container);
+    auto * sgdLayout = new QVBoxLayout(this);
+    sgdLayout->setContentsMargins(6, 0, 0, 0);
+    sgdLayout->addWidget(ui->algo_sgd_container);
 
     algo_de = new Expander("Differential evolution options", 300, ui->mainPane);
     algo_de->setContentLayout(*deLayout);
@@ -56,6 +59,8 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     algo_chio->setContentLayout(*chioLayout);
     algo_fmin = new Expander("Bounded simplex search options", 300, ui->mainPane);
     algo_fmin->setContentLayout(*fminLayout);
+    algo_sgd = new Expander("SGD options", 300, ui->mainPane);
+    algo_sgd->setContentLayout(*sgdLayout);
     opt_boundary_constraints = new Expander("Optimization boundary constraints", 300, ui->mainPane);
     opt_boundary_constraints->setContentLayout(*optLayout);
     fgrid = new Expander("Axis rebuilding", 300, ui->mainPane);
@@ -63,6 +68,7 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     advanced_rng = new Expander("Randomness options", 300, ui->mainPane);
     advanced_rng->setContentLayout(*rngLayout);
 
+    ui->mainPane->layout()->addWidget(algo_sgd);
     ui->mainPane->layout()->addWidget(algo_de);
     ui->mainPane->layout()->addWidget(algo_flower);
     ui->mainPane->layout()->addWidget(algo_chio);
@@ -270,8 +276,8 @@ void CurveFittingDialog::parseCsv(){
         if (targetList[i] > upGain)
             upGain = targetList[i];
     }
-    lowGain -= 5.0;
-    upGain += 5.0;
+    lowGain -= 25.0;
+    upGain += 25.0;
 
     ui->obc_gain_min->setValue(lowGain);
     ui->obc_gain_max->setValue(upGain);
@@ -332,8 +338,8 @@ void CurveFittingDialog::updatePreviewPlot(){
         if (targetList[i] > upGain)
             upGain = targetList[i];
     }
-    lowGain -= 5.0;
-    upGain += 5.0;
+    lowGain -= 25.0;
+    upGain += 25.0;
 
     ui->previewPlot->yAxis->setRange(lowGain, upGain);
     ui->previewPlot->clearGraphs();
@@ -388,14 +394,16 @@ void CurveFittingDialog::accept()
                                 DoubleRange(ui->obc_gain_min->value(), ui->obc_gain_max->value()),
                                 ui->fgrid_force_convert->isChecked(),
                                 ui->iterations->value(),
-                                ui->iterations_simplex->value(),
+                                ui->iterations_b->value(),
+                                ui->iterations_c->value(),
                                 ui->fgrid_avgbw->value(),
                                 ui->rnd_pop_k->value(), ui->rnd_pop_n->value(),
                                 ui->algo_fmin_dimension_adaptive->isChecked(), ui->algo_de_probibound->value(),
                                 ui->algo_flower_pcond->value(), ui->algo_flower_weightstep->value(),
                                 ui->algo_chio_maxsolsurvive->value(), ui->algo_chio_c0->value(), ui->algo_chio_spreadingrate->value(),
                                 ui->invert_gain->isChecked(),
-                                ui->modelComplex->value());
+                                ui->modelComplex->value(),
+                                ui->sgd_lr_1->value(), ui->sgd_ldr_1->value(), ui->sgd_lr_2->value(), ui->sgd_ldr_2->value());
 
     auto *worker = new CurveFittingWorkerDialog(options, this);
 
@@ -416,7 +424,22 @@ void CurveFittingDialog::accept()
 }
 
 void CurveFittingDialog::updateSupportedProperties(int index){
+
     switch((CurveFittingOptions::AlgorithmType) index){
+    case CurveFittingOptions::AT_SGD:
+        ui->iterations->setValue(5000);
+        ui->iterations_b->setValue(50000);
+        break;
+    case CurveFittingOptions::AT_HYBRID_SGD_DE:
+        ui->iterations->setValue(5000);
+        ui->iterations_b->setValue(50000);
+        ui->iterations_c->setValue(20000);
+        break;
+    case CurveFittingOptions::AT_HYBRID_SGD_CHIO:
+        ui->iterations->setValue(5000);
+        ui->iterations_b->setValue(50000);
+        ui->iterations_c->setValue(4000);
+        break;
     case CurveFittingOptions::AT_FMINSEARCHBND:
         ui->iterations->setValue(20000);
         break;
@@ -431,18 +454,17 @@ void CurveFittingDialog::updateSupportedProperties(int index){
         break;
     case CurveFittingOptions::AT_HYBRID_FLOWER_FMIN:
         ui->iterations->setValue(4000);
-        ui->iterations_simplex->setValue(10000);
+        ui->iterations_b->setValue(10000);
         break;
     case CurveFittingOptions::AT_HYBRID_DE_FMIN:
         ui->iterations->setValue(20000);
-        ui->iterations_simplex->setValue(10000);
+        ui->iterations_b->setValue(10000);
         break;
     case CurveFittingOptions::AT_HYBRID_CHIO_FMIN:
         ui->iterations->setValue(4000);
-        ui->iterations_simplex->setValue(10000);
+        ui->iterations_b->setValue(10000);
         break;
     }
-
 
     // I really need to replace this enum with a more advanced class...
     switch((CurveFittingOptions::AlgorithmType) index){
@@ -470,6 +492,7 @@ void CurveFittingDialog::updateSupportedProperties(int index){
     switch((CurveFittingOptions::AlgorithmType) index){
     case CurveFittingOptions::AT_HYBRID_DE_FMIN:
     case CurveFittingOptions::AT_DIFF_EVOLUTION:
+    case CurveFittingOptions::AT_HYBRID_SGD_DE:
         algo_de->setVisible(true);
         break;
     default:
@@ -479,11 +502,23 @@ void CurveFittingDialog::updateSupportedProperties(int index){
 
     switch((CurveFittingOptions::AlgorithmType) index){
     case CurveFittingOptions::AT_HYBRID_CHIO_FMIN:
+    case CurveFittingOptions::AT_HYBRID_SGD_CHIO:
     case CurveFittingOptions::AT_CHIO:
         algo_chio->setVisible(true);
         break;
     default:
         algo_chio->setVisible(false);
+        break;
+    }
+
+    switch((CurveFittingOptions::AlgorithmType) index){
+    case CurveFittingOptions::AT_SGD:
+    case CurveFittingOptions::AT_HYBRID_SGD_CHIO:
+    case CurveFittingOptions::AT_HYBRID_SGD_DE:
+        algo_sgd->setVisible(true);
+        break;
+    default:
+        algo_sgd->setVisible(false);
         break;
     }
 
@@ -496,40 +531,85 @@ void CurveFittingDialog::updateSupportedProperties(int index){
         break;
     }
 
+    QString shortcutA("");
+    QString shortcutB("");
+    QString shortcutC("");
     switch((CurveFittingOptions::AlgorithmType) index){
     case CurveFittingOptions::AT_HYBRID_FLOWER_FMIN:
     case CurveFittingOptions::AT_HYBRID_DE_FMIN:
     case CurveFittingOptions::AT_HYBRID_CHIO_FMIN: {
-        QString shortcut;
+
         if(index == CurveFittingOptions::AT_HYBRID_DE_FMIN)
-            shortcut = "de";
+            shortcutA = "de";
         else if(index == CurveFittingOptions::AT_HYBRID_FLOWER_FMIN)
-            shortcut = "fpa";
+            shortcutA = "fpa";
         else if(index == CurveFittingOptions::AT_HYBRID_CHIO_FMIN)
-            shortcut = "chio";
-
-        QString html = "Iterations<span style='font-size:11pt; vertical-align:sub;'> " + shortcut + "</span>";
-
-#ifdef __APPLE__
-        html = OSXHtmlSizingPatch::patchTextSize(html);
-#endif
-
-        ui->iteration_label_a->setText(html);
-#ifdef __APPLE__
-        ui->iteration_label_b->setText(OSXHtmlSizingPatch::patchTextSize("Iterations<span style='font-size:11pt; vertical-align:sub;'> simplex</span>"));
-#endif
-        ui->iteration_label_b->setVisible(true);
-        ui->iteration_content_b->setVisible(true);
-        ui->formLayout->insertRow(5, ui->iteration_label_b, ui->iteration_content_b);
+            shortcutA = "chio";
+        shortcutB = "simplex";
         break;
     }
+    case CurveFittingOptions::AT_SGD:
+        shortcutA = "sgd1";
+        shortcutB = "sgd2";
+        break;
+    case CurveFittingOptions::AT_HYBRID_SGD_DE:
+        shortcutA = "sgd1";
+        shortcutB = "sgd2";
+        shortcutC = "de";
+        break;
+    case CurveFittingOptions::AT_HYBRID_SGD_CHIO:
+        shortcutA = "sgd1";
+        shortcutB = "sgd2";
+        shortcutC = "chio";
+        break;
     default:
+        break;
+    }
+
+    QString htmlA = "Iterations<span style='font-size:11pt; vertical-align:sub;'> " + shortcutA + "</span>";
+    QString htmlB = "Iterations<span style='font-size:11pt; vertical-align:sub;'> " + shortcutB + "</span>";
+    QString htmlC = "Iterations<span style='font-size:11pt; vertical-align:sub;'> " + shortcutC + "</span>";
+
+#ifdef __APPLE__
+    htmlA = OSXHtmlSizingPatch::patchTextSize(htmlA);
+    htmlB = OSXHtmlSizingPatch::patchTextSize(htmlB);
+    htmlC = OSXHtmlSizingPatch::patchTextSize(htmlC);
+#endif
+
+    ui->iteration_label_a->setText(htmlA);
+    ui->iteration_label_b->setText(htmlB);
+    ui->iteration_label_c->setText(htmlC);
+
+    if(shortcutA.length() <= 0)
+    {
         ui->iteration_label_a->setText("Iterations");
-        ui->iteration_label_b->setVisible(false);
-        ui->iteration_content_b->setVisible(false);
+    }
+
+    bool visibleB = shortcutB.length() > 0;
+    ui->iteration_label_b->setVisible(visibleB);
+    ui->iteration_content_b->setVisible(visibleB);
+
+    if(visibleB)
+    {
+        ui->formLayout->insertRow(5, ui->iteration_label_b, ui->iteration_content_b);
+    }
+    else
+    {
         ui->formLayout->removeWidget(ui->iteration_label_b);
         ui->formLayout->removeWidget(ui->iteration_content_b);
-        break;
     }
 
+    bool visibleC = shortcutC.length() > 0;
+    ui->iteration_label_c->setVisible(visibleC);
+    ui->iteration_content_c->setVisible(visibleC);
+
+    if(visibleC)
+    {
+        ui->formLayout->insertRow(7, ui->iteration_label_c, ui->iteration_content_c);
+    }
+    else
+    {
+        ui->formLayout->removeWidget(ui->iteration_label_c);
+        ui->formLayout->removeWidget(ui->iteration_content_c);
+    }
 }

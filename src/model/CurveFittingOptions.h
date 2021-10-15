@@ -4,18 +4,23 @@
 #include <cinttypes>
 #include <utility>
 
+#include <QObject>
+
 typedef std::pair<double,double> DoubleRange;
 
 class CurveFittingOptions {
 public:
     enum AlgorithmType {
         AT_DIFF_EVOLUTION = 0,
-        AT_FMINSEARCHBND = 1,
-        AT_FLOWERPOLLINATION = 2,
-        AT_CHIO = 3,
-        AT_HYBRID_DE_FMIN = 4,
-        AT_HYBRID_FLOWER_FMIN = 5,
-        AT_HYBRID_CHIO_FMIN = 6
+        AT_SGD = 1,
+        AT_FMINSEARCHBND = 2,
+        AT_FLOWERPOLLINATION = 3,
+        AT_CHIO = 4,
+        AT_HYBRID_DE_FMIN = 5,
+        AT_HYBRID_FLOWER_FMIN = 6,
+        AT_HYBRID_CHIO_FMIN = 7,
+        AT_HYBRID_SGD_DE = 8,
+        AT_HYBRID_SGD_CHIO = 9
     };
 
     enum ProbDensityFunc {
@@ -27,11 +32,11 @@ public:
     CurveFittingOptions(AlgorithmType _algorithm_type, double* _frequency, double* _gain, int _count,
                         uint64_t _rng_seed, ProbDensityFunc _rng_density_dist,
                         DoubleRange _obc_freq, DoubleRange _obc_q, DoubleRange _obc_gain,
-                        bool _force_oct_grid, unsigned int _iterations, unsigned int _iterations2, double _avgbw,
-                        double _pop_k, double _pop_n,
+                        bool _force_oct_grid, unsigned int _iterations, unsigned int _iterations2, unsigned int _iterations3,
+                        double _avgbw, double _pop_k, double _pop_n,
                         bool _fmin_dimension_adaptive, double _de_probibound, double _flower_pcond, double _flower_weight_step,
                         unsigned int _chio_max_sol_survive_epoch, unsigned int _chio_c0, double _chio_spreading_rate, bool _invert_gain,
-                        float _model_complexity){
+                        float _model_complexity, double _learnRate1, double _learnDecayRate1, double _learnRate2, double _learnDecayRate2){
         algorithm_type = _algorithm_type;
         frequency = _frequency;
         gain = _gain;
@@ -44,6 +49,7 @@ public:
         force_oct_grid = _force_oct_grid;
         iterations_count = _iterations;
         iterations2_count = _iterations2;
+        iterations3_count = _iterations3;
         avgbw = _avgbw;
         pop_k = _pop_k;
         pop_n = _pop_n;
@@ -56,6 +62,10 @@ public:
         chio_spreading_rate = _chio_spreading_rate;
         invert_gain = _invert_gain;
         model_complexity = _model_complexity;
+        learnRate1 = _learnRate1;
+        learnDecayRate1 = _learnDecayRate1;
+        learnRate2 = _learnRate2;
+        learnDecayRate2 = _learnDecayRate2;
     }
 
     double *frequencyData() const;
@@ -71,9 +81,11 @@ public:
 
     bool forceLogOctGrid() const;
     double averageBandwidth() const;
+    bool invertGain() const;
 
     unsigned int iterations() const;
     unsigned int iterationsSecondary() const;
+    unsigned int iterationsTertiary() const;
 
     double populationK() const;
     double populationN() const;
@@ -87,9 +99,12 @@ public:
     unsigned int chioC0() const;
     double chioSpreadingRate() const;
 
-    bool invertGain() const;
-
     float modelComplexity() const;
+
+    double getLearnRate1() const;
+    double getLearnDecayRate1() const;
+    double getLearnRate2() const;
+    double getLearnDecayRate2() const;
 
 private:
     double* frequency;
@@ -104,6 +119,7 @@ private:
     bool force_oct_grid;
     unsigned int iterations_count;
     unsigned int iterations2_count;
+    unsigned int iterations3_count;
     double avgbw;
     double pop_k;
     double pop_n;
@@ -117,7 +133,14 @@ private:
     bool invert_gain;
     float model_complexity;
 
+    double learnRate1;
+    double learnDecayRate1;
+    double learnRate2;
+    double learnDecayRate2;
+
 };
+
+Q_DECLARE_METATYPE(CurveFittingOptions::AlgorithmType);
 
 inline double *CurveFittingOptions::frequencyData() const
 {
@@ -232,6 +255,31 @@ inline bool CurveFittingOptions::invertGain() const
 inline float CurveFittingOptions::modelComplexity() const
 {
     return model_complexity;
+}
+
+inline unsigned int CurveFittingOptions::iterationsTertiary() const
+{
+    return iterations3_count;
+}
+
+inline double CurveFittingOptions::getLearnRate1() const
+{
+    return learnRate1;
+}
+
+inline double CurveFittingOptions::getLearnDecayRate1() const
+{
+    return learnDecayRate1;
+}
+
+inline double CurveFittingOptions::getLearnRate2() const
+{
+    return learnRate2;
+}
+
+inline double CurveFittingOptions::getLearnDecayRate2() const
+{
+    return learnDecayRate2;
 }
 
 inline double CurveFittingOptions::averageBandwidth() const
