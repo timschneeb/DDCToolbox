@@ -1,12 +1,15 @@
-INCLUDEPATH += $$PWD/libgradfreeOpt/gradfreeOpt \
-               $$PWD/libgradfreeOpt/Examples
+INCLUDEPATH += $$PWD/libgradfreeOpt/GradientFree/gradfreeOpt \
+               $$PWD/libgradfreeOpt/libgenmath
 
-HEADERS += $$PWD/libgradfreeOpt/gradfreeOpt/gradfreeOpt.h \
-           $$PWD/libgradfreeOpt/Examples/PeakingFit/linear_interpolation.h \
-           $$PWD/libgradfreeOpt/Examples/PeakingFit/peakfinder.h \
-           $$PWD/libgradfreeOpt/gradfreeOpt/rand_c.h
+HEADERS += $$PWD/libgradfreeOpt/GradientFree/gradfreeOpt/gradfreeOpt.h \
+    $$PWD/libgradfreeOpt/libgenmath/interpolation2.h \
+    $$PWD/libgradfreeOpt/libgenmath/peakfinder.h \
+    $$PWD/libgradfreeOpt/libgenmath/rand_c.h
 
-
-SOURCES += $$PWD/libgradfreeOpt/gradfreeOpt/opt_alg.c \
-           $$PWD/libgradfreeOpt/Examples/PeakingFit/peakfinder.c \
-           $$PWD/libgradfreeOpt/gradfreeOpt/rand_c.c
+SOURCES += $$PWD/libgradfreeOpt/GradientFree/gradfreeOpt/opt_alg.c \
+    $$PWD/libgradfreeOpt/libgenmath/interpolation2.c \
+    $$PWD/libgradfreeOpt/libgenmath/misc.c \
+    $$PWD/libgradfreeOpt/libgenmath/naive1DDiff.c \
+    $$PWD/libgradfreeOpt/libgenmath/peakfinder.c \
+    $$PWD/libgradfreeOpt/libgenmath/rand_c.c \
+    $$PWD/libgradfreeOpt/libgenmath/sortingIdx.c

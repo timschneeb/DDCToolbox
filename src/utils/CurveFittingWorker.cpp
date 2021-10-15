@@ -1,8 +1,8 @@
 #include "CurveFittingWorker.h"
 
 extern "C" {
-#include <PeakingFit/linear_interpolation.h>
-#include <PeakingFit/peakfinder.h>
+#include <interpolation2.h>
+#include <peakfinder.h>
 #include <gradfreeOpt.h>
 }
 
