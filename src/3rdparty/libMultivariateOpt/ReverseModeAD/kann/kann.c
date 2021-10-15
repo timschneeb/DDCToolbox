@@ -6,7 +6,7 @@
 #include <stdarg.h>
 #include "kann.h"
 
-int kann_verbose = 3;
+int kann_verbose = 0;
 
 /******************************************
  *** @@BASIC: fundamental KANN routines ***

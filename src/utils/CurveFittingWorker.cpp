@@ -21,8 +21,6 @@ typedef struct
 
 CurveFittingWorker::CurveFittingWorker(const CurveFittingOptions& _options, QObject* parent) : QObject(parent), options(_options)
 {
-    kann_verbose = 0;
-
     freq =_options.frequencyData();
     target =_options.targetData();
     rng_seed = _options.seed();
