@@ -1,20 +1,20 @@
-INCLUDEPATH += $$PWD/libgradfreeOpt/GradientFree/gradfreeOpt \
-               $$PWD/libgradfreeOpt/libgenmath \
-               $$PWD/libgradfreeOpt/ReverseModeAD/kann
+INCLUDEPATH += $$PWD/libMultivariateOpt/GradientFree/gradfreeOpt \
+               $$PWD/libMultivariateOpt/libgenmath \
+               $$PWD/libMultivariateOpt/ReverseModeAD/kann
 
-HEADERS += $$PWD/libgradfreeOpt/GradientFree/gradfreeOpt/gradfreeOpt.h \
-    $$PWD/libgradfreeOpt/ReverseModeAD/kann/kann.h \
-    $$PWD/libgradfreeOpt/ReverseModeAD/kann/kautodiff.h \
-    $$PWD/libgradfreeOpt/libgenmath/interpolation2.h \
-    $$PWD/libgradfreeOpt/libgenmath/peakfinder.h \
-    $$PWD/libgradfreeOpt/libgenmath/rand_c.h
+HEADERS += $$PWD/libMultivariateOpt/GradientFree/gradfreeOpt/gradfreeOpt.h \
+    $$PWD/libMultivariateOpt/ReverseModeAD/kann/kann.h \
+    $$PWD/libMultivariateOpt/ReverseModeAD/kann/kautodiff.h \
+    $$PWD/libMultivariateOptlibgenmath/interpolation2.h \
+    $$PWD/libMultivariateOpt/libgenmath/peakfinder.h \
+    $$PWD/libMultivariateOpt/libgenmath/rand_c.h
 
-SOURCES += $$PWD/libgradfreeOpt/GradientFree/gradfreeOpt/opt_alg.c \
-    $$PWD/libgradfreeOpt/ReverseModeAD/kann/kann.c \
-    $$PWD/libgradfreeOpt/ReverseModeAD/kann/kautodiff.c \
-    $$PWD/libgradfreeOpt/libgenmath/interpolation2.c \
-    $$PWD/libgradfreeOpt/libgenmath/misc.c \
-    $$PWD/libgradfreeOpt/libgenmath/naive1DDiff.c \
-    $$PWD/libgradfreeOpt/libgenmath/peakfinder.c \
-    $$PWD/libgradfreeOpt/libgenmath/rand_c.c \
-    $$PWD/libgradfreeOpt/libgenmath/sortingIdx.c
+SOURCES += $$PWD/libMultivariateOpt/GradientFree/gradfreeOpt/opt_alg.c \
+    $$PWD/libMultivariateOpt/ReverseModeAD/kann/kann.c \
+    $$PWD/libMultivariateOpt/ReverseModeAD/kann/kautodiff.c \
+    $$PWD/libMultivariateOpt/libgenmath/interpolation2.c \
+    $$PWD/libMultivariateOpt/libgenmath/misc.c \
+    $$PWD/libMultivariateOpt/libgenmath/naive1DDiff.c \
+    $$PWD/libMultivariateOpt/libgenmath/peakfinder.c \
+    $$PWD/libMultivariateOpt/libgenmath/rand_c.c \
+    $$PWD/libMultivariateOpt/libgenmath/sortingIdx.c

@@ -189,7 +189,7 @@ void CurveFittingDialog::moveLegend()
 
 void CurveFittingDialog::visitProject()
 {
-    QDesktopServices::openUrl(QUrl("https://github.com/james34602/libgradfreeOpt"));
+    QDesktopServices::openUrl(QUrl("https://github.com/james34602/libMultivariateOpt"));
 }
 
 void CurveFittingDialog::selectFile()
