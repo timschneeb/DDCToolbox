@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>873</width>
-    <height>960</height>
+    <height>1069</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -233,7 +233,12 @@
                <widget class="QComboBox" name="algorithmType">
                 <item>
                  <property name="text">
-                  <string>Differential evolution</string>
+                  <string>Hybrid (SGD + differential evolution)</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Hybrid (SGD + CHIO)</string>
                  </property>
                 </item>
                 <item>
@@ -243,42 +248,12 @@
                 </item>
                 <item>
                  <property name="text">
-                  <string>Bounded simplex search</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Flower pollination search</string>
+                  <string>Differential evolution</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
                   <string>CHIO</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Hybrid (Differential evolution + simplex search)</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Hybrid (Flower pollination + simplex search)</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Hybrid (CHIO + simplex search)</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Hybrid (SGD + differential evolution)</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Hybrid (SGD + CHIO)</string>
                  </property>
                 </item>
                </widget>
@@ -595,116 +570,6 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="algo_flower_container">
-            <property name="title">
-             <string/>
-            </property>
-            <layout class="QFormLayout" name="formLayout_9">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_18">
-               <property name="text">
-                <string>Probability of increased population diversity</string>
-               </property>
-               <property name="wordWrap">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <layout class="QHBoxLayout" name="horizontalLayout_12">
-               <property name="spacing">
-                <number>6</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <spacer name="horizontalSpacer_13">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="algo_flower_pcond">
-                 <property name="minimumSize">
-                  <size>
-                   <width>90</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="maximum">
-                  <double>1.000000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.010000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.100000000000000</double>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_19">
-               <property name="text">
-                <string>Weight step</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <layout class="QHBoxLayout" name="horizontalLayout_17">
-               <item>
-                <spacer name="horizontalSpacer_15">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="algo_flower_weightstep">
-                 <property name="minimumSize">
-                  <size>
-                   <width>90</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="decimals">
-                  <number>2</number>
-                 </property>
-                 <property name="minimum">
-                  <double>0.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>1.000000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.010000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.050000000000000</double>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
            <widget class="QGroupBox" name="algo_chio_container">
             <property name="title">
              <string/>
@@ -847,37 +712,6 @@
                 </widget>
                </item>
               </layout>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="algo_fmin_container">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_6">
-             <property name="leftMargin">
-              <number>9</number>
-             </property>
-             <property name="topMargin">
-              <number>7</number>
-             </property>
-             <property name="rightMargin">
-              <number>9</number>
-             </property>
-             <property name="bottomMargin">
-              <number>7</number>
-             </property>
-             <item>
-              <widget class="QCheckBox" name="algo_fmin_dimension_adaptive">
-               <property name="text">
-                <string>Dimension adaptive</string>
-               </property>
-              </widget>
              </item>
             </layout>
            </widget>
@@ -2112,12 +1946,9 @@ border: 1px solid rgb(208, 204, 201) </string>
   <tabstop>iterations</tabstop>
   <tabstop>iterations_b</tabstop>
   <tabstop>algo_de_probibound</tabstop>
-  <tabstop>algo_flower_pcond</tabstop>
-  <tabstop>algo_flower_weightstep</tabstop>
   <tabstop>algo_chio_maxsolsurvive</tabstop>
   <tabstop>algo_chio_c0</tabstop>
   <tabstop>algo_chio_spreadingrate</tabstop>
-  <tabstop>algo_fmin_dimension_adaptive</tabstop>
   <tabstop>fgrid_avgbw</tabstop>
   <tabstop>obc_freq_min</tabstop>
   <tabstop>obc_freq_max</tabstop>

@@ -157,12 +157,6 @@ void CurveFittingWorkerDialog::stageChanged(uint stage, CurveFittingOptions::Alg
     case CurveFittingOptions::AT_SGD:
         name = "SGD";
         break;
-    case CurveFittingOptions::AT_FMINSEARCHBND:
-        name = "Simplex";
-        break;
-    case CurveFittingOptions::AT_FLOWERPOLLINATION:
-        name = "FPA";
-        break;
     case CurveFittingOptions::AT_CHIO:
         name = "CHIO";
         break;

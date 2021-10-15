@@ -38,27 +38,17 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     auto * deLayout = new QVBoxLayout(this);
     deLayout->setContentsMargins(6, 0, 0, 0);
     deLayout->addWidget(ui->algo_de_container);
-    auto * flowerLayout = new QVBoxLayout(this);
-    flowerLayout->setContentsMargins(6, 0, 0, 0);
-    flowerLayout->addWidget(ui->algo_flower_container);
     auto * chioLayout = new QVBoxLayout(this);
     chioLayout->setContentsMargins(6, 0, 0, 0);
     chioLayout->addWidget(ui->algo_chio_container);
-    auto * fminLayout = new QVBoxLayout(this);
-    fminLayout->setContentsMargins(6, 0, 0, 0);
-    fminLayout->addWidget(ui->algo_fmin_container);
     auto * sgdLayout = new QVBoxLayout(this);
     sgdLayout->setContentsMargins(6, 0, 0, 0);
     sgdLayout->addWidget(ui->algo_sgd_container);
 
     algo_de = new Expander("Differential evolution options", 300, ui->mainPane);
     algo_de->setContentLayout(*deLayout);
-    algo_flower = new Expander("Flower pollination search options", 300, ui->mainPane);
-    algo_flower->setContentLayout(*flowerLayout);
     algo_chio = new Expander("CHIO options", 300, ui->mainPane);
     algo_chio->setContentLayout(*chioLayout);
-    algo_fmin = new Expander("Bounded simplex search options", 300, ui->mainPane);
-    algo_fmin->setContentLayout(*fminLayout);
     algo_sgd = new Expander("SGD options", 300, ui->mainPane);
     algo_sgd->setContentLayout(*sgdLayout);
     opt_boundary_constraints = new Expander("Optimization boundary constraints", 300, ui->mainPane);
@@ -70,16 +60,14 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
 
     ui->mainPane->layout()->addWidget(algo_sgd);
     ui->mainPane->layout()->addWidget(algo_de);
-    ui->mainPane->layout()->addWidget(algo_flower);
     ui->mainPane->layout()->addWidget(algo_chio);
-    ui->mainPane->layout()->addWidget(algo_fmin);
     ui->mainPane->layout()->addWidget(opt_boundary_constraints);
     ui->mainPane->layout()->addWidget(fgrid);
     ui->mainPane->layout()->addWidget(advanced_rng);
     ui->mainPane->layout()->addWidget(ui->previewSwitchLayout);
     ui->mainPane->layout()->addWidget(ui->footer);
 
-    QList<Expander*> _expanders(std::initializer_list<Expander*>({algo_de, algo_flower, algo_chio, algo_fmin, opt_boundary_constraints, fgrid, advanced_rng}));
+    QList<Expander*> _expanders(std::initializer_list<Expander*>({algo_de, algo_chio, algo_sgd, opt_boundary_constraints, fgrid, advanced_rng}));
     for(const auto& exp : qAsConst(_expanders)){
         connect(exp, &Expander::stateChanged, this, [=](bool state){
             if(state){
@@ -398,8 +386,7 @@ void CurveFittingDialog::accept()
                                 ui->iterations_c->value(),
                                 ui->fgrid_avgbw->value(),
                                 ui->rnd_pop_k->value(), ui->rnd_pop_n->value(),
-                                ui->algo_fmin_dimension_adaptive->isChecked(), ui->algo_de_probibound->value(),
-                                ui->algo_flower_pcond->value(), ui->algo_flower_weightstep->value(),
+                                ui->algo_de_probibound->value(),
                                 ui->algo_chio_maxsolsurvive->value(), ui->algo_chio_c0->value(), ui->algo_chio_spreadingrate->value(),
                                 ui->invert_gain->isChecked(),
                                 ui->modelComplex->value(),
@@ -440,57 +427,15 @@ void CurveFittingDialog::updateSupportedProperties(int index){
         ui->iterations_b->setValue(50000);
         ui->iterations_c->setValue(4000);
         break;
-    case CurveFittingOptions::AT_FMINSEARCHBND:
-        ui->iterations->setValue(20000);
-        break;
     case CurveFittingOptions::AT_DIFF_EVOLUTION:
         ui->iterations->setValue(20000);
-        break;
-    case CurveFittingOptions::AT_FLOWERPOLLINATION:
-        ui->iterations->setValue(4000);
         break;
     case CurveFittingOptions::AT_CHIO:
         ui->iterations->setValue(4000);
         break;
-    case CurveFittingOptions::AT_HYBRID_FLOWER_FMIN:
-        ui->iterations->setValue(4000);
-        ui->iterations_b->setValue(10000);
-        break;
-    case CurveFittingOptions::AT_HYBRID_DE_FMIN:
-        ui->iterations->setValue(20000);
-        ui->iterations_b->setValue(10000);
-        break;
-    case CurveFittingOptions::AT_HYBRID_CHIO_FMIN:
-        ui->iterations->setValue(4000);
-        ui->iterations_b->setValue(10000);
-        break;
-    }
-
-    // I really need to replace this enum with a more advanced class...
-    switch((CurveFittingOptions::AlgorithmType) index){
-    case CurveFittingOptions::AT_FMINSEARCHBND:
-    case CurveFittingOptions::AT_HYBRID_FLOWER_FMIN:
-    case CurveFittingOptions::AT_HYBRID_DE_FMIN:
-    case CurveFittingOptions::AT_HYBRID_CHIO_FMIN:
-        algo_fmin->setVisible(true);
-        break;
-    default:
-        algo_fmin->setVisible(false);
-        break;
     }
 
     switch((CurveFittingOptions::AlgorithmType) index){
-    case CurveFittingOptions::AT_HYBRID_FLOWER_FMIN:
-    case CurveFittingOptions::AT_FLOWERPOLLINATION:
-        algo_flower->setVisible(true);
-        break;
-    default:
-        algo_flower->setVisible(false);
-        break;
-    }
-
-    switch((CurveFittingOptions::AlgorithmType) index){
-    case CurveFittingOptions::AT_HYBRID_DE_FMIN:
     case CurveFittingOptions::AT_DIFF_EVOLUTION:
     case CurveFittingOptions::AT_HYBRID_SGD_DE:
         algo_de->setVisible(true);
@@ -501,7 +446,6 @@ void CurveFittingDialog::updateSupportedProperties(int index){
     }
 
     switch((CurveFittingOptions::AlgorithmType) index){
-    case CurveFittingOptions::AT_HYBRID_CHIO_FMIN:
     case CurveFittingOptions::AT_HYBRID_SGD_CHIO:
     case CurveFittingOptions::AT_CHIO:
         algo_chio->setVisible(true);
@@ -522,32 +466,10 @@ void CurveFittingDialog::updateSupportedProperties(int index){
         break;
     }
 
-    switch((CurveFittingOptions::AlgorithmType) index){
-    case CurveFittingOptions::AT_FMINSEARCHBND:
-        advanced_rng->setVisible(false);
-        break;
-    default:
-        advanced_rng->setVisible(true);
-        break;
-    }
-
     QString shortcutA("");
     QString shortcutB("");
     QString shortcutC("");
     switch((CurveFittingOptions::AlgorithmType) index){
-    case CurveFittingOptions::AT_HYBRID_FLOWER_FMIN:
-    case CurveFittingOptions::AT_HYBRID_DE_FMIN:
-    case CurveFittingOptions::AT_HYBRID_CHIO_FMIN: {
-
-        if(index == CurveFittingOptions::AT_HYBRID_DE_FMIN)
-            shortcutA = "de";
-        else if(index == CurveFittingOptions::AT_HYBRID_FLOWER_FMIN)
-            shortcutA = "fpa";
-        else if(index == CurveFittingOptions::AT_HYBRID_CHIO_FMIN)
-            shortcutA = "chio";
-        shortcutB = "simplex";
-        break;
-    }
     case CurveFittingOptions::AT_SGD:
         shortcutA = "sgd1";
         shortcutB = "sgd2";

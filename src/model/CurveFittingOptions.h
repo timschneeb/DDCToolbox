@@ -11,16 +11,11 @@ typedef std::pair<double,double> DoubleRange;
 class CurveFittingOptions {
 public:
     enum AlgorithmType {
-        AT_DIFF_EVOLUTION = 0,
-        AT_SGD = 1,
-        AT_FMINSEARCHBND = 2,
-        AT_FLOWERPOLLINATION = 3,
-        AT_CHIO = 4,
-        AT_HYBRID_DE_FMIN = 5,
-        AT_HYBRID_FLOWER_FMIN = 6,
-        AT_HYBRID_CHIO_FMIN = 7,
-        AT_HYBRID_SGD_DE = 8,
-        AT_HYBRID_SGD_CHIO = 9
+        AT_HYBRID_SGD_DE = 0,
+        AT_HYBRID_SGD_CHIO = 1,
+        AT_SGD = 2,
+        AT_DIFF_EVOLUTION = 3,
+        AT_CHIO = 4
     };
 
     enum ProbDensityFunc {
@@ -34,7 +29,7 @@ public:
                         DoubleRange _obc_freq, DoubleRange _obc_q, DoubleRange _obc_gain,
                         bool _force_oct_grid, unsigned int _iterations, unsigned int _iterations2, unsigned int _iterations3,
                         double _avgbw, double _pop_k, double _pop_n,
-                        bool _fmin_dimension_adaptive, double _de_probibound, double _flower_pcond, double _flower_weight_step,
+                        double _de_probibound,
                         unsigned int _chio_max_sol_survive_epoch, unsigned int _chio_c0, double _chio_spreading_rate, bool _invert_gain,
                         float _model_complexity, double _learnRate1, double _learnDecayRate1, double _learnRate2, double _learnDecayRate2){
         algorithm_type = _algorithm_type;
@@ -53,10 +48,7 @@ public:
         avgbw = _avgbw;
         pop_k = _pop_k;
         pop_n = _pop_n;
-        fmin_dimension_adaptive = _fmin_dimension_adaptive;
         de_probibound = _de_probibound;
-        flower_pcond = _flower_pcond;
-        flower_weight_step = _flower_weight_step;
         chio_max_sol_survive_epoch = _chio_max_sol_survive_epoch;
         chio_c0 = _chio_c0;
         chio_spreading_rate = _chio_spreading_rate;
