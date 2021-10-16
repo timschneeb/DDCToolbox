@@ -5,7 +5,7 @@ INCLUDEPATH += $$PWD/libMultivariateOpt/GradientFree/gradfreeOpt \
 HEADERS += $$PWD/libMultivariateOpt/GradientFree/gradfreeOpt/gradfreeOpt.h \
     $$PWD/libMultivariateOpt/ReverseModeAD/kann/kann.h \
     $$PWD/libMultivariateOpt/ReverseModeAD/kann/kautodiff.h \
-    $$PWD/libMultivariateOptlibgenmath/interpolation2.h \
+    $$PWD/libMultivariateOpt/libgenmath/interpolation2.h \
     $$PWD/libMultivariateOpt/libgenmath/peakfinder.h \
     $$PWD/libMultivariateOpt/libgenmath/rand_c.h
 
