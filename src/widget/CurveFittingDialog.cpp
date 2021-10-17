@@ -28,9 +28,6 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     auto * rngLayout = new QVBoxLayout(this);
     rngLayout->setContentsMargins(6, 0, 0, 0);
     rngLayout->addWidget(ui->widget);
-    auto * optLayout = new QVBoxLayout(this);
-    optLayout->setContentsMargins(6, 0, 0, 0);
-    optLayout->addWidget(ui->obc_container);
     auto * fgridLayout = new QVBoxLayout(this);
     fgridLayout->setContentsMargins(6, 0, 0, 0);
     fgridLayout->addWidget(ui->fgrid_container);
@@ -51,8 +48,6 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     algo_chio->setContentLayout(*chioLayout);
     algo_sgd = new Expander("SGD options", 300, ui->mainPane);
     algo_sgd->setContentLayout(*sgdLayout);
-    opt_boundary_constraints = new Expander("Optimization boundary constraints", 300, ui->mainPane);
-    opt_boundary_constraints->setContentLayout(*optLayout);
     fgrid = new Expander("Axis rebuilding", 300, ui->mainPane);
     fgrid->setContentLayout(*fgridLayout);
     advanced_rng = new Expander("Randomness options", 300, ui->mainPane);
@@ -61,13 +56,12 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     ui->mainPane->layout()->addWidget(algo_sgd);
     ui->mainPane->layout()->addWidget(algo_de);
     ui->mainPane->layout()->addWidget(algo_chio);
-    ui->mainPane->layout()->addWidget(opt_boundary_constraints);
     ui->mainPane->layout()->addWidget(fgrid);
     ui->mainPane->layout()->addWidget(advanced_rng);
     ui->mainPane->layout()->addWidget(ui->previewSwitchLayout);
     ui->mainPane->layout()->addWidget(ui->footer);
 
-    QList<Expander*> _expanders(std::initializer_list<Expander*>({algo_de, algo_chio, algo_sgd, opt_boundary_constraints, fgrid, advanced_rng}));
+    QList<Expander*> _expanders(std::initializer_list<Expander*>({algo_de, algo_chio, algo_sgd, fgrid, advanced_rng}));
     for(const auto& exp : qAsConst(_expanders)){
         connect(exp, &Expander::stateChanged, this, [=](bool state){
             if(state){
@@ -83,10 +77,6 @@ CurveFittingDialog::CurveFittingDialog(QWidget *parent) :
     // Prepare seed
     ui->adv_random_seed->setValidator(new QInt64Validator(0, UINT64_MAX, ui->adv_random_seed));
     ui->adv_random_seed->setText(QString::number(((uint64_t)rand() << 32ull) | rand()));
-
-    /* Update optimization boundary freq */
-    const double fs = 44100; // <- Don't forget to update this
-    ui->obc_freq_max->setValue(fs / 2 - 1);
 
     // Setup UI
     ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setEnabled(false);
@@ -254,21 +244,6 @@ void CurveFittingDialog::parseCsv(){
     ui->fgrid_force_convert->setChecked(!is_nonuniform);
     ui->fgrid_avgbw->setEnabled(!is_nonuniform);
 
-
-    double lowGain = targetList[0];
-    double upGain = targetList[0];
-    for (uint i = 1; i < size; i++)
-    {
-        if (targetList[i] < lowGain)
-            lowGain = targetList[i];
-        if (targetList[i] > upGain)
-            upGain = targetList[i];
-    }
-    lowGain -= 25.0;
-    upGain += 25.0;
-
-    ui->obc_gain_min->setValue(lowGain);
-    ui->obc_gain_max->setValue(upGain);
     free(flt_freqList);
     free(targetList);
 
@@ -296,11 +271,16 @@ QVector<DeflatedBiquad> CurveFittingDialog::getResults() const
     return results;
 }
 
-void CurveFittingDialog::updatePreviewPlot(){
+DoubleRange CurveFittingDialog::calculateYAxisRange(bool exportDataset, double** ret_freq, double** ret_gain){
     uint size = freq.size();
 
     if(size < 1){
-        return;
+        if(exportDataset)
+        {
+            ret_freq = nullptr;
+            ret_gain = nullptr;
+        }
+        return DoubleRange(-40, 40);
     }
 
     double* flt_freqList = (double*)malloc(size * sizeof(double));
@@ -326,11 +306,42 @@ void CurveFittingDialog::updatePreviewPlot(){
         if (targetList[i] > upGain)
             upGain = targetList[i];
     }
-    lowGain -= 25.0;
-    upGain += 25.0;
+    lowGain -= 32.0;
+    upGain += 32.0;
 
-    ui->previewPlot->yAxis->setRange(lowGain, upGain);
+    if(exportDataset)
+    {
+        *ret_freq = flt_freqList;
+        *ret_gain = targetList;
+    }
+    else
+    {
+        free(flt_freqList);
+        free(targetList);
+    }
+
+    return DoubleRange(lowGain, upGain);
+}
+
+void CurveFittingDialog::updatePreviewPlot(){
+    uint size = freq.size();
+
+    if(size < 1){
+        return;
+    }
+
+    double* flt_freqList = nullptr;
+    double* targetList = nullptr;
+    DoubleRange range = calculateYAxisRange(true, &flt_freqList, &targetList);
+
     ui->previewPlot->clearGraphs();
+
+    if(flt_freqList == nullptr || targetList == nullptr)
+    {
+        return;
+    }
+
+    ui->previewPlot->yAxis->setRange(range.first, range.second);
 
     auto *pGraphOrig = ui->previewPlot->addGraph();
     QPen graphPen;
@@ -377,9 +388,6 @@ void CurveFittingDialog::accept()
                                 freq.count(),
                                 ui->adv_random_seed->text().toLong(),
                                 (CurveFittingOptions::ProbDensityFunc) ui->adv_prob_density_func->currentIndex(),
-                                DoubleRange(ui->obc_freq_min->value(), ui->obc_freq_max->value()),
-                                DoubleRange(ui->obc_q_min->value(), ui->obc_q_max->value()),
-                                DoubleRange(ui->obc_gain_min->value(), ui->obc_gain_max->value()),
                                 ui->fgrid_force_convert->isChecked(),
                                 ui->iterations->value(),
                                 ui->iterations_b->value(),
@@ -392,7 +400,7 @@ void CurveFittingDialog::accept()
                                 ui->modelComplex->value(),
                                 ui->sgd_lr_1->value(), ui->sgd_ldr_1->value(), ui->sgd_lr_2->value(), ui->sgd_ldr_2->value());
 
-    auto *worker = new CurveFittingWorkerDialog(options, this);
+    auto *worker = new CurveFittingWorkerDialog(options, calculateYAxisRange(false, NULL, NULL), this);
 
     // Launch worker dialog and halt until finished or cancelled
     if(!worker->exec()){

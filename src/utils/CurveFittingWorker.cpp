@@ -27,9 +27,6 @@ CurveFittingWorker::CurveFittingWorker(const CurveFittingOptions& _options, QObj
     rng_density_func = _options.probabilityDensityFunc();
     array_size = _options.dataCount();
     algorithm_type = _options.algorithmType();
-    obc_freq = _options.obcFrequencyRange();
-    obc_q = _options.obcQRange();
-    obc_gain = _options.obcGainRange();
     force_to_oct_grid_conversion = _options.forceLogOctGrid();
     avg_bw = _options.averageBandwidth();
 
@@ -367,16 +364,13 @@ void CurveFittingWorker::run()
     preprocess(flt_freqList, targetList, array_size, fs, force_to_oct_grid_conversion, avg_bw, nullptr, options.invertGain());
 
     // Bound constraints
-    double lowFc = obc_freq.first; // Hz
-    double upFc = obc_freq.second; // Hz
-    double lowQ = obc_q.first; // 0.01 - 1000, higher shaper the filter
-    double upQ = obc_q.second; // 0.01 - 1000, higher shaper the filter
-    double lowGain = obc_gain.first; // dB
-    double upGain = obc_gain.second; // dB
+    double lowFc = 10; // Hz
+    double upFc = fs / 2 - 1; // Hz
+    double lowQ = 0.01; // 0.01 - 1000, higher == shaper the filter
+    double upQ = 512; // 0.01 - 1000, higher == shaper the filter
+    double lowGain = targetList[0]; // dB
+    double upGain = targetList[0]; // dB
 
-    /* --- VVV This is already pre-calculated in GUI code
-    lowGain = targetList[0];
-    upGain = targetList[0];
     for (i = 1; i < array_size; i++)
     {
         if (targetList[i] < lowGain)
@@ -384,10 +378,8 @@ void CurveFittingWorker::run()
         if (targetList[i] > upGain)
             upGain = targetList[i];
     }
-    lowGain -= 5.0;
-    upGain += 5.0;
-    */
-
+    lowGain -= 32.0;
+    upGain += 32.0;
 
     // Parameter estimation
     unsigned int numMaximas, numMinimas;

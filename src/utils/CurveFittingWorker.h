@@ -37,9 +37,6 @@ private:
     uint64_t rng_seed;
     CurveFittingOptions::ProbDensityFunc rng_density_func;
     CurveFittingOptions::AlgorithmType algorithm_type;
-    DoubleRange obc_freq;
-    DoubleRange obc_q;
-    DoubleRange obc_gain;
     bool force_to_oct_grid_conversion;
     uint stage1Epk;
     uint stage2Epk;

@@ -18,7 +18,7 @@ class CurveFittingWorkerDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit CurveFittingWorkerDialog(const CurveFittingOptions &_options, QWidget *parent = nullptr);
+    explicit CurveFittingWorkerDialog(const CurveFittingOptions &_options, DoubleRange yAxis, QWidget *parent = nullptr);
     ~CurveFittingWorkerDialog();
 
     void reject() override;

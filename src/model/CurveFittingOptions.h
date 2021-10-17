@@ -26,7 +26,6 @@ public:
 
     CurveFittingOptions(AlgorithmType _algorithm_type, double* _frequency, double* _gain, int _count,
                         uint64_t _rng_seed, ProbDensityFunc _rng_density_dist,
-                        DoubleRange _obc_freq, DoubleRange _obc_q, DoubleRange _obc_gain,
                         bool _force_oct_grid, unsigned int _iterations, unsigned int _iterations2, unsigned int _iterations3,
                         double _avgbw, double _pop_k, double _pop_n,
                         double _de_probibound,
@@ -38,9 +37,6 @@ public:
         count = _count;
         rng_seed = _rng_seed;
         rng_density_dist = _rng_density_dist;
-        obc_freq = _obc_freq;
-        obc_q = _obc_q;
-        obc_gain = _obc_gain;
         force_oct_grid = _force_oct_grid;
         iterations_count = _iterations;
         iterations2_count = _iterations2;
@@ -105,9 +101,6 @@ private:
     uint64_t rng_seed;
     ProbDensityFunc rng_density_dist;
     AlgorithmType algorithm_type;
-    DoubleRange obc_freq;
-    DoubleRange obc_q;
-    DoubleRange obc_gain;
     bool force_oct_grid;
     unsigned int iterations_count;
     unsigned int iterations2_count;
@@ -162,21 +155,6 @@ inline unsigned int CurveFittingOptions::dataCount() const
 inline CurveFittingOptions::AlgorithmType CurveFittingOptions::algorithmType() const
 {
     return algorithm_type;
-}
-
-inline DoubleRange CurveFittingOptions::obcFrequencyRange() const
-{
-    return obc_freq;
-}
-
-inline DoubleRange CurveFittingOptions::obcQRange() const
-{
-    return obc_q;
-}
-
-inline DoubleRange CurveFittingOptions::obcGainRange() const
-{
-    return obc_gain;
 }
 
 inline bool CurveFittingOptions::forceLogOctGrid() const

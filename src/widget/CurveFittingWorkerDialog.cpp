@@ -7,7 +7,7 @@
 #include <QPushButton>
 #include <QTimer>
 
-CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _options, QWidget *parent) :
+CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _options, DoubleRange yAxis, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::CurveFittingWorkerDialog),
     options(_options)
@@ -28,7 +28,7 @@ CurveFittingWorkerDialog::CurveFittingWorkerDialog(const CurveFittingOptions& _o
     ui->rmsePlot->graph()->setAdaptiveSampling(false);
 
     /* Plot 2 */
-    ui->previewPlot->yAxis->setRange(options.obcGainRange().first, options.obcGainRange().second);
+    ui->previewPlot->yAxis->setRange(yAxis.first, yAxis.second);
     ui->previewPlot->xAxis->setRange(QCPRange(0, 400));
     ui->previewPlot->xAxis->setLabel("Optimization history");
     ui->previewPlot->rescaleAxes();

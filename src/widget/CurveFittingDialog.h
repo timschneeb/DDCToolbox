@@ -2,6 +2,7 @@
 #define CURVEFITTINGDIALOG_H
 
 #include "model/DeflatedBiquad.h"
+#include "model/CurveFittingOptions.h"
 
 #include <QDialog>
 
@@ -39,7 +40,6 @@ private:
     void setStatus(bool success, const QString& text);
 
     Ui::CurveFittingDialog *ui;
-    Expander* opt_boundary_constraints = nullptr;
     Expander* advanced_rng = nullptr;
     Expander* fgrid = nullptr;
     Expander* algo_de = nullptr;
@@ -50,6 +50,7 @@ private:
     QVector<double> gain;
 
     QVector<DeflatedBiquad> results;
+    DoubleRange calculateYAxisRange(bool exportDataset, double** freq = nullptr, double** gain = nullptr);
 };
 
 #endif // CURVEFITTINGDIALOG_H
