@@ -17,5 +17,8 @@ int main(int argc, char *argv[])
     qRegisterMetaType<QVector<float>>("QVector<float>");
     qRegisterMetaType<std::vector<double>>("std::vector<double>");
 
+#ifdef Q_OS_WINDOWS
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
+#endif
     return AppRuntime(argc, argv).exec();
 }
