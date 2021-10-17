@@ -7,6 +7,7 @@
 
 #include <makeid.h>
 
+#include <float.h>
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -72,7 +73,7 @@ void Biquad::RefreshFilter(FilterType type, const CustomFilter& c441, const Cust
 
 std::list<double> Biquad::CalculateCoeffs(double fs, bool noA0divide)
 {
-    if (m_dFilterFreq <= 2.2204460492503131e-016 || fs <= 2.2204460492503131e-016){
+    if (m_dFilterFreq <= DBL_EPSILON || fs <= DBL_EPSILON){
         qWarning() << "Biquad::CalculateCoeffs: Invalid frequency or samplerate";
         return std::list<double>();
     }
@@ -88,7 +89,7 @@ std::list<double> Biquad::CalculateCoeffs(double fs, bool noA0divide)
 
     double alpha;
     if (m_dFilterType == FilterType::LOW_SHELF || m_dFilterType == FilterType::HIGH_SHELF) {
-        double q = round(1000000*pow(2,m_dFilterBQ*0.5)/(pow(2,m_dFilterBQ)-1))/1000000; // convert bw to q
+        double q = pow(2, m_dFilterBQ * 0.5) / (pow(2, m_dFilterBQ) - 1); // convert bw to q
         alpha = num3 / 2 * sqrt((d + 1 / d) * (1 / q - 1) + 2);
     }
     else // BW
