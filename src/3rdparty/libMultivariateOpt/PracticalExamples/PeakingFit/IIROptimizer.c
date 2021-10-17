@@ -387,6 +387,9 @@ int main()
 	double *cdf = (double*)malloc(finess * sizeof(double));
 	double *pxi = (double*)malloc(finess * sizeof(double));
 	arbitraryPDF(px, prob, 7, cdf, pxi, finess);
+	// Convert uniform grid to log grid is recommended
+	// Nonuniform grid doesn't necessary to be a log grid, but we can force to make it log
+	char forceConvertCurrentGrid2OctaveGrid = 0;
 	// Parameter setup start
 	char algorithm[] = "SGD + DE"; // DE, SGD, SGD + DE, SGD + CHIO
 	const double avgBW = 1.005; // Smaller the value less smooth the output gonna be, of course, don't go too large
@@ -447,9 +450,6 @@ int main()
 		gdType = 0;
 		printf("Uniform grid\n");
 	}
-	// Convert uniform grid to log grid is recommended
-	// Nonuniform grid doesn't necessary to be a log grid, but we can force to make it log
-	char forceConvertCurrentGrid2OctaveGrid = 0;
 	if (forceConvertCurrentGrid2OctaveGrid)
 	{
 		unsigned int oGridSize;
@@ -464,8 +464,8 @@ int main()
 	// Bound constraints
 	double lowFc = 10; // Hz
 	double upFc = fs / 2 - 1; // Hz
-	double lowQ = 0.01; // 0.01 - 1000, higher == shaper the filter
-	double upQ = 512; // 0.01 - 1000, higher == shaper the filter
+	double lowQ = 0.000001; // 0.000001 - 1000, higher == shaper the filter
+	double upQ = 1000; // 0.000001 - 1000, higher == shaper the filter
 	double lowGain = target[0]; // dB
 	double upGain = target[0]; // dB
 	for (i = 1; i < ud_gridSize; i++)
@@ -475,8 +475,8 @@ int main()
 		if (target[i] > upGain)
 			upGain = target[i];
 	}
-	lowGain -= 25.0;
-	upGain += 25.0;
+	lowGain -= 32.0;
+	upGain += 32.0;
 	unsigned int numMaximas, numMinimas;
 	unsigned int *maximaIndex = peakfinder_wrapper(target, ud_gridSize, 0.1, 1, &numMaximas);
 	unsigned int *minimaIndex = peakfinder_wrapper(target, ud_gridSize, 0.1, 0, &numMinimas);
