@@ -26,5 +26,6 @@
         <file>img/clear_recents.svg</file>
         <file>img/recents.svg</file>
         <file>img/close.svg</file>
+        <file>qt/etc/qt.conf</file>
     </qresource>
 </RCC>
