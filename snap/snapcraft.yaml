@@ -22,6 +22,7 @@ apps:
       - network-bind
       - network-manager
       - x11
+      - gsettings
       - wayland
       - unity7
       - desktop
