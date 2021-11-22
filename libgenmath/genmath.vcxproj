@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="iirZpSmooth.c" />
     <ClCompile Include="interpolation2.c" />
     <ClCompile Include="misc.c" />
     <ClCompile Include="naive1DDiff.c" />
@@ -27,6 +28,7 @@
     <ClCompile Include="sortingIdx.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="iirZpSmooth.h" />
     <ClInclude Include="interpolation2.h" />
     <ClInclude Include="peakfinder.h" />
     <ClInclude Include="rand_c.h" />

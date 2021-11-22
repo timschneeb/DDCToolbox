@@ -1,3 +1,4 @@
+#include <stdlib.h>
 static void merge(unsigned int idx_data[], double x_data[], int offset, int np, int nq, unsigned int iwork_data[], double xwork_data[])
 {
 	int exitg1;
@@ -88,10 +89,10 @@ void sort(double x_data[], const unsigned int xSize, unsigned int idx_data[])
 		idx_data[0] = 0;
 		return;
 	}
-	double vwork_data[3777];
-	double xwork_data[3777];
-	unsigned int iidx_data[3777];
-	unsigned int iwork_data[3777];
+	double *vwork_data = (double*)malloc(xSize * sizeof(double));
+	double *xwork_data = (double*)malloc(xSize * sizeof(double));
+	unsigned int *iidx_data = (unsigned int*)malloc(xSize * sizeof(unsigned int));
+	unsigned int *iwork_data = (unsigned int*)malloc(xSize * sizeof(unsigned int));
 	double x4[4];
 	unsigned int idx4[4];
 	signed char perm[4];
@@ -258,4 +259,8 @@ void sort(double x_data[], const unsigned int xSize, unsigned int idx_data[])
 		x_data[k] = vwork_data[k];
 		idx_data[k] = iidx_data[k] - 1;
 	}
+	free(vwork_data);
+	free(xwork_data);
+	free(iidx_data);
+	free(iwork_data);
 }
