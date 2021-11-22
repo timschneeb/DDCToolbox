@@ -52,10 +52,23 @@ Recommended:
 * **Linux**
   * [Debian/Ubuntu (PPA)](#debianubuntu-ppa)
   * [Arch Linux (AUR)](#arch-aur)
+  * [Snap package (All distros)](#snap-package-universal-linux)
 * **macOS**
   * [macOS (OSX 10.13 and later, Intel x64 only)](#macos-intel)
 * **Android**
   * [Android app (basic features only)](#android)
+
+**Supported CPU architectures:**
+* Windows
+  * `x86_64` only; precompiled
+* Linux
+  * PPA - `x86_64` only; precompiled
+  * AUR - `x86_64`, `arm64`, and `armhf`; built from source
+  * Snap - `x86_64`, `arm64`, `armhf`, `ppc64el`, and `s390x`; precompiled
+* macOS
+  * Intel `x86_64` only
+
+_____
 
 Other installation methods (not recommended):
 * **Linux**
@@ -106,6 +119,26 @@ A git package is available in the [AUR](https://aur.archlinux.org/packages/ddcto
 yay -S ddctoolbox-git
 ```
 ![AUR version](https://img.shields.io/aur/version/ddctoolbox-git?label=aur-git)
+
+## Snap package (Universal Linux)
+Linux users can download a stable release of this app from the Snap Store. If `snap` is not yet installed on your system, you need to install it before you can continue: <https://snapcraft.io/docs/installing-snapd>. (All Ubuntu flavors, KDE Neon, Manjaro and Zorin OS have this utility already pre-installed)
+
+Supported CPU architectures: `x86_64`, `arm64`, `armhf`, `ppc64el`, and `s390x`.
+
+Once `snap` is properly installed, you can install ddctoolbox:
+```bash
+sudo snap install ddctoolbox
+```
+You can launch ddctoolbox by executing `ddctoolbox` in a terminal, or by selecting the application shortcut in your drop-down menu bar.
+
+> Note: If you installed snap for the first time, it may be necessary to relogin in order to make the application shortcut in your menu bar visible.
+
+<p align="center">
+  <a href="https://snapcraft.io/ddctoolbox">
+    <img alt="Snapcraft Badge" src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg">
+  </a>
+</p>
+
 
 ## Android
 There is an Android version of DDCToolbox with limited functionality available here: [ThePBone/DDCToolbox-Android](https://github.com/ThePBone/DDCToolbox-Android)

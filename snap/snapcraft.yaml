@@ -1,6 +1,6 @@
 name: ddctoolbox 
 base: core20
-version: '2.0.0'
+version: '2.0.1'
 icon: snap/gui/ddctoolbox.svg
 summary: Create and edit ViPER DDC files on Linux, Windows and macOS
 description: |
@@ -22,6 +22,7 @@ apps:
       - network-bind
       - network-manager
       - x11
+      - gsettings
       - wayland
       - unity7
       - desktop
