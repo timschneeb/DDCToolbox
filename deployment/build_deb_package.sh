@@ -8,7 +8,7 @@ mkdir $debname"/DEBIAN"
 mkdir -p $debname"/usr/bin"
 mkdir -p $debname"/usr/share/applications"
 mkdir -p $debname"/usr/share/pixmaps"
-chmod +x "DDCToolbox"
+chmod +x "ddctoolbox"
 cp "DDCToolbox" $debname"/usr/bin/ddctoolbox"
 
 cp "img/icon.png" $debname"/usr/share/pixmaps/ddctoolbox.png"
