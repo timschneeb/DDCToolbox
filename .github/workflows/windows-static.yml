@@ -97,7 +97,7 @@ jobs:
       
     # Make x64 installer
     - name: Download artifact (x64)
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: DDCToolbox_Portable_win64
 
@@ -146,12 +146,12 @@ jobs:
       id: version
       
     - name: Download setup artifact (x64)
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: DDCToolbox_Setup_win64_${{steps.version.outputs.version}}.exe
       
     - name: Download portable artifact (x64)
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: DDCToolbox_Portable_win64
       
@@ -203,12 +203,12 @@ jobs:
       id: version
       
     - name: Download setup artifact (x64)
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: DDCToolbox_Setup_win64_${{steps.version.outputs.version}}.exe
       
     - name: Download portable artifact (x64)
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: DDCToolbox_Portable_win64
       

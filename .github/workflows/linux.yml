@@ -61,7 +61,7 @@ jobs:
       id: version
       
     - name: Download artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: DDCToolbox_Portable_linux64
       
@@ -97,12 +97,12 @@ jobs:
       id: version
       
     - name: Download portable artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: DDCToolbox_Portable_linux64
               
     - name: Download package artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: ddctoolbox_${{steps.version.outputs.version}}_linux64.deb
         
@@ -154,7 +154,7 @@ jobs:
       id: version
       
     - name: Download package artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: ddctoolbox_${{steps.version.outputs.version}}_linux64.deb
       
@@ -193,7 +193,7 @@ jobs:
       id: version
         
     - name: Download package artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: ddctoolbox_${{steps.version.outputs.version}}_linux64.deb
 
