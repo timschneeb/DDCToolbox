@@ -5,6 +5,9 @@
 #include <stdint.h>
 #include "rand_c.h"
 #include "interpolation2.h"
+
+extern void sort(double x_data[], const unsigned int xSize, unsigned int idx_data[]);
+
 static const double tbl1[257] = { 0.0, 0.215241895984875, 0.286174591792068,
   0.335737519214422, 0.375121332878378, 0.408389134611989, 0.43751840220787,
   0.46363433679088, 0.487443966139235, 0.50942332960209, 0.529909720661557,
