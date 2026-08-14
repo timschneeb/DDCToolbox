@@ -171,6 +171,10 @@ Install dependencies (Arch)
 
     sudo pacman -S qt5-base 
 
+Install dependencies (Fedora)
+
+    sudo dnf install git gcc-c++ make qt5-qtbase-devel mesa-libGL-dev
+
 Clone this repository
 
     git clone --recurse-submodules https://github.com/ThePBone/DDCToolbox
@@ -183,6 +187,11 @@ Compile sources
 
 You should now be able to execute it:
 
+    ./DDCToolbox
+
+Or:
+
+    cd src
     ./DDCToolbox
 
 #### Optional: Installation and shortcut
